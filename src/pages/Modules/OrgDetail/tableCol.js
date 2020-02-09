@@ -95,11 +95,11 @@ let tableCol = {
             key: 'ActivityType'
         },
         {
-            title: '当前进度',
+            title: '审核进度',
             key: 'CurrentStep'
         },
         {
-            title: '活动负责人',
+            title: '负责人姓名',
             key: 'Owner'
         },
         {

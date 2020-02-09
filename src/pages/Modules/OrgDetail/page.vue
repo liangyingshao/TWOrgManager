@@ -309,7 +309,7 @@
                         </i-row>
                     </i-card>
                 </i-tab-pane>
-                <i-tab-pane label="操作日志" name="operation">
+                <i-tab-pane label="操作记录" name="operation">
                     <i-table stripe :columns="tableCol.operation" :data="tableData.operation" :loading="tableLoading">
                     </i-table>
                     <br/>
