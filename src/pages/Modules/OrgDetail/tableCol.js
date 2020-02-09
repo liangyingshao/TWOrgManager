@@ -29,7 +29,8 @@ let tableCol = {
     subDept: [
         {
             title: '部门名称',
-            key: 'name'
+            key: 'name',
+            tree: true
         },
         {
             title: '部门层级显示',
@@ -37,11 +38,11 @@ let tableCol = {
         },
         {
             title: '部门类型',
-            key: 'Type'
+            slot: 'Type'
         },
         {
-            title: '管理员姓名',
-            key: 'admin'
+            title: '管理员',
+            slot: 'admin'
         },
         {
             title: '操作',

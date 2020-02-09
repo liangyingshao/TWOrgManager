@@ -1,7 +1,7 @@
 <template>
     <i-row>
         <i-col style="padding: 0px 10%">
-            <i-form :model="modalData" ref="Form" :rules="ruleForMem">
+            <i-form :model="modalData.user" ref="Form" :rules="ruleForMem">
                 <i-form-item label="姓名" prop="RealName">
                     <i-input v-model="modalData.user.RealName" />
                 </i-form-item>
@@ -95,6 +95,8 @@
                         this.resetFields();
                         if (msg.success) {
                             callback();
+                        } else {
+                            this.$Message.warning(msg.msg);
                         }
                     })
                 })

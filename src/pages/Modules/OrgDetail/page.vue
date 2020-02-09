@@ -178,7 +178,7 @@
                                         <i-input prefix="ios-search" placeholder="搜索成员" v-model="keyword" @keyup.enter.native="getMemberTable()"/>
                                     </i-col>
                                     <i-col>
-                                        <i-button type="primary" @click="addMember()">添加成员</i-button>
+                                        <i-button type="primary" @click="addMember('member', '成员')">添加成员</i-button>
                                     </i-col>
                                 </i-row>
                             </i-col>
@@ -237,6 +237,13 @@
                                     <i-button @click="modifySubDepart(row)">管理</i-button>
                                     <i-button @click="delSubDepart(row)">删除</i-button>
                                 </template>
+                                <template slot="admin" slot-scope="{row}">
+                                    {{row.admin}}
+                                    <i-button shape="circle" v-if="row.admin === ''" @click="addMember('member', '管理员', row.id)">添加管理员</i-button>
+                                </template>
+                                <template slot="Type" slot-scope="{row}">
+                                    {{row.Type === 0 ? "挂靠单位" : "社团"}}
+                                </template>
                             </i-table>
                             <br/>
                             <i-page show-total :total="tableData.subDept.length" :page-size="10000"/>
@@ -257,7 +264,7 @@
                                         <i-input prefix="ios-search" placeholder="搜索老师" v-model="keyword" @keyup.enter.native="getTutorTable()"/>
                                     </i-col>
                                     <i-col>
-                                        <i-button type="primary" @click="addTutor()">添加老师</i-button>
+                                        <i-button type="primary" @click="addMember('tutor')">添加老师</i-button>
                                     </i-col>
                                 </i-row>
                             </i-col>
@@ -310,8 +317,8 @@
                 </i-tab-pane>
             </i-tabs>
         </i-card>
-        <i-modal :z-index="10" v-model="modalShow" title="添加/修改成员" @on-ok="submit()" @on-cancel="cancel()">
-            <component :is="componentDic[tabSelect]" ref="Form" :modalData="recordData"></component>
+        <i-modal :z-index="10" v-model="modalShow" :title="component.title || '暂无'" @on-ok="submit()" @on-cancel="cancel()">
+            <component :is="component.name" ref="Form" :modalData="recordData"></component>
         </i-modal>
     </i-row>
 </template>
@@ -334,7 +341,7 @@ export default {
     methods: {
         submit () {
             let form = this.$refs["Form"];
-            form.submit(this.orgInfo.ID, this.callbackFunc);
+            form.submit(this.newDptId || this.orgInfo.ID, this.callbackFunc);
         },
         cancel () {
         },
@@ -342,17 +349,18 @@ export default {
             this.isSaving = true;
             let form = this.$refs["form"];
             form.validate(res => {
-                    if (!res) return;
-                    axios.post("/api/security/SaveDepartV2", this.orgInfo, msg => {
+                if (!res) return;
+                axios.post("/api/security/SaveDepartV2", this.orgInfo, msg => {
                     if (msg.success) {
                         this.$Message.success("部门信息保存成功");
                     } else {
                         this.$Message.warning(msg.msg);
                     }
+                    form.resetFields();
+                    this.isSaving = false;
                     this.getOrgDetail();
                 });
             })
-            this.isSaving = false;
         },
         getOrgDetail () {
             this.tableLoading = true;
@@ -406,8 +414,7 @@ export default {
             if (this.orgInfo.Type !== 0) return;
             this.tableLoading = true;
             axios.post("/api/security/GetDepartsByDepartId", {id: this.orgInfo.ID}, msg => {
-                this.tableData.subDept = msg.data.children;
-                this.tableData.subDept.forEach(e => e.Type = (e.Type === 0 ? "挂靠单位" : "社团"));
+                this.tableData.subDept = msg.data.children || [];
                 this.tableLoading = false;
             });
         },
@@ -433,23 +440,26 @@ export default {
         },
         addSubDepart () {
             this.recordData = {};
+            this.component.name = "subDept-form";
+            this.component.title = "新建部门";
             this.callbackFunc = this.modifySubDepart;
             this.modalShow = true;
         },
-        addTutor () {
+        addMember (who, position, departId) {
+            this.component.name = who + "-form";
+            let dic = {
+                "tutor": "新建指导老师",
+                "member": "新建成员",
+                "admin": "新建管理员"
+            }
+            this.component.title = dic[who];
+            this.newDptId = departId;
             this.recordData = {
+                position,
                 user: {},
                 changeLogs: []
             };
-            this.callbackFunc = this.getTutorTable;
-            this.modalShow = true;
-        },
-        addMember () {
-            this.recordData = {
-                user: {},
-                changeLogs: []
-            };
-            this.callbackFunc = this.getMemberTable;
+            this.callbackFunc = who === "tutor" ? this.getTutorTable : this.getMemberTable;
             this.modalShow = true;
         },
         addActivity () {
@@ -462,29 +472,56 @@ export default {
             })
         },
         delMember (row) {
-             axios.post("/api/security/RemoveUserV2", {userId: row.ID, departId: row.departId}, msg => {
-                this.getMemberTable();
-            })
+            this.$Modal.confirm({
+                title: "确认删除该成员？",
+                onOk: () => {
+                    axios.post("/api/security/RemoveUserV2", { userId: row.ID, departId: row.departId }, msg => {
+                        if (msg.success) {
+                            this.$Message.success("删除成功");
+                        } else {
+                            this.$Message.warning(msg.msg);
+                        }
+                        this.getMemberTable();
+                    });
+                }
+            });
         },
         delTutor (row) {
-             axios.post("/api/security/RemoveUserV2", {userId: row.ID, departId: row.departId, position: "指导老师"}, msg => {
-                this.getTutorTable();
-            })
+            this.$Modal.confirm({
+                title: "确认删除该指导老师？",
+                onOk: () => {
+                    axios.post("/api/security/RemoveUserV2", { userId: row.ID, departId: row.departId, position: "指导老师" }, msg => {
+                        if (msg.success) {
+                            this.$Message.success("删除成功");
+                        } else {
+                            this.$Message.warning(msg.msg);
+                        }
+                        this.getTutorTable();
+                    });
+                }
+            });
         },
         delSubDepart (row) {
-            axios.post("/api/security/RemoveDepartV2", {id: row.id}, msg => {
-                if (msg.success) {
+            this.$Modal.confirm({
+                title: "确认删除该部门？",
+                onOk: () => {
+                    axios.post("/api/security/RemoveDepartV2", {id: row.id}, msg => {
+                        if (msg.success) {
+                            this.$Message.success("删除成功");
+                        } else {
+                            this.$Message.warning(msg.msg);
+                        }
+                    });
                     this.getDeptTable();
-                    this.$Message.success("删除成功");
-                } else {
-                    this.$Message.warning(msg.msg);
                 }
-            })
+            });
         },
         modifyMember (row) {
             axios.post("/api/security/GetUserById", {id: row.ID, departId: this.orgInfo.ID}, msg => {
                 this.recordData.user = msg.user;
                 this.recordData.changeLogs = msg.changeLogs;
+                this.component.name = "member-form";
+                this.component.title = "修改成员"
                 this.modalShow = true;
                 this.callbackFunc = this.getMemberTable;
             });
@@ -493,6 +530,8 @@ export default {
             axios.post("/api/security/GetUserById", {id: row.ID, departId: this.orgInfo.ID}, msg => {
                 this.recordData.user = msg.user;
                 this.recordData.changeLogs = msg.changeLogs;
+                this.component.name = "tutor-form";
+                this.component.title = "修改指导老师"
                 this.modalShow = true;
                 this.callbackFunc = this.getTutorTable;
             });
@@ -506,7 +545,6 @@ export default {
         setPositon (userId, position) {
             axios.post("/api/security/SetPositionV2", {userId, departId: this.orgInfo.ID, position}, msg => {
                 this.getMemberTable();
-                this.getTutorTable();
             })
         },
         setPassword (row) {
@@ -605,6 +643,11 @@ export default {
             tabSelect: "",
             isSaving: false,
             tableLoading: false,
+            newDptId: "",
+            component: {
+                name: "",
+                title: ""
+            },
             recordData: {
                 user: {},
                 changeLogs: []
@@ -664,11 +707,6 @@ export default {
                 }
             },
             modalShow: false,
-            componentDic: {
-                member: "member-form",
-                tutor: "tutor-form",
-                subDept: "subDept-form"
-            },
             password: {},
             pwdRule: {
                 password: {

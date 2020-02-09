@@ -4,16 +4,16 @@
             <div class="paper">
                 <div>
                     <div class="status-bar">
+                        <p class="smallhang"/>
+                        <p class="headline">强制执行</p>
                         <table border="0">
                             <tr>
                                 <td class="smallhang wen-zi-ju-you">执行人：</td>
                                 <td colspan="2">
-                                    <i-select v-model="model1" class="drop-down-box">
-                                        <i-option v-for="item in executorList" :value="item.value" :key="item.value">{{ item.label }}</i-option>
-                                    </i-select>
+                                    <user-selector v-model="model1"/>
                                 </td>
                                 <td class="smallhang"></td>
-                                <td class="smallhang wen-zi-ju-you">状态：</td>
+                                <td class="smallhang wen-zi-ju-you">步骤：</td>
                                 <td colspan="2">
                                     <i-select v-model="model2" class="drop-down-box">
                                         <i-option v-for="item in stateList" :value="item.value" :key="item.value">{{ item.label }}</i-option>
@@ -62,7 +62,7 @@
                                     <td class="smallhang">活动人数</td>
                                     <td colspan="2" width="200">
                                         <i-input  v-if="io.fieldAccess.AttendanceFigures === 'w' && io.isMyStep" v-model="io.data.AttendanceFigures"/>
-                                        <p v-else>{{io.data.AttendanceFigures}}</p>人
+                                        <p v-else>{{io.data.AttendanceFigures}}人</p>
                                     </td>
                                 </tr>
                                 <tr>
@@ -86,11 +86,14 @@
                                 </tr>
                                 <tr>
                                     <td class="smallhang" rowspan="2">面向范围</td>
-                                    <td class="longhang" colspan="4" >活动类型：
+                                    <td class="longhang" colspan="4"  v-if="!io.data.ActivityType">活动类型：
                                         <i-radio-group v-model="io.data.ActivityType">
-                                            <i-radio label="社团内部活动" class="iview-type-size" :disabled="io.fieldAccess.ActivityType === 'r' || !io.isMyStep">社团内部活动</i-radio>
-                                            <i-radio label="公开活动" class="iview-type-size" :disabled="io.fieldAccess.ActivityType === 'r' || !io.isMyStep">公开活动</i-radio>
+                                            <i-radio label="社团内部活动" class="iview-type-size" :disabled="io.fieldAccess.Description === 'r' || !io.isMyStep">社团内部活动</i-radio>
+                                            <i-radio label="公开活动" class="iview-type-size" :disabled="io.fieldAccess.Description === 'r' || !io.isMyStep">公开活动</i-radio>
                                         </i-radio-group>
+                                    </td>
+                                    <td class="longhang" v-else colspan="4">
+                                        <p>活动类型：<Icon type="ios-checkbox-outline" />{{io.data.ActivityType}}</p>
                                     </td>
                                 </tr>
                                 <tr>
@@ -101,10 +104,13 @@
                                 </tr>
                                 <tr>
                                     <td class="smallhang" rowspan="2">活动内容</td>
-                                    <td class="longhang" colspan="4">
-                                            <i-upload action="//jsonplaceholder.typicode.com/posts/">
-                                                <i-button icon="ios-cloud-upload-outline" type="primary" :disabled="io.fieldAccess.Description === 'r' || !io.isMyStep">上传文件</i-button>
-                                            </i-upload>
+                                    <td class="longhang" colspan="4" v-if="io.currentStep === '填写申请表'">
+                                        <i-upload action="//jsonplaceholder.typicode.com/posts/">
+                                            <i-button icon="ios-cloud-upload-outline" type="primary" :disabled="io.fieldAccess.Description === 'r' || !io.isMyStep">上传文件</i-button>
+                                        </i-upload>
+                                    </td>
+                                    <td class="longhang" colspan="4" v-else>
+                                        <p>无附件</p>
                                     </td>
                                 </tr>
                                 <tr>
@@ -206,8 +212,10 @@
                     </i-row>
                 </div>
             </div>
-            <div class="paper">
-                <i-timeline style="overflow-y:scroll; height:600px; padding: 20px;">
+            <div class="paper" v-if="io.timelines.length > 0">
+                <p class="smallhang"/>
+                <p class="headline">流程执行步骤</p>
+                <i-timeline style="padding: 20px;">
                     <TimelineItem v-for="(item,index) in io.timelines" :key="index">
                         <i-row class="time">
                             <i-col>
@@ -215,23 +223,8 @@
                             </i-col>
                         </i-row>
                         <i-row v-for="(item,index) in item.steps" :key="index" class="content">
-                            <i-col>
-                                <p><b>{{item.Time}} {{item.ExecutorName}}{{stepInfo[item.State]}}</b></p>
-                            </i-col>
-                            <i-col>
-                                <p>{{item.StepName}}</p>
-                            </i-col>
-                            <i-col>
-                                <p v-if="inStep([0, 1], item.State)">
-                                    {{ item.ExecutorName ? `${item.ExecutorName} 正在进行中` : "正在等待接手" }}
-                                </p>
-                                <p v-else-if="inStep([2], item.State)">
-                                    由{{ item.Operator }}于{{ item.CreatedOn }}完成
-                                </p>
-                                <p v-else>
-                                    由{{ item.Operator }}于{{ item.CreatedOn }}取消
-                                </p>
-                            </i-col>
+                            <Alert v-if="item.State !== 0 && item.State !== 1" show-icon :type="icons[item.State - 1]">{{item.StepName}}于{{item.CreatedOn}}{{item.Time}}由{{item.ExecutorName}}{{stepInfo[item.State]}}</Alert>
+                            <Alert v-else show-icon>{{item.StepName}}于{{item.CreatedOn}}{{item.Time}}由{{item.ExecutorName}}{{stepInfo[item.State]}}</Alert>
                         </i-row>
                     </TimelineItem>
                 </i-timeline>
@@ -247,6 +240,14 @@ const enums = require("@/config/enums");
 export default {
     data () {
         return {
+            icons: [
+                "",
+                "",
+                "success",
+                "success",
+                "error",
+                "warning"
+            ],
             executorList: [
                 {
                 value: "指导老师",
@@ -284,13 +285,24 @@ export default {
                 intstanceState: '',
                 currentStep: ''
             },
-            stateList: [{
-                value: "审核通过",
-                label: "审核通过"
+            stateList: [
+                {
+                    value: "填写申请表",
+                    label: "填写申请表"
                 }, {
-                value: "审核不通过",
-                label: "审核不通过"
-            }],
+                    value: "指导老师审核",
+                    label: "指导老师审核"
+                }, {
+                    value: '挂靠单位审核',
+                    label: '挂靠单位审核'
+                }, {
+                    value: '学生联合会审核',
+                    label: '学生联合会审核'
+                }, {
+                    value: '校团委审核',
+                    label: '校团委审核'
+                }
+            ],
             model2: ""
         }
     },
@@ -350,6 +362,7 @@ export default {
     .time{
     font-weight: bold;
     color: #888;
+    margin-bottom: 10px;
     }
     .content{
         padding-left: 5px;
