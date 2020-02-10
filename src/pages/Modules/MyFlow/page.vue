@@ -18,16 +18,12 @@ export default {
                     key: "WorkflowName"
                 },
                 {
-                    title: "创建者",
+                    title: "申请人",
                     key: "Owner"
                 },
                 {
-                    title: "创建时间",
+                    title: "申请时间",
                     key: "ArriveOn"
-                },
-                {
-                    title: "该实例版本",
-                    key: "Version"
                 },
                 {
                     title: "操作",

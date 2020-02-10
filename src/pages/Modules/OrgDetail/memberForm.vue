@@ -173,7 +173,11 @@
                         position: this.modalData.position
                         }, msg => {
                         this.resetFields();
-                        callback();
+                        if (msg.success) {
+                            callback();
+                        } else {
+                            this.$Message.warning(msg.msg);
+                        }
                     });
                 })
             }
