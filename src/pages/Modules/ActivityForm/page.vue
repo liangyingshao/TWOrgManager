@@ -111,7 +111,7 @@
                                         <div v-if="formData !== null">
                                             <i-row>
                                                 <Button type="text" style="text-align: left;width: 300px;overflow: hidden;white-space: nowrap;text-overflow: ellipsis;">{{formData.name}}</Button>
-                                                <Button type="text" @click="uploadFile" :loading="loadingStatus">{{ loadingStatus ? 'Uploading' : '上传' }}</Button>
+                                                <Button type="text" @click="uploadFile" :loading="loadingStatus">上传</Button>
                                                 <Button type="text" @click="removeFormData"><Icon type="ios-close" /></Button>
                                             </i-row>
                                         </div>
@@ -128,7 +128,7 @@
                                                 </i-row>
                                             </template>
                                         </div>
-                                        <div v-else>无附件</div>
+                                        <div v-else-if="io.fieldAccess.Description === 'r' || !io.isMyStep">无附件</div>
                                     </td>
                                 </tr>
                                 <tr>
@@ -241,7 +241,7 @@
                             </i-col>
                         </i-row>
                         <i-row v-for="(item,index) in item.steps" :key="index" class="content">
-                            <Alert v-if="item.State !== 0 && item.State !== 1" show-icon :type="icons[item.State - 1]">{{item.StepName}}于{{item.CreatedOn}}{{item.Time}}由{{item.ExecutorName}}{{stepInfo[item.State]}}</Alert>
+                            <Alert v-if="item.State !== 0 && item.State !== 1" show-icon :type="icons[item.State]">{{item.StepName}}于{{item.CreatedOn}}{{item.Time}}由{{item.ExecutorName}}{{stepInfo[item.State]}}</Alert>
                             <Alert v-else show-icon>{{item.StepName}}于{{item.CreatedOn}}{{item.Time}}由{{item.ExecutorName}}{{stepInfo[item.State]}}</Alert>
                         </i-row>
                     </TimelineItem>
