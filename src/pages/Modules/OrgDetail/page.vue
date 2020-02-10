@@ -221,7 +221,7 @@
                             <i-col>
                                 <i-row type="flex" :gutter="16">
                                     <i-col>
-                                        <i-input prefix="ios-search" placeholder="搜索部门"/>
+                                        <i-input prefix="ios-search" placeholder="搜索部门" v-model="keyword" @keyup.enter.native="searchSubDepart()"/>
                                     </i-col>
                                     <i-col>
                                         <i-button type="primary" @click="addSubDepart">
@@ -415,6 +415,7 @@ export default {
             this.tableLoading = true;
             axios.post("/api/security/GetDepartsByDepartId", {id: this.orgInfo.ID}, msg => {
                 this.tableData.subDept = msg.data.children || [];
+                this.searchSubDep = this.tableData.subDept;
                 this.tableLoading = false;
             });
         },
@@ -511,8 +512,8 @@ export default {
                         } else {
                             this.$Message.warning(msg.msg);
                         }
+                        this.getDeptTable();
                     });
-                    this.getDeptTable();
                 }
             });
         },
@@ -537,6 +538,7 @@ export default {
             });
         },
         modifySubDepart (row) {
+            this.getDeptTable();
             window.open("/manage/org/detail?id=" + row.id);
         },
         checkWorkflow (instanceId, stepId) {
@@ -544,6 +546,11 @@ export default {
         },
         setPositon (userId, position) {
             axios.post("/api/security/SetPositionV2", {userId, departId: this.orgInfo.ID, position}, msg => {
+                if (msg.success) {
+                    this.$Message.success("设置成功")
+                } else {
+                    this.$Message.warning(msg.msg);
+                }
                 this.getMemberTable();
             })
         },
@@ -557,12 +564,22 @@ export default {
         cancelSet () {
             this.visible = false;
         },
+        searchSubDepart () {
+           this.tableData.subDept = this.searchSubDep.filter(item => {
+                if (item.name.includes(this.keyword)) {
+                    return item;
+                }
+            })
+        },
         setKeyword: _.debounce(function () {
                 if (this.tabSelect === "member") {
                     this.getMemberTable();
                 }
                 if (this.tabSelect === "tutor") {
                     this.getTutorTable();
+                }
+                if (this.tabSelect === "subDept") {
+                    this.searchSubDepart();
                 }
         }, 500)
     },
@@ -648,6 +665,7 @@ export default {
                 name: "",
                 title: ""
             },
+            searchSubDep: {},
             recordData: {
                 user: {},
                 changeLogs: []
