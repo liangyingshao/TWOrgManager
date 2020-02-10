@@ -309,7 +309,7 @@
                         </i-row>
                     </i-card>
                 </i-tab-pane>
-                <i-tab-pane label="操作日志" name="operation">
+                <i-tab-pane label="操作记录" name="operation">
                     <i-table stripe :columns="tableCol.operation" :data="tableData.operation" :loading="tableLoading">
                     </i-table>
                     <br/>
@@ -349,17 +349,18 @@ export default {
             this.isSaving = true;
             let form = this.$refs["form"];
             form.validate(res => {
-                    if (!res) return;
-                    axios.post("/api/security/SaveDepartV2", this.orgInfo, msg => {
+                if (!res) return;
+                axios.post("/api/security/SaveDepartV2", this.orgInfo, msg => {
                     if (msg.success) {
                         this.$Message.success("部门信息保存成功");
                     } else {
                         this.$Message.warning(msg.msg);
                     }
+                    form.resetFields();
+                    this.isSaving = false;
                     this.getOrgDetail();
                 });
             })
-            this.isSaving = false;
         },
         getOrgDetail () {
             this.tableLoading = true;

@@ -37,11 +37,10 @@
                     </template>
                 </i-row>
             </i-col>
-            <Divider type="vertical" />
             <i-col span="5" offset="2">
-                <i-card :padding="0" :to="routers[0]">
+                <i-card :padding="0" :to="routers[0]" v-if="dashBoard.Name">
                     <template slot="title">
-                        {{dashBoard.Name||'请设置社团名称'}}
+                        {{dashBoard.Name}}
                     </template>
                     <i-cell-group style="padding: 10px 0px">
                         <i-cell :title="`现有成员:${dashBoard.users}人`" :to="entrForStudent[0].routerTo"></i-cell>
