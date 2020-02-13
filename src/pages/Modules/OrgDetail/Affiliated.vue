@@ -1,62 +1,38 @@
 <template>
     <i-row>
         <i-card :padding="100">
-            <i-row type="flex" style="margin: -50px 0px 40px 0px" align="middle">
-                <i-col span="3">
-                    <i-avatar :src="app.webInfo.avatar" size="120"/>
+            <i-row>
+                <i-col span="6" class="tree">
+                    <i-spin fix size="large" v-show="treeLoading"></i-spin>
+                    <Tree :data="subDept" class="org-tree" @on-select-change="selectCategory"></Tree>
                 </i-col>
-                <i-col span="21">
-                    <i-row style="font-size:30px; margin-bottom:10px">{{orgInfo.Name ? orgInfo.Name : "正在加载中"}}</i-row>
-                    <i-row>
-                        <i-col span="3">成员人数：{{users}}</i-col>
-                        <i-col span="3">指导老师：{{teachers.length}}</i-col>
-                    </i-row>
-                </i-col>
-            </i-row>
-            <i-tabs v-model="tabSelect">
-                <i-tab-pane label="基本信息" name="basicInfo">
-                    <i-row>
+                <i-col span="17" offset="1">
                         <i-spin fix size="large" v-show="tableLoading"></i-spin>
-                        <i-col span="16">
-                            <i-form :model="orgInfo" :rules="ruleForBasic" ref="form">
-                                <i-row type="flex" justify="space-between">
-                                    <i-col span="22">
-                                        <i-form-item label="社团名称" span="8" prop="Name">
+                        <i-row style="font-size:30px;margin-bottom:10px">
+                            {{orgInfo.Name}}
+                            <i-button @click="showLog = !showLog" type="text" style="float:right; padding: 0;">查看修改记录</i-button>
+                        </i-row>
+                        <i-row>
+                            <i-col span="6" offset="2">
+                                <i-avatar size="100"></i-avatar>
+                            </i-col>
+                            <i-col span="6" offset="2">
+                                <i-avatar size="100"></i-avatar>
+                            </i-col>
+                            <i-col span="6" offset="2">
+                                <i-avatar size="100"></i-avatar>
+                            </i-col>
+                        </i-row>
+                        <i-form :model="orgInfo" :rules="ruleForBasic" ref="form">
+                                <i-row>
+                                    <i-col>
+                                        <i-form-item label="单位名称" span="8" prop="Name">
                                             <i-input v-model="orgInfo.Name"/>
                                         </i-form-item>
                                     </i-col>
                                 </i-row>
-                                <i-row type="flex">
-                                    <i-col span="10">
-                                        <i-form-item label="社团类型" prop="DepartType">
-                                            <dic-select dic="社团类型" v-model="orgInfo.DepartType" />
-                                        </i-form-item>
-                                    </i-col>
-                                    <i-col span="10" offset="2">
-                                        <i-form-item label="成立时间" prop="BirthTime">
-                                            <i-date-picker type="date" v-model="orgInfo.BirthTime" format="yyyy年MM月dd日" />
-                                        </i-form-item>
-                                    </i-col>
-                                </i-row>
-                                <i-row type="flex">
-                                    <i-col span="10">
-                                        <i-form-item label="部门电话">
-                                            <i-input v-model="orgInfo.Phone"/>
-                                        </i-form-item>
-                                    </i-col>
-                                    <i-col span="10" offset="2">
-                                        <i-form-item label="挂靠单位">
-                                            <org-selector v-model="orgInfo.ParentId"/>
-                                        </i-form-item>
-                                    </i-col>
-                                </i-row>
-                                <i-row type="flex" v-if="level === 3">
-                                    <i-col span="10">
-                                        <i-form-item label="排序号">
-                                            <i-input v-model="orgInfo.Sort"/>
-                                        </i-form-item>
-                                    </i-col>
-                                    <i-col span="10" offset="2">
+                                <i-row>
+                                    <i-col span="11">
                                         <i-form-item label="部门类型">
                                             <i-select v-model="orgInfo.Type">
                                                 <i-option :value="0" key="挂靠单位">挂靠单位</i-option>
@@ -64,79 +40,108 @@
                                             </i-select>
                                         </i-form-item>
                                     </i-col>
+                                    <i-col span="11" offset="2">
+                                        <i-form-item label="成立时间" prop="BirthTime">
+                                            <i-date-picker type="date" v-model="orgInfo.BirthTime" format="yyyy年MM月dd日" />
+                                        </i-form-item>
+                                    </i-col>
                                 </i-row>
-                                <i-row type="flex">
-                                    <i-col span="22">
+                                <i-row v-if="showMore">
+                                    <i-col span="11">
+                                        <i-form-item label="单位电话">
+                                            <i-input v-model="orgInfo.Phone"/>
+                                        </i-form-item>
+                                    </i-col>
+                                    <i-col span="11" offset="2">
+                                        <i-form-item label="挂靠单位">
+                                            <org-selector v-model="orgInfo.ParentId"/>
+                                        </i-form-item>
+                                    </i-col>
+                                </i-row>
+                                <i-row type="flex" v-if="level === 3&&showMore">
+                                    <i-col span="11">
+                                        <i-form-item label="排序号">
+                                            <i-input v-model="orgInfo.Sort"/>
+                                        </i-form-item>
+                                    </i-col>
+                                    <i-col span="11" offset="2">
+                                        <i-form-item label="社团类型" prop="DepartType">
+                                            <dic-select dic="社团类型" v-model="orgInfo.DepartType" />
+                                        </i-form-item>
+                                    </i-col>
+                                </i-row>
+                                <i-row v-if="showMore">
+                                    <i-col>
                                         <i-form-item label="部门描述">
                                             <i-input type="textarea" v-model="orgInfo.Description"/>
                                         </i-form-item>
                                     </i-col>
                                 </i-row>
-                                <i-row type="flex">
-                                    <i-col span="10">
+                                <i-row v-if="showMore">
+                                    <i-col span="11">
                                         <i-form-item label="是否有社团章程">
                                             <i-checkbox v-model="orgInfo.HaveDepartRule"></i-checkbox>
                                             <i-date-picker :disabled="!orgInfo.HaveDepartRule" v-model="orgInfo.RuleCreatedOn"></i-date-picker>
                                         </i-form-item>
                                     </i-col>
-                                    <i-col span="10" offset="2">
+                                    <i-col span="11" offset="2" v-if="showMore">
                                         <i-form-item label="是否成立团支部">
                                             <i-checkbox v-model="orgInfo.HaveLeagueBranch"></i-checkbox>
                                             <i-date-picker :disabled="!orgInfo.HaveLeagueBranch" v-model="orgInfo.LeagueBrachCreatedOn"></i-date-picker>
                                         </i-form-item>
                                     </i-col>
                                 </i-row>
-                                <i-row type="flex">
+                                <i-row v-if="showMore">
                                     <i-col span="10">
                                         <i-form-item label="是否有党支部">
                                             <i-checkbox v-model="orgInfo.HaveCPCBranch"></i-checkbox>
                                             <i-date-picker :disabled="!orgInfo.HaveCPCBranch" v-model="orgInfo.CPCBranchCreatedOn"></i-date-picker>
                                         </i-form-item>
                                     </i-col>
-                                    <i-col span="10" offset="2">
+                                    <i-col span="11" offset="2">
                                         <i-form-item label="党支部类型">
                                             <dic-select dic="党支部类型" :disabled="!orgInfo.HaveCPCBranch" v-model="orgInfo.CPCBranchType"/>
                                         </i-form-item>
                                     </i-col>
                                 </i-row>
-                                <i-row type="flex">
-                                    <i-col span="10">
+                                <i-row v-if="showMore">
+                                    <i-col span="11">
                                         <i-form-item label="社交媒体">
                                             <i-input v-model="orgInfo.SocialMedia"/>
                                         </i-form-item>
                                     </i-col>
-                                    <i-col span="10" offset="2">
+                                    <i-col span="11" offset="2">
                                         <i-form-item label="社交媒体粉丝数">
                                             <i-input v-model="orgInfo.SocialMediaFans"/>
                                         </i-form-item>
                                     </i-col>
                                 </i-row>
-                                <i-row type="flex">
-                                    <i-col span="10">
+                                <i-row v-if="showMore">
+                                    <i-col span="11">
                                         <i-form-item label="经费类型">
                                             <i-input v-model="orgInfo.FundsCategory"/>
                                         </i-form-item>
                                     </i-col>
-                                    <i-col span="10" offset="2">
+                                    <i-col span="11" offset="2">
                                         <i-form-item label="经费来源">
                                             <i-input v-model="orgInfo.ChannelForFunds"/>
                                         </i-form-item>
                                     </i-col>
                                 </i-row>
-                                <i-row type="flex" v-if="level > 1">
-                                    <i-col span="10">
+                                <i-row v-if="level > 1&&showMore">
+                                    <i-col span="11">
                                         <i-form-item label="指导老师产生方式">
                                             <i-input v-model="orgInfo.GuideElectionBy"/>
                                         </i-form-item>
                                     </i-col>
-                                    <i-col span="10" offset="2">
+                                    <i-col span="11" offset="2">
                                         <i-form-item label="指导老师有无激励">
                                             <i-input v-model="orgInfo.GuideBonus"/>
                                         </i-form-item>
                                     </i-col>
                                 </i-row>
-                                <i-row type="flex">
-                                    <i-col span="22">
+                                <i-row v-if="showMore">
+                                    <i-col>
                                         <i-form-item label="备注1">
                                             <i-input type="textarea" v-model="orgInfo.Memo"/>
                                         </i-form-item>
@@ -146,190 +151,130 @@
                                     </i-col>
                                 </i-row>
                             </i-form>
-                            <i-button type="primary" @click="saveOrgDetail()" :loading="isSaving">保存</i-button>
-                        </i-col>
-                        <i-col span="7" offset="1">
-                            <i-timeline class="timeline i-scrollbar-hide">
-                                <TimelineItem v-for="(item,index) in logs" :key="index">
-                                    <i-row>
-                                        <p class="time">{{item.OperateOn}} {{item.Operator}}</p>
-                                        <p class="content">
-                                            <i-row v-for="(d,index) in item.Details" :key="index">
-                                                {{d}}
+                            <i-row>
+                                <i-col span="20">
+                                    <i-button type="primary" @click="saveOrgDetail()" :loading="isSaving">保存</i-button>
+                                </i-col>
+                                <i-col span="3" offset="1">
+                                    <i-button @click="showMore = !showMore">查看更多</i-button>
+                                </i-col>
+                            </i-row>
+                        <i-tabs v-model="tabSelect" style="padding-top:10px;">
+                            <i-tab-pane :label="memberManage" name="member">
+                                <i-card dis-hover>
+                                    <i-row type="flex" justify="space-between" align="middle" slot="title">
+                                        <i-col>
+                                            <i-row type="flex" align="middle" :gutter="16">
+                                                <i-col>社团成员</i-col>
                                             </i-row>
-                                        </p>
+                                        </i-col>
+                                        <i-col>
+                                            <i-row type="flex" :gutter="16">
+                                                <i-col>
+                                                    <i-input prefix="ios-search" placeholder="搜索成员" v-model="keyword" @keyup.enter.native="getMemberTable()"/>
+                                                </i-col>
+                                                <i-col>
+                                                    <i-button type="primary" @click="addMember('member', '成员')">添加成员</i-button>
+                                                </i-col>
+                                            </i-row>
+                                        </i-col>
                                     </i-row>
-                                </TimelineItem>
-                            </i-timeline>
-                        </i-col>
-                    </i-row>
-                </i-tab-pane>
-                <i-tab-pane :label="memberManage" name="member">
-                    <i-card dis-hover>
-                        <i-row type="flex" justify="space-between" align="middle" slot="title">
-                            <i-col>
-                                <i-row type="flex" align="middle" :gutter="16">
-                                    <i-col>社团成员</i-col>
-                                </i-row>
-                            </i-col>
-                            <i-col>
-                                <i-row type="flex" :gutter="16">
-                                    <i-col>
-                                        <i-input prefix="ios-search" placeholder="搜索成员" v-model="keyword" @keyup.enter.native="getMemberTable()"/>
-                                    </i-col>
-                                    <i-col>
-                                        <i-button type="primary" @click="addMember('member', '成员')">添加成员</i-button>
-                                    </i-col>
-                                </i-row>
-                            </i-col>
-                        </i-row>
-                        <i-table stripe :columns="tableCol.member" :data="tableData.member" :loading="tableLoading">
-                            <template slot="RealName" slot-scope="{row}">
-                                    {{row.RealName}}
-                                    <i-tag v-if="row.isAdmin">管理员</i-tag>
-                            </template>
-                            <template slot="Action" slot-scope="{row}">
-                                <i-button @click="modifyMember(row)" v-if="(level+orgInfo.Type>1)">修改</i-button>
-                                <i-tooltip :disabled="!row.isAdmin" content="不能删除管理员" placement="top">
-                                    <i-button :disabled="row.isAdmin" @click="delMember(row)" v-if="(2*orgInfo.Type+level>=3)">删除</i-button>
-                                </i-tooltip>
-                                <i-button v-if="(level === 3)&&(!row.isAdmin)" @click="setPositon(row.ID,'管理员')">设置管理员</i-button>
-                                <i-poptip transfer v-model="visible" v-if="row.isAdmin">
-                                    <i-button v-if="(level === 3)&&row.isAdmin">设置密码</i-button>
-                                    <i-row slot="title">您正在更改社团管理员密码</i-row>
-                                    <i-form  :model="password" slot="content" label-position="top" :rules="pwdRule">
-                                        <i-form-item label="新密码" prop="password">
-                                            <i-input v-model="password.password" size="small" type="password"/>
-                                        </i-form-item>
-                                        <i-form-item label="确认密码" prop="confirmPassword">
-                                            <i-input v-model="password.confirmPassword" size="small" type="password"/>
-                                        </i-form-item>
-                                        <i-button type="primary" size="small" @click="setPassword(row)">确认</i-button>
-                                        <i-button size="small" @click="cancelSet()">取消</i-button>
-                                    </i-form>
-                                </i-poptip>
-                            </template>
-                        </i-table>
-                        <br/>
-                        <i-page show-sizer show-total :total="pager.member.total" @on-change="getMemberTable($event, null)" @on-page-size-change="getMemberTable(null, $event)" />
-                    </i-card>
-                </i-tab-pane>
-                <i-tab-pane :disabled="orgInfo.Type === 1" label="子部门" name="subDept">
-                    <i-card dis-hover >
-                        <i-row type="flex" justify="space-between" align="middle" slot="title">
-                            <i-col>
-                                <i-row type="flex" align="middle" :gutter="16">
-                                    <i-col>子部门</i-col>
-                                </i-row>
-                            </i-col>
-                            <i-col>
-                                <i-row type="flex" :gutter="16">
-                                    <i-col>
-                                        <i-input prefix="ios-search" placeholder="搜索部门" v-model="keyword" @keyup.enter.native="searchSubDepart()"/>
-                                    </i-col>
-                                    <i-col>
-                                        <i-button type="primary" @click="addSubDepart">
-                                            新建部门
-                                        </i-button>
-                                    </i-col>
-                                </i-row>
-                            </i-col>
-                        </i-row>
-                        <i-row>
-                            <i-table row-key="id" stripe :columns="tableCol.subDept" :data="tableData.subDept" :loading="tableLoading">
-                                <template slot="Action" slot-scope="{row}">
-                                    <i-button @click="modifySubDepart(row)">管理</i-button>
-                                    <i-button @click="delSubDepart(row)">删除</i-button>
-                                </template>
-                                <template slot="admin" slot-scope="{row}">
-                                    {{row.admin}}
-                                    <i-button shape="circle" v-if="row.admin === ''" @click="addMember('member', '管理员', row.id)">添加管理员</i-button>
-                                </template>
-                                <template slot="Type" slot-scope="{row}">
-                                    {{row.Type === 0 ? "挂靠单位" : "社团"}}
-                                </template>
-                            </i-table>
-                            <br/>
-                            <i-page show-total :total="tableData.subDept.length" :page-size="10000"/>
-                        </i-row>
-                    </i-card>
-                </i-tab-pane>
-                <i-tab-pane :disabled="orgInfo.Type === 0" label="指导老师" name="tutor">
-                    <i-card dis-hover>
-                        <i-row type="flex" justify="space-between" align="middle" slot="title">
-                            <i-col>
-                                <i-row type="flex" align="middle" :gutter="16">
-                                    <i-col>指导老师</i-col>
-                                </i-row>
-                            </i-col>
-                            <i-col>
-                                <i-row type="flex" :gutter="16">
-                                    <i-col>
-                                        <i-input prefix="ios-search" placeholder="搜索老师" v-model="keyword" @keyup.enter.native="getTutorTable()"/>
-                                    </i-col>
-                                    <i-col>
-                                        <i-button type="primary" @click="addMember('tutor')">添加老师</i-button>
-                                    </i-col>
-                                </i-row>
-                            </i-col>
-                        </i-row>
-                        <i-row>
-                            <i-table stripe :columns="tableCol.tutor" :data="tableData.tutor" :loading="tableLoading">
-                                <template slot="Action" slot-scope="{row}">
-                                    <i-button @click="modifyTutor(row)">修改</i-button>
-                                    <i-button @click="delTutor(row)">删除</i-button>
-                                </template>
-                            </i-table>
-                            <br/>
-                            <i-page show-sizer show-total :total="pager.tutor.total" @on-change="getTutorTable($event, null)" @on-page-size-change="getTutorTable(null, $event)" />
-                        </i-row>
-                    </i-card>
-                </i-tab-pane>
-                <i-tab-pane label="社团活动" name="activity">
-                    <i-card dis-hover>
-                        <i-row type="flex" justify="space-between" align="middle" slot="title">
-                            <i-col>
-                                <i-row type="flex" align="middle" :gutter="16">
-                                    <i-col>社团活动</i-col>
-                                    <i-col><i-badge :count="tableData.length"></i-badge></i-col>
-                                </i-row>
-                            </i-col>
-                            <i-col>
-                                <i-row type="flex" :gutter="16">
-                                    <i-col>
-                                        <i-button type="primary" @click="addActivity">添加活动</i-button>
-                                    </i-col>
-                                </i-row>
-                            </i-col>
-                        </i-row>
-                        <i-row>
-                            <i-table stripe :columns="tableCol.activity" :data="tableData.activity" :loading="tableLoading">
-                                <template slot="Action" slot-scope="{row}">
-                                    <i-button @click="checkWorkflow(row.InstanceId, row.StepId)">查看</i-button>
-                                </template>
-                            </i-table>
-                            <br/>
-                            <i-page show-sizer show-total :total="pager.activity.total" @on-change="getActivityTable($event, null)" @on-page-size-change="getActivityTable(null, $event)" />
-                        </i-row>
-                    </i-card>
-                </i-tab-pane>
-                <i-tab-pane label="操作记录" name="operation">
-                    <i-table stripe :columns="tableCol.operation" :data="tableData.operation" :loading="tableLoading">
-                    </i-table>
-                    <br/>
-                    <i-page show-sizer show-total :total="pager.operation.total" @on-change="getOptTable($event, null)" @on-page-size-change="getOptTable(null, $event)" />
-                </i-tab-pane>
-            </i-tabs>
+                                    <i-table stripe :columns="tableCol.member" :data="tableData.member" :loading="tableLoading">
+                                        <template slot="RealName" slot-scope="{row}">
+                                                {{row.RealName}}
+                                                <i-tag v-if="row.isAdmin">管理员</i-tag>
+                                        </template>
+                                        <template slot="Action" slot-scope="{row}">
+                                            <i-button @click="modifyMember(row)" v-if="(level+orgInfo.Type>1)">修改</i-button>
+                                            <i-tooltip :disabled="!row.isAdmin" content="不能删除管理员" placement="top">
+                                                <i-button :disabled="row.isAdmin" @click="delMember(row)" v-if="(2*orgInfo.Type+level>=3)">删除</i-button>
+                                            </i-tooltip>
+                                            <i-button v-if="(level === 3)&&(!row.isAdmin)" @click="setPositon(row.ID,'管理员')">设置管理员</i-button>
+                                            <i-poptip transfer v-model="visible" v-if="row.isAdmin">
+                                                <i-button v-if="(level === 3)&&row.isAdmin">设置密码</i-button>
+                                                <i-row slot="title">您正在更改社团管理员密码</i-row>
+                                                <i-form  :model="password" slot="content" label-position="top" :rules="pwdRule">
+                                                    <i-form-item label="新密码" prop="password">
+                                                        <i-input v-model="password.password" size="small" type="password"/>
+                                                    </i-form-item>
+                                                    <i-form-item label="确认密码" prop="confirmPassword">
+                                                        <i-input v-model="password.confirmPassword" size="small" type="password"/>
+                                                    </i-form-item>
+                                                    <i-button type="primary" size="small" @click="setPassword(row)">确认</i-button>
+                                                    <i-button size="small" @click="cancelSet()">取消</i-button>
+                                                </i-form>
+                                            </i-poptip>
+                                        </template>
+                                    </i-table>
+                                    <br/>
+                                    <i-page show-sizer show-total :total="pager.member.total" @on-change="getMemberTable($event, null)" @on-page-size-change="getMemberTable(null, $event)" />
+                                </i-card>
+                            </i-tab-pane>
+                            <i-tab-pane label="社团活动" name="activity">
+                                <i-card dis-hover>
+                                    <i-row type="flex" justify="space-between" align="middle" slot="title">
+                                        <i-col>
+                                            <i-row type="flex" align="middle" :gutter="16">
+                                                <i-col>社团活动</i-col>
+                                                <i-col><i-badge :count="tableData.length"></i-badge></i-col>
+                                            </i-row>
+                                        </i-col>
+                                        <i-col>
+                                            <i-row type="flex" :gutter="16">
+                                                <i-col>
+                                                    <i-button type="primary" @click="addActivity">添加活动</i-button>
+                                                </i-col>
+                                            </i-row>
+                                        </i-col>
+                                    </i-row>
+                                    <i-row>
+                                        <i-table stripe :columns="tableCol.activity" :data="tableData.activity" :loading="tableLoading">
+                                            <template slot="Action" slot-scope="{row}">
+                                                <i-button @click="checkWorkflow(row.InstanceId, row.StepId)">查看</i-button>
+                                            </template>
+                                        </i-table>
+                                        <br/>
+                                        <i-page show-sizer show-total :total="pager.activity.total" @on-change="getActivityTable($event, null)" @on-page-size-change="getActivityTable(null, $event)" />
+                                    </i-row>
+                                </i-card>
+                            </i-tab-pane>
+                            <i-tab-pane label="操作记录" name="operation">
+                                <i-table stripe :columns="tableCol.operation" :data="tableData.operation" :loading="tableLoading">
+                                </i-table>
+                                <br/>
+                                <i-page show-sizer show-total :total="pager.operation.total" @on-change="getOptTable($event, null)" @on-page-size-change="getOptTable(null, $event)" />
+                            </i-tab-pane>
+                        </i-tabs>
+                </i-col>
+            </i-row>
         </i-card>
         <i-modal :z-index="10" v-model="modalShow" :title="component.title || '暂无'" @on-ok="submit()" @on-cancel="cancel()">
             <component :is="component.name" ref="Form" :modalData="recordData"></component>
         </i-modal>
+        <i-drawer title="修改记录" v-model="showLog" scrollable width="20">
+            <i-timeline class="timeline">
+                <TimelineItem v-for="(item,index) in logs" :key="index">
+                    <i-row>
+                        <i-col>
+                            <p class="time">{{item.OperateOn}}</p>
+                            <p class="content">{{item.Operator}}{{item.Abstract}}</p>
+                        </i-col>
+                    </i-row>
+                    <i-row>
+                        <i-col class="detail">
+                            <p v-for="(d,index) in item.Details" :key="index">
+                                {{d}}
+                            </p>
+                        </i-col>
+                    </i-row>
+                </TimelineItem>
+            </i-timeline>
+        </i-drawer>
     </i-row>
 </template>
 
 <script>
 import memberForm from "./memberForm"
-import tutorForm from "./tutorForm"
 import subDeptForm from "./subDeptForm"
 const app = require("@/config");
 const tableCol = require("./tableCol");
@@ -339,7 +284,6 @@ const axios = require("axios");
 export default {
     components: {
         "member-form": memberForm,
-        "tutor-form": tutorForm,
         "subDept-form": subDeptForm
     },
     methods: {
@@ -348,6 +292,18 @@ export default {
             form.submit(this.newDptId || this.orgInfo.ID, this.callbackFunc);
         },
         cancel () {
+        },
+        selectCategory (n) {
+            if (!n[0].isParent) {
+                window.open("/manage/org/detail?id=" + n[0].id);
+            } else {
+                this.orgInfo.ID = n[0].id;
+                this.getOrgDetail();
+                this.getMemberTable();
+                this.getDeptTable();
+                this.getOptTable();
+                this.getActivityTable();
+            }
         },
         saveOrgDetail () {
             this.isSaving = true;
@@ -397,28 +353,14 @@ export default {
                 this.tableLoading = false;
             });
         },
-        getTutorTable (page, pageSize) {
-            this.tableLoading = true;
-            let name = this.keyword ? this.keyword : undefined;
-            this.pager.tutor.page = page || this.pager.tutor.page;
-            this.pager.tutor.pageSize = pageSize || this.pager.tutor.pageSize;
-            axios.post("/api/security/GetUsersByDepartId", {
-                departId: this.orgInfo.ID,
-                name,
-                position: "指导老师",
-                page: this.pager.tutor.page,
-                pageSize: this.pager.tutor.pageSize
-            }, msg => {
-                this.tableData.tutor = msg.data;
-                this.pager.tutor.total = msg.totalRow;
-                this.tableLoading = false;
-            });
-        },
         getDeptTable (page, pageSize) {
             if (this.orgInfo.Type !== 0) return;
+            this.treeLoading = true;
             this.tableLoading = true;
             axios.post("/api/security/GetDepartsByDepartId", {id: this.orgInfo.ID}, msg => {
                 this.tableData.subDept = msg.data.children || [];
+                this.subDept = [msg.data];
+                this.treeLoading = false;
                 this.searchSubDep = this.tableData.subDept;
                 this.tableLoading = false;
             });
@@ -453,7 +395,6 @@ export default {
         addMember (who, position, departId) {
             this.component.name = who + "-form";
             let dic = {
-                "tutor": "新建指导老师",
                 "member": "新建成员",
                 "admin": "新建管理员"
             }
@@ -491,21 +432,6 @@ export default {
                 }
             });
         },
-        delTutor (row) {
-            this.$Modal.confirm({
-                title: "确认删除该指导老师？",
-                onOk: () => {
-                    axios.post("/api/security/RemoveUserV2", { userId: row.ID, departId: row.departId, position: "指导老师" }, msg => {
-                        if (msg.success) {
-                            this.$Message.success("删除成功");
-                        } else {
-                            this.$Message.warning(msg.msg);
-                        }
-                        this.getTutorTable();
-                    });
-                }
-            });
-        },
         delSubDepart (row) {
             this.$Modal.confirm({
                 title: "确认删除该部门？",
@@ -531,23 +457,9 @@ export default {
                 this.callbackFunc = this.getMemberTable;
             });
         },
-        modifyTutor (row) {
-            axios.post("/api/security/GetUserById", {id: row.ID, departId: this.orgInfo.ID}, msg => {
-                this.recordData.user = msg.user;
-                this.recordData.changeLogs = msg.changeLogs;
-                this.component.name = "tutor-form";
-                this.component.title = "修改指导老师"
-                this.modalShow = true;
-                this.callbackFunc = this.getTutorTable;
-            });
-        },
         modifySubDepart (row) {
             this.getDeptTable();
-            if (!row.isParent) {
-                window.open("/manage/org/detail?id=" + row.id);
-            } else {
-                window.open("/manage/org/affiliated?id=" + row.id);
-            }
+            window.open("/manage/org/detail?id=" + row.id);
         },
         checkWorkflow (instanceId, stepId) {
             window.open(`/manage/org/activityform?instanceId=${instanceId}&stepId=${stepId}&detail=true`);
@@ -582,12 +494,6 @@ export default {
         setKeyword: _.debounce(function () {
                 if (this.tabSelect === "member") {
                     this.getMemberTable();
-                }
-                if (this.tabSelect === "tutor") {
-                    this.getTutorTable();
-                }
-                if (this.tabSelect === "subDept") {
-                    this.searchSubDepart();
                 }
         }, 500)
     },
@@ -646,13 +552,12 @@ export default {
                 this.logs = msg.changeLogs.data;
                 // 获取其他Tab页信息
                 this.getMemberTable();
-                this.getTutorTable();
                 this.getDeptTable();
                 this.getOptTable();
                 this.getActivityTable();
             }
             this.$Spin.hide();
-            this.tabSelect = this.$route.query.tabSelect || "basicInfo";
+            this.tabSelect = this.$route.query.tabSelect || "member";
         });
     },
     data () {
@@ -661,14 +566,18 @@ export default {
             app,
             tableCol,
             visible: false,
+            showLog: false,
+            treeLoading: false,
             logs: [],
             keyword: "",
             teachers: [],
+            subDept: [],
             users: 0,
             tabSelect: "",
             isSaving: false,
             tableLoading: false,
             newDptId: "",
+            showMore: false,
             component: {
                 name: "",
                 title: ""
@@ -690,15 +599,8 @@ export default {
                 Name: [
                         {
                             required: true,
-                            message: "必须填写社团名称",
+                            message: "必须填写单位名称",
                             trigger: "blur"
-                        }
-                    ],
-                DepartType: [
-                        {
-                            required: true,
-                            message: "必须填写社团类型",
-                            trigger: "change"
                         }
                     ],
                 BirthTime: [
@@ -761,6 +663,13 @@ export default {
 </script>
 
 <style lang="less">
+.tree {
+        background: #808695;
+        color: #fff;
+        width: 280px;
+        min-height: fill-available;
+        @import "../../../assets/less/orgTree.less";
+    }
 .ivu-form-item .ivu-date-picker{
     width: 100%;
 }
