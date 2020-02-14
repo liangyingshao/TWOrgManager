@@ -2,7 +2,7 @@
     <i-row>
         <i-card :padding="75">
             <i-row>
-                <i-col span="5" class="tree">
+                <i-col span="5">
                     <i-spin fix size="large" v-show="treeLoading"></i-spin>
                     <i-row style="text-align:center;font-size:20px;padding-top:10px">部门管理</i-row>
                     <Tree :data="subDept" class="org-tree" @on-select-change="selectCategory"></Tree>
