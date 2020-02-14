@@ -38,7 +38,7 @@
                 </i-row>
             </i-col>
             <i-col span="5" offset="2">
-                <i-card :padding="0" :to="routers[0]" v-if="dashBoard.Name">
+                <i-card :padding="0" :to="dashBoard.DepartType === 0 ? routers[1]:routers[0]" v-if="dashBoard.Name">
                     <template slot="title">
                         {{dashBoard.Name}}
                     </template>
@@ -92,6 +92,12 @@ export default {
                     name: "OrgDetail",
                     query: {
                         tabSelect: "basicInfo"
+                    }
+                },
+                {
+                    name: "Affiliated",
+                    query: {
+                        tabSelect: "member"
                     }
                 }, {
                     name: "OrgDetail",
