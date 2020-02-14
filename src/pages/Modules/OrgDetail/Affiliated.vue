@@ -274,13 +274,12 @@ export default {
         cancel () {
         },
         selectCategory (n) {
-            if (n[0].isParent !== undefined && !n[0].isParent) {
+            if (!n[0].isParent) {
                  window.open("/manage/org/detail?id=" + n[0].id);
-            } else if (n[0].isParent) {
+            } else {
                 this.orgInfo.ID = n[0].id;
                 this.getOrgDetail();
                 this.getMemberTable();
-                this.getDeptTable();
                 this.getOptTable();
                 this.getActivityTable();
             }
