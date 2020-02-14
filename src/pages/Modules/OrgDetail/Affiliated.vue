@@ -1,9 +1,10 @@
 <template>
     <i-row>
-        <i-card :padding="100">
+        <i-card :padding="75">
             <i-row>
                 <i-col span="5" class="tree">
                     <i-spin fix size="large" v-show="treeLoading"></i-spin>
+                    <i-row style="text-align:center;font-size:20px;padding-top:10px">部门管理</i-row>
                     <Tree :data="subDept" class="org-tree" @on-select-change="selectCategory"></Tree>
                 </i-col>
                 <i-col span="17" offset="1">
@@ -28,21 +29,6 @@
                                     <i-col>
                                         <i-form-item label="单位名称" span="8" prop="Name">
                                             <i-input v-model="orgInfo.Name"/>
-                                        </i-form-item>
-                                    </i-col>
-                                </i-row>
-                                <i-row>
-                                    <i-col span="11">
-                                        <i-form-item label="部门类型">
-                                            <i-select v-model="orgInfo.Type">
-                                                <i-option :value="0" key="挂靠单位">挂靠单位</i-option>
-                                                <i-option :value="1" key="社团">社团</i-option>
-                                            </i-select>
-                                        </i-form-item>
-                                    </i-col>
-                                    <i-col span="11" offset="2">
-                                        <i-form-item label="成立时间" prop="BirthTime">
-                                            <i-date-picker type="date" v-model="orgInfo.BirthTime" format="yyyy年MM月dd日" />
                                         </i-form-item>
                                     </i-col>
                                 </i-row>
@@ -92,7 +78,7 @@
                                     </i-col>
                                 </i-row>
                                 <i-row v-if="showMore">
-                                    <i-col span="10">
+                                    <i-col span="11">
                                         <i-form-item label="是否有党支部">
                                             <i-checkbox v-model="orgInfo.HaveCPCBranch"></i-checkbox>
                                             <i-date-picker :disabled="!orgInfo.HaveCPCBranch" v-model="orgInfo.CPCBranchCreatedOn"></i-date-picker>
@@ -151,14 +137,8 @@
                                     </i-col>
                                 </i-row>
                             </i-form>
-                            <i-row>
-                                <i-col span="20">
-                                    <i-button type="primary" @click="saveOrgDetail()" :loading="isSaving">保存</i-button>
-                                </i-col>
-                                <i-col span="3" offset="1">
-                                    <i-button @click="showMore = !showMore">查看更多</i-button>
-                                </i-col>
-                            </i-row>
+                        <i-button type="primary" @click="saveOrgDetail()" :loading="isSaving">保存</i-button>
+                        <i-button @click="showMore = !showMore" style="float:right">查看更多</i-button>
                         <i-tabs v-model="tabSelect" style="padding-top:10px;">
                             <i-tab-pane :label="memberManage" name="member">
                                 <i-card dis-hover>
@@ -294,9 +274,9 @@ export default {
         cancel () {
         },
         selectCategory (n) {
-            if (!n[0].isParent) {
-                window.open("/manage/org/detail?id=" + n[0].id);
-            } else {
+            if (n[0].isParent !== undefined && !n[0].isParent) {
+                 window.open("/manage/org/detail?id=" + n[0].id);
+            } else if (n[0].isParent) {
                 this.orgInfo.ID = n[0].id;
                 this.getOrgDetail();
                 this.getMemberTable();
@@ -360,6 +340,7 @@ export default {
             axios.post("/api/security/GetDepartsByDepartId", {id: this.orgInfo.ID}, msg => {
                 this.tableData.subDept = msg.data.children || [];
                 this.subDept = [msg.data];
+                this.subDept[0].expand = true;
                 this.treeLoading = false;
                 this.searchSubDep = this.tableData.subDept;
                 this.tableLoading = false;
@@ -571,7 +552,9 @@ export default {
             logs: [],
             keyword: "",
             teachers: [],
-            subDept: [],
+            subDept: [
+                {expand: true}
+            ],
             users: 0,
             tabSelect: "",
             isSaving: false,
