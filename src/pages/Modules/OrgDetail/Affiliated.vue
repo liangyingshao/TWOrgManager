@@ -2,7 +2,7 @@
     <i-row>
         <i-card :padding="100">
             <i-row>
-                <i-col span="6" class="tree">
+                <i-col span="5" class="tree">
                     <i-spin fix size="large" v-show="treeLoading"></i-spin>
                     <Tree :data="subDept" class="org-tree" @on-select-change="selectCategory"></Tree>
                 </i-col>
@@ -663,13 +663,6 @@ export default {
 </script>
 
 <style lang="less">
-.tree {
-        background: #808695;
-        color: #fff;
-        width: 280px;
-        min-height: fill-available;
-        @import "../../../assets/less/orgTree.less";
-    }
 .ivu-form-item .ivu-date-picker{
     width: 100%;
 }
