@@ -1,4 +1,9 @@
 module.exports = {
+    SamplePage: {
+        path: "/sample",
+        layout: "admin",
+        component: () => import(/* webpackChunkName: "Sample" */"@p/Modules/SamplePage")
+    },
     OrgManage: {
         path: "/manage/dashboard",
         layout: "admin",
