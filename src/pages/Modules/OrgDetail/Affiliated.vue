@@ -2,7 +2,7 @@
     <i-row>
         <i-card :padding="75">
             <i-row>
-                <i-col span="6" class="tree">
+                <i-col span="5">
                     <i-spin fix size="large" v-show="treeLoading"></i-spin>
                     <i-row style="text-align:center;font-size:20px;padding-top:10px">部门管理</i-row>
                     <Tree :data="subDept" class="org-tree" @on-select-change="selectCategory"></Tree>
@@ -645,13 +645,6 @@ export default {
 </script>
 
 <style lang="less">
-.tree {
-        background: #808695;
-        color: #fff;
-        width: 280px;
-        min-height: fill-available;
-        @import "../../../assets/less/orgTree.less";
-    }
 .ivu-form-item .ivu-date-picker{
     width: 100%;
 }
