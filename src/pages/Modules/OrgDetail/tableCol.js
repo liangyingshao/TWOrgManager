@@ -2,7 +2,7 @@ let tableCol = {
     member: [
         {
             title: '姓名',
-            key: 'RealName'
+            slot: 'RealName'
         },
         {
             title: '学号',
