@@ -55,9 +55,9 @@
                         </template>
                         <i-cell :title="`子部门:${dashBoard.children?dashBoard.children:'无'}`" v-else-if="dashBoard.DepartType===0" :to="routers[2]">
                         </i-cell>
-                        <i-cell :title="`社团类型:${dashBoard.StrType}`">
+                        <i-cell :title="`社团类型:${dashBoard.StrType}`" v-if="dashBoard.DepartType !== 0">
                         </i-cell>
-                        <i-cell :title="`成立时间:${dashBoard.BirthTime}`">
+                        <i-cell :title="`成立时间:${dashBoard.BirthTime}`" v-if="dashBoard.DepartType !== 0">
                         </i-cell>
                     </i-cell-group>
                 </i-card>

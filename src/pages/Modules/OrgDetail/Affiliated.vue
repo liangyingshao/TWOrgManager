@@ -14,14 +14,14 @@
                             <i-button @click="showLog = !showLog" type="text" style="float:right; padding: 0;">查看修改记录</i-button>
                         </i-row>
                         <i-row>
-                            <i-col span="6" offset="2">
-                                <i-avatar size="100"></i-avatar>
+                            <i-col span="6">
+                                <div id="depart" style="width:300px;height:200px"/>
                             </i-col>
                             <i-col span="6" offset="2">
-                                <i-avatar size="100"></i-avatar>
+                                <div id="guage" style="width:300px;height:200px"/>
                             </i-col>
                             <i-col span="6" offset="2">
-                                <i-avatar size="100"></i-avatar>
+                                <div id="member" style="width:320px;height:200px"/>
                             </i-col>
                         </i-row>
                         <i-form :model="orgInfo" :rules="ruleForBasic" ref="form">
@@ -257,6 +257,7 @@
 import memberForm from "./memberForm"
 import subDeptForm from "./subDeptForm"
 const app = require("@/config");
+const echarts = require("echarts");
 const tableCol = require("./tableCol");
 const md5 = require("md5");
 let _ = require("lodash");
@@ -274,13 +275,12 @@ export default {
         cancel () {
         },
         selectCategory (n) {
-            if (n[0].isParent !== undefined && !n[0].isParent) {
+            if (!n[0].isParent) {
                  window.open("/manage/org/detail?id=" + n[0].id);
-            } else if (n[0].isParent) {
+            } else {
                 this.orgInfo.ID = n[0].id;
                 this.getOrgDetail();
                 this.getMemberTable();
-                this.getDeptTable();
                 this.getOptTable();
                 this.getActivityTable();
             }
@@ -519,6 +519,15 @@ export default {
                 ])
             }
         });
+        let ele = document.getElementById("depart");
+        let instance = echarts.init(ele);
+        instance.setOption(this.depart);
+        let ele2 = document.getElementById("guage");
+        let instance2 = echarts.init(ele2);
+        instance2.setOption(this.guage);
+        let ele3 = document.getElementById("member");
+        let instance3 = echarts.init(ele3);
+        instance3.setOption(this.member);
         axios.post("/api/security/GetOrgDetail", {id: this.$route.query.id ? this.$route.query.id : null}, msg => {
             if (msg.success) {
                 this.orgInfo = msg.data;
@@ -569,6 +578,120 @@ export default {
             recordData: {
                 user: {},
                 changeLogs: []
+            },
+           depart: {
+                title: {
+                    text: '社团类型',
+                    left: '50%',
+                    top: '80%',
+                    textAlign: 'center',
+                    textStyle: {
+                        color: '#515A6E',
+                        fontSize: '20',
+                        fontWeight: 'normal'
+                    }
+                },
+                series: [{
+                    type: 'pie',
+                    radius: '35%',
+                    center: ['50%', '50%'],
+                    data: [{
+                        name: '思想政治类',
+                        value: 10
+                    }, {
+                        name: '志愿互助类',
+                        value: 10
+                    }, {
+                        name: '社会实践类',
+                        value: 10
+                    }, {
+                        name: '文化艺术类',
+                        value: 10
+                    }, {
+                        name: '学术科技类',
+                        value: 10
+                    }, {
+                        name: '体育健身类类',
+                        value: 10
+                    }
+                    ],
+                    label: {
+                        position: 'outer',
+                        fontSize: '15'
+                    },
+                    left: 0,
+                    right: '0',
+                    top: 0,
+                    bottom: 0
+                }]
+            },
+            guage: {
+                title: {
+                    text: '本学院活动数',
+                    left: '50%',
+                    top: '80%',
+                    textAlign: 'center',
+                    textStyle: {
+                        color: "#515A6E",
+                        fontSize: '20',
+                        fontWeight: 'normal'
+                    }
+                },
+                series: [
+                    {
+                        type: 'gauge',
+                        radius: '95%',
+                        axisLine: {
+                            lineStyle: {color: [[1, '#63869e']]}
+                        },
+                        itemStyle: {
+                                color: '#91c7ae'
+                        },
+                        data: [{value: 50}],
+                        title: {
+                            fontSize: '15'
+                        }
+                    }
+                ]
+            },
+            member: {
+                title: {
+                    text: '社团成员',
+                    left: '50%',
+                    top: '80%',
+                    textAlign: 'center',
+                    textStyle: {
+                        color: "#515A6E",
+                        fontSize: '20',
+                        fontWeight: 'normal'
+                    }
+                },
+                series: [{
+                    type: 'pie',
+                    radius: '35%',
+                    center: ['50%', '50%'],
+                    data: [{
+                        name: '中共党员',
+                        value: 10
+                    }, {
+                        name: '群众',
+                        value: 10
+                    }, {
+                        name: '共青团员',
+                        value: 10
+                    }, {
+                        name: '中共预备党员',
+                        value: 10
+                    }],
+                    label: {
+                        position: 'outer',
+                        fontSize: '15'
+                    },
+                    left: 0,
+                    right: '0',
+                    top: 0,
+                    bottom: 0
+                }]
             },
             level: 0,
             orgInfo: {},
