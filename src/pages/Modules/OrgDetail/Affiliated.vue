@@ -364,6 +364,11 @@ export default {
                 this.tableData.activity = msg.data;
                 this.pager.activity.total = msg.totalRow;
                 this.tableLoading = false;
+                this.guage.series.data[0].value = msg.charts.departCount;
+                this.guage.series.max = msg.charts.total;
+                let ele2 = document.getElementById("guage");
+                let instance2 = echarts.init(ele2);
+                instance2.setOption(this.guage);
             });
         },
         addSubDepart () {
@@ -519,20 +524,19 @@ export default {
                 ])
             }
         });
-        let ele = document.getElementById("depart");
-        let instance = echarts.init(ele);
-        instance.setOption(this.depart);
-        let ele2 = document.getElementById("guage");
-        let instance2 = echarts.init(ele2);
-        instance2.setOption(this.guage);
-        let ele3 = document.getElementById("member");
-        let instance3 = echarts.init(ele3);
-        instance3.setOption(this.member);
         axios.post("/api/security/GetOrgDetail", {id: this.$route.query.id ? this.$route.query.id : null}, msg => {
             if (msg.success) {
                 this.orgInfo = msg.data;
                 this.teachers = msg.teachers;
                 this.users = msg.users;
+                this.depart.series.data = msg.charts.departType;
+                this.member.series.data = msg.charts.userType;
+                let ele = document.getElementById("depart");
+                let instance = echarts.init(ele);
+                instance.setOption(this.depart);
+                let ele3 = document.getElementById("member");
+                let instance3 = echarts.init(ele3);
+                instance3.setOption(this.member);
                 // 弥补接口错误
                 this.orgInfo.HaveLeagueBranch = this.orgInfo.HaveLeagueBranch === "true";
                 this.orgInfo.HaveCPCBranch = this.orgInfo.HaveCPCBranch === "true";
@@ -579,8 +583,8 @@ export default {
                 user: {},
                 changeLogs: []
             },
-           depart: {
-                title: {
+            depart: {
+               title: {
                     text: '社团类型',
                     left: '50%',
                     top: '80%',
@@ -591,30 +595,11 @@ export default {
                         fontWeight: 'normal'
                     }
                 },
-                series: [{
+                series: {
                     type: 'pie',
                     radius: '35%',
                     center: ['50%', '50%'],
-                    data: [{
-                        name: '思想政治类',
-                        value: 10
-                    }, {
-                        name: '志愿互助类',
-                        value: 10
-                    }, {
-                        name: '社会实践类',
-                        value: 10
-                    }, {
-                        name: '文化艺术类',
-                        value: 10
-                    }, {
-                        name: '学术科技类',
-                        value: 10
-                    }, {
-                        name: '体育健身类类',
-                        value: 10
-                    }
-                    ],
+                    data: [],
                     label: {
                         position: 'outer',
                         fontSize: '15'
@@ -623,8 +608,8 @@ export default {
                     right: '0',
                     top: 0,
                     bottom: 0
-                }]
-            },
+                }
+           },
             guage: {
                 title: {
                     text: '本学院活动数',
@@ -637,22 +622,23 @@ export default {
                         fontWeight: 'normal'
                     }
                 },
-                series: [
-                    {
-                        type: 'gauge',
-                        radius: '95%',
-                        axisLine: {
-                            lineStyle: {color: [[1, '#63869e']]}
-                        },
-                        itemStyle: {
-                                color: '#91c7ae'
-                        },
-                        data: [{value: 50}],
-                        title: {
-                            fontSize: '15'
-                        }
+                series: {
+                    type: 'gauge',
+                    radius: '95%',
+                    axisLine: {
+                        lineStyle: {color: [[1, '#63869e']]}
+                    },
+                    itemStyle: {
+                            color: '#91c7ae'
+                    },
+                    data: [{
+                        value: 0
+                    }],
+                    max: 0,
+                    title: {
+                        fontSize: '15'
                     }
-                ]
+                }
             },
             member: {
                 title: {
@@ -666,23 +652,11 @@ export default {
                         fontWeight: 'normal'
                     }
                 },
-                series: [{
+                series: {
                     type: 'pie',
                     radius: '35%',
                     center: ['50%', '50%'],
-                    data: [{
-                        name: '中共党员',
-                        value: 10
-                    }, {
-                        name: '群众',
-                        value: 10
-                    }, {
-                        name: '共青团员',
-                        value: 10
-                    }, {
-                        name: '中共预备党员',
-                        value: 10
-                    }],
+                    data: [],
                     label: {
                         position: 'outer',
                         fontSize: '15'
@@ -691,7 +665,7 @@ export default {
                     right: '0',
                     top: 0,
                     bottom: 0
-                }]
+                }
             },
             level: 0,
             orgInfo: {},
