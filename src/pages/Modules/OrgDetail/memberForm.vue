@@ -103,6 +103,7 @@
 
 <script>
     let _ = require("lodash");
+    let badDate = new Date("Mon Jan 01 1900 00:00:00 GMT+0805 (中国标准时间)");
     const axios = require("axios");
     const regex = require("@/regex.js");
     export default {
@@ -114,10 +115,10 @@
         },
         watch: {
             "modalData.user.JoinCPCTime" (value) {
-                this.haveJoinCPC = value !== "1900年1月1日";
+                this.haveJoinCPC = value.toLocaleDateString() !== badDate.toLocaleDateString();
             },
             "modalData.user.JoinCCYLTime" (value) {
-                this.haveJoinCCYL = value !== "1900年1月1日";
+                this.haveJoinCPC = value.toLocaleDateString() !== badDate.toLocaleDateString();
             }
         },
         data () {

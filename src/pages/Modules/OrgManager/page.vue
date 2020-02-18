@@ -37,11 +37,10 @@
                     </template>
                 </i-row>
             </i-col>
-            <Divider type="vertical" />
             <i-col span="5" offset="2">
-                <i-card :padding="0" :to="routers[0]">
+                <i-card :padding="0" :to="dashBoard.DepartType === 0 ? routers[1]:routers[0]" v-if="dashBoard.Name">
                     <template slot="title">
-                        {{dashBoard.Name||'请设置社团名称'}}
+                        {{dashBoard.Name}}
                     </template>
                     <i-cell-group style="padding: 10px 0px">
                         <i-cell :title="`现有成员:${dashBoard.users}人`" :to="entrForStudent[0].routerTo"></i-cell>
@@ -56,9 +55,9 @@
                         </template>
                         <i-cell :title="`子部门:${dashBoard.children?dashBoard.children:'无'}`" v-else-if="dashBoard.DepartType===0" :to="routers[2]">
                         </i-cell>
-                        <i-cell :title="`社团类型:${dashBoard.StrType}`">
+                        <i-cell :title="`社团类型:${dashBoard.StrType}`" v-if="dashBoard.DepartType !== 0">
                         </i-cell>
-                        <i-cell :title="`成立时间:${dashBoard.BirthTime}`">
+                        <i-cell :title="`成立时间:${dashBoard.BirthTime}`" v-if="dashBoard.DepartType !== 0">
                         </i-cell>
                     </i-cell-group>
                 </i-card>
@@ -93,6 +92,12 @@ export default {
                     name: "OrgDetail",
                     query: {
                         tabSelect: "basicInfo"
+                    }
+                },
+                {
+                    name: "Affiliated",
+                    query: {
+                        tabSelect: "member"
                     }
                 }, {
                     name: "OrgDetail",
