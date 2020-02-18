@@ -309,6 +309,14 @@ export default {
                     this.orgInfo = msg.data;
                     this.teachers = msg.teachers;
                     this.users = msg.users;
+                    this.depart.series.data = msg.charts.departType;
+                    this.member.series.data = msg.charts.userType;
+                    let ele = document.getElementById("depart");
+                    let instance = echarts.init(ele);
+                    instance.setOption(this.depart);
+                    let ele3 = document.getElementById("member");
+                    let instance3 = echarts.init(ele3);
+                    instance3.setOption(this.member);
                     // 弥补接口错误
                     this.orgInfo.HaveLeagueBranch = this.orgInfo.HaveLeagueBranch === "true";
                     this.orgInfo.HaveCPCBranch = this.orgInfo.HaveCPCBranch === "true";
