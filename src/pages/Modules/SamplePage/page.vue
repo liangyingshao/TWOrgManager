@@ -6,8 +6,8 @@
 </template>
 
 <script>
-const echarts = require("echarts");
-const app = require("@/config");
+// const echarts = require("echarts");
+// const app = require("@/config");
 export default {
     data () {
         return {};
