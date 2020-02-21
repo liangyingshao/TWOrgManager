@@ -1,7 +1,7 @@
 <template>
     <i-card :padding="50">
         <i-row type="flex" justify="center">
-            <i-col span="15">
+            <i-col span="17">
                 <i-row>
                     <div class="welcome">{{time}}好，{{userInfo.realName}}</div>
                 </i-row>
@@ -9,15 +9,15 @@
                     <i-col v-if="message.length >0" style="font-weight: bold;margin-bottom: 20px">您当前有{{message.length}}条待办事项</i-col>
                     <i-col style="font-weight: bold;margin-bottom:30px;color: gray" v-else>待办已经全部完成</i-col>
                 </i-row>
-                <i-row v-if="!isTeacehr">
-                    <i-col span="6">
-                        <div id="depart" style="width:200px;height:200px"/>
+                <i-row v-if="!isTeacehr" justify="space-between">
+                    <i-col span="8">
+                        <div id="depart" style="width:300px;height:200px"/>
                     </i-col>
-                    <i-col span="6" offset="2">
-                        <div id="guage" style="width:220px;height:200px"/>
+                    <i-col span="7" offset="1" style="text-align: center">
+                        <div id="guage" style="width:200px;height:200px"/>
                     </i-col>
-                    <i-col span="6" offset="2">
-                        <div id="member" style="width:200px;height:200px"/>
+                    <i-col span="8">
+                        <div id="member" style="width:300px;height:200px"/>
                     </i-col>
                 </i-row>
                 <List v-if="messageNum>0">
@@ -34,7 +34,7 @@
                     <i-row style="margin-top: 40px" class="layout-con"><img :src="pic" /></i-row>
                 </template>
             </i-col>
-            <i-col span="7" offset="1" style="padding-top: 20px">
+            <i-col span="6" offset="1" style="padding-top: 20px">
                 <i-card :padding="0" :to="dashBoard.DepartType === 0 ? routers[1]:routers[0]" v-if="dashBoard.Name">
                     <template slot="title">
                         {{dashBoard.Name}}
