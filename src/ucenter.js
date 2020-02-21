@@ -31,6 +31,7 @@ axios.post("/api/config/GetBasicConfig", {}, msg => {
     app.webInfo = msg.info;
     app.titlePerfix = " - " + app.webInfo.title;
     app.userInfo = msg.userInfo;
+    app.info = msg.info;
     let ps = app.userInfo.permissons;
     app.checkPermission = (p) => {
         return ps && ps.indexOf(p) >= 0;

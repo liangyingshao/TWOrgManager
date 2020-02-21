@@ -61,6 +61,7 @@ export default {
                     this.isloading = false;
                     if (msg.success) {
                         app.userInfo = msg.userInfo;
+                        app.info = msg.info;
                         let ps = app.userInfo.permissons;
                         app.checkPermission = (p) => {
                             return ps && ps.indexOf(p) >= 0;

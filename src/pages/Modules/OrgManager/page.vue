@@ -1,7 +1,7 @@
 <template>
     <i-card :padding="50">
         <i-row type="flex" justify="center">
-            <i-col span="17">
+            <i-col span="16">
                 <i-row>
                     <div class="welcome">{{time}}好，{{userInfo.realName}}</div>
                 </i-row>
@@ -34,7 +34,7 @@
                     <i-row style="margin-top: 40px" class="layout-con"><img :src="pic" /></i-row>
                 </template>
             </i-col>
-            <i-col span="6" offset="1" style="padding-top: 20px">
+            <i-col span="7" offset="1" style="padding-top: 20px">
                 <i-card :padding="0" :to="dashBoard.DepartType === 0 ? routers[1]:routers[0]" v-if="dashBoard.Name">
                     <template slot="title">
                         {{dashBoard.Name}}
