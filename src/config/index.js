@@ -8,6 +8,13 @@ let appSetting = {
     reloadOrg: "",
     reloadCategory: "",
     userInfo: {},
+    info: {
+        title: "",
+        subtitle: "",
+        avatar: "",
+        nmsopen: false
+    },
+    departType: 2,
     checkPermission () { return false; },
     webInfo: {
         avatar: "",
