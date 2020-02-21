@@ -1,11 +1,26 @@
 <template>
     <i-card :padding="50">
         <i-row type="flex" justify="center">
-            <i-col span="13">
+            <i-col span="15">
                 <i-row>
                     <div class="welcome">{{time}}好，{{userInfo.realName}}</div>
                 </i-row>
-                <List v-if="messageNum>0" :header="`您有${messageNum}条待办事项`">
+                <i-row type="flex">
+                    <i-col v-if="message.length >0" style="font-weight: bold;margin-bottom: 20px">您当前有{{message.length}}条待办事项</i-col>
+                    <i-col style="font-weight: bold;margin-bottom:30px;color: gray" v-else>待办已经全部完成</i-col>
+                </i-row>
+                <i-row v-if="!isTeacehr">
+                    <i-col span="6">
+                        <div id="depart" style="width:200px;height:200px"/>
+                    </i-col>
+                    <i-col span="6" offset="2">
+                        <div id="guage" style="width:220px;height:200px"/>
+                    </i-col>
+                    <i-col span="6" offset="2">
+                        <div id="member" style="width:200px;height:200px"/>
+                    </i-col>
+                </i-row>
+                <List v-if="messageNum>0">
                     <template v-for="(item,index) in message" >
                         <ListItem :key="index">
                             <ListItemMeta :title="`${item.Owner}提交的${item.WorkflowName}流程已到达您的步骤`" :description="`到达时间:${item.ArriveOn}`"></ListItemMeta>
@@ -16,28 +31,10 @@
                     </template>
                 </List>
                 <template v-else>
-                    <i-row class="tip">您目前没有待办事项</i-row>
-                    <i-row class="layout-con"><img :src="pic" /></i-row>
+                    <i-row style="margin-top: 40px" class="layout-con"><img :src="pic" /></i-row>
                 </template>
-                <i-row class="title">常用入口</i-row>
-                <i-row type="flex" justify="space-between">
-                    <template v-if="dashBoard.DepartType===1">
-                        <i-col span="7"  v-for="(item,index) in entrForStudent" :key="index">
-                            <i-card class="layout-con" :to="item.routerTo">
-                                <i-avatar class="margin" :icon="item.icon" />{{item.title}}
-                            </i-card>
-                        </i-col>
-                    </template>
-                    <template v-else-if="dashBoard.DepartType===0">
-                        <i-col span="7"  v-for="(item,index) in entrForTeacher" :key="index">
-                            <i-card class="layout-con" :to="item.routerTo">
-                                <i-avatar class="margin" :icon="item.icon" />{{item.title}}
-                            </i-card>
-                        </i-col>
-                    </template>
-                </i-row>
             </i-col>
-            <i-col span="5" offset="2">
+            <i-col span="7" offset="1" style="padding-top: 20px">
                 <i-card :padding="0" :to="dashBoard.DepartType === 0 ? routers[1]:routers[0]" v-if="dashBoard.Name">
                     <template slot="title">
                         {{dashBoard.Name}}
@@ -61,6 +58,23 @@
                         </i-cell>
                     </i-cell-group>
                 </i-card>
+                <i-row class="title" v-if="dashBoard.DepartType === 1||dashBoard.DepartType === 0">常用入口</i-row>
+                <i-row type="flex" justify="space-between">
+                    <template v-if="dashBoard.DepartType===1">
+                        <i-col span="10"  v-for="(item,index) in entrForStudent" :key="index">
+                            <i-card class="layout-con" :to="item.routerTo">
+                                <i-avatar class="margin" :icon="item.icon" />{{item.title}}
+                            </i-card>
+                        </i-col>
+                    </template>
+                    <template v-else-if="dashBoard.DepartType===0">
+                        <i-col span="11"  v-for="(item,index) in entrForTeacher" :key="index">
+                            <i-card class="layout-con" :to="item.routerTo">
+                                <i-avatar class="margin" :icon="item.icon" />{{item.title}}
+                            </i-card>
+                        </i-col>
+                    </template>
+                </i-row>
             </i-col>
         </i-row>
     </i-card>
@@ -68,6 +82,7 @@
 
 <script>
 import axios from 'axios';
+const echarts = require("echarts");
 let app = require("@/config");
 let pic = require("@/assets/icon.png");
 export default {
@@ -237,7 +252,92 @@ export default {
                     },
                     icon: "md-eye"
                 }
-            ]
+            ],
+            depart: {
+               title: {
+                    text: '社团类型',
+                    left: '50%',
+                    top: '80%',
+                    textAlign: 'center',
+                    textStyle: {
+                        color: '#515A6E',
+                        fontSize: '20',
+                        fontWeight: 'normal'
+                    }
+                },
+                series: {
+                    type: 'pie',
+                    radius: '35%',
+                    center: ['50%', '50%'],
+                    data: [],
+                    label: {
+                        position: 'outer',
+                        fontSize: '15'
+                    },
+                    left: 0,
+                    right: '0',
+                    top: 0,
+                    bottom: 0
+                }
+           },
+            guage: {
+                title: {
+                    text: '本学院活动数',
+                    left: '50%',
+                    top: '80%',
+                    textAlign: 'center',
+                    textStyle: {
+                        color: "#515A6E",
+                        fontSize: '20',
+                        fontWeight: 'normal'
+                    }
+                },
+                series: {
+                    type: 'gauge',
+                    radius: '95%',
+                    axisLine: {
+                        lineStyle: {color: [[1, '#63869e']]}
+                    },
+                    itemStyle: {
+                            color: '#91c7ae'
+                    },
+                    data: [{
+                        value: 0
+                    }],
+                    max: 0,
+                    title: {
+                        fontSize: '15'
+                    }
+                }
+            },
+            member: {
+                title: {
+                    text: '社团成员',
+                    left: '50%',
+                    top: '80%',
+                    textAlign: 'center',
+                    textStyle: {
+                        color: "#515A6E",
+                        fontSize: '20',
+                        fontWeight: 'normal'
+                    }
+                },
+                series: {
+                    type: 'pie',
+                    radius: '35%',
+                    center: ['50%', '50%'],
+                    data: [],
+                    label: {
+                        position: 'outer',
+                        fontSize: '15'
+                    },
+                    left: 0,
+                    right: '0',
+                    top: 0,
+                    bottom: 0
+                }
+            },
+            isTeacehr: true
         };
     },
     mounted () {
@@ -250,8 +350,29 @@ export default {
         getDashBoard () {
             axios.post("/api/org/GetDashboard", {}, msg => {
                 this.dashBoard = msg;
-                console.log(this.dashBoard["teachers"]);
                 app.departType = msg.DepartType;
+                if (msg.success) {
+                    this.isTeacehr = false;
+                    axios.post("/api/security/GetOrgDetail", {}, msg => {
+                        if (msg.success) {
+                            this.depart.series.data = msg.charts.departType;
+                            this.member.series.data = msg.charts.userType;
+                            let ele = document.getElementById("depart");
+                            let instance = echarts.init(ele);
+                            instance.setOption(this.depart);
+                            let ele3 = document.getElementById("member");
+                            let instance3 = echarts.init(ele3);
+                            instance3.setOption(this.member);
+                        }
+                    })
+                    axios.post("/api/org/GetActByDepartId", {}, msg => {
+                        this.guage.series.data[0].value = msg.charts.departCount;
+                        this.guage.series.max = msg.charts.total;
+                        let ele2 = document.getElementById("guage");
+                        let instance2 = echarts.init(ele2);
+                        instance2.setOption(this.guage);
+                    });
+                }
             });
         },
         judgeTime () {
@@ -281,8 +402,17 @@ export default {
 </script>
 
 <style lang="less">
+    .ivu-card-body {
+        padding: 10px;
+    }
+    .ivu-card-head {
+        border-bottom: 1px solid #e8eaec;
+        padding: 14px 16px;
+        line-height: 1;
+        text-align: center;
+    }
     .welcome {
-        font-size: 32px;
+        font-size: 48px;
         color: #17233d;
         padding: 10px 0;
         font-weight: bold;
@@ -294,14 +424,15 @@ export default {
     .title {
         font-size: 28px;
         color: #17233d;
-        padding: 10px 0px;
+        padding: 15px 0px;
         margin-top: 10px;
+        text-align: center;
     }
     .padding {
         padding: 10px;
     }
     .margin {
-        margin: 10px;
+        margin: 5px;
     }
     .layout-con {
         margin-bottom: 24px;
