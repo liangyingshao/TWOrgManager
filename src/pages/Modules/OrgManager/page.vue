@@ -29,7 +29,7 @@
                         </i-col>
                     </template>
                     <template v-else-if="dashBoard.DepartType===0">
-                        <i-col span="7"  v-for="(item,index) in entrForStudent" :key="index">
+                        <i-col span="7"  v-for="(item,index) in entrForTeacher" :key="index">
                             <i-card class="layout-con" :to="item.routerTo">
                                 <i-avatar class="margin" :icon="item.icon" />{{item.title}}
                             </i-card>
@@ -186,7 +186,7 @@ export default {
                 {
                     title: "添加成员",
                     routerTo: {
-                        name: "OrgDetail",
+                        name: "Affiliated",
                         query: {
                             tabSelect: "member"
                         }
@@ -196,7 +196,7 @@ export default {
                 {
                     title: "添加社团",
                     routerTo: {
-                        name: "OrgDetail",
+                        name: "Affiliated",
                         query: {
                             tabSelect: "subDept"
                         }
@@ -206,7 +206,7 @@ export default {
                 {
                     title: "申请活动",
                     routerTo: {
-                        name: "OrgDetail",
+                        name: "Affiliated",
                         query: {
                             tabSelect: "activity"
                         }
@@ -219,7 +219,7 @@ export default {
                         name: "MyFlow",
                         query: {}
                     },
-                    icon: "md-information"
+                    icon: "ios-add-circle"
                 },
                 {
                     title: "我参与的",
@@ -227,7 +227,7 @@ export default {
                         name: "MyAttend",
                         query: {}
                     },
-                    icon: "md-information"
+                    icon: "ios-contacts"
                 },
                 {
                     title: "所有流程",
@@ -235,7 +235,7 @@ export default {
                         name: "AllFlow",
                         query: {}
                     },
-                    icon: "md-information"
+                    icon: "md-eye"
                 }
             ]
         };
