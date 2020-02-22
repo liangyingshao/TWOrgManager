@@ -1,13 +1,13 @@
 <template>
     <i-row>
-        <i-card :padding="75">
+        <i-card :padding="50">
             <i-row>
-                <i-col span="5" class="tree">
+                <i-col span="6" class="tree">
                     <i-spin fix size="large" v-show="treeLoading"></i-spin>
                     <i-row style="text-align:center;font-size:20px;padding-top:10px">部门管理</i-row>
                     <Tree :data="subDept" class="org-tree" @on-select-change="selectCategory"></Tree>
                 </i-col>
-                <i-col span="17" offset="1">
+                <i-col span="19" offset="1">
                         <i-spin fix size="large" v-show="tableLoading"></i-spin>
                         <i-row style="font-size:30px;margin-bottom:10px">
                             {{orgInfo.Name}}
@@ -16,15 +16,13 @@
                         </i-row>
                         <i-row>
                             <i-col span="6">
-                                <div id="depart" v-if="depart.series.data.length" style="width:300px;height:200px"/>
-                                <div v-else style="width:320px;height:200px">这里来张图？</div>
+                                <div id="depart" style="width:300px;height:200px"/>
                             </i-col>
                             <i-col span="6" offset="2">
                                 <div id="guage" style="width:300px;height:200px"/>
                             </i-col>
                             <i-col span="6" offset="2">
-                                <div id="member" v-if="member.series.data.length" style="width:320px;height:200px"/>
-                                <div v-else style="width:320px;height:200px">这里来张图？</div>
+                                <div id="member" style="width:320px;height:200px"/>
                             </i-col>
                         </i-row>
                         <i-form :model="orgInfo" :rules="ruleForBasic" ref="form">
@@ -537,6 +535,10 @@ export default {
                         fontWeight: 'normal'
                     }
                 },
+                tooltip: {
+                    trigger: 'item',
+                    formatter: '{b}：{c}人（{d}%）'
+                },
                 series: {
                     type: 'pie',
                     radius: '35%',
@@ -551,7 +553,7 @@ export default {
                     top: 0,
                     bottom: 0
                 }
-           },
+            },
             guage: {
                 title: {
                     text: '本学院活动数',
@@ -593,6 +595,10 @@ export default {
                         fontSize: '20',
                         fontWeight: 'normal'
                     }
+                },
+                tooltip: {
+                    trigger: 'item',
+                    formatter: '{b}：{c}人（{d}%）'
                 },
                 series: {
                     type: 'pie',
