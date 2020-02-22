@@ -26,6 +26,12 @@ module.exports = {
         layout: "admin",
         component: () => import(/* webpackChunkName: "OrgManager" */"@p/Modules/OrgDetail/Affiliated")
     },
+    DepartSwitch: {
+        path: "/manage/org/departSwitch",
+        layout: "admin",
+        showAs: "OrgManage",
+        component: () => import(/* webpackChunkName: "OrgManager" */"@p/Modules/OrgDetail/DepartSwitch")
+    },
     WorkflowConfig: {
         path: "/manage/wwf/config",
         layout: "admin",
