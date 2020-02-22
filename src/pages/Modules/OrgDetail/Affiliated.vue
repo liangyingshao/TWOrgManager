@@ -2,7 +2,7 @@
     <i-row>
         <i-card :padding="75">
             <i-row>
-                <i-col span="5">
+                <i-col span="5" class="tree">
                     <i-spin fix size="large" v-show="treeLoading"></i-spin>
                     <i-row style="text-align:center;font-size:20px;padding-top:10px">部门管理</i-row>
                     <Tree :data="subDept" class="org-tree" @on-select-change="selectCategory"></Tree>
@@ -11,7 +11,8 @@
                         <i-spin fix size="large" v-show="tableLoading"></i-spin>
                         <i-row style="font-size:30px;margin-bottom:10px">
                             {{orgInfo.Name}}
-                            <i-button @click="showLog = !showLog" type="text" style="float:right; padding: 0;">查看修改记录</i-button>
+                            <i-button @click="showMore = !showMore" type="text">修改基本信息</i-button>
+                            <i-button @click="showLog = !showLog" type="text" style="float:right; padding-top: 12px;">查看修改记录</i-button>
                         </i-row>
                         <i-row>
                             <i-col span="6">
@@ -25,7 +26,7 @@
                             </i-col>
                         </i-row>
                         <i-form :model="orgInfo" :rules="ruleForBasic" ref="form">
-                                <i-row>
+                                <i-row v-if="showMore">
                                     <i-col>
                                         <i-form-item label="单位名称" span="8" prop="Name">
                                             <i-input v-model="orgInfo.Name"/>
@@ -38,107 +39,14 @@
                                             <i-input v-model="orgInfo.Phone"/>
                                         </i-form-item>
                                     </i-col>
-                                    <i-col span="11" offset="2">
-                                        <i-form-item label="挂靠单位">
-                                            <org-selector v-model="orgInfo.ParentId"/>
-                                        </i-form-item>
-                                    </i-col>
-                                </i-row>
-                                <i-row type="flex" v-if="level === 3&&showMore">
-                                    <i-col span="11">
+                                    <i-col span="11" v-if="level === 3" offset="2">
                                         <i-form-item label="排序号">
                                             <i-input v-model="orgInfo.Sort"/>
                                         </i-form-item>
                                     </i-col>
-                                    <i-col span="11" offset="2">
-                                        <i-form-item label="社团类型" prop="DepartType">
-                                            <dic-select dic="社团类型" v-model="orgInfo.DepartType" />
-                                        </i-form-item>
-                                    </i-col>
-                                </i-row>
-                                <i-row v-if="showMore">
-                                    <i-col>
-                                        <i-form-item label="部门描述">
-                                            <i-input type="textarea" v-model="orgInfo.Description"/>
-                                        </i-form-item>
-                                    </i-col>
-                                </i-row>
-                                <i-row v-if="showMore">
-                                    <i-col span="11">
-                                        <i-form-item label="是否有社团章程">
-                                            <i-checkbox v-model="orgInfo.HaveDepartRule"></i-checkbox>
-                                            <i-date-picker :disabled="!orgInfo.HaveDepartRule" v-model="orgInfo.RuleCreatedOn"></i-date-picker>
-                                        </i-form-item>
-                                    </i-col>
-                                    <i-col span="11" offset="2" v-if="showMore">
-                                        <i-form-item label="是否成立团支部">
-                                            <i-checkbox v-model="orgInfo.HaveLeagueBranch"></i-checkbox>
-                                            <i-date-picker :disabled="!orgInfo.HaveLeagueBranch" v-model="orgInfo.LeagueBrachCreatedOn"></i-date-picker>
-                                        </i-form-item>
-                                    </i-col>
-                                </i-row>
-                                <i-row v-if="showMore">
-                                    <i-col span="11">
-                                        <i-form-item label="是否有党支部">
-                                            <i-checkbox v-model="orgInfo.HaveCPCBranch"></i-checkbox>
-                                            <i-date-picker :disabled="!orgInfo.HaveCPCBranch" v-model="orgInfo.CPCBranchCreatedOn"></i-date-picker>
-                                        </i-form-item>
-                                    </i-col>
-                                    <i-col span="11" offset="2">
-                                        <i-form-item label="党支部类型">
-                                            <dic-select dic="党支部类型" :disabled="!orgInfo.HaveCPCBranch" v-model="orgInfo.CPCBranchType"/>
-                                        </i-form-item>
-                                    </i-col>
-                                </i-row>
-                                <i-row v-if="showMore">
-                                    <i-col span="11">
-                                        <i-form-item label="社交媒体">
-                                            <i-input v-model="orgInfo.SocialMedia"/>
-                                        </i-form-item>
-                                    </i-col>
-                                    <i-col span="11" offset="2">
-                                        <i-form-item label="社交媒体粉丝数">
-                                            <i-input v-model="orgInfo.SocialMediaFans"/>
-                                        </i-form-item>
-                                    </i-col>
-                                </i-row>
-                                <i-row v-if="showMore">
-                                    <i-col span="11">
-                                        <i-form-item label="经费类型">
-                                            <i-input v-model="orgInfo.FundsCategory"/>
-                                        </i-form-item>
-                                    </i-col>
-                                    <i-col span="11" offset="2">
-                                        <i-form-item label="经费来源">
-                                            <i-input v-model="orgInfo.ChannelForFunds"/>
-                                        </i-form-item>
-                                    </i-col>
-                                </i-row>
-                                <i-row v-if="level > 1&&showMore">
-                                    <i-col span="11">
-                                        <i-form-item label="指导老师产生方式">
-                                            <i-input v-model="orgInfo.GuideElectionBy"/>
-                                        </i-form-item>
-                                    </i-col>
-                                    <i-col span="11" offset="2">
-                                        <i-form-item label="指导老师有无激励">
-                                            <i-input v-model="orgInfo.GuideBonus"/>
-                                        </i-form-item>
-                                    </i-col>
-                                </i-row>
-                                <i-row v-if="showMore">
-                                    <i-col>
-                                        <i-form-item label="备注1">
-                                            <i-input type="textarea" v-model="orgInfo.Memo"/>
-                                        </i-form-item>
-                                        <i-form-item label="备注2">
-                                            <i-input type="textarea" v-model="orgInfo.Remark"/>
-                                        </i-form-item>
-                                    </i-col>
                                 </i-row>
                             </i-form>
-                        <i-button type="primary" @click="saveOrgDetail()" :loading="isSaving">保存</i-button>
-                        <i-button @click="showMore = !showMore" style="float:right">查看更多</i-button>
+                        <i-button type="primary" @click="saveOrgDetail()" :loading="isSaving" v-if="showMore">保存</i-button>
                         <i-tabs v-model="tabSelect" style="padding-top:10px;">
                             <i-tab-pane :label="memberManage" name="member">
                                 <i-card dis-hover>
@@ -274,16 +182,21 @@ export default {
         },
         cancel () {
         },
-        selectCategory (n) {
-            if (!n[0].isParent) {
-                 window.open("/manage/org/detail?id=" + n[0].id);
-            } else {
-                this.orgInfo.ID = n[0].id;
+        selectCategory (node, n) {
+                this.orgInfo.ID = n.id;
+                if (n.isParent && (!this.filters.length || n.id !== this.filters[0].id)) {
+                    this.filters.push(n);
+                }
+                this.$set(n, 'expand', true);
+                if (this.filters.length === 2) {
+                    let x = this.filters.shift();
+                    this.$set(x, 'expand', false);
+                }
                 this.getOrgDetail();
                 this.getMemberTable();
                 this.getOptTable();
                 this.getActivityTable();
-            }
+                this.select = true;
         },
         saveOrgDetail () {
             this.isSaving = true;
@@ -348,7 +261,7 @@ export default {
             axios.post("/api/security/GetDepartsByDepartId", {id: this.orgInfo.ID}, msg => {
                 this.tableData.subDept = msg.data.children || [];
                 this.subDept = [msg.data];
-                this.subDept[0].expand = true;
+                this.$set(this.subDept[0], 'expand', true);
                 this.treeLoading = false;
                 this.searchSubDep = this.tableData.subDept;
                 this.tableLoading = false;
@@ -496,7 +409,10 @@ export default {
             this.setKeyword();
         },
         "orgInfo.Type" (value, oldValue) {
-            if (value === oldValue || oldValue === undefined) return;
+            if (value === oldValue || oldValue === undefined || this.select) {
+                this.select = false;
+                return;
+            }
             this.$Modal.confirm({
                 title: "确实要更改部门类型吗？",
                 content: `将部门类型由<strong>${oldValue === 0 ? "挂靠单位" : "社团"}</strong>更改为
@@ -570,6 +486,8 @@ export default {
             visible: false,
             showLog: false,
             treeLoading: false,
+            select: true,
+            filters: [],
             logs: [],
             keyword: "",
             teachers: [],
@@ -751,6 +669,13 @@ export default {
 </script>
 
 <style lang="less">
+.tree {
+    background: #808695;
+    color: #fff;
+    width: 260px;
+    min-height: fill-available;
+    @import "../../../assets/less/orgTree.less";
+  }
 .ivu-form-item .ivu-date-picker{
     width: 100%;
 }
