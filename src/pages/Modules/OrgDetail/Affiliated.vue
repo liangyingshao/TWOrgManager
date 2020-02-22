@@ -1,13 +1,13 @@
 <template>
     <i-row>
-        <i-card :padding="50">
+        <i-card :padding="75">
             <i-row>
-                <i-col span="6" class="tree">
+                <i-col span="5" class="tree">
                     <i-spin fix size="large" v-show="treeLoading"></i-spin>
                     <i-row style="text-align:center;font-size:20px;padding-top:10px">部门管理</i-row>
                     <Tree :data="subDept" class="org-tree" @on-select-change="selectCategory"></Tree>
                 </i-col>
-                <i-col span="19" offset="1">
+                <i-col span="18" offset="1">
                         <i-spin fix size="large" v-show="tableLoading"></i-spin>
                         <i-row style="font-size:30px;margin-bottom:10px">
                             {{orgInfo.Name}}
@@ -694,7 +694,6 @@ export default {
 .tree {
     background: #808695;
     color: #fff;
-    width: 260px;
     min-height: fill-available;
     @import "../../../assets/less/orgTree.less";
   }
