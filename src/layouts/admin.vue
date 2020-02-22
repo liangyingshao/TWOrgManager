@@ -1,7 +1,7 @@
 <template>
     <Layout class="main-layer">
         <Sider ref="side1" hide-trigger collapsible :collapsed-width="78" v-model="isCollapsed">
-            <div class="logo"><Avatar style="width: 60px;height: 60px;" :src="app.info.avatar"/></div>
+            <div class="logo"><Avatar style="width: 60px;height: 60px;" :src="app.webInfo.avatar"/></div>
             <Menu ref="menu" theme="dark" id="main-menu" width="auto" :class="menuitemClasses" :open-names="openMenus.map(e => e.ActionName || e.Text)" :active-name="activeMenu">
                 <template v-for="(item, index) in menus">
                     <i-menu-item v-if="item.Items && !item.Items.length" :key="index" :to="{ name: item.ActionName }" :name="item.ActionName || item.Text">
