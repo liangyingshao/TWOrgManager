@@ -265,6 +265,10 @@ export default {
                         fontWeight: 'normal'
                     }
                 },
+                tooltip: {
+                    trigger: 'item',
+                    formatter: '{b}：{c}人（{d}%）'
+                },
                 series: {
                     type: 'pie',
                     radius: '35%',
@@ -322,6 +326,10 @@ export default {
                         fontWeight: 'normal'
                     }
                 },
+                tooltip: {
+                    trigger: 'item',
+                    formatter: '{b}：{c}人（{d}%）'
+                },
                 series: {
                     type: 'pie',
                     radius: '35%',
@@ -355,7 +363,13 @@ export default {
                     this.isTeacehr = false;
                     axios.post("/api/security/GetOrgDetail", {}, msg => {
                         if (msg.success) {
+                            msg.charts.departType.forEach(element => {
+                                element.name = element.name ? element.name : "未分类";
+                            });
                             this.depart.series.data = msg.charts.departType;
+                            msg.charts.userType.forEach(element => {
+                                element.name = element.name ? element.name : "未填写";
+                            });
                             this.member.series.data = msg.charts.userType;
                             let ele = document.getElementById("depart");
                             let instance = echarts.init(ele);
