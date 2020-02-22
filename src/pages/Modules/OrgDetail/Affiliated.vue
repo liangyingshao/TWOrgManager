@@ -16,13 +16,15 @@
                         </i-row>
                         <i-row>
                             <i-col span="6">
-                                <div id="depart" style="width:300px;height:200px"/>
+                                <div id="depart" v-if="depart.series.data.length" style="width:300px;height:200px"/>
+                                <div v-else style="width:320px;height:200px">这里来张图？</div>
                             </i-col>
                             <i-col span="6" offset="2">
                                 <div id="guage" style="width:300px;height:200px"/>
                             </i-col>
                             <i-col span="6" offset="2">
-                                <div id="member" style="width:320px;height:200px"/>
+                                <div id="member" v-if="member.series.data.length" style="width:320px;height:200px"/>
+                                <div v-else style="width:320px;height:200px">这里来张图？</div>
                             </i-col>
                         </i-row>
                         <i-form :model="orgInfo" :rules="ruleForBasic" ref="form">
@@ -222,7 +224,13 @@ export default {
                     this.orgInfo = msg.data;
                     this.teachers = msg.teachers;
                     this.users = msg.users;
+                    msg.charts.departType.forEach(element => {
+                        element.name = element.name ? element.name : "未分类";
+                    });
                     this.depart.series.data = msg.charts.departType;
+                    msg.charts.userType.forEach(element => {
+                        element.name = element.name ? element.name : "未填写";
+                    });
                     this.member.series.data = msg.charts.userType;
                     let ele = document.getElementById("depart");
                     let instance = echarts.init(ele);
@@ -453,7 +461,14 @@ export default {
                 this.orgInfo = msg.data;
                 this.teachers = msg.teachers;
                 this.users = msg.users;
+
+                msg.charts.departType.forEach(element => {
+                    element.name = element.name ? element.name : "未分类";
+                });
                 this.depart.series.data = msg.charts.departType;
+                msg.charts.userType.forEach(element => {
+                    element.name = element.name ? element.name : "未填写";
+                });
                 this.member.series.data = msg.charts.userType;
                 let ele = document.getElementById("depart");
                 let instance = echarts.init(ele);
@@ -461,6 +476,7 @@ export default {
                 let ele3 = document.getElementById("member");
                 let instance3 = echarts.init(ele3);
                 instance3.setOption(this.member);
+
                 // 弥补接口错误
                 this.orgInfo.HaveLeagueBranch = this.orgInfo.HaveLeagueBranch === "true";
                 this.orgInfo.HaveCPCBranch = this.orgInfo.HaveCPCBranch === "true";

@@ -8,6 +8,7 @@ let appSetting = {
     reloadOrg: "",
     reloadCategory: "",
     userInfo: {},
+    departType: 2,
     checkPermission () { return false; },
     webInfo: {
         avatar: "",
