@@ -116,7 +116,7 @@
                                             </i-row>
                                         </div>
                                         <div v-if="files.length > 0">
-                                            <Divider v-if="formData !== null || (io.fieldAccess.Description === 'w' && io.isMyStep)"/>
+                                            <Divider v-if="formData !== null"/>
                                             <template v-for="(item, index) in files">
                                                 <i-row :key="index">
                                                     <i-col span="3" v-if="index === 0">附件：</i-col>
