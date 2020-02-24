@@ -116,13 +116,13 @@
                                             </i-row>
                                         </div>
                                         <div v-if="files.length > 0">
-                                            <Divider />
+                                            <Divider v-if="formData !== null"/>
                                             <template v-for="(item, index) in files">
                                                 <i-row :key="index">
                                                     <i-col span="3" v-if="index === 0">附件：</i-col>
                                                     <i-col span="3" v-else><div style="width: 100%;height: 1px"></div></i-col>
                                                     <i-col span="21">
-                                                        <a :class="io.isMyStep ? '' : 'disabled'" style="display: inline-block;text-align: left;width: 300px;overflow: hidden;white-space: nowrap;text-overflow: ellipsis;" :href="'/api/cms/Download?id=' + item.ID" target="_blank">{{item.DisplayName}}</a>
+                                                        <a style="display: inline-block;text-align: left;width: 300px;overflow: hidden;white-space: nowrap;text-overflow: ellipsis;" :href="'/api/cms/Download?id=' + item.ID" target="_blank">{{item.DisplayName}}</a>
                                                         <Button @click="removeFile(item)" type="text" v-if="io.currentStep==='填写申请表' && io.isMyStep"><Icon type="ios-close" /></Button>
                                                     </i-col>
                                                 </i-row>
@@ -446,12 +446,6 @@ export default {
 
 <style lang="less">
 #activity-form {
-    a.disabled {
-        pointer-events: none;
-        filter: alpha(opacity=50); /*IE滤镜，透明度50%*/
-        -moz-opacity: 0.5; /*Firefox私有，透明度50%*/
-        opacity: 0.5; /*其他，透明度50%*/
-    }
     .opinionForm .ivu-input {
     border:1px solid #dcdee2;
     }
