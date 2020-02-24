@@ -11,18 +11,20 @@
                         <i-spin fix size="large" v-show="tableLoading"></i-spin>
                         <i-row style="font-size:30px;margin-bottom:10px">
                             {{orgInfo.Name}}
-                            <i-button @click="showMore = !showMore" type="text">修改基本信息</i-button>
+                            <i-button @click="modifyBasicInfo" type="text">修改基本信息</i-button>
                             <i-button @click="showLog = !showLog" type="text" style="float:right; padding-top: 12px;">查看修改记录</i-button>
                         </i-row>
                         <i-row>
                             <i-col span="6">
-                                <div id="depart" style="width:300px;height:200px"/>
+                                <div id="depart" v-show="depart.series.data.length" style="width:300px;height:200px"/>
+                                <div v-show="!depart.series.data.length" style="width:320px;height:200px">这里来张图？</div>
                             </i-col>
                             <i-col span="6" offset="2">
                                 <div id="guage" style="width:300px;height:200px"/>
                             </i-col>
                             <i-col span="6" offset="2">
-                                <div id="member" style="width:320px;height:200px"/>
+                                <div id="member" v-show="member.series.data.length" style="width:320px;height:200px"/>
+                                <div v-show="!member.series.data.length" style="width:320px;height:200px">这里来张图？</div>
                             </i-col>
                         </i-row>
                         <i-form :model="orgInfo" :rules="ruleForBasic" ref="form">
@@ -182,6 +184,13 @@ export default {
         },
         cancel () {
         },
+        modifyBasicInfo () {
+            if (this.orgInfo.CategoryName === '社团') {
+                window.open("/manage/org/detail?id=" + this.orgInfo.ID);
+            } else {
+                this.showMore = !this.showMore;
+            }
+        },
         selectCategory (node, n) {
                 this.orgInfo.ID = n.id;
                 if (n.isParent && (!this.filters.length || n.id !== this.filters[0].id)) {
@@ -222,14 +231,20 @@ export default {
                     this.orgInfo = msg.data;
                     this.teachers = msg.teachers;
                     this.users = msg.users;
-                    msg.charts.departType.forEach(element => {
-                        element.name = element.name ? element.name : "未分类";
-                    });
-                    this.depart.series.data = msg.charts.departType;
-                    msg.charts.userType.forEach(element => {
-                        element.name = element.name ? element.name : "未填写";
-                    });
-                    this.member.series.data = msg.charts.userType;
+                    if (JSON.stringify(msg.charts) !== '{}') {
+                        if (msg.charts.departType.length) {
+                                msg.charts.departType.forEach(element => {
+                                element.name = element.name ? element.name : "未分类";
+                            });
+                            this.depart.series.data = msg.charts.departType;
+                        }
+                        if (msg.charts.userType.length) {
+                                msg.charts.userType.forEach(element => {
+                                element.name = element.name ? element.name : "未填写";
+                            });
+                            this.member.series.data = msg.charts.userType;
+                        }
+                    }
                     let ele = document.getElementById("depart");
                     let instance = echarts.init(ele);
                     instance.setOption(this.depart);
@@ -474,7 +489,6 @@ export default {
                 let ele3 = document.getElementById("member");
                 let instance3 = echarts.init(ele3);
                 instance3.setOption(this.member);
-
                 // 弥补接口错误
                 this.orgInfo.HaveLeagueBranch = this.orgInfo.HaveLeagueBranch === "true";
                 this.orgInfo.HaveCPCBranch = this.orgInfo.HaveCPCBranch === "true";
