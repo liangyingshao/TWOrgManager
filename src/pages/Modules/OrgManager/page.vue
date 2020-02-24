@@ -9,7 +9,7 @@
                     <i-col v-if="message.length >0" style="font-weight: bold;margin-bottom: 20px">您当前有{{message.length}}条待办事项</i-col>
                     <i-col style="font-weight: bold;margin-bottom:30px;color: gray" v-else>待办已经全部完成</i-col>
                 </i-row>
-                <i-row v-if="!isTeacehr" justify="space-between">
+                <i-row v-show="level === 2 || level === 3" justify="space-between">
                     <i-col span="8">
                         <div id="depart" style="width:300px;height:200px"/>
                     </i-col>
@@ -88,6 +88,7 @@ let pic = require("@/assets/icon.png");
 export default {
     data () {
         return {
+            level: -1,
             pic: pic,
             messageNum: 0,
             message: [],
@@ -344,8 +345,7 @@ export default {
                     top: 0,
                     bottom: 0
                 }
-            },
-            isTeacehr: true
+            }
         };
     },
     mounted () {
@@ -360,9 +360,9 @@ export default {
                 this.dashBoard = msg;
                 app.departType = msg.DepartType;
                 if (msg.success) {
-                    this.isTeacehr = false;
                     axios.post("/api/security/GetOrgDetail", {}, msg => {
                         if (msg.success) {
+                            this.level = msg.level;
                             msg.charts.departType.forEach(element => {
                                 element.name = element.name ? element.name : "未分类";
                             });
