@@ -11,18 +11,20 @@
                         <i-spin fix size="large" v-show="tableLoading"></i-spin>
                         <i-row style="font-size:30px;margin-bottom:10px">
                             {{orgInfo.Name}}
-                            <i-button @click="showMore = !showMore" type="text">修改基本信息</i-button>
+                            <i-button @click="modifyBasicInfo" type="text">修改基本信息</i-button>
                             <i-button @click="showLog = !showLog" type="text" style="float:right; padding-top: 12px;">查看修改记录</i-button>
                         </i-row>
                         <i-row>
                             <i-col span="6">
-                                <div id="depart" style="width:300px;height:200px"/>
+                                <div id="depart" v-show="depart.series.data.length" style="width:300px;height:200px"/>
+                                <div v-show="!depart.series.data.length" style="width:320px;height:200px">这里来张图？</div>
                             </i-col>
                             <i-col span="6" offset="2">
                                 <div id="guage" style="width:300px;height:200px"/>
                             </i-col>
                             <i-col span="6" offset="2">
-                                <div id="member" style="width:320px;height:200px"/>
+                                <div id="member" v-show="member.series.data.length" style="width:320px;height:200px"/>
+                                <div v-show="!member.series.data.length" style="width:320px;height:200px">这里来张图？</div>
                             </i-col>
                         </i-row>
                         <i-form :model="orgInfo" :rules="ruleForBasic" ref="form">
@@ -181,6 +183,13 @@ export default {
             form.submit(this.newDptId || this.orgInfo.ID, this.callbackFunc);
         },
         cancel () {
+        },
+        modifyBasicInfo () {
+            if (this.orgInfo.CategoryName === '社团') {
+                window.open("/manage/org/detail?id=" + this.orgInfo.ID);
+            } else {
+                this.showMore = !this.showMore;
+            }
         },
         selectCategory (node, n) {
                 this.orgInfo.ID = n.id;
@@ -474,7 +483,6 @@ export default {
                 let ele3 = document.getElementById("member");
                 let instance3 = echarts.init(ele3);
                 instance3.setOption(this.member);
-
                 // 弥补接口错误
                 this.orgInfo.HaveLeagueBranch = this.orgInfo.HaveLeagueBranch === "true";
                 this.orgInfo.HaveCPCBranch = this.orgInfo.HaveCPCBranch === "true";
