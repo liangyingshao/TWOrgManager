@@ -7,7 +7,7 @@
                     <i-row style="text-align:center;font-size:20px;padding-top:10px">部门管理</i-row>
                     <Tree :data="subDept" class="org-tree" @on-select-change="selectCategory"></Tree>
                 </i-col>
-                <i-col span="17" offset="1">
+                <i-col span="18" offset="1">
                         <i-spin fix size="large" v-show="tableLoading"></i-spin>
                         <i-row style="font-size:30px;margin-bottom:10px">
                             {{orgInfo.Name}}
@@ -549,6 +549,10 @@ export default {
                         fontWeight: 'normal'
                     }
                 },
+                tooltip: {
+                    trigger: 'item',
+                    formatter: '{b}：{c}人（{d}%）'
+                },
                 series: {
                     type: 'pie',
                     radius: '35%',
@@ -563,7 +567,7 @@ export default {
                     top: 0,
                     bottom: 0
                 }
-           },
+            },
             guage: {
                 title: {
                     text: '本学院活动数',
@@ -605,6 +609,10 @@ export default {
                         fontSize: '20',
                         fontWeight: 'normal'
                     }
+                },
+                tooltip: {
+                    trigger: 'item',
+                    formatter: '{b}：{c}人（{d}%）'
                 },
                 series: {
                     type: 'pie',
@@ -700,7 +708,6 @@ export default {
 .tree {
     background: #808695;
     color: #fff;
-    width: 260px;
     min-height: fill-available;
     @import "../../../assets/less/orgTree.less";
   }

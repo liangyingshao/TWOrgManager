@@ -18,7 +18,6 @@ module.exports = {
     ActivityForm: {
         path: "/manage/org/activityform",
         layout: "admin",
-        showAs: "OrgManage",
         component: () => import(/* webpackChunkName: "OrgManager" */"@p/Modules/ActivityForm")
     },
     Affiliated: {
