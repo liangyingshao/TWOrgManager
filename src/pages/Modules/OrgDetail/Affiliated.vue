@@ -231,20 +231,14 @@ export default {
                     this.orgInfo = msg.data;
                     this.teachers = msg.teachers;
                     this.users = msg.users;
-                    if (JSON.stringify(msg.charts) !== '{}') {
-                        if (msg.charts.departType.length) {
-                                msg.charts.departType.forEach(element => {
-                                element.name = element.name ? element.name : "未分类";
-                            });
-                            this.depart.series.data = msg.charts.departType;
-                        }
-                        if (msg.charts.userType.length) {
-                                msg.charts.userType.forEach(element => {
-                                element.name = element.name ? element.name : "未填写";
-                            });
-                            this.member.series.data = msg.charts.userType;
-                        }
-                    }
+                    msg.charts.departType.forEach(element => {
+                        element.name = element.name ? element.name : "未分类";
+                    });
+                    this.depart.series.data = msg.charts.departType;
+                    msg.charts.userType.forEach(element => {
+                        element.name = element.name ? element.name : "未填写";
+                    });
+                    this.member.series.data = msg.charts.userType;
                     let ele = document.getElementById("depart");
                     let instance = echarts.init(ele);
                     instance.setOption(this.depart);
