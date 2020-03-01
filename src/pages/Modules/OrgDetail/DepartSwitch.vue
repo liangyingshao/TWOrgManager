@@ -7,9 +7,9 @@ const app = require('@/config')
 export default {
     mounted () {
         if (app.departType === 0) {
-            this.$router.push({name: 'Affiliated'});
+            this.$router.replace({name: 'Affiliated'});
         } else {
-            this.$router.push({name: 'OrgDetail'});
+            this.$router.replace({name: 'OrgDetail'});
         }
     }
 }
