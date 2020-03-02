@@ -357,38 +357,32 @@ export default {
     methods: {
         getDashBoard () {
             axios.post("/api/org/GetDashboard", {}, msg => {
-                this.dashBoard = msg;
-                app.departType = msg.DepartType;
-                if (msg.success) {
-                    axios.post("/api/security/GetOrgDetail", {}, msg => {
-                        if (msg.success) {
-                            this.level = msg.level;
-                            if (this.level === 2 || this.level === 3) {
-                                msg.charts.departType.forEach(element => {
-                                    element.name = element.name ? element.name : "未分类";
-                                });
-                                this.depart.series.data = msg.charts.departType;
-                                msg.charts.userType.forEach(element => {
-                                    element.name = element.name ? element.name : "未填写";
-                                });
-                                this.member.series.data = msg.charts.userType;
-                                let ele = document.getElementById("depart");
-                                let instance = echarts.init(ele);
-                                instance.setOption(this.depart);
-                                let ele3 = document.getElementById("member");
-                                let instance3 = echarts.init(ele3);
-                                instance3.setOption(this.member);
-                                axios.post("/api/org/GetActByDepartId", {}, msg => {
-                                    this.guage.series.data[0].value = msg.charts.departCount;
-                                    this.guage.series.max = msg.charts.total;
-                                    let ele2 = document.getElementById("guage");
-                                    let instance2 = echarts.init(ele2);
-                                    instance2.setOption(this.guage);
-                                });
-                            }
-                        }
-                    })
-                }
+                axios.post("/api/security/GetOrgDetail", {}, msg => {
+                    this.level = msg.level;
+                    if (this.level === 2 || this.level === 3) {
+                        msg.charts.departType.forEach(element => {
+                            element.name = element.name ? element.name : "未分类";
+                        });
+                        this.depart.series.data = msg.charts.departType;
+                        msg.charts.userType.forEach(element => {
+                            element.name = element.name ? element.name : "未填写";
+                        });
+                        this.member.series.data = msg.charts.userType;
+                        let ele = document.getElementById("depart");
+                        let instance = echarts.init(ele);
+                        instance.setOption(this.depart);
+                        let ele3 = document.getElementById("member");
+                        let instance3 = echarts.init(ele3);
+                        instance3.setOption(this.member);
+                        axios.post("/api/org/GetActByDepartId", {Id: msg.data.ID}, msg => {
+                            this.guage.series.data[0].value = msg.charts.departCount;
+                            this.guage.series.max = msg.charts.total;
+                            let ele2 = document.getElementById("guage");
+                            let instance2 = echarts.init(ele2);
+                            instance2.setOption(this.guage);
+                        });
+                    }
+                })
             });
         },
         judgeTime () {

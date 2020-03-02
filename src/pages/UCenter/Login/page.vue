@@ -18,7 +18,7 @@
             <i-form-item prop="userName">
                 <i-input placeholder="手机号" prefix="ios-contact" size="large" v-model="mobileModel.userName" />
             </i-form-item>
-            <mobile-verify prop="password" :mobile="mobileModel.userName" @on-recieve="onRecieve" v-model="mobileModel.password" />
+                <mobile-verify prop="password" :mobile="mobileModel.userName" @on-recieve="onRecieve" v-model="mobileModel.password" />
             <i-form-item>
                 <i-button long size="large" type="primary" @click="submit()" :loading="isloading">登 录</i-button>
                 <a href="javascript:;" class="to-mobile" @click="method='password'">使用账号密码登录</a>

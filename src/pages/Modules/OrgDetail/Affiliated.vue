@@ -50,7 +50,7 @@
                             </i-form>
                         <i-button type="primary" @click="saveOrgDetail()" :loading="isSaving" v-if="showMore">保存</i-button>
                         <i-tabs v-model="tabSelect" style="padding-top:10px;">
-                            <i-tab-pane :label="memberManage" name="member">
+                            <i-tab-pane label="成员与社团管理" name="member">
                                 <i-card dis-hover>
                                     <i-row type="flex" justify="space-between" align="middle" slot="title">
                                         <i-col>
@@ -98,6 +98,44 @@
                                     </i-table>
                                     <br/>
                                     <i-page show-sizer show-total :total="pager.member.total" @on-change="getMemberTable($event, null)" @on-page-size-change="getMemberTable(null, $event)" />
+                                </i-card>
+                                <i-card dis-hover style="margin-top:16px;">
+                                    <i-row type="flex" justify="space-between" align="middle" slot="title">
+                                        <i-col>
+                                            <i-row type="flex" align="middle" :gutter="16">
+                                                <i-col>子部门</i-col>
+                                            </i-row>
+                                        </i-col>
+                                        <i-col>
+                                            <i-row type="flex" :gutter="16">
+                                                <i-col>
+                                                    <i-input prefix="ios-search" placeholder="搜索部门" v-model="keyword" @keyup.enter.native="searchSubDepart()"/>
+                                                </i-col>
+                                                <i-col>
+                                                    <i-button type="primary" @click="addSubDepart">
+                                                        新建部门
+                                                    </i-button>
+                                                </i-col>
+                                            </i-row>
+                                        </i-col>
+                                    </i-row>
+                                    <i-row>
+                                        <i-table row-key="id" stripe :columns="tableCol.subDept" :data="tableData.subDept" :loading="tableLoading">
+                                            <template slot="Action" slot-scope="{row}">
+                                                <i-button @click="modifySubDepart(row)">管理</i-button>
+                                                <i-button @click="delSubDepart(row)">删除</i-button>
+                                            </template>
+                                            <template slot="admin" slot-scope="{row}">
+                                                {{row.admin}}
+                                                <i-button shape="circle" v-if="row.admin === ''" @click="addMember('member', '管理员', row.id)">添加管理员</i-button>
+                                            </template>
+                                            <template slot="Type" slot-scope="{row}">
+                                                {{row.Type === 0 ? "挂靠单位" : "社团"}}
+                                            </template>
+                                        </i-table>
+                                        <br/>
+                                        <i-page show-total :total="tableData.subDept.length" :page-size="10000"/>
+                                    </i-row>
                                 </i-card>
                             </i-tab-pane>
                             <i-tab-pane label="社团活动" name="activity">
@@ -296,7 +334,7 @@ export default {
             this.tableLoading = true;
             this.pager.activity.page = page || this.pager.activity.page;
             this.pager.activity.pageSize = pageSize || this.pager.activity.pageSize;
-            axios.post("/api/org/GetActByDepartId", {departId: this.orgInfo.ID, page: this.pager.activity.page, pageSize: this.pager.activity.pageSize}, msg => {
+            axios.post("/api/org/GetActByDepartId", {Id: this.orgInfo.ID, page: this.pager.activity.page, pageSize: this.pager.activity.pageSize}, msg => {
                 this.tableData.activity = msg.data;
                 this.pager.activity.total = msg.totalRow;
                 this.tableLoading = false;
@@ -669,12 +707,6 @@ export default {
                     page: 1,
                     pageSize: 10
                 }
-            },
-            memberManage: (h) => {
-                    return h('div', [
-                        h('span', '成员管理'),
-                        h('span', '（' + this.tableData.member.length + '人）')
-                    ])
             },
             modalShow: false,
             password: {},
