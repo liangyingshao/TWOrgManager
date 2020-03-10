@@ -14,17 +14,33 @@
                             <i-button @click="modifyBasicInfo" type="text">修改基本信息</i-button>
                             <i-button @click="showLog = !showLog" type="text" style="float:right; padding-top: 12px;">查看修改记录</i-button>
                         </i-row>
-                        <i-row>
+                        <i-row type="flex" justify="center" class="center">
+                            <i-col span="6" >
+                                <div v-if="true">
+                                    <p class="p1">52389</p>
+                                    <p class="p">社团数</p>
+                                </div>
+                                <!--div v-else style="width:320px;height:200px">这里来张图？</div-->
+                            </i-col>
+                            <i-col span="1">
+                                <i-divider type="vertical" class="vertical-line"/>
+                            </i-col>
                             <i-col span="6">
-                                <div id="depart" v-show="depart.series.data.length" style="width:300px;height:200px"/>
-                                <div v-show="!depart.series.data.length" style="width:320px;height:200px">这里来张图？</div>
+                                <div v-if="true">
+                                    <p class="p2">13435</p>
+                                    <p class="p">成员数</p>
+                                </div>
+                                <!--div v-else style="width:320px;height:200px">这里来张图？</div-->
                             </i-col>
-                            <i-col span="6" offset="2">
-                                <div id="guage" style="width:300px;height:200px"/>
+                            <i-col span="1">
+                                <i-divider type="vertical" class="vertical-line"/>
                             </i-col>
-                            <i-col span="6" offset="2">
-                                <div id="member" v-show="member.series.data.length" style="width:320px;height:200px"/>
-                                <div v-show="!member.series.data.length" style="width:320px;height:200px">这里来张图？</div>
+                            <i-col span="6">
+                                <div v-if="true">
+                                    <p class="p3">6144</p>
+                                    <p class="p">活动数</p>
+                                </div>
+                                <!--div v-else style="width:320px;height:200px">这里来张图？</div-->
                             </i-col>
                         </i-row>
                         <i-form :model="orgInfo" :rules="ruleForBasic" ref="form">
@@ -205,7 +221,6 @@
 import memberForm from "./memberForm"
 import subDeptForm from "./subDeptForm"
 const app = require("@/config");
-const echarts = require("echarts");
 const tableCol = require("./tableCol");
 const md5 = require("md5");
 let _ = require("lodash");
@@ -269,20 +284,6 @@ export default {
                     this.orgInfo = msg.data;
                     this.teachers = msg.teachers;
                     this.users = msg.users;
-                    msg.charts.departType.forEach(element => {
-                        element.name = element.name ? element.name : "未分类";
-                    });
-                    this.depart.series.data = msg.charts.departType;
-                    msg.charts.userType.forEach(element => {
-                        element.name = element.name ? element.name : "未填写";
-                    });
-                    this.member.series.data = msg.charts.userType;
-                    let ele = document.getElementById("depart");
-                    let instance = echarts.init(ele);
-                    instance.setOption(this.depart);
-                    let ele3 = document.getElementById("member");
-                    let instance3 = echarts.init(ele3);
-                    instance3.setOption(this.member);
                     // 弥补接口错误
                     this.orgInfo.HaveLeagueBranch = this.orgInfo.HaveLeagueBranch === "true";
                     this.orgInfo.HaveCPCBranch = this.orgInfo.HaveCPCBranch === "true";
@@ -338,11 +339,6 @@ export default {
                 this.tableData.activity = msg.data;
                 this.pager.activity.total = msg.totalRow;
                 this.tableLoading = false;
-                this.guage.series.data[0].value = msg.charts.departCount;
-                this.guage.series.max = msg.charts.total;
-                let ele2 = document.getElementById("guage");
-                let instance2 = echarts.init(ele2);
-                instance2.setOption(this.guage);
             });
         },
         addSubDepart () {
@@ -507,20 +503,6 @@ export default {
                 this.teachers = msg.teachers;
                 this.users = msg.users;
 
-                msg.charts.departType.forEach(element => {
-                    element.name = element.name ? element.name : "未分类";
-                });
-                this.depart.series.data = msg.charts.departType;
-                msg.charts.userType.forEach(element => {
-                    element.name = element.name ? element.name : "未填写";
-                });
-                this.member.series.data = msg.charts.userType;
-                let ele = document.getElementById("depart");
-                let instance = echarts.init(ele);
-                instance.setOption(this.depart);
-                let ele3 = document.getElementById("member");
-                let instance3 = echarts.init(ele3);
-                instance3.setOption(this.member);
                 // 弥补接口错误
                 this.orgInfo.HaveLeagueBranch = this.orgInfo.HaveLeagueBranch === "true";
                 this.orgInfo.HaveCPCBranch = this.orgInfo.HaveCPCBranch === "true";
@@ -731,6 +713,35 @@ export default {
 </script>
 
 <style lang="less">
+.center {
+    text-align: center;
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+.vertical-line {
+    height: 3em;
+    width: 2px;
+    margin-top: 15px;
+}
+.p {
+    font-weight: bold;
+    font-size: 20px;
+}
+.p1 {
+    color: #da5953;
+    font-size: 36px;
+    font-weight: bold;
+}
+.p2 {
+    color: #d37b33;
+    font-size: 36px;
+    font-weight: bold;
+}
+.p3 {
+    color: #53ac9a;
+    font-size: 36px;
+    font-weight: bold;
+}
 .tree {
     background: #808695;
     color: #fff;

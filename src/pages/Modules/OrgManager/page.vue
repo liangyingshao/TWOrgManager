@@ -9,17 +9,35 @@
                     <i-col v-if="message.length >0" style="font-weight: bold;margin-bottom: 20px">您当前有{{message.length}}条待办事项</i-col>
                     <i-col style="font-weight: bold;margin-bottom:30px;color: gray" v-else>待办已经全部完成</i-col>
                 </i-row>
-                <i-row v-show="level === 2 || level === 3" justify="space-between">
-                    <i-col span="8">
-                        <div id="depart" style="width:300px;height:200px"/>
-                    </i-col>
-                    <i-col span="7" offset="1" style="text-align: center">
-                        <div id="guage" style="width:200px;height:200px"/>
-                    </i-col>
-                    <i-col span="8">
-                        <div id="member" style="width:300px;height:200px"/>
-                    </i-col>
-                </i-row>
+                <i-row v-show="level === 2 || level === 3" type="flex" justify="center" class="center">
+                            <i-col span="6" >
+                                <div v-if="true">
+                                    <p class="p1">52389</p>
+                                    <p class="p">社团数</p>
+                                </div>
+                                <!--div v-else style="width:320px;height:200px">这里来张图？</div-->
+                            </i-col>
+                            <i-col span="1">
+                                <i-divider type="vertical" class="vertical-line"/>
+                            </i-col>
+                            <i-col span="6">
+                                <div v-if="true">
+                                    <p class="p2">13435</p>
+                                    <p class="p">成员数</p>
+                                </div>
+                                <!--div v-else style="width:320px;height:200px">这里来张图？</div-->
+                            </i-col>
+                            <i-col span="1">
+                                <i-divider type="vertical" class="vertical-line"/>
+                            </i-col>
+                            <i-col span="6">
+                                <div v-if="true">
+                                    <p class="p3">6144</p>
+                                    <p class="p">活动数</p>
+                                </div>
+                                <!--div v-else style="width:320px;height:200px">这里来张图？</div-->
+                            </i-col>
+                        </i-row>
                 <List v-if="messageNum>0">
                     <template v-for="(item,index) in message" >
                         <ListItem :key="index">
@@ -82,7 +100,6 @@
 
 <script>
 import axios from 'axios';
-const echarts = require("echarts");
 let app = require("@/config");
 let pic = require("@/assets/icon.png");
 export default {
@@ -360,26 +377,9 @@ export default {
                 axios.post("/api/security/GetOrgDetail", {}, msg => {
                     this.level = msg.level;
                     if (this.level === 2 || this.level === 3) {
-                        msg.charts.departType.forEach(element => {
-                            element.name = element.name ? element.name : "未分类";
-                        });
-                        this.depart.series.data = msg.charts.departType;
-                        msg.charts.userType.forEach(element => {
-                            element.name = element.name ? element.name : "未填写";
-                        });
-                        this.member.series.data = msg.charts.userType;
-                        let ele = document.getElementById("depart");
-                        let instance = echarts.init(ele);
-                        instance.setOption(this.depart);
-                        let ele3 = document.getElementById("member");
-                        let instance3 = echarts.init(ele3);
-                        instance3.setOption(this.member);
+                        // should have something
                         axios.post("/api/org/GetActByDepartId", {Id: msg.data.ID}, msg => {
-                            this.guage.series.data[0].value = msg.charts.departCount;
-                            this.guage.series.max = msg.charts.total;
-                            let ele2 = document.getElementById("guage");
-                            let instance2 = echarts.init(ele2);
-                            instance2.setOption(this.guage);
+
                         });
                     }
                 })
