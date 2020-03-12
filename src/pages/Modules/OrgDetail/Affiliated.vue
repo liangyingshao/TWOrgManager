@@ -241,9 +241,11 @@ export default {
                 }
                 this.getOrgDetail();
                 this.getMemberTable();
-                this.getOptTable();
+                if (n.isParent) {
+                    this.getDeptTable();
+                }
                 this.getActivityTable();
-                this.getDeptTable();
+                this.getOptTable();
                 this.select = true;
         },
         saveOrgDetail () {
