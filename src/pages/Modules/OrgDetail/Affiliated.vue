@@ -11,18 +11,20 @@
                         <i-spin fix size="large" v-show="tableLoading"></i-spin>
                         <i-row style="font-size:30px;margin-bottom:10px">
                             {{orgInfo.Name}}
-                            <i-button @click="showMore = !showMore" type="text">修改基本信息</i-button>
+                            <i-button @click="modifyBasicInfo" type="text">修改基本信息</i-button>
                             <i-button @click="showLog = !showLog" type="text" style="float:right; padding-top: 12px;">查看修改记录</i-button>
                         </i-row>
                         <i-row>
                             <i-col span="6">
-                                <div id="depart" style="width:300px;height:200px"/>
+                                <div id="depart" v-show="depart.series.data.length" style="width:320px;height:200px"/>
+                                <div v-show="!depart.series.data.length" style="width:320px;height:200px">这里来张图？</div>
                             </i-col>
                             <i-col span="6" offset="2">
-                                <div id="guage" style="width:300px;height:200px"/>
+                                <div id="guage" style="width:320px;height:200px"/>
                             </i-col>
                             <i-col span="6" offset="2">
-                                <div id="member" style="width:320px;height:200px"/>
+                                <div id="member" v-show="member.series.data.length" style="width:320px;height:200px"/>
+                                <div v-show="!member.series.data.length" style="width:320px;height:200px">这里来张图？</div>
                             </i-col>
                         </i-row>
                         <i-form :model="orgInfo" :rules="ruleForBasic" ref="form">
@@ -48,7 +50,7 @@
                             </i-form>
                         <i-button type="primary" @click="saveOrgDetail()" :loading="isSaving" v-if="showMore">保存</i-button>
                         <i-tabs v-model="tabSelect" style="padding-top:10px;">
-                            <i-tab-pane :label="memberManage" name="member">
+                            <i-tab-pane label="成员与社团管理" name="member">
                                 <i-card dis-hover>
                                     <i-row type="flex" justify="space-between" align="middle" slot="title">
                                         <i-col>
@@ -96,6 +98,44 @@
                                     </i-table>
                                     <br/>
                                     <i-page show-sizer show-total :total="pager.member.total" @on-change="getMemberTable($event, null)" @on-page-size-change="getMemberTable(null, $event)" />
+                                </i-card>
+                                <i-card dis-hover style="margin-top:16px;">
+                                    <i-row type="flex" justify="space-between" align="middle" slot="title">
+                                        <i-col>
+                                            <i-row type="flex" align="middle" :gutter="16">
+                                                <i-col>子部门</i-col>
+                                            </i-row>
+                                        </i-col>
+                                        <i-col>
+                                            <i-row type="flex" :gutter="16">
+                                                <i-col>
+                                                    <i-input prefix="ios-search" placeholder="搜索部门" v-model="keyword" @keyup.enter.native="searchSubDepart()"/>
+                                                </i-col>
+                                                <i-col>
+                                                    <i-button type="primary" @click="addSubDepart">
+                                                        新建部门
+                                                    </i-button>
+                                                </i-col>
+                                            </i-row>
+                                        </i-col>
+                                    </i-row>
+                                    <i-row>
+                                        <i-table row-key="id" stripe :columns="tableCol.subDept" :data="tableData.subDept" :loading="tableLoading">
+                                            <template slot="Action" slot-scope="{row}">
+                                                <i-button @click="modifySubDepart(row)">管理</i-button>
+                                                <i-button @click="delSubDepart(row)">删除</i-button>
+                                            </template>
+                                            <template slot="admin" slot-scope="{row}">
+                                                {{row.admin}}
+                                                <i-button shape="circle" v-if="row.admin === ''" @click="addMember('member', '管理员', row.id)">添加管理员</i-button>
+                                            </template>
+                                            <template slot="Type" slot-scope="{row}">
+                                                {{row.Type === 0 ? "挂靠单位" : "社团"}}
+                                            </template>
+                                        </i-table>
+                                        <br/>
+                                        <i-page show-total :total="tableData.subDept.length" :page-size="10000"/>
+                                    </i-row>
                                 </i-card>
                             </i-tab-pane>
                             <i-tab-pane label="社团活动" name="activity">
@@ -182,6 +222,13 @@ export default {
         },
         cancel () {
         },
+        modifyBasicInfo () {
+            if (this.orgInfo.CategoryName === '社团') {
+                window.open("/manage/org/detail?id=" + this.orgInfo.ID);
+            } else {
+                this.showMore = !this.showMore;
+            }
+        },
         selectCategory (node, n) {
                 this.orgInfo.ID = n.id;
                 if (n.isParent && (!this.filters.length || n.id !== this.filters[0].id)) {
@@ -196,6 +243,7 @@ export default {
                 this.getMemberTable();
                 this.getOptTable();
                 this.getActivityTable();
+                this.getDeptTable();
                 this.select = true;
         },
         saveOrgDetail () {
@@ -287,12 +335,12 @@ export default {
             this.tableLoading = true;
             this.pager.activity.page = page || this.pager.activity.page;
             this.pager.activity.pageSize = pageSize || this.pager.activity.pageSize;
-            axios.post("/api/org/GetActByDepartId", {departId: this.orgInfo.ID, page: this.pager.activity.page, pageSize: this.pager.activity.pageSize}, msg => {
+            axios.post("/api/org/GetActByDepartId", {Id: this.orgInfo.ID, page: this.pager.activity.page, pageSize: this.pager.activity.pageSize}, msg => {
                 this.tableData.activity = msg.data;
                 this.pager.activity.total = msg.totalRow;
                 this.tableLoading = false;
                 this.guage.series.data[0].value = msg.charts.departCount;
-                this.guage.series.max = msg.charts.total;
+                this.guage.series.max = (parseInt(msg.charts.total / 10) + 1 * 10);
                 let ele2 = document.getElementById("guage");
                 let instance2 = echarts.init(ele2);
                 instance2.setOption(this.guage);
@@ -474,7 +522,6 @@ export default {
                 let ele3 = document.getElementById("member");
                 let instance3 = echarts.init(ele3);
                 instance3.setOption(this.member);
-
                 // 弥补接口错误
                 this.orgInfo.HaveLeagueBranch = this.orgInfo.HaveLeagueBranch === "true";
                 this.orgInfo.HaveCPCBranch = this.orgInfo.HaveCPCBranch === "true";
@@ -573,7 +620,7 @@ export default {
                         lineStyle: {color: [[1, '#63869e']]}
                     },
                     itemStyle: {
-                            color: '#91c7ae'
+                        color: '#91c7ae'
                     },
                     data: [{
                         value: 0
@@ -581,6 +628,11 @@ export default {
                     max: 0,
                     title: {
                         fontSize: '15'
+                    },
+                    axisLabel: {
+                        formatter: function (v) {
+                            return v.toFixed(0);
+                        }
                     }
                 }
             },
@@ -661,12 +713,6 @@ export default {
                     page: 1,
                     pageSize: 10
                 }
-            },
-            memberManage: (h) => {
-                    return h('div', [
-                        h('span', '成员管理'),
-                        h('span', '（' + this.tableData.member.length + '人）')
-                    ])
             },
             modalShow: false,
             password: {},

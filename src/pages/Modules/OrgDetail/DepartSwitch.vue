@@ -3,14 +3,16 @@
 </template>
 
 <script>
-const app = require('@/config')
+const axios = require("axios");
 export default {
     mounted () {
-        if (app.departType === 0) {
-            this.$router.replace({name: 'Affiliated'});
-        } else {
-            this.$router.replace({name: 'OrgDetail'});
-        }
+        axios.post("/api/org/GetDashboard", {}, msg => {
+            if (msg.DepartType) {
+                this.$router.replace({name: 'OrgDetail'});
+            } else {
+                this.$router.replace({name: 'Affiliated'});
+            }
+        });
     }
 }
 </script>
