@@ -5,7 +5,7 @@
                 <i-col span="5" class="tree">
                     <i-spin fix size="large" v-show="treeLoading"></i-spin>
                     <i-row style="text-align:center;font-size:20px;padding-top:10px">部门管理</i-row>
-                    <Tree :data="subDept" class="org-tree" @on-select-change="selectCategory"></Tree>
+                    <Tree :data="subDeptTree" class="org-tree" @on-select-change="selectCategory"></Tree>
                 </i-col>
                 <i-col span="18" offset="1">
                         <i-spin fix size="large" v-show="tableLoading"></i-spin>
@@ -16,11 +16,11 @@
                         </i-row>
                         <i-row>
                             <i-col span="6">
-                                <div id="depart" v-show="depart.series.data.length" style="width:300px;height:200px"/>
+                                <div id="depart" v-show="depart.series.data.length" style="width:320px;height:200px"/>
                                 <div v-show="!depart.series.data.length" style="width:320px;height:200px">这里来张图？</div>
                             </i-col>
                             <i-col span="6" offset="2">
-                                <div id="guage" style="width:300px;height:200px"/>
+                                <div id="guage" style="width:320px;height:200px"/>
                             </i-col>
                             <i-col span="6" offset="2">
                                 <div id="member" v-show="member.series.data.length" style="width:320px;height:200px"/>
@@ -50,7 +50,7 @@
                             </i-form>
                         <i-button type="primary" @click="saveOrgDetail()" :loading="isSaving" v-if="showMore">保存</i-button>
                         <i-tabs v-model="tabSelect" style="padding-top:10px;">
-                            <i-tab-pane :label="memberManage" name="member">
+                            <i-tab-pane label="成员与社团管理" name="member">
                                 <i-card dis-hover>
                                     <i-row type="flex" justify="space-between" align="middle" slot="title">
                                         <i-col>
@@ -98,6 +98,44 @@
                                     </i-table>
                                     <br/>
                                     <i-page show-sizer show-total :total="pager.member.total" @on-change="getMemberTable($event, null)" @on-page-size-change="getMemberTable(null, $event)" />
+                                </i-card>
+                                <i-card dis-hover style="margin-top:16px;">
+                                    <i-row type="flex" justify="space-between" align="middle" slot="title">
+                                        <i-col>
+                                            <i-row type="flex" align="middle" :gutter="16">
+                                                <i-col>子部门</i-col>
+                                            </i-row>
+                                        </i-col>
+                                        <i-col>
+                                            <i-row type="flex" :gutter="16">
+                                                <i-col>
+                                                    <i-input prefix="ios-search" placeholder="搜索部门" v-model="keyword" @keyup.enter.native="searchSubDepart()"/>
+                                                </i-col>
+                                                <i-col>
+                                                    <i-button type="primary" @click="addSubDepart">
+                                                        新建部门
+                                                    </i-button>
+                                                </i-col>
+                                            </i-row>
+                                        </i-col>
+                                    </i-row>
+                                    <i-row>
+                                        <i-table row-key="id" stripe :columns="tableCol.subDept" :data="tableData.subDept" :loading="tableLoading">
+                                            <template slot="Action" slot-scope="{row}">
+                                                <i-button @click="modifySubDepart(row)">管理</i-button>
+                                                <i-button @click="delSubDepart(row)">删除</i-button>
+                                            </template>
+                                            <template slot="admin" slot-scope="{row}">
+                                                {{row.admin}}
+                                                <i-button shape="circle" v-if="row.admin === ''" @click="addMember('member', '管理员', row.id)">添加管理员</i-button>
+                                            </template>
+                                            <template slot="Type" slot-scope="{row}">
+                                                {{row.Type === 0 ? "挂靠单位" : "社团"}}
+                                            </template>
+                                        </i-table>
+                                        <br/>
+                                        <i-page show-total :total="tableData.subDept.length" :page-size="10000"/>
+                                    </i-row>
                                 </i-card>
                             </i-tab-pane>
                             <i-tab-pane label="社团活动" name="activity">
@@ -205,6 +243,7 @@ export default {
                 this.getMemberTable();
                 this.getOptTable();
                 this.getActivityTable();
+                this.getDeptTable();
                 this.select = true;
         },
         saveOrgDetail () {
@@ -231,20 +270,14 @@ export default {
                     this.orgInfo = msg.data;
                     this.teachers = msg.teachers;
                     this.users = msg.users;
-                    if (JSON.stringify(msg.charts) !== '{}') {
-                        if (msg.charts.departType.length) {
-                                msg.charts.departType.forEach(element => {
-                                element.name = element.name ? element.name : "未分类";
-                            });
-                            this.depart.series.data = msg.charts.departType;
-                        }
-                        if (msg.charts.userType.length) {
-                                msg.charts.userType.forEach(element => {
-                                element.name = element.name ? element.name : "未填写";
-                            });
-                            this.member.series.data = msg.charts.userType;
-                        }
-                    }
+                    msg.charts.departType.forEach(element => {
+                        element.name = element.name ? element.name : "未分类";
+                    });
+                    this.depart.series.data = msg.charts.departType;
+                    msg.charts.userType.forEach(element => {
+                        element.name = element.name ? element.name : "未填写";
+                    });
+                    this.member.series.data = msg.charts.userType;
                     let ele = document.getElementById("depart");
                     let instance = echarts.init(ele);
                     instance.setOption(this.depart);
@@ -275,14 +308,16 @@ export default {
                 this.tableLoading = false;
             });
         },
-        getDeptTable (page, pageSize) {
+        getDeptTable (reflashTree, page, pageSize) {
             if (this.orgInfo.Type !== 0) return;
             this.treeLoading = true;
             this.tableLoading = true;
             axios.post("/api/security/GetDepartsByDepartId", {id: this.orgInfo.ID}, msg => {
                 this.tableData.subDept = msg.data.children || [];
-                this.subDept = [msg.data];
-                this.$set(this.subDept[0], 'expand', true);
+                if (reflashTree) {
+                    this.subDeptTree = [msg.data];
+                    this.$set(this.subDeptTree[0], 'expand', true);
+                }
                 this.treeLoading = false;
                 this.searchSubDep = this.tableData.subDept;
                 this.tableLoading = false;
@@ -302,12 +337,12 @@ export default {
             this.tableLoading = true;
             this.pager.activity.page = page || this.pager.activity.page;
             this.pager.activity.pageSize = pageSize || this.pager.activity.pageSize;
-            axios.post("/api/org/GetActByDepartId", {departId: this.orgInfo.ID, page: this.pager.activity.page, pageSize: this.pager.activity.pageSize}, msg => {
+            axios.post("/api/org/GetActByDepartId", {Id: this.orgInfo.ID, page: this.pager.activity.page, pageSize: this.pager.activity.pageSize}, msg => {
                 this.tableData.activity = msg.data;
                 this.pager.activity.total = msg.totalRow;
                 this.tableLoading = false;
                 this.guage.series.data[0].value = msg.charts.departCount;
-                this.guage.series.max = msg.charts.total;
+                this.guage.series.max = (parseInt(msg.charts.total / 10) + 1 * 10);
                 let ele2 = document.getElementById("guage");
                 let instance2 = echarts.init(ele2);
                 instance2.setOption(this.guage);
@@ -386,8 +421,8 @@ export default {
             });
         },
         modifySubDepart (row) {
-            this.getDeptTable();
-            window.open("/manage/org/detail?id=" + row.id);
+            if (row.type) window.open("/manage/org/affiliated?id=" + row.id);
+            else window.open("/manage/org/detail?id=" + row.id);
         },
         checkWorkflow (instanceId, stepId) {
             window.open(`/manage/org/activityform?instanceId=${instanceId}&stepId=${stepId}&detail=true`);
@@ -498,7 +533,7 @@ export default {
                 this.logs = msg.changeLogs.data;
                 // 获取其他Tab页信息
                 this.getMemberTable();
-                this.getDeptTable();
+                this.getDeptTable(true);
                 this.getOptTable();
                 this.getActivityTable();
             }
@@ -519,9 +554,10 @@ export default {
             logs: [],
             keyword: "",
             teachers: [],
-            subDept: [
+            subDeptTree: [
                 {expand: true}
             ],
+            subdept: {},
             users: 0,
             tabSelect: "",
             isSaving: false,
@@ -587,7 +623,7 @@ export default {
                         lineStyle: {color: [[1, '#63869e']]}
                     },
                     itemStyle: {
-                            color: '#91c7ae'
+                        color: '#91c7ae'
                     },
                     data: [{
                         value: 0
@@ -595,6 +631,11 @@ export default {
                     max: 0,
                     title: {
                         fontSize: '15'
+                    },
+                    axisLabel: {
+                        formatter: function (v) {
+                            return v.toFixed(0);
+                        }
                     }
                 }
             },
@@ -675,12 +716,6 @@ export default {
                     page: 1,
                     pageSize: 10
                 }
-            },
-            memberManage: (h) => {
-                    return h('div', [
-                        h('span', '成员管理'),
-                        h('span', '（' + this.tableData.member.length + '人）')
-                    ])
             },
             modalShow: false,
             password: {},
