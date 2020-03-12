@@ -16,11 +16,11 @@
                         </i-row>
                         <i-row>
                             <i-col span="6">
-                                <div id="depart" v-show="depart.series.data.length" style="width:300px;height:200px"/>
+                                <div id="depart" v-show="depart.series.data.length" style="width:320px;height:200px"/>
                                 <div v-show="!depart.series.data.length" style="width:320px;height:200px">这里来张图？</div>
                             </i-col>
                             <i-col span="6" offset="2">
-                                <div id="guage" style="width:300px;height:200px"/>
+                                <div id="guage" style="width:320px;height:200px"/>
                             </i-col>
                             <i-col span="6" offset="2">
                                 <div id="member" v-show="member.series.data.length" style="width:320px;height:200px"/>
@@ -243,6 +243,7 @@ export default {
                 this.getMemberTable();
                 this.getOptTable();
                 this.getActivityTable();
+                this.getDeptTable();
                 this.select = true;
         },
         saveOrgDetail () {
@@ -339,7 +340,7 @@ export default {
                 this.pager.activity.total = msg.totalRow;
                 this.tableLoading = false;
                 this.guage.series.data[0].value = msg.charts.departCount;
-                this.guage.series.max = msg.charts.total;
+                this.guage.series.max = (parseInt(msg.charts.total / 10) + 1 * 10);
                 let ele2 = document.getElementById("guage");
                 let instance2 = echarts.init(ele2);
                 instance2.setOption(this.guage);
@@ -619,7 +620,7 @@ export default {
                         lineStyle: {color: [[1, '#63869e']]}
                     },
                     itemStyle: {
-                            color: '#91c7ae'
+                        color: '#91c7ae'
                     },
                     data: [{
                         value: 0
@@ -627,6 +628,11 @@ export default {
                     max: 0,
                     title: {
                         fontSize: '15'
+                    },
+                    axisLabel: {
+                        formatter: function (v) {
+                            return v.toFixed(0);
+                        }
                     }
                 }
             },
