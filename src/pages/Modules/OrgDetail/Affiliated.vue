@@ -5,7 +5,7 @@
                 <i-col span="5" class="tree">
                     <i-spin fix size="large" v-show="treeLoading"></i-spin>
                     <i-row style="text-align:center;font-size:20px;padding-top:10px">部门管理</i-row>
-                    <Tree :data="subDept" class="org-tree" @on-select-change="selectCategory"></Tree>
+                    <Tree :data="subDeptTree" class="org-tree" @on-select-change="selectCategory"></Tree>
                 </i-col>
                 <i-col span="18" offset="1">
                         <i-spin fix size="large" v-show="tableLoading"></i-spin>
@@ -308,14 +308,16 @@ export default {
                 this.tableLoading = false;
             });
         },
-        getDeptTable (page, pageSize) {
+        getDeptTable (reflashTree, page, pageSize) {
             if (this.orgInfo.Type !== 0) return;
             this.treeLoading = true;
             this.tableLoading = true;
             axios.post("/api/security/GetDepartsByDepartId", {id: this.orgInfo.ID}, msg => {
                 this.tableData.subDept = msg.data.children || [];
-                this.subDept = [msg.data];
-                this.$set(this.subDept[0], 'expand', true);
+                if (reflashTree) {
+                    this.subDeptTree = [msg.data];
+                    this.$set(this.subDeptTree[0], 'expand', true);
+                }
                 this.treeLoading = false;
                 this.searchSubDep = this.tableData.subDept;
                 this.tableLoading = false;
@@ -531,7 +533,7 @@ export default {
                 this.logs = msg.changeLogs.data;
                 // 获取其他Tab页信息
                 this.getMemberTable();
-                this.getDeptTable();
+                this.getDeptTable(true);
                 this.getOptTable();
                 this.getActivityTable();
             }
@@ -552,9 +554,10 @@ export default {
             logs: [],
             keyword: "",
             teachers: [],
-            subDept: [
+            subDeptTree: [
                 {expand: true}
             ],
+            subdept: {},
             users: 0,
             tabSelect: "",
             isSaving: false,
