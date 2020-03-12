@@ -421,8 +421,8 @@ export default {
             });
         },
         modifySubDepart (row) {
-            this.getDeptTable();
-            window.open("/manage/org/detail?id=" + row.id);
+            if (row.type) window.open("/manage/org/affiliated?id=" + row.id);
+            else window.open("/manage/org/detail?id=" + row.id);
         },
         checkWorkflow (instanceId, stepId) {
             window.open(`/manage/org/activityform?instanceId=${instanceId}&stepId=${stepId}&detail=true`);
