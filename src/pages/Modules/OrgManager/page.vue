@@ -370,7 +370,7 @@ export default {
             color: #17233d;
         }
         .number {
-            font-size: 32px;
+            font-size: 36px;
             font-weight: bold;
         }
         #organization {
