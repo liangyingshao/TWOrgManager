@@ -1,16 +1,16 @@
 <template>
-    <i-card :padding="50">
-        <i-row type="flex" justify="center">
-            <i-col span="16">
-                <i-row>
-                    <div class="welcome">{{time}}好，{{userInfo.realName}}</div>
-                </i-row>
+    <i-card :padding="60">
+        <i-row>
+            <i-col offset="1" class="welcome">{{time}}好，{{userInfo.realName}}</i-col>
+        </i-row>
+        <i-row type="flex">
+            <i-col span="15" offset="1">
                 <i-row type="flex">
                     <i-col v-if="message.length >0" style="font-weight: bold;margin-bottom: 20px">您当前有{{message.length}}条待办事项</i-col>
                     <i-col style="font-weight: bold;margin-bottom:30px;color: gray" v-else>待办已经全部完成</i-col>
                 </i-row>
-                <i-row v-show="level === 2 || level === 3" justify="space-between">
-                    <i-col span="8">
+                <i-row type="flex" justify="space-between" id="chart" v-show="level === 2 || level === 3">
+                    <!--i-col span="8">
                         <div id="depart" style="width:300px;height:200px"/>
                     </i-col>
                     <i-col span="7" offset="1" style="text-align: center">
@@ -18,6 +18,23 @@
                     </i-col>
                     <i-col span="8">
                         <div id="member" style="width:300px;height:200px"/>
+                    </i-col-->
+                    <i-col span="8" id="organization">
+                        <i-row class="difference">较去年<span class="number">+{{chart.organization.allChildrenIncrease}}</span></i-row>
+                        <i-row class="number">{{chart.organization.allChildrenCount}}</i-row>
+                        <i-row class="item-name">社团数</i-row>
+                    </i-col>
+                    <i-divider type="vertical" />
+                    <i-col span="7" id="member">
+                        <i-row class="difference">较去年<span class="number">+{{chart.member.allMemberIncrease}}</span></i-row>
+                        <i-row class="number">{{chart.member.allMemberCount}}</i-row>
+                        <i-row class="item-name">成员数</i-row>
+                    </i-col>
+                    <i-divider type="vertical" />
+                    <i-col span="8" id="activity">
+                        <i-row class="difference">较去年<span class="number">+{{chart.activity.increase}}</span></i-row>
+                        <i-row class="number">{{chart.activity.total}}</i-row>
+                        <i-row class="item-name">活动数</i-row>
                     </i-col>
                 </i-row>
                 <List v-if="messageNum>0">
@@ -31,11 +48,11 @@
                     </template>
                 </List>
                 <template v-else>
-                    <i-row style="margin-top: 40px" class="layout-con"><img :src="pic" /></i-row>
+                    <i-row class="picture">所有工作已完成</i-row>
                 </template>
             </i-col>
-            <i-col span="7" offset="1" style="padding-top: 20px">
-                <i-card :padding="0" :to="dashBoard.DepartType === 0 ? routers[1]:routers[0]" v-if="dashBoard.Name">
+            <i-col span="6" offset="1" style="padding-top: 20px">
+                <i-card :padding="0" :to="dashBoard.DepartType === 0 ? routers[1]:routers[0]" v-if="true">
                     <template slot="title">
                         {{dashBoard.Name}}
                     </template>
@@ -82,7 +99,7 @@
 
 <script>
 import axios from 'axios';
-const echarts = require("echarts");
+// const echarts = require("echarts");
 let app = require("@/config");
 let pic = require("@/assets/icon.png");
 export default {
@@ -254,97 +271,10 @@ export default {
                     icon: "md-eye"
                 }
             ],
-            depart: {
-               title: {
-                    text: '社团类型',
-                    left: '50%',
-                    top: '80%',
-                    textAlign: 'center',
-                    textStyle: {
-                        color: '#515A6E',
-                        fontSize: '20',
-                        fontWeight: 'normal'
-                    }
-                },
-                tooltip: {
-                    trigger: 'item',
-                    formatter: '{b}：{c}人（{d}%）'
-                },
-                series: {
-                    type: 'pie',
-                    radius: '35%',
-                    center: ['50%', '50%'],
-                    data: [],
-                    label: {
-                        position: 'outer',
-                        fontSize: '15'
-                    },
-                    left: 0,
-                    right: '0',
-                    top: 0,
-                    bottom: 0
-                }
-           },
-            guage: {
-                title: {
-                    text: '本学院活动数',
-                    left: '50%',
-                    top: '80%',
-                    textAlign: 'center',
-                    textStyle: {
-                        color: "#515A6E",
-                        fontSize: '20',
-                        fontWeight: 'normal'
-                    }
-                },
-                series: {
-                    type: 'gauge',
-                    radius: '95%',
-                    axisLine: {
-                        lineStyle: {color: [[1, '#63869e']]}
-                    },
-                    itemStyle: {
-                            color: '#91c7ae'
-                    },
-                    data: [{
-                        value: 0
-                    }],
-                    max: 0,
-                    title: {
-                        fontSize: '15'
-                    }
-                }
-            },
-            member: {
-                title: {
-                    text: '社团成员',
-                    left: '50%',
-                    top: '80%',
-                    textAlign: 'center',
-                    textStyle: {
-                        color: "#515A6E",
-                        fontSize: '20',
-                        fontWeight: 'normal'
-                    }
-                },
-                tooltip: {
-                    trigger: 'item',
-                    formatter: '{b}：{c}人（{d}%）'
-                },
-                series: {
-                    type: 'pie',
-                    radius: '35%',
-                    center: ['50%', '50%'],
-                    data: [],
-                    label: {
-                        position: 'outer',
-                        fontSize: '15'
-                    },
-                    left: 0,
-                    right: '0',
-                    top: 0,
-                    bottom: 0
-                }
+            chart: {
+                member: {},
+                activity: {},
+                organization: {}
             }
         };
     },
@@ -357,29 +287,33 @@ export default {
     methods: {
         getDashBoard () {
             axios.post("/api/org/GetDashboard", {}, msg => {
+                this.dashBoard = msg;
                 axios.post("/api/security/GetOrgDetail", {}, msg => {
                     this.level = msg.level;
                     if (this.level === 2 || this.level === 3) {
-                        msg.charts.departType.forEach(element => {
-                            element.name = element.name ? element.name : "未分类";
-                        });
-                        this.depart.series.data = msg.charts.departType;
-                        msg.charts.userType.forEach(element => {
-                            element.name = element.name ? element.name : "未填写";
-                        });
-                        this.member.series.data = msg.charts.userType;
-                        let ele = document.getElementById("depart");
-                        let instance = echarts.init(ele);
-                        instance.setOption(this.depart);
-                        let ele3 = document.getElementById("member");
-                        let instance3 = echarts.init(ele3);
-                        instance3.setOption(this.member);
+                        this.chart.organization = msg.charts.allChildren;
+                        this.chart.member = msg.charts.allMember;
+                        // msg.charts.departType.forEach(element => {
+                        //     element.name = element.name ? element.name : "未分类";
+                        // });
+                        // this.depart.series.data = msg.charts.departType;
+                        // msg.charts.userType.forEach(element => {
+                        //     element.name = element.name ? element.name : "未填写";
+                        // });
+                        // this.member.series.data = msg.charts.userType;
+                        // let ele = document.getElementById("depart");
+                        // let instance = echarts.init(ele);
+                        // instance.setOption(this.depart);
+                        // let ele3 = document.getElementById("member");
+                        // let instance3 = echarts.init(ele3);
+                        // instance3.setOption(this.member);
                         axios.post("/api/org/GetActByDepartId", {Id: msg.data.ID}, msg => {
-                            this.guage.series.data[0].value = msg.charts.departCount;
-                            this.guage.series.max = msg.charts.total;
-                            let ele2 = document.getElementById("guage");
-                            let instance2 = echarts.init(ele2);
-                            instance2.setOption(this.guage);
+                            this.chart.activity = msg.charts;
+                            // this.guage.series.data[0].value = msg.charts.departCount;
+                            // this.guage.series.max = msg.charts.total;
+                            // let ele2 = document.getElementById("guage");
+                            // let instance2 = echarts.init(ele2);
+                            // instance2.setOption(this.guage);
                         });
                     }
                 })
@@ -412,14 +346,51 @@ export default {
 </script>
 
 <style lang="less">
-    .ivu-card-body {
-        padding: 10px;
+    .ivu-divider, .ivu-divider-vertical {
+        margin: 0 8px;
+        display: inline-block;
+        width: 1px;
+        vertical-align: middle;
+        position: relative;
+        top: -0.06em;
+        height: auto;
     }
-    .ivu-card-head {
-        border-bottom: 1px solid #e8eaec;
-        padding: 14px 16px;
-        line-height: 1;
+    #chart {
+        margin: 24px 0px;
         text-align: center;
+        .difference {
+            font-size: 16px;
+            color: #808695;
+            .number {
+                font-size: 16px;
+            }
+        }
+        .item-name {
+            font-size: 20px;
+            color: #17233d;
+        }
+        .number {
+            font-size: 36px;
+            font-weight: bold;
+        }
+        #organization {
+            .number
+            {
+                color: orangered;
+            }
+        }
+        #member {
+            .number
+            {
+                color: orange;
+            }
+        }
+        #activity {
+            .number
+            {
+                color: teal;
+            }
+        }
     }
     .welcome {
         font-size: 48px;
@@ -448,5 +419,16 @@ export default {
         margin-bottom: 24px;
         text-align: center;
         color: #515a6e;
+    }
+    .picture {
+        margin: 40px 0px 24px 0px;
+        text-align: center;
+        color: #808695;
+        letter-spacing: 5px;
+        font-size: 32px;
+        border: #dcdee2 solid 3px;
+        border-radius: 20px;
+        height:300px;
+        line-height: 300px;
     }
 </style>

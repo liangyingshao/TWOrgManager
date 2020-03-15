@@ -5,7 +5,7 @@
                 <i-col span="5" class="tree">
                     <i-spin fix size="large" v-show="treeLoading"></i-spin>
                     <i-row style="text-align:center;font-size:20px;padding-top:10px">部门管理</i-row>
-                    <Tree :data="subDept" class="org-tree" @on-select-change="selectCategory"></Tree>
+                    <Tree :data="subDeptTree" class="org-tree" @on-select-change="selectCategory"></Tree>
                 </i-col>
                 <i-col span="18" offset="1">
                         <i-spin fix size="large" v-show="tableLoading"></i-spin>
@@ -14,17 +14,23 @@
                             <i-button @click="modifyBasicInfo" type="text">修改基本信息</i-button>
                             <i-button @click="showLog = !showLog" type="text" style="float:right; padding-top: 12px;">查看修改记录</i-button>
                         </i-row>
-                        <i-row>
-                            <i-col span="6">
-                                <div id="depart" v-show="depart.series.data.length" style="width:300px;height:200px"/>
-                                <div v-show="!depart.series.data.length" style="width:320px;height:200px">这里来张图？</div>
+                        <i-row type="flex" justify="space-between" id="chart" v-if="!orgInfo.Type">
+                            <i-col span="8" id="organization">
+                                <i-row class="difference">较去年<span class="number">+{{chart.organization.allChildrenIncrease}}</span></i-row>
+                                <i-row class="number">{{chart.organization.allChildrenCount}}</i-row>
+                                <i-row class="item-name">社团数</i-row>
                             </i-col>
-                            <i-col span="6" offset="2">
-                                <div id="guage" style="width:300px;height:200px"/>
+                            <i-divider type="vertical" />
+                            <i-col span="7" id="member">
+                                <i-row class="difference">较去年<span class="number">+{{chart.member.allMemberIncrease}}</span></i-row>
+                                <i-row class="number">{{chart.member.allMemberCount}}</i-row>
+                                <i-row class="item-name">成员数</i-row>
                             </i-col>
-                            <i-col span="6" offset="2">
-                                <div id="member" v-show="member.series.data.length" style="width:320px;height:200px"/>
-                                <div v-show="!member.series.data.length" style="width:320px;height:200px">这里来张图？</div>
+                            <i-divider type="vertical" />
+                            <i-col span="8" id="activity">
+                                <i-row class="difference">较去年<span class="number">+{{chart.activity.increase}}</span></i-row>
+                                <i-row class="number">{{chart.activity.total}}</i-row>
+                                <i-row class="item-name">活动数</i-row>
                             </i-col>
                         </i-row>
                         <i-form :model="orgInfo" :rules="ruleForBasic" ref="form">
@@ -99,7 +105,7 @@
                                     <br/>
                                     <i-page show-sizer show-total :total="pager.member.total" @on-change="getMemberTable($event, null)" @on-page-size-change="getMemberTable(null, $event)" />
                                 </i-card>
-                                <i-card dis-hover style="margin-top:16px;">
+                                <i-card v-if="!orgInfo.Type" dis-hover style="margin-top:16px;">
                                     <i-row type="flex" justify="space-between" align="middle" slot="title">
                                         <i-col>
                                             <i-row type="flex" align="middle" :gutter="16">
@@ -205,7 +211,6 @@
 import memberForm from "./memberForm"
 import subDeptForm from "./subDeptForm"
 const app = require("@/config");
-const echarts = require("echarts");
 const tableCol = require("./tableCol");
 const md5 = require("md5");
 let _ = require("lodash");
@@ -241,8 +246,11 @@ export default {
                 }
                 this.getOrgDetail();
                 this.getMemberTable();
-                this.getOptTable();
+                if (n.isParent) {
+                    this.getDeptTable();
+                }
                 this.getActivityTable();
+                this.getOptTable();
                 this.select = true;
         },
         saveOrgDetail () {
@@ -269,20 +277,9 @@ export default {
                     this.orgInfo = msg.data;
                     this.teachers = msg.teachers;
                     this.users = msg.users;
-                    msg.charts.departType.forEach(element => {
-                        element.name = element.name ? element.name : "未分类";
-                    });
-                    this.depart.series.data = msg.charts.departType;
-                    msg.charts.userType.forEach(element => {
-                        element.name = element.name ? element.name : "未填写";
-                    });
-                    this.member.series.data = msg.charts.userType;
-                    let ele = document.getElementById("depart");
-                    let instance = echarts.init(ele);
-                    instance.setOption(this.depart);
-                    let ele3 = document.getElementById("member");
-                    let instance3 = echarts.init(ele3);
-                    instance3.setOption(this.member);
+
+                    this.chart.organization = msg.charts.allChildren;
+                    this.chart.member = msg.charts.allMember;
                     // 弥补接口错误
                     this.orgInfo.HaveLeagueBranch = this.orgInfo.HaveLeagueBranch === "true";
                     this.orgInfo.HaveCPCBranch = this.orgInfo.HaveCPCBranch === "true";
@@ -307,14 +304,16 @@ export default {
                 this.tableLoading = false;
             });
         },
-        getDeptTable (page, pageSize) {
+        getDeptTable (reflashTree, page, pageSize) {
             if (this.orgInfo.Type !== 0) return;
             this.treeLoading = true;
             this.tableLoading = true;
             axios.post("/api/security/GetDepartsByDepartId", {id: this.orgInfo.ID}, msg => {
                 this.tableData.subDept = msg.data.children || [];
-                this.subDept = [msg.data];
-                this.$set(this.subDept[0], 'expand', true);
+                if (reflashTree) {
+                    this.subDeptTree = [msg.data];
+                    this.$set(this.subDeptTree[0], 'expand', true);
+                }
                 this.treeLoading = false;
                 this.searchSubDep = this.tableData.subDept;
                 this.tableLoading = false;
@@ -338,11 +337,7 @@ export default {
                 this.tableData.activity = msg.data;
                 this.pager.activity.total = msg.totalRow;
                 this.tableLoading = false;
-                this.guage.series.data[0].value = msg.charts.departCount;
-                this.guage.series.max = msg.charts.total;
-                let ele2 = document.getElementById("guage");
-                let instance2 = echarts.init(ele2);
-                instance2.setOption(this.guage);
+                this.chart.activity = msg.charts;
             });
         },
         addSubDepart () {
@@ -418,8 +413,8 @@ export default {
             });
         },
         modifySubDepart (row) {
-            this.getDeptTable();
-            window.open("/manage/org/detail?id=" + row.id);
+            if (row.type) window.open("/manage/org/affiliated?id=" + row.id);
+            else window.open("/manage/org/detail?id=" + row.id);
         },
         checkWorkflow (instanceId, stepId) {
             window.open(`/manage/org/activityform?instanceId=${instanceId}&stepId=${stepId}&detail=true`);
@@ -507,20 +502,8 @@ export default {
                 this.teachers = msg.teachers;
                 this.users = msg.users;
 
-                msg.charts.departType.forEach(element => {
-                    element.name = element.name ? element.name : "未分类";
-                });
-                this.depart.series.data = msg.charts.departType;
-                msg.charts.userType.forEach(element => {
-                    element.name = element.name ? element.name : "未填写";
-                });
-                this.member.series.data = msg.charts.userType;
-                let ele = document.getElementById("depart");
-                let instance = echarts.init(ele);
-                instance.setOption(this.depart);
-                let ele3 = document.getElementById("member");
-                let instance3 = echarts.init(ele3);
-                instance3.setOption(this.member);
+                this.chart.organization = msg.charts.allChildren;
+                this.chart.member = msg.charts.allMember;
                 // 弥补接口错误
                 this.orgInfo.HaveLeagueBranch = this.orgInfo.HaveLeagueBranch === "true";
                 this.orgInfo.HaveCPCBranch = this.orgInfo.HaveCPCBranch === "true";
@@ -530,7 +513,7 @@ export default {
                 this.logs = msg.changeLogs.data;
                 // 获取其他Tab页信息
                 this.getMemberTable();
-                this.getDeptTable();
+                this.getDeptTable(true);
                 this.getOptTable();
                 this.getActivityTable();
             }
@@ -551,9 +534,10 @@ export default {
             logs: [],
             keyword: "",
             teachers: [],
-            subDept: [
+            subDeptTree: [
                 {expand: true}
             ],
+            subdept: {},
             users: 0,
             tabSelect: "",
             isSaving: false,
@@ -568,98 +552,6 @@ export default {
             recordData: {
                 user: {},
                 changeLogs: []
-            },
-            depart: {
-               title: {
-                    text: '社团类型',
-                    left: '50%',
-                    top: '80%',
-                    textAlign: 'center',
-                    textStyle: {
-                        color: '#515A6E',
-                        fontSize: '20',
-                        fontWeight: 'normal'
-                    }
-                },
-                tooltip: {
-                    trigger: 'item',
-                    formatter: '{b}：{c}人（{d}%）'
-                },
-                series: {
-                    type: 'pie',
-                    radius: '35%',
-                    center: ['50%', '50%'],
-                    data: [],
-                    label: {
-                        position: 'outer',
-                        fontSize: '15'
-                    },
-                    left: 0,
-                    right: '0',
-                    top: 0,
-                    bottom: 0
-                }
-            },
-            guage: {
-                title: {
-                    text: '本学院活动数',
-                    left: '50%',
-                    top: '80%',
-                    textAlign: 'center',
-                    textStyle: {
-                        color: "#515A6E",
-                        fontSize: '20',
-                        fontWeight: 'normal'
-                    }
-                },
-                series: {
-                    type: 'gauge',
-                    radius: '95%',
-                    axisLine: {
-                        lineStyle: {color: [[1, '#63869e']]}
-                    },
-                    itemStyle: {
-                            color: '#91c7ae'
-                    },
-                    data: [{
-                        value: 0
-                    }],
-                    max: 0,
-                    title: {
-                        fontSize: '15'
-                    }
-                }
-            },
-            member: {
-                title: {
-                    text: '社团成员',
-                    left: '50%',
-                    top: '80%',
-                    textAlign: 'center',
-                    textStyle: {
-                        color: "#515A6E",
-                        fontSize: '20',
-                        fontWeight: 'normal'
-                    }
-                },
-                tooltip: {
-                    trigger: 'item',
-                    formatter: '{b}：{c}人（{d}%）'
-                },
-                series: {
-                    type: 'pie',
-                    radius: '35%',
-                    center: ['50%', '50%'],
-                    data: [],
-                    label: {
-                        position: 'outer',
-                        fontSize: '15'
-                    },
-                    left: 0,
-                    right: '0',
-                    top: 0,
-                    bottom: 0
-                }
             },
             level: 0,
             orgInfo: {},
@@ -724,6 +616,11 @@ export default {
                     }
                 }
             },
+            chart: {
+                member: {},
+                activity: {},
+                organization: {}
+            },
             callbackFunc: () => {}
         };
     }
@@ -736,7 +633,7 @@ export default {
     color: #fff;
     min-height: fill-available;
     @import "../../../assets/less/orgTree.less";
-  }
+}
 .ivu-form-item .ivu-date-picker{
     width: 100%;
 }
@@ -758,4 +655,41 @@ export default {
 .ivu-poptip-body-content {
     overflow: hidden;
 }
+#chart {
+        margin: 24px 0px;
+        text-align: center;
+        .difference {
+            font-size: 16px;
+            color: #808695;
+            .number {
+                font-size: 16px;
+            }
+        }
+        .item-name {
+            font-size: 20px;
+            color: #17233d;
+        }
+        .number {
+            font-size: 36px;
+            font-weight: bold;
+        }
+        #organization {
+            .number
+            {
+                color: orangered;
+            }
+        }
+        #member {
+            .number
+            {
+                color: orange;
+            }
+        }
+        #activity {
+            .number
+            {
+                color: teal;
+            }
+        }
+    }
 </style>
