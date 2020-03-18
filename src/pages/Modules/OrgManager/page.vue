@@ -31,7 +31,7 @@
             </template>
         </i-row>
         <i-row type="flex" style="padding: 20px 60px;" justify="space-between">
-            <i-col span="10">
+            <i-col span="14">
                 <i-row type="flex">
                     <i-col v-if="message.length >0" style="font-weight: bold;margin-bottom: 20px">您当前有{{message.length}}条待办事项</i-col>
                 </i-row>
@@ -344,7 +344,7 @@ export default {
 }
 </script>
 
-<style lang="less">
+<style lang="less" scoped>
     .ivu-divider, .ivu-divider-vertical {
         margin: 0 8px;
         display: inline-block;
@@ -368,6 +368,7 @@ export default {
         #userInfo {
             margin: 0 24px;
             width: 47%;
+            font-size: 24px;
         }
         .difference {
             font-size: 16px;

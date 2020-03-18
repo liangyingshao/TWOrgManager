@@ -1,5 +1,5 @@
 <template>
-    <i-row>
+    <i-row id="affiliated">
         <i-card :padding="75">
             <i-row>
                 <i-col span="5" class="tree">
@@ -628,6 +628,7 @@ export default {
 </script>
 
 <style lang="less">
+#affiliated{
 .tree {
     background: #808695;
     color: #fff;
@@ -692,4 +693,9 @@ export default {
             }
         }
     }
+    .ivu-divider-vertical {
+        height: 130px;
+    }
+}
+
 </style>
