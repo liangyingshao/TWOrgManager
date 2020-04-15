@@ -52,7 +52,7 @@ export default {
             axios.post("/api/security/GetVerifyCode", params, msg => {
                 this.isloading = false;
                 if (msg.success) {
-                    this.innerValue = msg.Code;
+                    process.env.NODE_ENV !== "production" && (this.innerValue = msg.Code);
                     this.$emit("on-recieve", msg.sceneId);
                     this.timeout = 60;
                     timer = setInterval(() => {
