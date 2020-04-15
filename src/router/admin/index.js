@@ -1,8 +1,13 @@
 module.exports = {
-    OrgManage: {
-        path: "/manage/dashboard",
+    AdminManage: {
+        path: "/manage/admin",
         layout: "admin",
-        component: () => import(/* webpackChunkName: "OrgManager" */"@p/Modules/OrgManager")
+        component: () => import(/* webpackChunkName: "OrgManager" */"@p/Modules/OrgManager/forAdmin")
+    },
+    StuManage: {
+        path: "/manage/student",
+        layout: "admin",
+        component: () => import(/* webpackChunkName: "OrgManager" */"@p/Modules/OrgManager/forStudent")
     },
     OrgDetail: {
         path: "/manage/org/detail",
