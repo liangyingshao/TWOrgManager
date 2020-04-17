@@ -219,7 +219,7 @@
                             <template slot="State" slot-scope="{row}">
                                 {{enumDic[row.State]}}
                             </template>
-                            <template slot="Action" slot-scope="{row}">
+                            <template slot="Action" slot-scope="{row}" v-if="row.State === 3">
                                 <i-button @click="acceptApplication(row.ID)">同意</i-button>
                                 <i-button @click="rejectApplication(row.ID)">拒绝</i-button>
                             </template>
@@ -461,7 +461,14 @@ export default {
             })
         },
         acceptApplication (appId) {
-            axios.post("/api/security/AcceptApplicate", {appId}, msg => {});
+            axios.post("/api/security/AcceptApplicate", {appId}, msg => {
+                if (msg.success) {
+                    this.$Message.success("接受成功");
+                } else {
+                    this.$Message.warning(msg.msg);
+                }
+                this.getApplicateTable();
+            });
         },
         delMember (row) {
             this.$Modal.confirm({
@@ -509,7 +516,14 @@ export default {
             });
         },
         rejectApplication (appId) {
-            axios.post("/api/security/DenyApplicate", {appId}, msg => {});
+            axios.post("/api/security/DenyApplicate", {appId}, msg => {
+                if (msg.success) {
+                    this.$Message.success("拒绝成功");
+                } else {
+                    this.$Message.warning(msg.msg);
+                }
+                this.getApplicateTable();
+            });
         },
         modifyMember (row) {
             axios.post("/api/security/GetUserById", {id: row.ID, departId: this.orgInfo.ID}, msg => {

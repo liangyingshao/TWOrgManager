@@ -43,7 +43,7 @@
                 <i-tabs>
                     <i-tab-pane class="browse-window" label="查找社团" name="name1" style="height: 600px">
                         <i-row style="margin-bottom: 16px">
-                            <i-input search></i-input>
+                            <i-input search @on-search="searchOrg"></i-input>
                         </i-row>
                         <i-row :gutter="16">
                             <i-col span="6" v-for="depart in allDeparts" :key="depart.ID" style="margin-bottom: 16px">
@@ -52,6 +52,7 @@
                                 </i-card>
                             </i-col>
                         </i-row>
+                        <i-spin fix size="large" v-if="loadingOrg" />
                     </i-tab-pane>
                     <i-tab-pane label="查找活动" name="name2">这里是各种活动</i-tab-pane>
                 </i-tabs>
@@ -65,7 +66,7 @@
                                 <ListItem v-for="org in orgHistory" :key="org.ID">
                                     <ListItemMeta :title="org.Name" :description="enumDic[org.app.State]" />
                                     <template slot="action">
-                                        <li>
+                                        <li v-if="org.app.State === 3">
                                             <i-button type="text" @click="withdrawApplication (org.app.ID)">撤销申请</i-button>
                                         </li>
                                         <li>
@@ -73,6 +74,7 @@
                                         </li>
                                     </template>
                                 </ListItem>
+                                <i-spin fix v-if="loadingOrg" />
                             </List>
                         </template>
                     </i-panel>
@@ -89,28 +91,24 @@
 <script>
 import axios from 'axios';
 let app = require("@/config");
-let pic = require("@/assets/icon.png");
 export default {
     data () {
         return {
             app,
-            level: -1,
-            pic: pic,
-            messageNum: 0,
-            message: [],
             time: "早上",
             userInfo: app.userInfo,
             dashBoard: {},
             allDeparts: [],
+            allDepartsBK: [],
             myOrg: [],
             orgHistory: [],
             enumDic: {
-                1: "找不到该社团",
-                2: "超过最大可加入社团的上限",
-                3: "您是管理员，不能申请加入社团",
-                4: "您已经申请过这个社团了",
-                5: "申请成功"
-            }
+                0: "已通过",
+                1: "被拒绝",
+                2: "自行撤回",
+                3: "申请中"
+            },
+            loadingOrg: true
         };
     },
     mounted () {
@@ -121,7 +119,6 @@ export default {
         this.getDashBoard();
         this.getAllOrgs();
         this.judgeTime();
-        this.getPending();
     },
     methods: {
         getDashBoard () {
@@ -139,15 +136,11 @@ export default {
             else if (s2 < 18) this.time = "下午";
             else if (s2 < 24) this.time = "晚上";
         },
-        getPending () {
-            axios.post("/api/workflow/Pending", {}, msg => {
-                this.messageNum = msg.totalRow;
-                this.message = msg.data;
-            })
-        },
         getAllOrgs () {
+            this.loadingOrg = true;
             axios.post("/api/security/GetAllDeparts", {}, msg => {
-                this.allDeparts = msg.data;
+                this.allDepartsBK = msg.data;
+                this.allDeparts = this.allDepartsBK;
                 this.orgHistory = this.allDeparts.filter(e => e.app);
                 // .map(e => {
                 //     e.State = e.app.State;
@@ -155,6 +148,7 @@ export default {
                 //     delete e.app;
                 //     return e;
                 // });
+                this.loadingOrg = false;
             });
         },
         showOrgs () {
@@ -162,11 +156,25 @@ export default {
         },
         ApplicateOrg (departId) {
             axios.post("/api/security/ApplicateDepart", {departId}, msg => {
-                this.allDeparts = msg.data;
+                if (msg.success) {
+                    this.$Notice.success({title: msg.msg});
+                } else {
+                    this.$Notice.error({title: "申请失败", desc: msg.msg});
+                }
             });
+            this.getAllOrgs();
         },
         withdrawApplication (appId) {
-            axios.post("/api/security/WithDraw", {appId}, msg => {});
+            axios.post("/api/security/WithDraw", {appId}, msg => {
+                if (msg.success) {
+                    this.$Notice.success({title: "撤回成功"});
+                } else {
+                    this.$Notice.error({title: "撤回失败", desc: msg.msg});
+                }
+            });
+        },
+        searchOrg (val) {
+            this.allDeparts = this.allDepartsBK.filter(e => { return e.Name.indexOf(val) > -1 });
         }
     }
 }
