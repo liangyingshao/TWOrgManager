@@ -1,4 +1,9 @@
 module.exports = {
+    OrgManage: {
+        path: "/manage/switch",
+        layout: "admin",
+        component: () => import(/* webpackChunkName: "OrgManager" */"@p/Modules/OrgManager/OrgManager")
+    },
     AdminManage: {
         path: "/manage/admin",
         layout: "admin",

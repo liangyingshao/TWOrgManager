@@ -15,23 +15,24 @@
             <i-col span="8">
                 <i-row type="flex" justify="space-around">
                     <i-col span="11" >
-                        <i-card style="height: 140px">
-                            <i-row v-if="myOrg[0]">
-                                社团社团社团
+                        <i-card>
+                            <i-row style="height: 108px" type="flex" justify="center" align="middle" v-if="myDeparts[0]">
+                                {{myDeparts[0].Name}}
                             </i-row>
-                            <i-row type="flex" justify="center" align="middle" v-else @click="showOrgs">
+                            <i-row style="height: 108px" type="flex" justify="center" align="middle" v-else @click="showOrgs">
                                 <Icon type="md-add-circle" :size="40"/>
-                                <p>参加社团</p>
+                                <div>请在下方加入社团</div>
                             </i-row>
                         </i-card>
                     </i-col>
                     <i-col span="11">
-                        <i-card style="height: 140px">
-                            <i-row v-if="myOrg[1]">
-                                社团社团社团
+                        <i-card>
+                            <i-row style="height: 108px" type="flex" justify="center" align="middle" v-if="myDeparts[1]">
+                                {{myDeparts[1].Name}}
                             </i-row>
-                            <i-row type="flex" justify="center" align="middle" v-else>
-                                <Icon type="md-add-circle" />
+                            <i-row style="height: 108px" type="flex" justify="center" align="middle" v-else @click="showOrgs">
+                                <Icon type="md-add-circle" :size="40"/>
+                                <div>请在下方加入社团</div>
                             </i-row>
                         </i-card>
                     </i-col>
@@ -69,9 +70,9 @@
                                         <li v-if="org.app.State === 3">
                                             <i-button type="text" @click="withdrawApplication (org.app.ID)">撤销申请</i-button>
                                         </li>
-                                        <li>
+                                        <!--li>
                                             <i-button type="text">更多</i-button>
-                                        </li>
+                                        </li-->
                                     </template>
                                 </ListItem>
                                 <i-spin fix v-if="loadingOrg" />
@@ -90,17 +91,16 @@
 
 <script>
 import axios from 'axios';
-let app = require("@/config");
+const app = require("@/config");
 export default {
     data () {
         return {
             app,
             time: "早上",
             userInfo: app.userInfo,
-            dashBoard: {},
+            myDeparts: [],
             allDeparts: [],
             allDepartsBK: [],
-            myOrg: [],
             orgHistory: [],
             enumDic: {
                 0: "已通过",
@@ -112,9 +112,6 @@ export default {
         };
     },
     mounted () {
-        if (app.checkPermission("Organization.DepartAdminUser") ||
-            app.checkPermission("Organization.UnitAdminUser") ||
-            app.checkPermission("Organization.TwAdminUser")) this.$router.push({name: "AdminManage"});
         app.title = "社团管理";
         this.getDashBoard();
         this.getAllOrgs();
@@ -123,7 +120,7 @@ export default {
     methods: {
         getDashBoard () {
             axios.post("/api/org/StudentDashboard", {}, msg => {
-                this.dashBoard = msg.departs;
+                this.myDeparts = msg.departs;
             });
         },
         judgeTime () {
