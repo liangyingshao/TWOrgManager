@@ -132,6 +132,24 @@ let tableCol = {
             title: '记录时间',
             key: 'CreatedOn'
         }
+    ],
+    applicate: [
+        {
+            title: '姓名',
+            key: 'RealName'
+        },
+        {
+            title: '申请时间',
+            key: 'CreateTime'
+        },
+        {
+            title: '申请状态',
+            slot: 'State'
+        },
+        {
+            title: '操作',
+            slot: 'Action'
+        }
     ]
 };
 module.exports = tableCol;

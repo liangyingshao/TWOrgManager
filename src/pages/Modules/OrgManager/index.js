@@ -1,2 +1,2 @@
-import page from './page.vue'
+import page from './forStudent.vue'
 export default page;
