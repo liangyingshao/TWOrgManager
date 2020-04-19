@@ -46,6 +46,9 @@
                         <i-row style="margin-bottom: 16px">
                             <i-input search @on-search="searchOrg"></i-input>
                         </i-row>
+                        <i-alert show-icon v-if="myDeparts.length >= 2">
+                            根据限制，每人最多加入两个社团
+                        </i-alert>
                         <i-row :gutter="16">
                             <i-col span="6" v-for="depart in allDeparts" :key="depart.ID" style="margin-bottom: 16px">
                                 <i-card :title="depart.Name">
@@ -158,11 +161,11 @@ export default {
                 depart.loading = false;
                 if (msg.success) {
                     this.$Notice.success({title: msg.msg});
+                    this.getAllOrgs();
                 } else {
                     this.$Notice.error({title: "申请失败", desc: msg.msg});
                 }
             });
-            this.getAllOrgs();
         },
         withdrawApplication (appId) {
             axios.post("/api/security/WithDraw", {appId}, msg => {
