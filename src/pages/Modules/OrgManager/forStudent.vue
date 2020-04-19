@@ -49,7 +49,7 @@
                         <i-row :gutter="16">
                             <i-col span="6" v-for="depart in allDeparts" :key="depart.ID" style="margin-bottom: 16px">
                                 <i-card :title="depart.Name">
-                                    <i-button @click="ApplicateOrg(depart.ID)">我要报名</i-button>
+                                    <i-button :loading="depart.loading" @click="ApplicateOrg(depart)">我要报名</i-button>
                                 </i-card>
                             </i-col>
                         </i-row>
@@ -136,6 +136,7 @@ export default {
         getAllOrgs () {
             this.loadingOrg = true;
             axios.post("/api/security/GetAllDeparts", {}, msg => {
+                msg.data.map(e => e.loading = false);
                 this.allDepartsBK = msg.data;
                 this.allDeparts = this.allDepartsBK;
                 this.orgHistory = this.allDeparts.filter(e => e.app);
@@ -151,8 +152,10 @@ export default {
         showOrgs () {
 
         },
-        ApplicateOrg (departId) {
-            axios.post("/api/security/ApplicateDepart", {departId}, msg => {
+        ApplicateOrg (depart) {
+            depart.loading = true;
+            axios.post("/api/security/ApplicateDepart", {departId: depart.ID}, msg => {
+                depart.loading = false;
                 if (msg.success) {
                     this.$Notice.success({title: msg.msg});
                 } else {
