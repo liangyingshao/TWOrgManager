@@ -144,6 +144,21 @@
                                     </i-row>
                                 </i-card>
                             </i-tab-pane>
+                            <i-tab-pane label="成员审核" name="checkin">
+                                <i-card dis-hover title="待加入成员">
+                                    <i-table stripe :columns="tableCol.applicate" :data="tableData.applicate" :loading="tableLoading">
+                                        <template slot="State" slot-scope="{row}">
+                                            {{enumDic[row.State]}}
+                                        </template>
+                                        <template slot="Action" slot-scope="{row}" v-if="row.State === 3">
+                                            <i-button @click="acceptApplication(row.ID)">同意</i-button>
+                                            <i-button @click="rejectApplication(row.ID)">拒绝</i-button>
+                                        </template>
+                                    </i-table>
+                                    <br/>
+                                    <i-page show-sizer show-total :total="pager.applicate.total" @on-change="getApplicateTable($event, null)" @on-page-size-change="getApplicateTable(null, $event)" />
+                                </i-card>
+                            </i-tab-pane>
                             <i-tab-pane label="社团活动" name="activity">
                                 <i-card dis-hover>
                                     <i-row type="flex" justify="space-between" align="middle" slot="title">
@@ -251,6 +266,7 @@ export default {
                 }
                 this.getActivityTable();
                 this.getOptTable();
+                this.getApplicateTable();
                 this.select = true;
         },
         saveOrgDetail () {
@@ -304,6 +320,16 @@ export default {
                 this.tableLoading = false;
             });
         },
+        getApplicateTable (page, pageSize) {
+            this.tableLoading = true;
+            this.pager.applicate.page = page || this.pager.applicate.page;
+            this.pager.applicate.pageSize = pageSize || this.pager.applicate.pageSize;
+            axios.post("/api/security/GetApplicationsByDeparts", {departId: this.orgInfo.ID, page: this.pager.applicate.page, pageSize: this.pager.applicate.pageSize}, msg => {
+                this.tableData.applicate = msg.data;
+                this.pager.applicate.total = msg.totalRow;
+                this.tableLoading = false;
+            });
+        },
         getDeptTable (reflashTree, page, pageSize) {
             if (this.orgInfo.Type !== 0) return;
             this.treeLoading = true;
@@ -346,6 +372,16 @@ export default {
             this.component.title = "新建部门";
             this.callbackFunc = this.modifySubDepart;
             this.modalShow = true;
+        },
+        acceptApplication (appId) {
+            axios.post("/api/security/AcceptApplicate", {appId}, msg => {
+                if (msg.success) {
+                    this.$Message.success("接受成功");
+                } else {
+                    this.$Message.warning(msg.msg);
+                }
+                this.getApplicateTable();
+            });
         },
         addMember (who, position, departId) {
             this.component.name = who + "-form";
@@ -410,6 +446,16 @@ export default {
                 this.component.title = "修改成员"
                 this.modalShow = true;
                 this.callbackFunc = this.getMemberTable;
+            });
+        },
+        rejectApplication (appId) {
+            axios.post("/api/security/DenyApplicate", {appId}, msg => {
+                if (msg.success) {
+                    this.$Message.success("拒绝成功");
+                } else {
+                    this.$Message.warning(msg.msg);
+                }
+                this.getApplicateTable();
             });
         },
         modifySubDepart (row) {
@@ -534,6 +580,12 @@ export default {
             logs: [],
             keyword: "",
             teachers: [],
+            enumDic: {
+                0: "已通过",
+                1: "被拒绝",
+                2: "自行撤回",
+                3: "申请中"
+            },
             subDeptTree: [
                 {expand: true}
             ],
@@ -595,6 +647,11 @@ export default {
                     pageSize: 10
                 },
                 operation: {
+                    total: 0,
+                    page: 1,
+                    pageSize: 10
+                },
+                applicate: {
                     total: 0,
                     page: 1,
                     pageSize: 10

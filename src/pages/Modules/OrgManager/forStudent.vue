@@ -16,10 +16,10 @@
                 <i-row type="flex" justify="space-around">
                     <i-col span="11" >
                         <i-card>
-                            <i-row style="height: 108px" type="flex" justify="center" align="middle" v-if="myDeparts[0]">
+                            <i-row style="height: 108px; font-size: 28px" type="flex" justify="center" align="middle" v-if="myDeparts[0]">
                                 {{myDeparts[0].Name}}
                             </i-row>
-                            <i-row style="height: 108px" type="flex" justify="center" align="middle" v-else @click="showOrgs">
+                            <i-row style="height: 108px;" type="flex" justify="center" align="middle" v-else @click="showOrgs">
                                 <Icon type="md-add-circle" :size="40"/>
                                 <div>请在下方加入社团</div>
                             </i-row>
@@ -27,7 +27,7 @@
                     </i-col>
                     <i-col span="11">
                         <i-card>
-                            <i-row style="height: 108px" type="flex" justify="center" align="middle" v-if="myDeparts[1]">
+                            <i-row style="height: 108px; font-size: 28px" type="flex" justify="center" align="middle" v-if="myDeparts[1]">
                                 {{myDeparts[1].Name}}
                             </i-row>
                             <i-row style="height: 108px" type="flex" justify="center" align="middle" v-else @click="showOrgs">
