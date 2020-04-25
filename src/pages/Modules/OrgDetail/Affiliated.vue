@@ -1,5 +1,5 @@
 <template>
-    <i-row>
+    <i-row id="affiliated">
         <i-card :padding="75">
             <i-row>
                 <i-col span="5" class="tree">
@@ -14,17 +14,23 @@
                             <i-button @click="modifyBasicInfo" type="text">修改基本信息</i-button>
                             <i-button @click="showLog = !showLog" type="text" style="float:right; padding-top: 12px;">查看修改记录</i-button>
                         </i-row>
-                        <i-row>
-                            <i-col span="6">
-                                <div id="depart" v-show="depart.series.data.length" style="width:320px;height:200px"/>
-                                <div v-show="!depart.series.data.length" style="width:320px;height:200px">这里来张图？</div>
+                        <i-row type="flex" justify="space-between" id="chart" v-if="!orgInfo.Type">
+                            <i-col span="8" id="organization">
+                                <i-row class="difference">较去年<span class="number">+{{chart.organization.allChildrenIncrease}}</span></i-row>
+                                <i-row class="number">{{chart.organization.allChildrenCount}}</i-row>
+                                <i-row class="item-name">社团数</i-row>
                             </i-col>
-                            <i-col span="6" offset="2">
-                                <div id="guage" style="width:320px;height:200px"/>
+                            <i-divider type="vertical" />
+                            <i-col span="7" id="member">
+                                <i-row class="difference">较去年<span class="number">+{{chart.member.allMemberIncrease}}</span></i-row>
+                                <i-row class="number">{{chart.member.allMemberCount}}</i-row>
+                                <i-row class="item-name">成员数</i-row>
                             </i-col>
-                            <i-col span="6" offset="2">
-                                <div id="member" v-show="member.series.data.length" style="width:320px;height:200px"/>
-                                <div v-show="!member.series.data.length" style="width:320px;height:200px">这里来张图？</div>
+                            <i-divider type="vertical" />
+                            <i-col span="8" id="activity">
+                                <i-row class="difference">较去年<span class="number">+{{chart.activity.increase}}</span></i-row>
+                                <i-row class="number">{{chart.activity.total}}</i-row>
+                                <i-row class="item-name">活动数</i-row>
                             </i-col>
                         </i-row>
                         <i-form :model="orgInfo" :rules="ruleForBasic" ref="form">
@@ -99,7 +105,7 @@
                                     <br/>
                                     <i-page show-sizer show-total :total="pager.member.total" @on-change="getMemberTable($event, null)" @on-page-size-change="getMemberTable(null, $event)" />
                                 </i-card>
-                                <i-card dis-hover style="margin-top:16px;">
+                                <i-card v-if="!orgInfo.Type" dis-hover style="margin-top:16px;">
                                     <i-row type="flex" justify="space-between" align="middle" slot="title">
                                         <i-col>
                                             <i-row type="flex" align="middle" :gutter="16">
@@ -136,6 +142,21 @@
                                         <br/>
                                         <i-page show-total :total="tableData.subDept.length" :page-size="10000"/>
                                     </i-row>
+                                </i-card>
+                            </i-tab-pane>
+                            <i-tab-pane label="成员审核" name="checkin">
+                                <i-card dis-hover title="待加入成员">
+                                    <i-table stripe :columns="tableCol.applicate" :data="tableData.applicate" :loading="tableLoading">
+                                        <template slot="State" slot-scope="{row}">
+                                            {{enumDic[row.State]}}
+                                        </template>
+                                        <template slot="Action" slot-scope="{row}" v-if="row.State === 3">
+                                            <i-button @click="acceptApplication(row.ID)">同意</i-button>
+                                            <i-button @click="rejectApplication(row.ID)">拒绝</i-button>
+                                        </template>
+                                    </i-table>
+                                    <br/>
+                                    <i-page show-sizer show-total :total="pager.applicate.total" @on-change="getApplicateTable($event, null)" @on-page-size-change="getApplicateTable(null, $event)" />
                                 </i-card>
                             </i-tab-pane>
                             <i-tab-pane label="社团活动" name="activity">
@@ -205,7 +226,6 @@
 import memberForm from "./memberForm"
 import subDeptForm from "./subDeptForm"
 const app = require("@/config");
-const echarts = require("echarts");
 const tableCol = require("./tableCol");
 const md5 = require("md5");
 let _ = require("lodash");
@@ -246,6 +266,7 @@ export default {
                 }
                 this.getActivityTable();
                 this.getOptTable();
+                this.getApplicateTable();
                 this.select = true;
         },
         saveOrgDetail () {
@@ -272,20 +293,9 @@ export default {
                     this.orgInfo = msg.data;
                     this.teachers = msg.teachers;
                     this.users = msg.users;
-                    msg.charts.departType.forEach(element => {
-                        element.name = element.name ? element.name : "未分类";
-                    });
-                    this.depart.series.data = msg.charts.departType;
-                    msg.charts.userType.forEach(element => {
-                        element.name = element.name ? element.name : "未填写";
-                    });
-                    this.member.series.data = msg.charts.userType;
-                    let ele = document.getElementById("depart");
-                    let instance = echarts.init(ele);
-                    instance.setOption(this.depart);
-                    let ele3 = document.getElementById("member");
-                    let instance3 = echarts.init(ele3);
-                    instance3.setOption(this.member);
+
+                    this.chart.organization = msg.charts.allChildren;
+                    this.chart.member = msg.charts.allMember;
                     // 弥补接口错误
                     this.orgInfo.HaveLeagueBranch = this.orgInfo.HaveLeagueBranch === "true";
                     this.orgInfo.HaveCPCBranch = this.orgInfo.HaveCPCBranch === "true";
@@ -307,6 +317,16 @@ export default {
             axios.post("/api/security/GetUsersByDepartId", {departId: this.orgInfo.ID, name, page: this.pager.member.page, pageSize: this.pager.member.pageSize}, msg => {
                 this.tableData.member = msg.data;
                 this.pager.member.total = msg.totalRow;
+                this.tableLoading = false;
+            });
+        },
+        getApplicateTable (page, pageSize) {
+            this.tableLoading = true;
+            this.pager.applicate.page = page || this.pager.applicate.page;
+            this.pager.applicate.pageSize = pageSize || this.pager.applicate.pageSize;
+            axios.post("/api/security/GetApplicationsByDeparts", {departId: this.orgInfo.ID, page: this.pager.applicate.page, pageSize: this.pager.applicate.pageSize}, msg => {
+                this.tableData.applicate = msg.data;
+                this.pager.applicate.total = msg.totalRow;
                 this.tableLoading = false;
             });
         },
@@ -343,11 +363,7 @@ export default {
                 this.tableData.activity = msg.data;
                 this.pager.activity.total = msg.totalRow;
                 this.tableLoading = false;
-                this.guage.series.data[0].value = msg.charts.departCount;
-                this.guage.series.max = (parseInt(msg.charts.total / 10) + 1 * 10);
-                let ele2 = document.getElementById("guage");
-                let instance2 = echarts.init(ele2);
-                instance2.setOption(this.guage);
+                this.chart.activity = msg.charts;
             });
         },
         addSubDepart () {
@@ -356,6 +372,16 @@ export default {
             this.component.title = "新建部门";
             this.callbackFunc = this.modifySubDepart;
             this.modalShow = true;
+        },
+        acceptApplication (appId) {
+            axios.post("/api/security/AcceptApplicate", {appId}, msg => {
+                if (msg.success) {
+                    this.$Message.success("接受成功");
+                } else {
+                    this.$Message.warning(msg.msg);
+                }
+                this.getApplicateTable();
+            });
         },
         addMember (who, position, departId) {
             this.component.name = who + "-form";
@@ -420,6 +446,16 @@ export default {
                 this.component.title = "修改成员"
                 this.modalShow = true;
                 this.callbackFunc = this.getMemberTable;
+            });
+        },
+        rejectApplication (appId) {
+            axios.post("/api/security/DenyApplicate", {appId}, msg => {
+                if (msg.success) {
+                    this.$Message.success("拒绝成功");
+                } else {
+                    this.$Message.warning(msg.msg);
+                }
+                this.getApplicateTable();
             });
         },
         modifySubDepart (row) {
@@ -512,20 +548,8 @@ export default {
                 this.teachers = msg.teachers;
                 this.users = msg.users;
 
-                msg.charts.departType.forEach(element => {
-                    element.name = element.name ? element.name : "未分类";
-                });
-                this.depart.series.data = msg.charts.departType;
-                msg.charts.userType.forEach(element => {
-                    element.name = element.name ? element.name : "未填写";
-                });
-                this.member.series.data = msg.charts.userType;
-                let ele = document.getElementById("depart");
-                let instance = echarts.init(ele);
-                instance.setOption(this.depart);
-                let ele3 = document.getElementById("member");
-                let instance3 = echarts.init(ele3);
-                instance3.setOption(this.member);
+                this.chart.organization = msg.charts.allChildren;
+                this.chart.member = msg.charts.allMember;
                 // 弥补接口错误
                 this.orgInfo.HaveLeagueBranch = this.orgInfo.HaveLeagueBranch === "true";
                 this.orgInfo.HaveCPCBranch = this.orgInfo.HaveCPCBranch === "true";
@@ -556,6 +580,12 @@ export default {
             logs: [],
             keyword: "",
             teachers: [],
+            enumDic: {
+                0: "已通过",
+                1: "被拒绝",
+                2: "自行撤回",
+                3: "申请中"
+            },
             subDeptTree: [
                 {expand: true}
             ],
@@ -574,103 +604,6 @@ export default {
             recordData: {
                 user: {},
                 changeLogs: []
-            },
-            depart: {
-               title: {
-                    text: '社团类型',
-                    left: '50%',
-                    top: '80%',
-                    textAlign: 'center',
-                    textStyle: {
-                        color: '#515A6E',
-                        fontSize: '20',
-                        fontWeight: 'normal'
-                    }
-                },
-                tooltip: {
-                    trigger: 'item',
-                    formatter: '{b}：{c}人（{d}%）'
-                },
-                series: {
-                    type: 'pie',
-                    radius: '35%',
-                    center: ['50%', '50%'],
-                    data: [],
-                    label: {
-                        position: 'outer',
-                        fontSize: '15'
-                    },
-                    left: 0,
-                    right: '0',
-                    top: 0,
-                    bottom: 0
-                }
-            },
-            guage: {
-                title: {
-                    text: '本学院活动数',
-                    left: '50%',
-                    top: '80%',
-                    textAlign: 'center',
-                    textStyle: {
-                        color: "#515A6E",
-                        fontSize: '20',
-                        fontWeight: 'normal'
-                    }
-                },
-                series: {
-                    type: 'gauge',
-                    radius: '95%',
-                    axisLine: {
-                        lineStyle: {color: [[1, '#63869e']]}
-                    },
-                    itemStyle: {
-                        color: '#91c7ae'
-                    },
-                    data: [{
-                        value: 0
-                    }],
-                    max: 0,
-                    title: {
-                        fontSize: '15'
-                    },
-                    axisLabel: {
-                        formatter: function (v) {
-                            return v.toFixed(0);
-                        }
-                    }
-                }
-            },
-            member: {
-                title: {
-                    text: '社团成员',
-                    left: '50%',
-                    top: '80%',
-                    textAlign: 'center',
-                    textStyle: {
-                        color: "#515A6E",
-                        fontSize: '20',
-                        fontWeight: 'normal'
-                    }
-                },
-                tooltip: {
-                    trigger: 'item',
-                    formatter: '{b}：{c}人（{d}%）'
-                },
-                series: {
-                    type: 'pie',
-                    radius: '35%',
-                    center: ['50%', '50%'],
-                    data: [],
-                    label: {
-                        position: 'outer',
-                        fontSize: '15'
-                    },
-                    left: 0,
-                    right: '0',
-                    top: 0,
-                    bottom: 0
-                }
             },
             level: 0,
             orgInfo: {},
@@ -717,6 +650,11 @@ export default {
                     total: 0,
                     page: 1,
                     pageSize: 10
+                },
+                applicate: {
+                    total: 0,
+                    page: 1,
+                    pageSize: 10
                 }
             },
             modalShow: false,
@@ -735,6 +673,11 @@ export default {
                     }
                 }
             },
+            chart: {
+                member: {},
+                activity: {},
+                organization: {}
+            },
             callbackFunc: () => {}
         };
     }
@@ -742,12 +685,13 @@ export default {
 </script>
 
 <style lang="less">
+#affiliated{
 .tree {
     background: #808695;
     color: #fff;
     min-height: fill-available;
     @import "../../../assets/less/orgTree.less";
-  }
+}
 .ivu-form-item .ivu-date-picker{
     width: 100%;
 }
@@ -769,4 +713,46 @@ export default {
 .ivu-poptip-body-content {
     overflow: hidden;
 }
+#chart {
+        margin: 24px 0px;
+        text-align: center;
+        .difference {
+            font-size: 16px;
+            color: #808695;
+            .number {
+                font-size: 16px;
+            }
+        }
+        .item-name {
+            font-size: 20px;
+            color: #17233d;
+        }
+        .number {
+            font-size: 36px;
+            font-weight: bold;
+        }
+        #organization {
+            .number
+            {
+                color: orangered;
+            }
+        }
+        #member {
+            .number
+            {
+                color: orange;
+            }
+        }
+        #activity {
+            .number
+            {
+                color: teal;
+            }
+        }
+    }
+    .ivu-divider-vertical {
+        height: 130px;
+    }
+}
+
 </style>

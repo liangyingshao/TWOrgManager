@@ -1,8 +1,18 @@
 module.exports = {
     OrgManage: {
-        path: "/manage/dashboard",
+        path: "/manage/switch",
         layout: "admin",
-        component: () => import(/* webpackChunkName: "OrgManager" */"@p/Modules/OrgManager")
+        component: () => import(/* webpackChunkName: "OrgManager" */"@p/Modules/OrgManager/OrgManager")
+    },
+    AdminManage: {
+        path: "/manage/admin",
+        layout: "admin",
+        component: () => import(/* webpackChunkName: "OrgManager" */"@p/Modules/OrgManager/forAdmin")
+    },
+    StuManage: {
+        path: "/manage/student",
+        layout: "admin",
+        component: () => import(/* webpackChunkName: "OrgManager" */"@p/Modules/OrgManager/forStudent")
     },
     OrgDetail: {
         path: "/manage/org/detail",
@@ -18,7 +28,6 @@ module.exports = {
     Affiliated: {
         path: "/manage/org/affiliated",
         layout: "admin",
-        showAs: "OrgManage",
         component: () => import(/* webpackChunkName: "OrgManager" */"@p/Modules/OrgDetail/Affiliated")
     },
     DepartSwitch: {
