@@ -25,6 +25,11 @@ module.exports = {
         layout: "admin",
         component: () => import(/* webpackChunkName: "OrgManager" */"@p/Modules/ActivityForm")
     },
+    SignUpSituation: {
+        path: "/manage/org/signUpSituation",
+        layout: "admin",
+        component: () => import(/* webpackChunkName: "OrgManager" */"@p/Modules/OrgDetail/signUpSituation")
+    },
     Affiliated: {
         path: "/manage/org/affiliated",
         layout: "admin",
