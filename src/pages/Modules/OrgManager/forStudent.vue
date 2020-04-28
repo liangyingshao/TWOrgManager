@@ -44,21 +44,34 @@
                 <i-tabs>
                     <i-tab-pane class="browse-window" label="查找社团" name="name1" style="height: 600px">
                         <i-row style="margin-bottom: 16px">
-                            <i-input search @on-search="searchOrg"></i-input>
+                            <i-input search @on-search="searchOrg" placeholder="搜索社团名称，按下回车键开始搜索"></i-input>
                         </i-row>
                         <i-alert show-icon v-if="myDeparts.length >= 2">
                             根据限制，每人最多加入两个社团
                         </i-alert>
                         <i-row :gutter="16">
                             <i-col span="6" v-for="depart in allDeparts" :key="depart.ID" style="margin-bottom: 16px">
-                                <i-card :title="depart.Name">
+                                <i-card>
+                                    <template slot="title">
+                                        {{depart.Name}}
+                                        <Icon type="ios-information-circle-outline"  @click="checkOrgDetail(depart.ID)"/>
+                                    </template>
                                     <i-button :loading="depart.loading" @click="ApplicateOrg(depart)">我要报名</i-button>
                                 </i-card>
                             </i-col>
                         </i-row>
                         <i-spin fix size="large" v-if="loadingOrg" />
                     </i-tab-pane>
-                    <i-tab-pane label="查找活动" name="name2">这里是各种活动</i-tab-pane>
+                    <i-tab-pane label="查找活动" name="name2">
+                        <i-card>
+                            <i-table stripe :columns="tableActCol" :data="tableAct">
+                                <template slot="Action" slot-scope="{row}">
+                                    <i-button @click="signUp(row.ID, 0), row.isSign = !row.isSign" v-if="row.isSign">报名</i-button>
+                                    <i-button @click="signUp(row.ID, 99), row.isSign = !row.isSign" v-else>取消</i-button>
+                                </template>
+                            </i-table>
+                        </i-card>
+                    </i-tab-pane>
                 </i-tabs>
             </i-col>
             <i-col span="8" offset="1">
@@ -71,7 +84,7 @@
                                     <ListItemMeta :title="org.Name" :description="enumDic[org.app.State]" />
                                     <template slot="action">
                                         <li v-if="org.app.State === 3">
-                                            <i-button type="text" @click="withdrawApplication (org.app.ID)">撤销申请</i-button>
+                                            <i-button type="text" @click="withdrawApplication (org.app.ID)">撤回申请</i-button>
                                         </li>
                                         <!--li>
                                             <i-button type="text">更多</i-button>
@@ -89,6 +102,10 @@
                 </i-collapse>
             </i-col>
         </i-row>
+        <i-modal v-model="showOrgDetail" :title="orgInfo.Name">
+            <i-row>社团类型：{{orgInfo.DepartType}}</i-row>
+            <i-row>社团描述：{{orgInfo.Description}}</i-row>
+        </i-modal>
     </i-row>
 </template>
 
@@ -111,7 +128,36 @@ export default {
                 2: "自行撤回",
                 3: "申请中"
             },
-            loadingOrg: true
+            loadingOrg: true,
+            showOrgDetail: false,
+            orgInfo: {},
+            tableAct: [],
+            tableActCol: [
+                {
+                    title: '活动名称',
+                    key: 'ActivityName'
+                },
+                {
+                    title: '所属社团',
+                    key: 'DepartName'
+                },
+                {
+                    title: '活动描述',
+                    key: 'Description'
+                },
+                {
+                    title: '活动开始时间',
+                    key: 'StartDate'
+                },
+                {
+                    title: '活动结束时间',
+                    key: 'EndDate'
+                },
+                {
+                    title: '操作',
+                    slot: 'Action'
+                }
+            ]
         };
     },
     mounted () {
@@ -119,12 +165,35 @@ export default {
         this.getDashBoard();
         this.getAllOrgs();
         this.judgeTime();
+        this.getAllAct();
     },
     methods: {
         getDashBoard () {
             axios.post("/api/org/StudentDashboard", {}, msg => {
                 this.myDeparts = msg.departs;
             });
+        },
+        getAllAct () {
+            axios.post("/api/org/GetStartedApplications", {page: 1, pageSize: 10}, msg => {
+                if (msg.success) {
+                    this.tableAct = msg.data;
+                    this.tableAct = this.tableAct.map((item, index) => {
+                        return Object.assign(item, {'isSign': true})
+                    })
+                } else {
+                    this.$Message.warning(msg.msg);
+                }
+            })
+        },
+        signUp (ID, state) {
+            axios.post("/api/org/ChangeSignUpState", {actId: ID, state: state}, msg => {
+                if (msg.success) {
+                    this.$Message.success(msg.msg);
+                    this.isSign = !this.isSign;
+                } else {
+                    this.$Message.warning(msg.msg);
+                }
+            })
         },
         judgeTime () {
             let day2 = new Date();
@@ -160,7 +229,7 @@ export default {
             axios.post("/api/security/ApplicateDepart", {departId: depart.ID}, msg => {
                 depart.loading = false;
                 if (msg.success) {
-                    this.$Notice.success({title: msg.msg});
+                    this.$Notice.info({title: "等待审核", desc: '您的申请已成功提交，正在等待社团管理员审核'});
                     this.getAllOrgs();
                 } else {
                     this.$Notice.error({title: "申请失败", desc: msg.msg});
@@ -171,6 +240,7 @@ export default {
             axios.post("/api/security/WithDraw", {appId}, msg => {
                 if (msg.success) {
                     this.$Notice.success({title: "撤回成功"});
+                    this.getAllOrgs();
                 } else {
                     this.$Notice.error({title: "撤回失败", desc: msg.msg});
                 }
@@ -178,6 +248,17 @@ export default {
         },
         searchOrg (val) {
             this.allDeparts = this.allDepartsBK.filter(e => { return e.Name.indexOf(val) > -1 });
+        },
+        checkOrgDetail (id) {
+            this.orgInfo.Name = "详细信息加载中，请稍候...";
+            this.showOrgDetail = true;
+            axios.post("/api/security/StudentGetOrgDetail", {id}, msg => {
+                if (msg.success) {
+                    this.orgInfo = msg.data;
+                } else {
+                    this.$Message.warning(msg.msg);
+                }
+            })
         }
     }
 }
