@@ -280,7 +280,9 @@
                         <i-row>
                             <i-table stripe :columns="tableCol.activity" :data="tableData.activity" :loading="tableLoading">
                                 <template slot="Action" slot-scope="{row}">
-                                    <i-button @click="checkWorkflow(row.InstanceId, row.StepId)">查看</i-button>
+                                    <i-button @click="checkWorkflow(row.InstanceId, row.StepId, row.ID)">查看</i-button>
+                                    <i-button type="primary" @click="iniateAct(row.ID, 1), row.isdoing = !row.isdoing" v-if="row.isdoing">发起活动</i-button>
+                                    <i-button @click="iniateAct(row.ID, 0), row.isdoing = !row.isdoing" v-else>取消活动</i-button>
                                 </template>
                             </i-table>
                             <br/>
@@ -323,6 +325,19 @@ export default {
             form.submit(this.newDptId || this.orgInfo.ID, this.callbackFunc);
         },
         cancel () {
+        },
+        iniateAct (ID, state, index) {
+            axios.post("/api/org/ChangeActivityState", {actId: ID, state: state}, msg => {
+                if (msg.success) {
+                    if (state === 1) {
+                        this.$Message.success("活动发起成功");
+                    } else if (state === 0) {
+                        this.$Message.success("活动已取消");
+                    }
+                } else {
+                    this.$Message.warning(msg.msg);
+                }
+            })
         },
         saveOrgDetail () {
             this.isSaving = true;
@@ -424,6 +439,9 @@ export default {
             this.pager.activity.pageSize = pageSize || this.pager.activity.pageSize;
             axios.post("/api/org/GetActByDepartId", {departId: this.orgInfo.ID, page: this.pager.activity.page, pageSize: this.pager.activity.pageSize}, msg => {
                 this.tableData.activity = msg.data;
+                this.tableData.activity = this.tableData.activity.map((item, index) => {
+                    return Object.assign(item, {'isdoing': true})
+                })
                 this.pager.activity.total = msg.totalRow;
                 this.tableLoading = false;
             });
@@ -554,8 +572,8 @@ export default {
                 window.open("/manage/org/affiliated?id=" + row.id);
             }
         },
-        checkWorkflow (instanceId, stepId) {
-            window.open(`/manage/org/activityform?instanceId=${instanceId}&stepId=${stepId}&detail=true`);
+        checkWorkflow (instanceId, stepId, actId) {
+            window.open(`/manage/org/signUpSituation?instanceId=${instanceId}&stepId=${stepId}&detail=true&actId=${actId}`);
         },
         setPositon (userId, position) {
             axios.post("/api/security/SetPositionV2", {userId, departId: this.orgInfo.ID, position}, msg => {
@@ -689,6 +707,7 @@ export default {
             tableData: {
                 member: [],
                 subDept: [],
+                activity: [],
                 tutor: [],
                 operation: []
             },

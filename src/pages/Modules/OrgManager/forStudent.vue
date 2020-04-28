@@ -58,7 +58,16 @@
                         </i-row>
                         <i-spin fix size="large" v-if="loadingOrg" />
                     </i-tab-pane>
-                    <i-tab-pane label="查找活动" name="name2">这里是各种活动</i-tab-pane>
+                    <i-tab-pane label="查找活动" name="name2">
+                        <i-card>
+                            <i-table stripe :columns="tableActCol" :data="tableAct">
+                                <template slot="Action" slot-scope="{row}">
+                                    <i-button @click="signUp(row.ID, 0), row.isSign = !row.isSign" v-if="row.isSign">报名</i-button>
+                                    <i-button @click="signUp(row.ID, 99), row.isSign = !row.isSign" v-else>取消</i-button>
+                                </template>
+                            </i-table>
+                        </i-card>
+                    </i-tab-pane>
                 </i-tabs>
             </i-col>
             <i-col span="8" offset="1">
@@ -111,7 +120,34 @@ export default {
                 2: "自行撤回",
                 3: "申请中"
             },
-            loadingOrg: true
+            loadingOrg: true,
+            tableAct: [],
+            tableActCol: [
+                {
+                    title: '活动名称',
+                    key: 'ActivityName'
+                },
+                {
+                    title: '所属社团',
+                    key: 'DepartName'
+                },
+                {
+                    title: '活动描述',
+                    key: 'Description'
+                },
+                {
+                    title: '活动开始时间',
+                    key: 'StartDate'
+                },
+                {
+                    title: '活动结束时间',
+                    key: 'EndDate'
+                },
+                {
+                    title: '操作',
+                    slot: 'Action'
+                }
+            ]
         };
     },
     mounted () {
@@ -119,12 +155,35 @@ export default {
         this.getDashBoard();
         this.getAllOrgs();
         this.judgeTime();
+        this.getAllAct();
     },
     methods: {
         getDashBoard () {
             axios.post("/api/org/StudentDashboard", {}, msg => {
                 this.myDeparts = msg.departs;
             });
+        },
+        getAllAct () {
+            axios.post("/api/org/GetStartedApplications", {page: 1, pageSize: 10}, msg => {
+                if (msg.success) {
+                    this.tableAct = msg.data;
+                    this.tableAct = this.tableAct.map((item, index) => {
+                        return Object.assign(item, {'isSign': true})
+                    })
+                } else {
+                    this.$Message.warning(msg.msg);
+                }
+            })
+        },
+        signUp (ID, state) {
+            axios.post("/api/org/ChangeSignUpState", {actId: ID, state: state}, msg => {
+                if (msg.success) {
+                    this.$Message.success(msg.msg);
+                    this.isSign = !this.isSign;
+                } else {
+                    this.$Message.warning(msg.msg);
+                }
+            })
         },
         judgeTime () {
             let day2 = new Date();
