@@ -44,14 +44,18 @@
                 <i-tabs>
                     <i-tab-pane class="browse-window" label="查找社团" name="name1" style="height: 600px">
                         <i-row style="margin-bottom: 16px">
-                            <i-input search @on-search="searchOrg"></i-input>
+                            <i-input search @on-search="searchOrg" placeholder="搜索社团名称，按下回车键开始搜索"></i-input>
                         </i-row>
                         <i-alert show-icon v-if="myDeparts.length >= 2">
                             根据限制，每人最多加入两个社团
                         </i-alert>
                         <i-row :gutter="16">
                             <i-col span="6" v-for="depart in allDeparts" :key="depart.ID" style="margin-bottom: 16px">
-                                <i-card :title="depart.Name">
+                                <i-card>
+                                    <template slot="title">
+                                        {{depart.Name}}
+                                        <Icon type="ios-information-circle-outline"  @click="checkOrgDetail(depart.ID)"/>
+                                    </template>
                                     <i-button :loading="depart.loading" @click="ApplicateOrg(depart)">我要报名</i-button>
                                 </i-card>
                             </i-col>
@@ -80,7 +84,7 @@
                                     <ListItemMeta :title="org.Name" :description="enumDic[org.app.State]" />
                                     <template slot="action">
                                         <li v-if="org.app.State === 3">
-                                            <i-button type="text" @click="withdrawApplication (org.app.ID)">撤销申请</i-button>
+                                            <i-button type="text" @click="withdrawApplication (org.app.ID)">撤回申请</i-button>
                                         </li>
                                         <!--li>
                                             <i-button type="text">更多</i-button>
@@ -98,6 +102,10 @@
                 </i-collapse>
             </i-col>
         </i-row>
+        <i-modal v-model="showOrgDetail" :title="orgInfo.Name">
+            <i-row>社团类型：{{orgInfo.DepartType}}</i-row>
+            <i-row>社团描述：{{orgInfo.Description}}</i-row>
+        </i-modal>
     </i-row>
 </template>
 
@@ -121,6 +129,8 @@ export default {
                 3: "申请中"
             },
             loadingOrg: true,
+            showOrgDetail: false,
+            orgInfo: {},
             tableAct: [],
             tableActCol: [
                 {
@@ -219,7 +229,7 @@ export default {
             axios.post("/api/security/ApplicateDepart", {departId: depart.ID}, msg => {
                 depart.loading = false;
                 if (msg.success) {
-                    this.$Notice.success({title: msg.msg});
+                    this.$Notice.info({title: "等待审核", desc: '您的申请已成功提交，正在等待社团管理员审核'});
                     this.getAllOrgs();
                 } else {
                     this.$Notice.error({title: "申请失败", desc: msg.msg});
@@ -230,6 +240,7 @@ export default {
             axios.post("/api/security/WithDraw", {appId}, msg => {
                 if (msg.success) {
                     this.$Notice.success({title: "撤回成功"});
+                    this.getAllOrgs();
                 } else {
                     this.$Notice.error({title: "撤回失败", desc: msg.msg});
                 }
@@ -237,6 +248,17 @@ export default {
         },
         searchOrg (val) {
             this.allDeparts = this.allDepartsBK.filter(e => { return e.Name.indexOf(val) > -1 });
+        },
+        checkOrgDetail (id) {
+            this.orgInfo.Name = "详细信息加载中，请稍候...";
+            this.showOrgDetail = true;
+            axios.post("/api/security/StudentGetOrgDetail", {id}, msg => {
+                if (msg.success) {
+                    this.orgInfo = msg.data;
+                } else {
+                    this.$Message.warning(msg.msg);
+                }
+            })
         }
     }
 }
