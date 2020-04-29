@@ -67,7 +67,7 @@
                                         <i-col>
                                             <i-row type="flex" :gutter="16">
                                                 <i-col>
-                                                    <i-input prefix="ios-search" placeholder="搜索成员" v-model="keyword" @keyup.enter.native="getMemberTable()"/>
+                                                    <i-input prefix="ios-search" placeholder="搜索成员" v-model="memberkeyword" @on-enter="getMemberTable()"/>
                                                 </i-col>
                                                 <i-col>
                                                     <i-button type="primary" @click="addMember('member', '成员')">添加成员</i-button>
@@ -115,7 +115,7 @@
                                         <i-col>
                                             <i-row type="flex" :gutter="16">
                                                 <i-col>
-                                                    <i-input prefix="ios-search" placeholder="搜索部门" v-model="keyword" @keyup.enter.native="searchSubDepart()"/>
+                                                    <i-input prefix="ios-search" placeholder="搜索部门" v-model="deptkeyword" @on-enter="searchSubDepart()"/>
                                                 </i-col>
                                                 <i-col>
                                                     <i-button type="primary" @click="addSubDepart">
@@ -311,7 +311,7 @@ export default {
         },
         getMemberTable (page, pageSize) {
             this.tableLoading = true;
-            let name = this.keyword ? this.keyword : undefined;
+            let name = this.memberkeyword ? this.memberkeyword : undefined;
             this.pager.member.page = page || this.pager.member.page;
             this.pager.member.pageSize = pageSize || this.pager.member.pageSize;
             axios.post("/api/security/GetUsersByDepartId", {departId: this.orgInfo.ID, name, page: this.pager.member.page, pageSize: this.pager.member.pageSize}, msg => {
@@ -486,21 +486,27 @@ export default {
             this.visible = false;
         },
         searchSubDepart () {
-           this.tableData.subDept = this.searchSubDep.filter(item => {
-                if (item.name.includes(this.keyword)) {
-                    return item;
-                }
-            })
+            if (!this.deptkeyword) {
+                this.tableData.subDept = this.searchSubDep;
+            } else {
+                this.tableData.subDept = this.searchSubDep.filter(item => {
+                    return item.name.includes(this.deptkeyword) ||
+                        item.children.filter(item => item.name.includes(this.deptkeyword)).length > 0;
+                })
+            }
         },
-        setKeyword: _.debounce(function () {
-                if (this.tabSelect === "member") {
-                    this.getMemberTable();
-                }
+        searchMember: _.debounce(function () {
+            if (this.tabSelect === "member") {
+                this.getMemberTable();
+            }
         }, 500)
     },
     watch: {
-        keyword (v) {
-            this.setKeyword();
+        memberkeyword (v) {
+            this.searchMember();
+        },
+        deptkeyword (v) {
+            this.searchSubDepart();
         },
         "orgInfo.Type" (value, oldValue) {
             if (value === oldValue || oldValue === undefined || this.select) {
@@ -578,7 +584,8 @@ export default {
             select: true,
             filters: [],
             logs: [],
-            keyword: "",
+            memberkeyword: "",
+            deptkeyword: "",
             teachers: [],
             enumDic: {
                 0: "已通过",
