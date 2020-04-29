@@ -66,8 +66,8 @@
                         <i-card>
                             <i-table stripe :columns="tableActCol" :data="tableAct">
                                 <template slot="Action" slot-scope="{row}">
-                                    <i-button @click="signUp(row.ID, 0), row.isSign = !row.isSign" v-if="row.isSign">报名</i-button>
-                                    <i-button @click="signUp(row.ID, 99), row.isSign = !row.isSign" v-else>取消</i-button>
+                                    <i-button @click="signUp(row.ID, 0)" v-if="!row.isSignUp">报名</i-button>
+                                    <i-button @click="signUp(row.ID, 99)" v-else>取消</i-button>
                                 </template>
                             </i-table>
                         </i-card>
@@ -97,7 +97,19 @@
                     </i-panel>
                     <i-panel name="2">
                         活动报名记录
-                        <p slot="content"></p>
+                        <template slot="content">
+                            <List>
+                                <ListItem v-for="act in allSignAct" :key="act.ID">
+                                    <ListItemMeta :title="act.ActivityName"/>
+                                    <template slot="action">
+                                        <li>
+                                            <i-button type="text" @click="signUp(act.ID, 99)">取消活动</i-button>
+                                        </li>
+                                    </template>
+                                </ListItem>
+                                <i-spin fix v-if="loadingAct" />
+                            </List>
+                        </template>
                     </i-panel>
                 </i-collapse>
             </i-col>
@@ -120,6 +132,7 @@ export default {
             userInfo: app.userInfo,
             myDeparts: [],
             allDeparts: [],
+            allSignAct: [],
             allDepartsBK: [],
             orgHistory: [],
             enumDic: {
@@ -129,6 +142,7 @@ export default {
                 3: "申请中"
             },
             loadingOrg: true,
+            loadingAct: true,
             showOrgDetail: false,
             orgInfo: {},
             tableAct: [],
@@ -174,22 +188,22 @@ export default {
             });
         },
         getAllAct () {
+            this.loadingAct = true;
             axios.post("/api/org/GetStartedApplications", {page: 1, pageSize: 10}, msg => {
                 if (msg.success) {
                     this.tableAct = msg.data;
-                    this.tableAct = this.tableAct.map((item, index) => {
-                        return Object.assign(item, {'isSign': true})
-                    })
+                    this.allSignAct = this.tableAct.filter(e => e.isSignUp);
                 } else {
                     this.$Message.warning(msg.msg);
                 }
+                this.loadingAct = false;
             })
         },
         signUp (ID, state) {
             axios.post("/api/org/ChangeSignUpState", {actId: ID, state: state}, msg => {
                 if (msg.success) {
                     this.$Message.success(msg.msg);
-                    this.isSign = !this.isSign;
+                    this.getAllAct();
                 } else {
                     this.$Message.warning(msg.msg);
                 }
