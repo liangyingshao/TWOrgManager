@@ -254,6 +254,10 @@
                             <p v-show="row.SignUpState === 0">已报名</p>
                             <p v-show="row.SignUpState === 99">已取消</p>
                         </template>
+                        <template slot="Action" slot-scope="{row}">
+                            <i-button v-show="row.SignUpState === 0" @click="signUp(row.ActivityId, 99, row.UserId)">踢出</i-button>
+                            <Tag v-show="row.SignUpState === 99" size="large">已取消</Tag>
+                        </template>
                     </i-table>
                 </i-card>
             </div>
@@ -295,6 +299,10 @@ export default {
                 {
                     title: '报名时间',
                     key: 'SignUpOn'
+                },
+                {
+                    title: '操作',
+                    slot: 'Action'
                 }
             ],
             actID: "",
@@ -358,6 +366,16 @@ export default {
         }
     },
     methods: {
+        signUp (ID, state, userID) {
+            axios.post("/api/org/ChangeSignUpState", {actId: ID, state: state, userId: userID}, msg => {
+                if (msg.success) {
+                    this.$Message.success("踢出成功");
+                    this.getSignUps();
+                } else {
+                    this.$Message.warning(msg.msg);
+                }
+            })
+        },
         getFiles () {
             axios.post("/api/cms/GetAttachments", {id: this.instanceId, relateTable: table, usage: usage}, msg => {
                 if (msg.success) {

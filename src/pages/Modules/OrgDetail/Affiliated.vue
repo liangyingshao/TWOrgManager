@@ -179,7 +179,7 @@
                                     <i-row>
                                         <i-table stripe :columns="tableCol.activity" :data="tableData.activity" :loading="tableLoading">
                                             <template slot="Action" slot-scope="{row}">
-                                                <i-button @click="checkWorkflow(row.InstanceId, row.StepId)">查看</i-button>
+                                                <i-button @click="checkWorkflow(row.InstanceId, row.StepId, row.ID)">查看</i-button>
                                             </template>
                                         </i-table>
                                         <br/>
@@ -462,8 +462,8 @@ export default {
             if (row.type) window.open("/manage/org/affiliated?id=" + row.id);
             else window.open("/manage/org/detail?id=" + row.id);
         },
-        checkWorkflow (instanceId, stepId) {
-            window.open(`/manage/org/activityform?instanceId=${instanceId}&stepId=${stepId}&detail=true`);
+        checkWorkflow (instanceId, stepId, actId) {
+            window.open(`/manage/org/signUpSituation?instanceId=${instanceId}&stepId=${stepId}&detail=true&actId=${actId}`);
         },
         setPositon (userId, position) {
             axios.post("/api/security/SetPositionV2", {userId, departId: this.orgInfo.ID, position}, msg => {
