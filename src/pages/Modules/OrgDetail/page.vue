@@ -438,7 +438,7 @@ export default {
             this.tableLoading = true;
             this.pager.activity.page = page || this.pager.activity.page;
             this.pager.activity.pageSize = pageSize || this.pager.activity.pageSize;
-            axios.post("/api/org/GetActByDepartId", {departId: this.orgInfo.ID, page: this.pager.activity.page, pageSize: this.pager.activity.pageSize}, msg => {
+            axios.post("/api/org/GetActByDepartId", {Id: this.orgInfo.ID, page: this.pager.activity.page, pageSize: this.pager.activity.pageSize}, msg => {
                 this.tableData.activity = msg.data;
                 this.pager.activity.total = msg.totalRow;
                 this.tableLoading = false;
