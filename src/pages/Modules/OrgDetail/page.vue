@@ -281,8 +281,8 @@
                             <i-table stripe :columns="tableCol.activity" :data="tableData.activity" :loading="tableLoading">
                                 <template slot="Action" slot-scope="{row}">
                                     <i-button @click="checkWorkflow(row.InstanceId, row.StepId, row.ID)">查看</i-button>
-                                    <i-button type="primary" @click="iniateAct(row.ID, 1), row.isdoing = !row.isdoing" v-if="row.isdoing">发起活动</i-button>
-                                    <i-button @click="iniateAct(row.ID, 0), row.isdoing = !row.isdoing" v-else>取消活动</i-button>
+                                    <i-button type="primary" @click="iniateAct(row.ID, 1)" v-if="row.StartState === 0">发起活动</i-button>
+                                    <i-button @click="iniateAct(row.ID, 0)" v-if="row.StartState === 1">取消活动</i-button>
                                 </template>
                             </i-table>
                             <br/>
@@ -334,6 +334,7 @@ export default {
                     } else if (state === 0) {
                         this.$Message.success("活动已取消");
                     }
+                    this.getActivityTable();
                 } else {
                     this.$Message.warning(msg.msg);
                 }
@@ -437,11 +438,8 @@ export default {
             this.tableLoading = true;
             this.pager.activity.page = page || this.pager.activity.page;
             this.pager.activity.pageSize = pageSize || this.pager.activity.pageSize;
-            axios.post("/api/org/GetActByDepartId", {departId: this.orgInfo.ID, page: this.pager.activity.page, pageSize: this.pager.activity.pageSize}, msg => {
+            axios.post("/api/org/GetActByDepartId", {Id: this.orgInfo.ID, page: this.pager.activity.page, pageSize: this.pager.activity.pageSize}, msg => {
                 this.tableData.activity = msg.data;
-                this.tableData.activity = this.tableData.activity.map((item, index) => {
-                    return Object.assign(item, {'isdoing': true})
-                })
                 this.pager.activity.total = msg.totalRow;
                 this.tableLoading = false;
             });
