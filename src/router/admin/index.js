@@ -65,5 +65,10 @@ module.exports = {
         path: "/manage/wwf/mypending",
         layout: "admin",
         component: () => import(/* webpackChunkName: "WorkflowManager" */"@p/Modules/MyPending")
+    },
+    Index: {
+        path: "/",
+        layout: "empty",
+        component: () => import(/* webpackChunkName: "OrgManager" */"@p/Modules/Index")
     }
 };
