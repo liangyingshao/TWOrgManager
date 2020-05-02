@@ -1,8 +1,18 @@
 module.exports = {
     OrgManage: {
-        path: "/manage/dashboard",
+        path: "/manage/switch",
         layout: "admin",
-        component: () => import(/* webpackChunkName: "OrgManager" */"@p/Modules/OrgManager")
+        component: () => import(/* webpackChunkName: "OrgManager" */"@p/Modules/OrgManager/OrgManager")
+    },
+    AdminManage: {
+        path: "/manage/admin",
+        layout: "admin",
+        component: () => import(/* webpackChunkName: "OrgManager" */"@p/Modules/OrgManager/forAdmin")
+    },
+    StuManage: {
+        path: "/manage/student",
+        layout: "admin",
+        component: () => import(/* webpackChunkName: "OrgManager" */"@p/Modules/OrgManager/forStudent")
     },
     OrgDetail: {
         path: "/manage/org/detail",
@@ -15,10 +25,14 @@ module.exports = {
         layout: "admin",
         component: () => import(/* webpackChunkName: "OrgManager" */"@p/Modules/ActivityForm")
     },
+    SignUpSituation: {
+        path: "/manage/org/signUpSituation",
+        layout: "admin",
+        component: () => import(/* webpackChunkName: "OrgManager" */"@p/Modules/OrgDetail/signUpSituation")
+    },
     Affiliated: {
         path: "/manage/org/affiliated",
         layout: "admin",
-        showAs: "OrgManage",
         component: () => import(/* webpackChunkName: "OrgManager" */"@p/Modules/OrgDetail/Affiliated")
     },
     DepartSwitch: {
@@ -51,5 +65,15 @@ module.exports = {
         path: "/manage/wwf/mypending",
         layout: "admin",
         component: () => import(/* webpackChunkName: "WorkflowManager" */"@p/Modules/MyPending")
+    },
+    Index: {
+        path: "/index",
+        layout: "empty",
+        component: () => import(/* webpackChunkName: "OrgManager" */"@p/Modules/Index")
+    },
+    NewsDetail: {
+        path: "/artical",
+        layout: "empty",
+        component: () => import(/* webpackChunkName: "Articals" */"@p/Modules/NewsDetail")
     }
 };

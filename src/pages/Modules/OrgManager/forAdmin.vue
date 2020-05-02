@@ -278,6 +278,7 @@ export default {
         };
     },
     mounted () {
+        // if (checkPermission("Organization.Student")) this.$router.push()
         app.title = "社团管理";
         this.getDashBoard();
         this.judgeTime();

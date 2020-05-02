@@ -169,7 +169,7 @@
                         <i-row type="flex" justify="space-between" align="middle" slot="title">
                             <i-col>
                                 <i-row type="flex" align="middle" :gutter="16">
-                                    <i-col>社团成员</i-col>
+                                    <i-col style="font-size: 18px">现有成员</i-col>
                                 </i-row>
                             </i-col>
                             <i-col>
@@ -214,47 +214,22 @@
                         <i-page show-sizer show-total :total="pager.member.total" @on-change="getMemberTable($event, null)" @on-page-size-change="getMemberTable(null, $event)" />
                     </i-card>
                 </i-tab-pane>
-                <i-tab-pane :disabled="orgInfo.Type === 1" label="子部门" name="subDept">
-                    <i-card dis-hover >
-                        <i-row type="flex" justify="space-between" align="middle" slot="title">
-                            <i-col>
-                                <i-row type="flex" align="middle" :gutter="16">
-                                    <i-col>子部门</i-col>
-                                </i-row>
-                            </i-col>
-                            <i-col>
-                                <i-row type="flex" :gutter="16">
-                                    <i-col>
-                                        <i-input prefix="ios-search" placeholder="搜索部门" v-model="keyword" @keyup.enter.native="searchSubDepart()"/>
-                                    </i-col>
-                                    <i-col>
-                                        <i-button type="primary" @click="addSubDepart">
-                                            新建部门
-                                        </i-button>
-                                    </i-col>
-                                </i-row>
-                            </i-col>
-                        </i-row>
-                        <i-row>
-                            <i-table row-key="id" stripe :columns="tableCol.subDept" :data="tableData.subDept" :loading="tableLoading">
-                                <template slot="Action" slot-scope="{row}">
-                                    <i-button @click="modifySubDepart(row)">管理</i-button>
-                                    <i-button @click="delSubDepart(row)">删除</i-button>
-                                </template>
-                                <template slot="admin" slot-scope="{row}">
-                                    {{row.admin}}
-                                    <i-button shape="circle" v-if="row.admin === ''" @click="addMember('member', '管理员', row.id)">添加管理员</i-button>
-                                </template>
-                                <template slot="Type" slot-scope="{row}">
-                                    {{row.Type === 0 ? "挂靠单位" : "社团"}}
-                                </template>
-                            </i-table>
-                            <br/>
-                            <i-page show-total :total="tableData.subDept.length" :page-size="10000"/>
-                        </i-row>
+                <i-tab-pane label="成员审核" name="checkin">
+                    <i-card dis-hover title="待加入成员">
+                        <i-table stripe :columns="tableCol.applicate" :data="tableData.applicate" :loading="tableLoading">
+                            <template slot="State" slot-scope="{row}">
+                                {{enumDic[row.State]}}
+                            </template>
+                            <template slot="Action" slot-scope="{row}" v-if="row.State === 3">
+                                <i-button @click="acceptApplication(row.ID)">同意</i-button>
+                                <i-button @click="rejectApplication(row.ID)">拒绝</i-button>
+                            </template>
+                        </i-table>
+                        <br/>
+                        <i-page show-sizer show-total :total="pager.applicate.total" @on-change="getApplicateTable($event, null)" @on-page-size-change="getApplicateTable(null, $event)" />
                     </i-card>
                 </i-tab-pane>
-                <i-tab-pane :disabled="orgInfo.Type === 0" label="指导老师" name="tutor">
+                <i-tab-pane label="指导老师" name="tutor">
                     <i-card dis-hover>
                         <i-row type="flex" justify="space-between" align="middle" slot="title">
                             <i-col>
@@ -305,7 +280,9 @@
                         <i-row>
                             <i-table stripe :columns="tableCol.activity" :data="tableData.activity" :loading="tableLoading">
                                 <template slot="Action" slot-scope="{row}">
-                                    <i-button @click="checkWorkflow(row.InstanceId, row.StepId)">查看</i-button>
+                                    <i-button @click="checkWorkflow(row.InstanceId, row.StepId, row.ID)">查看</i-button>
+                                    <i-button type="primary" @click="iniateAct(row.ID, 1)" v-if="row.StartState === 0">发起活动</i-button>
+                                    <i-button @click="iniateAct(row.ID, 0)" v-if="row.StartState === 1">取消活动</i-button>
                                 </template>
                             </i-table>
                             <br/>
@@ -348,6 +325,20 @@ export default {
             form.submit(this.newDptId || this.orgInfo.ID, this.callbackFunc);
         },
         cancel () {
+        },
+        iniateAct (ID, state, index) {
+            axios.post("/api/org/ChangeActivityState", {actId: ID, state: state}, msg => {
+                if (msg.success) {
+                    if (state === 1) {
+                        this.$Message.success("活动发起成功");
+                    } else if (state === 0) {
+                        this.$Message.success("活动已取消");
+                    }
+                    this.getActivityTable();
+                } else {
+                    this.$Message.warning(msg.msg);
+                }
+            })
         },
         saveOrgDetail () {
             this.isSaving = true;
@@ -397,6 +388,16 @@ export default {
                 this.tableLoading = false;
             });
         },
+        getApplicateTable (page, pageSize) {
+            this.tableLoading = true;
+            this.pager.applicate.page = page || this.pager.applicate.page;
+            this.pager.applicate.pageSize = pageSize || this.pager.applicate.pageSize;
+            axios.post("/api/security/GetApplicationsByDeparts", {departId: this.orgInfo.ID, page: this.pager.applicate.page, pageSize: this.pager.applicate.pageSize}, msg => {
+                this.tableData.applicate = msg.data;
+                this.pager.applicate.total = msg.totalRow;
+                this.tableLoading = false;
+            });
+        },
         getTutorTable (page, pageSize) {
             this.tableLoading = true;
             let name = this.keyword ? this.keyword : undefined;
@@ -437,7 +438,7 @@ export default {
             this.tableLoading = true;
             this.pager.activity.page = page || this.pager.activity.page;
             this.pager.activity.pageSize = pageSize || this.pager.activity.pageSize;
-            axios.post("/api/org/GetActByDepartId", {departId: this.orgInfo.ID, page: this.pager.activity.page, pageSize: this.pager.activity.pageSize}, msg => {
+            axios.post("/api/org/GetActByDepartId", {Id: this.orgInfo.ID, page: this.pager.activity.page, pageSize: this.pager.activity.pageSize}, msg => {
                 this.tableData.activity = msg.data;
                 this.pager.activity.total = msg.totalRow;
                 this.tableLoading = false;
@@ -475,6 +476,16 @@ export default {
                     this.$Message.warning(msg.msg);
                 }
             })
+        },
+        acceptApplication (appId) {
+            axios.post("/api/security/AcceptApplicate", {appId}, msg => {
+                if (msg.success) {
+                    this.$Message.success("接受成功");
+                } else {
+                    this.$Message.warning(msg.msg);
+                }
+                this.getApplicateTable();
+            });
         },
         delMember (row) {
             this.$Modal.confirm({
@@ -521,6 +532,16 @@ export default {
                 }
             });
         },
+        rejectApplication (appId) {
+            axios.post("/api/security/DenyApplicate", {appId}, msg => {
+                if (msg.success) {
+                    this.$Message.success("拒绝成功");
+                } else {
+                    this.$Message.warning(msg.msg);
+                }
+                this.getApplicateTable();
+            });
+        },
         modifyMember (row) {
             axios.post("/api/security/GetUserById", {id: row.ID, departId: this.orgInfo.ID}, msg => {
                 this.recordData.user = msg.user;
@@ -549,8 +570,8 @@ export default {
                 window.open("/manage/org/affiliated?id=" + row.id);
             }
         },
-        checkWorkflow (instanceId, stepId) {
-            window.open(`/manage/org/activityform?instanceId=${instanceId}&stepId=${stepId}&detail=true`);
+        checkWorkflow (instanceId, stepId, actId) {
+            window.open(`/manage/org/signUpSituation?instanceId=${instanceId}&stepId=${stepId}&detail=true&actId=${actId}`);
         },
         setPositon (userId, position) {
             axios.post("/api/security/SetPositionV2", {userId, departId: this.orgInfo.ID, position}, msg => {
@@ -650,6 +671,7 @@ export default {
                 this.getDeptTable();
                 this.getOptTable();
                 this.getActivityTable();
+                this.getApplicateTable();
             }
             this.$Spin.hide();
             this.tabSelect = this.$route.query.tabSelect || "basicInfo";
@@ -683,8 +705,15 @@ export default {
             tableData: {
                 member: [],
                 subDept: [],
+                activity: [],
                 tutor: [],
                 operation: []
+            },
+            enumDic: {
+                0: "已通过",
+                1: "被拒绝",
+                2: "自行撤回",
+                3: "申请中"
             },
             ruleForBasic: {
                 Name: [
@@ -727,6 +756,11 @@ export default {
                     pageSize: 10
                 },
                 operation: {
+                    total: 0,
+                    page: 1,
+                    pageSize: 10
+                },
+                applicate: {
                     total: 0,
                     page: 1,
                     pageSize: 10
