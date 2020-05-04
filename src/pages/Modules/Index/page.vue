@@ -56,7 +56,7 @@
                     </i-col>
                     <i-col span="14" push="1">
                         <i-tabs>
-                            <i-tab-pane label="学院新闻">
+                            <i-tab-pane label="学院新闻" icon="md-megaphone">
                                 <i-row :gutter="16" class="news" v-for="(item, index) in data.news" :key=index>
                                     <i-col span="3">
                                         <i-row class="date">{{item.date.day}}<hr/>{{item.date.year}}/{{item.date.month}}</i-row>
@@ -64,7 +64,7 @@
                                     <i-col span="21">
                                         <i-row class="topic">
                                             <i-row style="color: #122e66;font-weight: bold">【{{item.content.type}}】</i-row>
-                                            <i-row>{{item.content.abs ? '【' + item.content.abs + '】' : ''}}
+                                            <i-row class="single-row">{{item.content.abs ? '【' + item.content.abs + '】' : ''}}
                                                 {{item.content.desc}}</i-row>
                                         </i-row>
                                     </i-col>
@@ -178,6 +178,11 @@ export default {
 </script>
 
 <style>
+.single-row {
+    overflow: hidden;
+    text-overflow:ellipsis;
+    white-space: nowrap;
+}
 .head{
     background-repeat: no-repeat;
     background-position: 80% 0%;
