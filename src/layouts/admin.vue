@@ -24,7 +24,7 @@
         <Layout>
             <Affix>
                 <Header :style="{padding: 0}" class="layout-header-bar">
-                    <Row >
+                    <i-row type="flex" align="middle">
                         <i-col span="20">
                             <Icon @click.native="collapsedSider" :class="rotateIcon" :style="{margin: '0 20px'}" type="md-menu" size="24"></Icon>
                         </i-col>
@@ -38,7 +38,7 @@
                             </Dropdown>
                         </i-col> -->
                         <i-col span="1">
-                            <Icon :style="[{margin: '0 5px'},{cursor: 'pointer'}]" type="md-notifications-outline" size="24"></Icon>
+                            <Icon :style="[{margin: '0 5px'},{cursor: 'pointer'}]" @click="$Notice.info({title: '您当前没有通知'});" type="md-notifications-outline" size="24"></Icon>
                         </i-col>
                         <i-col span="1">
                             <Dropdown trigger="click">
@@ -59,7 +59,8 @@
                                 </DropdownMenu>
                             </Dropdown>
                         </i-col>
-                    </Row>
+                        <i-col span="2" />
+                    </i-row>
                 </Header>
             </Affix>
             <Content :style="{margin: '20px'}" class="content">
