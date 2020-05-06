@@ -17,11 +17,11 @@
                 <i-row type="flex" justify="space-between">
                     <i-col span="11">
                         <i-form-item label="学历" prop="Educational">
-                            <i-input v-model="modalData.user.Educational" />
+                            <dic-select dic="学历" v-model="modalData.user.Educational"/>
                         </i-form-item>
                     </i-col>
                     <i-col span="11">
-                        <i-form-item label="专业" prop="Specialty">
+                        <i-form-item label="学院" prop="Specialty">
                             <i-input v-model="modalData.user.Specialty" />
                         </i-form-item>
                     </i-col>
@@ -29,7 +29,7 @@
                 <i-row type="flex" justify="space-between">
                     <i-col span="11">
                         <i-form-item label="政治面貌" prop="PoliticalStatus">
-                            <i-input v-model="modalData.user.PoliticalStatus" />
+                            <dic-select dic="政治面貌" v-model="modalData.user.PoliticalStatus"/>
                         </i-form-item>
                     </i-col>
                     <i-col span="11">
@@ -66,7 +66,7 @@
                 </i-row>
                 <i-row type="flex" justify="space-between">
                     <i-col span="11">
-                        <i-form-item label="籍贯" prop="BirthPlace">
+                        <i-form-item label="民族" prop="BirthPlace">
                             <i-input v-model="modalData.user.BirthPlace" />
                         </i-form-item>
                     </i-col>
@@ -142,8 +142,43 @@
                             trigger: "blur"
                         }
                     ],
+                    PoliticalStatus: [
+                        {
+                            required: true,
+                            message: "必须选择政治面貌",
+                            trigger: "blur"
+                        }
+                    ],
+                    Educational: [
+                        {
+                            required: true,
+                            message: "必须选择政治学历",
+                            trigger: "blur"
+                        }
+                    ],
+                    Specialty: [
+                        {
+                            required: true,
+                            message: "必须选择学院",
+                            trigger: "blur"
+                        }
+                    ],
+                    BirthPlace: [
+                        {
+                            required: true,
+                            message: "必须填写民族",
+                            trigger: "blur"
+                        }
+                    ],
+                    Source: [
+                        {
+                            required: true,
+                            message: "必须选择生源地",
+                            trigger: "blur"
+                        }
+                    ],
                     "Mobile": [
-                        {type: "string", pattern: regex.mobile, message: "手机格式不正确", trigger: "blur"},
+                        {type: "string", required: true, pattern: regex.mobile, message: "手机格式不正确", trigger: "blur"},
                         _.debounce(function (rule, value, cb) {
                             let userId = THIS.modalData.user.ID;
                             axios.post("/api/security/MobileValidate", { userId, mobile: value }, msg => {

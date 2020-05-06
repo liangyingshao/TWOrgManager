@@ -6,12 +6,12 @@
             </i-col>
         </i-row>
         <i-row>
-            <i-col span="17" push="3">
+            <i-col span="14" push="5">
                 <i-row>
-                    <i-col span="7">
+                    <i-col span="9">
                         <i-card>
                             <i-divider style="font-size:32px">用户登录</i-divider>
-                            <i-row>
+                            <i-row style="margin: auto 24px">
                                 <i-form>
                                     <i-form-item>
                                         <i-input placeholder="用户名" prefix="ios-contact" />
@@ -21,13 +21,13 @@
                                     </i-form-item>
                                 </i-form>
                             </i-row>
-                            <i-row>
+                            <i-row style="margin: 0px 24px 40px 24px">
                                 <i-button type="primary">用厦大账号登录</i-button>
                                 <i-button>直接登录</i-button>
                             </i-row>
                         </i-card>
                     </i-col>
-                    <i-col span="16" push="1">
+                    <i-col span="14" push="1">
                         <i-carousel loop :height="300">
                             <CarouselItem v-for="data in data.carouselItems" :key="data.carouselItems">
                                 <img :src="data.img" />
@@ -36,7 +36,7 @@
                     </i-col>
                 </i-row>
                 <i-row>
-                    <i-col span="7">
+                    <i-col span="9">
                         <i-tabs>
                             <i-tab-pane label="最新活动" icon="md-paper">
                                 <List item-layout="horizontal">
@@ -54,7 +54,7 @@
                             </i-tab-pane>
                         </i-tabs>
                     </i-col>
-                    <i-col span="16" push="1">
+                    <i-col span="14" push="1">
                         <i-tabs>
                             <i-tab-pane label="学院新闻" icon="md-megaphone">
                                 <i-row :gutter="16" class="news" v-for="(item, index) in data.news" :key=index>

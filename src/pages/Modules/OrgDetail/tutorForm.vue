@@ -67,7 +67,7 @@
                         }
                     ],
                     "Mobile": [
-                        {type: "string", pattern: regex.mobile, message: "手机格式不正确", trigger: "blur"},
+                        {type: "string", required: true, pattern: regex.mobile, message: "手机格式不正确", trigger: "blur"},
                         _.debounce(function (rule, value, cb) {
                             let userId = THIS.modalData.user.ID;
                             axios.post("/api/security/MobileValidate", { userId, mobile: value }, msg => {
