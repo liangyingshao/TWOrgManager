@@ -3,7 +3,15 @@
         <i-card :padding="100">
             <i-row type="flex" style="margin: -50px 0px 40px 0px" align="middle">
                 <i-col span="3">
-                    <i-avatar :src="app.webInfo.avatar" size="120"/>
+                    <avatar-uploader
+                        :width="128"
+                        :height="128"
+                        usage="departAvatar"
+                        single
+                        :showText="false"
+                        relate-table="IDepart"
+                        v-model="orgInfo.Avatar"
+                    />
                 </i-col>
                 <i-col span="21">
                     <i-row style="font-size:30px; margin-bottom:10px">{{orgInfo.Name ? orgInfo.Name : "正在加载中"}}</i-row>
@@ -67,8 +75,8 @@
                                 </i-row>
                                 <i-row type="flex">
                                     <i-col span="22">
-                                        <i-form-item label="部门描述">
-                                            <i-input type="textarea" v-model="orgInfo.Description"/>
+                                        <i-form-item label="社团简介">
+                                            <i-input type="textarea" maxlength="300" show-word-limit :autosize="{minRows: 3}" v-model="orgInfo.Description"/>
                                         </i-form-item>
                                     </i-col>
                                 </i-row>
@@ -101,20 +109,8 @@
                                 </i-row>
                                 <i-row type="flex">
                                     <i-col span="10">
-                                        <i-form-item label="社交媒体">
-                                            <i-input v-model="orgInfo.SocialMedia"/>
-                                        </i-form-item>
-                                    </i-col>
-                                    <i-col span="10" offset="2">
-                                        <i-form-item label="社交媒体粉丝数">
-                                            <i-input v-model="orgInfo.SocialMediaFans"/>
-                                        </i-form-item>
-                                    </i-col>
-                                </i-row>
-                                <i-row type="flex">
-                                    <i-col span="10">
-                                        <i-form-item label="经费类型">
-                                            <i-input v-model="orgInfo.FundsCategory"/>
+                                        <i-form-item label="宣传平台信息">
+                                            <i-input v-model="orgInfo.SocialMedia" placeholder="媒体平台：账号名称，粉丝数；"/>
                                         </i-form-item>
                                     </i-col>
                                     <i-col span="10" offset="2">

@@ -17,7 +17,6 @@ module.exports = {
     OrgDetail: {
         path: "/manage/org/detail",
         layout: "admin",
-        showAs: "OrgManage",
         component: () => import(/* webpackChunkName: "OrgManager" */"@p/Modules/OrgDetail")
     },
     ActivityForm: {
@@ -38,7 +37,6 @@ module.exports = {
     DepartSwitch: {
         path: "/manage/org/departSwitch",
         layout: "admin",
-        showAs: "OrgManage",
         component: () => import(/* webpackChunkName: "OrgManager" */"@p/Modules/OrgDetail/DepartSwitch")
     },
     WorkflowConfig: {
