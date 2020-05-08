@@ -1,7 +1,7 @@
 <template>
     <i-row>
         <i-row type="flex" align="middle" :style="bgImg" class="head">
-            <i-col push="3">
+            <i-col push="5">
                 <i-row type="flex"><img :src="xmuWordImg" style="margin-right: 16px" />学生社团管理</i-row>
             </i-col>
         </i-row>
@@ -9,21 +9,39 @@
             <i-col span="14" push="5">
                 <i-row>
                     <i-col span="9">
-                        <i-card>
+                        <i-card v-if="app.userInfo.isLogined">
+                            <i-divider style="font-size:32px">登录信息</i-divider>
+                            <i-row style="margin: auto 24px">
+                                姓名：{{app.userInfo.realName}}<br/>
+                                您的身份：{{app.userInfo.permissons.includes('Organization.Student')?"学生":""}}
+                                {{app.userInfo.permissons.includes('Organization.Organization.TeacherAdmin')?"指导老师":""}}
+                                {{app.userInfo.permissons.includes('Organization.TwAdminUser')?"校团委管理员":""}}
+                                {{app.userInfo.permissons.includes('Organization.DepartAdminUser')?"挂靠单位管理员":""}}
+                                {{app.userInfo.permissons.includes('Organization.UnitAdminUser')?"社团管理员":""}}
+                                {{app.userInfo.permissons.includes('Organization.XSLHH')?"学生社团联合会":""}}<br/>
+                                登录IP：{{app.userInfo.region.ip}}<br/>
+                                登录地点：{{app.userInfo.region.province}}&nbsp;{{app.userInfo.region.city}}
+                            </i-row>
+                            <i-row style="margin: 12px 24px 24px">
+                                <i-button @click="toOrgManage()" type="primary">进入系统</i-button>
+                                <i-button @click="logout()" :loading='isloading'>注销</i-button>
+                            </i-row>
+                        </i-card>
+                        <i-card v-else>
                             <i-divider style="font-size:32px">用户登录</i-divider>
                             <i-row style="margin: auto 24px">
                                 <i-form>
                                     <i-form-item>
-                                        <i-input placeholder="用户名" prefix="ios-contact" />
+                                        <i-input placeholder="用户名" prefix="ios-contact" v-model="loginValue.username"/>
                                     </i-form-item>
                                     <i-form-item>
-                                        <i-input placeholder="密码"  prefix="ios-lock" type="password" password />
+                                        <i-input placeholder="密码"  prefix="ios-lock" type="password" password v-model="loginValue.password"/>
                                     </i-form-item>
                                 </i-form>
                             </i-row>
                             <i-row style="margin: 0px 24px 40px 24px">
-                                <i-button type="primary">用厦大账号登录</i-button>
-                                <i-button>直接登录</i-button>
+                                <i-button type="primary" @click="toXMUIds()">用厦大账号登录</i-button>
+                                <i-button @click="login" :loading='isloading'>直接登录</i-button>
                             </i-row>
                         </i-card>
                     </i-col>
@@ -79,14 +97,21 @@
 </template>
 
 <script>
-// const echarts = require("echarts");
-// const app = require("@/config");
+const axios = require("axios");
+let app = require("@/config");
+const md5 = require("md5");
 export default {
     data () {
         return {
+            app,
             bgImg: {
                 backgroundImage: 'url(' + require("@/assets/XMU.png") + ')'
             },
+            loginValue: {
+                username: '',
+                password: ''
+            },
+            isloading: false,
             xmuWordImg: require("@/assets/XMUWord.png"),
             data: {
                 activities: [
@@ -172,6 +197,49 @@ export default {
     methods: {
         toDetail (routerObj) {
             this.$router.push(routerObj);
+        },
+        toXMUIds () {
+            this.$Notice.warning({title: '没有实现哦~', desc: '给程序员打钱可以加快开发进度'});
+        },
+        toOrgManage () {
+            this.$router.push({name: "OrgManage"});
+        },
+        logout () {
+            this.isloading = true;
+            axios.post("/api/security/logout", {currentUserGuid: app.currentUserGuid}, msg => {
+                this.isloading = false;
+                if (msg.success === true) {
+                    app.userInfo.isLogined = false;
+                } else {
+                    this.$Message.warning("注销失败");
+                }
+            })
+        },
+        login () {
+            this.isloading = true;
+            let userName = this.loginValue.username;
+            let password = this.loginValue.password;
+            axios.post("/api/security/Login", { method: 'password', username: userName, pwd: md5(password), isRemember: false, isPwd: true }, msg => {
+                this.isloading = false;
+                if (msg.success) {
+                    app.userInfo = msg.userInfo;
+                    let ps = app.userInfo.permissons;
+                    app.checkPermission = (p) => {
+                        return ps && ps.indexOf(p) >= 0;
+                    }
+                    this.$nextTick(() => {
+                        if (msg.success) {
+                            let path = this.$route.query.goto || app.dashboard;
+                            path = path === "/" ? app.dashboard : path;
+                            if (path !== app.dashboard) this.$router.push(path);
+                        } else {
+                            this.$Message.warning(msg.msg);
+                        }
+                    });
+                } else {
+                    this.$Message.warning(msg.msg);
+                }
+            })
         }
     }
 }

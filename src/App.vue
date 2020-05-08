@@ -31,7 +31,7 @@ export default {
         },
         kickUser (msg) {
             this.$Message.info(msg);
-            this.$router.push({ name: "Login" });
+            this.$router.push({ name: "Index" });
         },
         setTitle () {
             document.title = app.title + app.titlePerfix;
@@ -47,7 +47,7 @@ export default {
             path = relUrl;
 
             if (path === "/") {
-                this.$router.push({ name: "Login" });
+                this.$router.push({ name: "Index" });
             } else {
                 this.$router.push(path);
             }
@@ -81,10 +81,10 @@ export default {
             let relUrl = arrUrl[1].substring(start);
             path = relUrl;
             let query;
-            if (path.indexOf("/manage/login") < 0) {
+            if (path.indexOf("/index") < 0) {
                 query = { goto: path };
             }
-            this.$router.push({ name: "Login", query });
+            this.$router.push({ name: "Index", query });
         }
         this.$Spin.hide();
     },
