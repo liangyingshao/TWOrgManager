@@ -141,6 +141,80 @@
                                         </i-form-item>
                                     </i-col>
                                 </i-row>
+                                <i-row type="flex">
+                                    <i-col span="11">
+                                        <i-form-item>
+                                            <div class="uploadBox">
+                                                <h3>上传章程</h3>
+                                                <div class="fileBox">
+                                                    <i-upload action="//jsonplaceholder.typicode.com/posts/" :before-upload="handleUpload">
+                                                        <i-button icon="ios-cloud-upload-outline" type="primary">上传文件</i-button>
+                                                    </i-upload>
+                                                </div>
+                                                <div style="margin-bottom: 10px" v-if="formData !== null">
+                                                    <i-row>
+                                                        <div class="fileInfo">
+                                                        <Button type="text" style="text-align: left;width: 200px;overflow: hidden;white-space: nowrap;text-overflow: ellipsis;">{{formData.name}}</Button>
+                                                        <Button type="text" @click="uploadFile" :loading="loadingStatus">上传</Button>
+                                                        <Button type="text" @click="removeFormData"><Icon type="ios-close" /></Button>
+                                                        </div>
+                                                    </i-row>
+                                                </div>
+                                                <div  v-if="files.length > 0">
+                                                    <Divider v-if="formData !== null"/>
+                                                    <template v-for="(item, index) in files">
+                                                        <i-row :key="index">
+                                                            <div class="fileInfo">
+                                                                <i-col span="18">
+                                                                    <a style="display: inline-block;text-align: left;width: 200px;overflow: hidden;white-space: nowrap;text-overflow: ellipsis;" :href="'/api/cms/Download?id=' + item.ID" target="_blank">{{item.DisplayName}}</a>
+                                                                </i-col>
+                                                                <i-col span="5">
+                                                                    <Button @click="removeFile(item)" type="text"><Icon type="ios-close" /></Button>
+                                                                </i-col>
+                                                            </div>
+                                                        </i-row>
+                                                    </template>
+                                                </div>
+                                            </div>
+                                        </i-form-item>
+                                    </i-col>
+                                    <i-col span="11" ooffset="2">
+                                        <i-form-item>
+                                            <div class="uploadBox">
+                                                <h3>上传活动照片</h3>
+                                                <div class="fileBox">
+                                                    <i-upload action="//jsonplaceholder.typicode.com/posts/" :before-upload="handleUpload">
+                                                        <i-button icon="ios-cloud-upload-outline" type="primary">上传照片</i-button>
+                                                    </i-upload>
+                                                </div>
+                                                <div style="margin-bottom: 10px" v-if="formData !== null">
+                                                    <i-row>
+                                                        <div class="fileInfo">
+                                                        <Button type="text" style="text-align: left;width: 200px;overflow: hidden;white-space: nowrap;text-overflow: ellipsis;">{{formData.name}}</Button>
+                                                        <Button type="text" @click="uploadFile" :loading="loadingStatus">上传</Button>
+                                                        <Button type="text" @click="removeFormData"><Icon type="ios-close" /></Button>
+                                                        </div>
+                                                    </i-row>
+                                                </div>
+                                                <div  v-if="files.length > 0">
+                                                    <Divider v-if="formData !== null"/>
+                                                    <template v-for="(item, index) in files">
+                                                        <i-row :key="index">
+                                                            <div class="fileInfo">
+                                                                <i-col span="18">
+                                                                    <a style="display: inline-block;text-align: left;width: 200px;overflow: hidden;white-space: nowrap;text-overflow: ellipsis;" :href="'/api/cms/Download?id=' + item.ID" target="_blank">{{item.DisplayName}}</a>
+                                                                </i-col>
+                                                                <i-col span="5">
+                                                                    <Button @click="removeFile(item)" type="text"><Icon type="ios-close" /></Button>
+                                                                </i-col>
+                                                            </div>
+                                                        </i-row>
+                                                    </template>
+                                                </div>
+                                            </div>
+                                        </i-form-item>
+                                    </i-col>
+                                </i-row>
                             </i-form>
                             <i-button type="primary" @click="saveOrgDetail()" :loading="isSaving">保存</i-button>
                         </i-col>
@@ -280,6 +354,10 @@
                                     <i-button type="primary" @click="iniateAct(row.ID, 1)" v-if="row.StartState === 0">发起活动</i-button>
                                     <i-button @click="iniateAct(row.ID, 0)" v-if="row.StartState === 1">取消活动</i-button>
                                 </template>
+                                <template slot="ShortCode" slot-scope="{row}">
+                                    <img :src="getImg(row.ShortCode)" v-if="row.StartState === 1"/>
+                                    <p v-else>活动未开始</p>
+                                </template>
                             </i-table>
                             <br/>
                             <i-page show-sizer show-total :total="pager.activity.total" @on-change="getActivityTable($event, null)" @on-page-size-change="getActivityTable(null, $event)" />
@@ -309,6 +387,8 @@ const tableCol = require("./tableCol");
 const md5 = require("md5");
 let _ = require("lodash");
 const axios = require("axios");
+const table = "AssociationCharter";
+const usage = "附件";
 export default {
     components: {
         "member-form": memberForm,
@@ -321,6 +401,51 @@ export default {
             form.submit(this.newDptId || this.orgInfo.ID, this.callbackFunc);
         },
         cancel () {
+        },
+        removeFile (file) {
+            axios.post("/api/cms/RemoveAttachment", {id: file.ID}, msg => {
+                if (msg.success) {
+                    this.$Message.success('删除文件成功');
+                    this.getFiles();
+                }
+            })
+        },
+        getFiles () {
+            axios.post("/api/cms/GetAttachments", {id: this.orgInfo.ID, relateTable: table, usage: usage}, msg => {
+                if (msg.success) {
+                    this.files = msg.data;
+                }
+            })
+        },
+        handleUpload (file) {
+            this.formData = file;
+            return false;
+        },
+        uploadFile () {
+            let param = new FormData();
+            param.append("file", this.formData);
+            param.append("id", this.orgInfo.ID);
+            param.append("relateTable", table);
+            param.append("usage", usage);
+            param.append("single", true);
+            param.append("fileName", this.formData.name);
+            this.loadingStatus = true;
+            axios._post("/api/cms/UploadFile", param).then((res) => {
+                this.loadingStatus = false;
+                if (res.data.success) {
+                    this.$Message.success('success');
+                    this.formData = null;
+                    this.getFiles();
+                } else {
+                    this.$Message.error(res.data.msg);
+                }
+            })
+        },
+        removeFormData () {
+            this.formData = null;
+        },
+        getImg (ShortCode) {
+            return "/qr/" + ShortCode;
         },
         iniateAct (ID, state, index) {
             axios.post("/api/org/ChangeActivityState", {actId: ID, state: state}, msg => {
@@ -677,6 +802,9 @@ export default {
         let THIS = this;
         return {
             app,
+            loadingStatus: false,
+            formData: null,
+            files: [],
             tableCol,
             visible: false,
             logs: [],
@@ -791,6 +919,32 @@ export default {
 </script>
 
 <style lang="less">
+.fileInfo {
+    margin: 16px;
+    height: 60px;
+    line-height: 60px;
+    border: 1px solid #ccc;
+    padding-left: 16px;
+    font-size: 16px;
+}
+.fileBox {
+    margin: 10px;
+    height: 60px;
+    line-height: 60px;
+    padding-left: 16px;
+    font-size: 16px;
+}
+h3 {
+    padding: 10px 0 0 16px;
+    font-weight: normal;
+    font-size: 18px;
+    color: #666;
+}
+.uploadBox {
+    width: 350px;
+    border: 1px solid #ccc;
+    margin: 40px auto;
+}
 .ivu-form-item .ivu-date-picker{
     width: 100%;
 }

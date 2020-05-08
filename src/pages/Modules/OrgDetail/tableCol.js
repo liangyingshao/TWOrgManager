@@ -107,6 +107,10 @@ let tableCol = {
             key: 'StartDate'
         },
         {
+            title: '二维码',
+            slot: 'ShortCode'
+        },
+        {
             title: '操作',
             slot: 'Action'
         }
