@@ -68,8 +68,8 @@
                                     </td>
                                     <td class="smallhang">预算金额</td>
                                     <td colspan="2" width="200">
-                                        <i-input v-if="io.fieldAccess.AttendanceFigures === 'w' && io.isMyStep" value="没有接口"/>
-                                        <p v-else>没有接口</p>
+                                        <i-input v-if="io.fieldAccess.AttendanceFigures === 'w' && io.isMyStep" v-model="io.data.Budget"/>
+                                        <p v-else>{{io.data.Budget}}</p>
                                     </td>
                                 </tr>
                                 <tr>

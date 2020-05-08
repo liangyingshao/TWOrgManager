@@ -1,14 +1,16 @@
 <template>
     <i-row id="news-detail">
-        <i-row style="height: 240px;">
+        <i-row type="flex" align="middle" :style="bgImg" class="head">
+            <i-col push="5">
+                <i-row type="flex"><img :src="xmuWordImg" style="margin-right: 16px" />学生社团管理</i-row>
+            </i-col>
         </i-row>
         <i-row>
             <i-col span="14" push="5">
                 <i-row>
                     <Breadcrumb>
-                        <BreadcrumbItem to="/">Home</BreadcrumbItem>
-                        <BreadcrumbItem to="/components/breadcrumb">Components</BreadcrumbItem>
-                        <BreadcrumbItem>Breadcrumb</BreadcrumbItem>
+                        <BreadcrumbItem to="/index">主页</BreadcrumbItem>
+                        <BreadcrumbItem>努力开创新中国史研究新局面</BreadcrumbItem>
                     </Breadcrumb>
                 </i-row>
                 <i-row class="title">努力开创新中国史研究新局面</i-row>
@@ -28,6 +30,14 @@
 </template>
 <script>
 export default {
+    data () {
+        return {
+            xmuWordImg: require("@/assets/XMUWord.png"),
+            bgImg: {
+                backgroundImage: 'url(' + require("@/assets/XMU.png") + ')'
+            }
+        }
+    }
 }
 </script>
 <style lang="less">
