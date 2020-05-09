@@ -244,7 +244,7 @@ export default {
             this.$router.push(routerObj);
         },
         toXMUIds () {
-            this.$Notice.warning({title: '没有实现哦~', desc: '给程序员打钱可以加快开发进度'});
+            this.$Notice.warning({title: '功能正在开发', desc: '将会跳转至厦大统一身份验证'});
         },
         toOrgManage () {
             this.$router.push({name: "OrgManage"});

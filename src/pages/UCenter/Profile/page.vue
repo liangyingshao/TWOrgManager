@@ -15,6 +15,12 @@
       <i-form-item label="邮箱" prop="email">
         <i-input style="width:700px;" type="text" size="large" v-model="model.email" />
       </i-form-item>
+      <i-form-item label="政治面貌" prop="PoliticalStatus">
+        <i-input style="width:700px;" type="text" size="large" v-model="model.PoliticalStatus" />
+      </i-form-item>
+      <i-form-item label="指导老师类别" prop="PoliticalStatus">
+        <i-input style="width:700px;" type="text" size="large" v-model="model.GuideTeacherType" />
+      </i-form-item>
       <i-form-item label="头像" prop="avatar">
         <i-row>
           <i-col span="3">
@@ -49,7 +55,7 @@ export default {
           return;
         }
 
-        axios.post("/api/security/SaveUserProfile", model, msg => {
+        axios.post("/api/security/SaveUserV2", {id: app.currentUserGuid, ...model}, msg => {
           this.isloading = false;
           if (!msg.success) {
             this.$Message.error(msg.msg);
