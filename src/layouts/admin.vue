@@ -54,7 +54,7 @@
                                         <router-link :to="{name: 'Profile'}" tag="div">账户设置</router-link>
                                     </DropdownItem>
                                     <DropdownItem @click.native="logout()">
-                                        <router-link :to="{name: 'Login'}" tag="div">退出</router-link>
+                                        <router-link :to="{name: 'Index'}" tag="div">退出</router-link>
                                     </DropdownItem>
                                 </DropdownMenu>
                             </Dropdown>
@@ -88,7 +88,7 @@ export default {
     mounted () {
         if (!app.checkPermission("Security.LoginAdmin")) {
             this.$Message.warning("你没有权限登录后台");
-            this.$router.push({ name: "Login" });
+            this.$router.push({ name: "Index" });
         }
         app.getMenus(menus => {
             this.$set(app, "menus", menus);
@@ -136,7 +136,7 @@ export default {
         logout () {
             Axios.post("/api/security/logout", {currentUserGuid: app.currentUserGuid}, msg => {
                 if (msg.success === true) {
-                    // this.$Message.success("登出成功");
+                    app.userInfo.isLogined = false;
                 } else {
                     this.$Message.warning("登出失败");
                 }

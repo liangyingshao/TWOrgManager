@@ -65,7 +65,7 @@ module.exports = {
         component: () => import(/* webpackChunkName: "WorkflowManager" */"@p/Modules/MyPending")
     },
     Index: {
-        path: "/index",
+        path: "/",
         layout: "empty",
         component: () => import(/* webpackChunkName: "OrgManager" */"@p/Modules/Index")
     },
