@@ -59,5 +59,15 @@ export default {
             margin: 16px 0px;
         }
     }
+    .head{
+    background-repeat: no-repeat;
+    background-position: 80% 0%;
+    height: 250px;
+    background-color: #122e66;
+    margin-bottom: 24px;
+    color: white;
+    font-size: 64px;
+    letter-spacing: 0.15em;
+}
 }
 </style>
