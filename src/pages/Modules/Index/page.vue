@@ -7,7 +7,7 @@
         </i-row>
         <i-row>
             <i-col span="14" push="5">
-                <i-row>
+                <i-row type="flex" :gutter="24">
                     <i-col span="9">
                         <i-card v-if="app.userInfo.isLogined">
                             <i-divider style="font-size:32px">登录信息</i-divider>
@@ -45,20 +45,20 @@
                             </i-row>
                         </i-card>
                     </i-col>
-                    <i-col span="14" push="1">
-                        <i-carousel loop :height="300">
+                    <i-col span="15">
+                        <i-carousel loop :height='300'>
                             <CarouselItem v-for="data in data.carouselItems" :key="data.carouselItems">
                                 <img :src="data.img" />
                             </CarouselItem>
                         </i-carousel>
                     </i-col>
                 </i-row>
-                <i-row>
+                <i-row type="flex" :gutter="24" style="margin-top: 16px">
                     <i-col span="9">
-                        <i-tabs>
-                            <i-tab-pane label="最新活动" icon="md-paper">
+                        <i-tabs class="latest-activities">
+                            <i-tab-pane :label="activityLable" class="latest-activities" style="cursor:default">
                                 <List item-layout="horizontal">
-                                    <ListItem @click.native="toDetail(activity.routerObj)" v-for="activity in data.activities" :key="activity.title">
+                                    <ListItem class="list-item" @click.native="toDetail(activity.routerObj)" v-for="activity in data.activities" :key="activity.title">
                                         <ListItemMeta>
                                             <template slot="title">{{activity.title}}</template>
                                         </ListItemMeta>
@@ -72,10 +72,10 @@
                             </i-tab-pane>
                         </i-tabs>
                     </i-col>
-                    <i-col span="14" push="1">
+                    <i-col span="15">
                         <i-tabs>
-                            <i-tab-pane label="学院新闻" icon="md-megaphone">
-                                <i-row :gutter="16" class="news" v-for="(item, index) in data.news" :key=index>
+                            <i-tab-pane :label="newsLable">
+                                <i-row @click.native="toDetail(item.routerObj)" :gutter="16" class="news" v-for="(item, index) in data.news" :key="index">
                                     <i-col span="3">
                                         <i-row class="date">{{item.date.day}}<hr/>{{item.date.year}}/{{item.date.month}}</i-row>
                                     </i-col>
@@ -156,6 +156,9 @@ export default {
                             abs: "学生交流",
                             type: "外事",
                             desc: "关于北美地区2020-2021学年校际交流项目的通知"
+                        },
+                        routerObj: {
+                            name: 'NewsDetail'
                         }
                     },
                     {
@@ -169,6 +172,9 @@ export default {
                             abs: "学生交流",
                             type: "外事",
                             desc: "关于北美地区2020-2021学年英国纽卡斯尔大学校际交流项目的选拔通知"
+                        },
+                        routerObj: {
+                            name: 'NewsDetail'
                         }
                     },
                     {
@@ -181,6 +187,9 @@ export default {
                         {
                             type: "研究生",
                             desc: "关于信息学院国家建设高水平大学公派研究生项目攻读博士学位研究生增补……通知"
+                        },
+                        routerObj: {
+                            name: 'NewsDetail'
                         }
                     }
                 ],
@@ -189,6 +198,42 @@ export default {
                     {img: require("@/assets/temp2.jpg")},
                     {img: require("@/assets/temp3.jpg")}
                 ]
+            },
+            activityLable: (h) => {
+                return h('div', {
+                    style: {
+                        color: '#2d8cf0'
+                    }
+                }, [
+                    h('Icon', {
+                        props: {
+                            type: 'md-paper',
+                            size: 18
+                        }
+                    }, []),
+                    h('span', {
+                        style: {
+                            fontSize: '18px'
+                        }
+                    }, '最新活动')
+                ])
+            },
+            newsLable: (h) => {
+                return h('div', [
+                    h('Icon', {
+                        props: {
+                            type: 'md-megaphone',
+                            size: 18
+                        }
+                    }, []),
+                    h('span', {
+                        style: {
+                            fontSize: '18px'
+                        }
+                    }, '学院新闻', {
+                        style: {color: '#2d8cf0'}
+                    })
+                ])
             }
         }
     },
@@ -245,7 +290,7 @@ export default {
 }
 </script>
 
-<style>
+<style scoped>
 .single-row {
     overflow: hidden;
     text-overflow:ellipsis;
@@ -263,6 +308,7 @@ export default {
 }
 .news {
     margin-bottom: 10px;
+    cursor: pointer;
 }
 .news .date{
     color: white;
@@ -273,5 +319,11 @@ export default {
 .news .topic{
     border: darkgray 1px solid;
     padding: 8px;
+}
+.list-item {
+    cursor: pointer;
+}
+.ivu-tabs-nav {
+    cursor: default;
 }
 </style>
