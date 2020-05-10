@@ -3,23 +3,23 @@
     <div style="margin-top:10px">个人信息</div>
     <divider/>
     <i-form ref="user-form" label-position="top" :model="model" :rules="rules">
-      <i-form-item label="姓名" prop="realName">
-        <i-input style="width:700px;" type="text" size="large" v-model="model.realName" />
+      <i-form-item label="姓名" prop="RealName">
+        <i-input style="width:700px;" type="text" size="large" v-model="model.RealName" />
       </i-form-item>
       <i-form-item label="学/工号" prop="code">
-        <i-input style="width:700px;" disabled type="text" size="large" :value="model.userCode" />
+        <i-input style="width:700px;" disabled type="text" size="large" :value="model.Code" />
       </i-form-item>
       <i-form-item label="手机" prop="mobile">
-        <i-input style="width:700px;" type="text" size="large" v-model="model.mobile" />
+        <i-input style="width:700px;" type="text" size="large" v-model="model.Mobile" />
       </i-form-item>
       <i-form-item label="邮箱" prop="email">
-        <i-input style="width:700px;" type="text" size="large" v-model="model.email" />
+        <i-input style="width:700px;" type="text" size="large" v-model="model.Email" />
       </i-form-item>
       <i-form-item label="政治面貌" prop="PoliticalStatus">
-        <i-input style="width:700px;" type="text" size="large" v-model="model.PoliticalStatus" />
+        <i-input style="width:700px;" disabled type="text" size="large" v-model="model.PoliticalStatus"/>
       </i-form-item>
       <i-form-item label="指导老师类别" prop="PoliticalStatus">
-        <i-input style="width:700px;" type="text" size="large" v-model="model.GuideTeacherType" />
+        <i-input style="width:700px;" disabled type="text" size="large" v-model="model.GuideTeacherType"/>
       </i-form-item>
       <i-form-item label="头像" prop="avatar">
         <i-row>
@@ -41,7 +41,7 @@
 </template>
 <script>
 const regex = require("@/regex.js");
-let app = require("@/config");
+const app = require("@/config");
 var _ = require("lodash");
 const axios = require("axios");
 export default {
@@ -54,8 +54,7 @@ export default {
         if (!err) {
           return;
         }
-
-        axios.post("/api/security/SaveUserV2", {id: app.currentUserGuid, ...model}, msg => {
+        axios.post("/api/security/SaveUserProfile", model, msg => {
           this.isloading = false;
           if (!msg.success) {
             this.$Message.error(msg.msg);
@@ -64,14 +63,27 @@ export default {
           }
         });
       });
+    },
+    getUser () {
+        axios.post("/api/security/GetUserById", {}, msg => {
+          if (msg.success) {
+            this.model = msg.user;
+            this.model.avatar = app.userInfo.avatar;
+          } else {
+            this.$Message.error(msg.msg);
+          }
+        });
     }
   },
   data () {
     return {
       isloading: false,
-      model: {},
+      model: {
+        avatar: ""
+      },
+      orgInfo: {},
       rules: {
-        "mobile": [
+        "Mobile": [
           {
             required: true,
             message: "必须输入手机号",
@@ -97,7 +109,7 @@ export default {
             );
           }, 500)
         ],
-        "email": [
+        "Email": [
           {
             required: true,
             message: "必须输入电子邮箱",
@@ -123,13 +135,13 @@ export default {
             );
           }, 500)
         ],
-        "realName": { required: true, message: "必须输入姓名", trigger: "blur" },
+        "RealName": { required: true, message: "必须输入姓名", trigger: "blur" },
         "avatar": { required: true, message: "必须上传图片", trigger: "blur" }
       }
     };
   },
   mounted () {
-    this.model = app.userInfo;
+    this.getUser();
   }
 };
 </script>
