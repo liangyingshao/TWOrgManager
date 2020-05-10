@@ -9,7 +9,7 @@
             <i-col span="14" push="5">
                 <i-row>
                     <Breadcrumb>
-                        <BreadcrumbItem to="/index">主页</BreadcrumbItem>
+                        <BreadcrumbItem to="/">主页</BreadcrumbItem>
                         <BreadcrumbItem>努力开创新中国史研究新局面</BreadcrumbItem>
                     </Breadcrumb>
                 </i-row>

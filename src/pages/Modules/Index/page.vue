@@ -16,8 +16,8 @@
                                 您的身份：{{app.userInfo.permissons.includes('Organization.Student')?"学生":""}}
                                 {{app.userInfo.permissons.includes('Organization.Organization.TeacherAdmin')?"指导老师":""}}
                                 {{app.userInfo.permissons.includes('Organization.TwAdminUser')?"校团委管理员":""}}
-                                {{app.userInfo.permissons.includes('Organization.DepartAdminUser')?"挂靠单位管理员":""}}
-                                {{app.userInfo.permissons.includes('Organization.UnitAdminUser')?"社团管理员":""}}
+                                {{app.userInfo.permissons.includes('Organization.DepartAdminUser')?"社团管理员":""}}
+                                {{app.userInfo.permissons.includes('Organization.UnitAdminUser')?"挂靠单位管理员":""}}
                                 {{app.userInfo.permissons.includes('Organization.XSLHH')?"学生社团联合会":""}}<br/>
                                 登录IP：{{app.userInfo.region.ip}}<br/>
                                 登录地点：{{app.userInfo.region.province}}&nbsp;{{app.userInfo.region.city}}
@@ -244,7 +244,7 @@ export default {
             this.$router.push(routerObj);
         },
         toXMUIds () {
-            this.$Notice.warning({title: '没有实现哦~', desc: '程序员正在努力写代码中'});
+            this.$Notice.warning({title: '功能正在开发', desc: '将会跳转至厦大统一身份验证'});
         },
         toOrgManage () {
             this.$router.push({name: "OrgManage"});

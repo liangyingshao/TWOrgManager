@@ -83,21 +83,21 @@
                                 <i-row type="flex">
                                     <i-col span="10">
                                         <i-form-item label="是否有社团章程">
-                                            <i-checkbox v-model="orgInfo.HaveDepartRule"></i-checkbox>
+                                            <i-switch v-model="orgInfo.HaveDepartRule" />
                                             <i-date-picker :disabled="!orgInfo.HaveDepartRule" v-model="orgInfo.RuleCreatedOn"></i-date-picker>
                                         </i-form-item>
                                     </i-col>
                                     <i-col span="10" offset="2">
                                         <i-form-item label="是否成立团支部">
-                                            <i-checkbox v-model="orgInfo.HaveLeagueBranch"></i-checkbox>
+                                            <i-switch v-model="orgInfo.HaveLeagueBranch" />
                                             <i-date-picker :disabled="!orgInfo.HaveLeagueBranch" v-model="orgInfo.LeagueBrachCreatedOn"></i-date-picker>
                                         </i-form-item>
                                     </i-col>
                                 </i-row>
                                 <i-row type="flex">
                                     <i-col span="10">
-                                        <i-form-item label="是否有党支部">
-                                            <i-checkbox v-model="orgInfo.HaveCPCBranch"></i-checkbox>
+                                        <i-form-item label="是否成立党支部">
+                                            <i-switch v-model="orgInfo.HaveCPCBranch" />
                                             <i-date-picker :disabled="!orgInfo.HaveCPCBranch" v-model="orgInfo.CPCBranchCreatedOn"></i-date-picker>
                                         </i-form-item>
                                     </i-col>
@@ -147,8 +147,8 @@
                                             <div class="uploadBox">
                                                 <h3>上传章程</h3>
                                                 <div class="fileBox">
-                                                    <i-upload action="//jsonplaceholder.typicode.com/posts/" :before-upload="handleUpload">
-                                                        <i-button icon="ios-cloud-upload-outline" type="primary">上传文件</i-button>
+                                                    <i-upload :disabled="!orgInfo.HaveDepartRule" action="//jsonplaceholder.typicode.com/posts/" :before-upload="handleUpload">
+                                                        <i-button :disabled="!orgInfo.HaveDepartRule" icon="ios-cloud-upload-outline" type="primary">上传文件</i-button>
                                                     </i-upload>
                                                 </div>
                                                 <div style="margin-bottom: 10px" v-if="formData !== null">

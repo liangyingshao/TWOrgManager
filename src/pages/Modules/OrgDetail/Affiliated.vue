@@ -459,8 +459,8 @@ export default {
             });
         },
         modifySubDepart (row) {
-            if (row.type) window.open("/manage/org/affiliated?id=" + row.id);
-            else window.open("/manage/org/detail?id=" + row.id);
+            if (row.Type) window.open("/manage/org/detail?id=" + row.id);
+            else window.open("/manage/org/affiliated?id=" + row.id);
         },
         checkWorkflow (instanceId, stepId, actId) {
             window.open(`/manage/org/signUpSituation?instanceId=${instanceId}&stepId=${stepId}&detail=true&actId=${actId}`);
