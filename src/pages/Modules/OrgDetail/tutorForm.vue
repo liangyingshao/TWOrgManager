@@ -12,7 +12,7 @@
                     <i-input v-model="modalData.user.Mobile" />
                 </i-form-item>
                 <i-form-item label="指导老师类别" prop="GuideTeacherType">
-                    <i-input v-model="modalData.user.GuideTeacherType" />
+                    <dic-select dic="指导老师类别" v-model="modalData.user.GuideTeacherType" />
                 </i-form-item>
                 <i-form-item label="所属部门" prop="BelongDepart">
                     <i-input v-model="modalData.user.BelongDepart" />
