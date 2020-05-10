@@ -244,7 +244,7 @@ export default {
             this.$router.push(routerObj);
         },
         toXMUIds () {
-            this.$Notice.warning({title: '没有实现哦~', desc: '给程序员打钱可以加快开发进度'});
+            this.$Notice.warning({title: '没有实现哦~', desc: '程序员正在努力写代码中'});
         },
         toOrgManage () {
             this.$router.push({name: "OrgManage"});
