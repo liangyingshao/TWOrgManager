@@ -76,6 +76,11 @@
                         </i-form-item>
                     </i-col>
                 </i-row>
+                <i-row type="flex" justify="space-between">
+                    <i-form-item label="所属部门" prop="BelongDepart">
+                        <i-input v-model="modalData.user.BelongDepart" />
+                    </i-form-item>
+                </i-row>
                 <i-button @click="showLog = true" type="text" style="float:right; padding: 0;">查看修改记录</i-button>
             </i-form>
         </i-col>
