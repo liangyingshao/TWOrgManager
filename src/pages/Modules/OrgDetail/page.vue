@@ -373,7 +373,7 @@
             </i-tabs>
         </i-card>
         <i-modal :z-index="10" v-model="modalShow" :loading="true" :title="component.title || '暂无'">
-            <component :is="component.name" ref="Form" @on-submit="onSubmit" :loading.sync="modalLoading" :modalData="recordData"></component>
+            <component :is="component.name" ref="Form" :loading.sync="modalLoading" :modalData="recordData"></component>
             <div slot="footer">
                 <i-button type="primary" :loading="modalLoading" @click="submit">确认</i-button>
                 <i-button @click="cancel">取消</i-button>
@@ -410,9 +410,6 @@ export default {
                     this.modalShow = false;
                 }
             });
-        },
-        onSubmit (v) {
-            this.modalShow = !v;
         },
         cancel () {
             this.modalShow = false;

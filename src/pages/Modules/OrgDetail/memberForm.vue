@@ -116,10 +116,6 @@
             modalData: {
                 type: Object,
                 required: true
-            },
-            loading: {
-                type: Boolean,
-                default: false
             }
         },
         watch: {
@@ -214,7 +210,6 @@
                 form.validate(res => {
                     if (!res) {
                         callback(FALSE);
-                        this.$emit("on-submit", false);
                         return;
                     }
                     axios.post("/api/security/SaveUserV2", {
@@ -226,11 +221,9 @@
                         }, msg => {
                         this.resetFields();
                         if (msg.success) {
-                            this.$emit("on-submit", true);
                             callback(TRUE, msg);
                         } else {
                             callback(FALSE);
-                            this.$emit("on-submit", false);
                             this.$Message.warning(msg.msg);
                         }
                     });
