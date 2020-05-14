@@ -114,9 +114,7 @@
                                     <td class="longhang" colspan="4">
                                         <i-upload  v-if="io.fieldAccess.Description === 'w' && io.isMyStep" action="//jsonplaceholder.typicode.com/posts/" :before-upload="handleUpload">
                                             <i-button icon="ios-cloud-upload-outline" type="primary">上传文件</i-button>
-                                            <i-tooltip content="文件内容应包括活动策划、经费预算、经费来源等" placement="right">
-                                                <i-icon type="md-information-circle" />
-                                            </i-tooltip>
+                                            文件内容应包括活动策划、经费预算、经费来源等
                                         </i-upload>
                                         <div v-if="formData !== null">
                                             <i-row>

@@ -68,13 +68,20 @@
             },
             submit (departId, callback) {
                 let form = this.$refs["form"];
+                // 注：在ES6的严格模式中，不允许回调函数直接返回bool类型的true和false，以免程序被误导。所以这里使用常量，也可以使用字符串返回。
+                const TRUE = true;
+                const FALSE = false;
                 form.validate(res => {
-                    if (!res) return;
+                    if (!res) {
+                        callback(FALSE);
+                        return;
+                    }
                     axios.post("/api/security/SaveDepartV2", this.modalData, msg => {
                         this.resetFields();
                         if (msg.success) {
-                            callback(msg);
+                            callback(TRUE, msg);
                         } else {
+                            callback(FALSE);
                             this.$Message.warning(msg.msg);
                         }
                     });

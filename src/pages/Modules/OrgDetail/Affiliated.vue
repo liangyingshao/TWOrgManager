@@ -246,6 +246,7 @@ export default {
             if (this.orgInfo.CategoryName === '社团') {
                 window.open("/manage/org/detail?id=" + this.orgInfo.ID);
             } else {
+                window.open("/manage/org/detail?id=" + this.orgInfo.ID);
                 this.showMore = !this.showMore;
             }
         },

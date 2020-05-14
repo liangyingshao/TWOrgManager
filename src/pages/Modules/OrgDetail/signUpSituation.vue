@@ -2,6 +2,24 @@
     <div id="activity-form">
         <div>
             <div class="paper">
+                <i-card>
+                    <i-table stripe :columns="signCol" :data="signData">
+                        <template slot="SignUpOn" slot-scope="{row}">
+                            <p v-if="row.SignUpState === 99">没有报名</p>
+                            <p v-else>{{row.SignUpOn}}</p>
+                        </template>
+                        <template slot="SignInOn" slot-scope="{row}">
+                            <p v-if="row.SignInState === 99">没有签到</p>
+                            <p v-else>{{row.SignInOn}}</p>
+                        </template>
+                        <template slot="Action" slot-scope="{row}">
+                            <i-button v-show="row.SignUpState === 0" @click="signUp(row.ActivityId, 99, row.UserId)">踢出</i-button>
+                            <Tag v-show="row.SignUpState === 99" size="large">已取消</Tag>
+                        </template>
+                    </i-table>
+                </i-card>
+            </div>
+            <div class="paper">
                 <div>
                     <div class="status-bar" v-if="isAdmin">
                         <p class="smallhang"/>
@@ -246,24 +264,6 @@
                         </i-row>
                     </TimelineItem>
                 </i-timeline>
-            </div>
-            <div class="paper">
-                <i-card>
-                    <i-table stripe :columns="signCol" :data="signData">
-                        <template slot="SignUpOn" slot-scope="{row}">
-                            <p v-if="row.SignUpState === 99">没有报名</p>
-                            <p v-else>{{row.SignUpOn}}</p>
-                        </template>
-                        <template slot="SignInOn" slot-scope="{row}">
-                            <p v-if="row.SignInState === 99">没有签到</p>
-                            <p v-else>{{row.SignInOn}}</p>
-                        </template>
-                        <template slot="Action" slot-scope="{row}">
-                            <i-button v-show="row.SignUpState === 0" @click="signUp(row.ActivityId, 99, row.UserId)">踢出</i-button>
-                            <Tag v-show="row.SignUpState === 99" size="large">已取消</Tag>
-                        </template>
-                    </i-table>
-                </i-card>
             </div>
         </div>
     </div>

@@ -50,9 +50,6 @@
                                     <DropdownItem>
                                         <router-link :to="{name: 'Profile'}" tag="div">个人中心</router-link>
                                     </DropdownItem>
-                                    <DropdownItem>
-                                        <router-link :to="{name: 'Profile'}" tag="div">账户设置</router-link>
-                                    </DropdownItem>
                                     <DropdownItem @click.native="logout()">
                                         <router-link :to="{name: 'Index'}" tag="div">退出</router-link>
                                     </DropdownItem>

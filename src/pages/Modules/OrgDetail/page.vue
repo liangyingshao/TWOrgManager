@@ -372,8 +372,12 @@
                 </i-tab-pane>
             </i-tabs>
         </i-card>
-        <i-modal :z-index="10" v-model="modalShow" :title="component.title || '暂无'" @on-ok="submit()" @on-cancel="cancel()">
-            <component :is="component.name" ref="Form" :modalData="recordData"></component>
+        <i-modal :z-index="10" v-model="modalShow" :loading="true" :title="component.title || '暂无'">
+            <component :is="component.name" ref="Form" @on-submit="onSubmit" :loading.sync="modalLoading" :modalData="recordData"></component>
+            <div slot="footer">
+                <i-button type="primary" :loading="modalLoading" @click="submit">确认</i-button>
+                <i-button @click="cancel">取消</i-button>
+            </div>
         </i-modal>
     </i-row>
 </template>
@@ -396,11 +400,22 @@ export default {
         "subDept-form": subDeptForm
     },
     methods: {
-        submit () {
+        async submit () {
             let form = this.$refs["Form"];
-            form.submit(this.newDptId || this.orgInfo.ID, this.callbackFunc);
+            this.modalLoading = true;
+            form.submit(this.newDptId || this.orgInfo.ID, (res, msg) => {
+                this.modalLoading = false;
+                if (res) {
+                    this.callbackFunc(msg);
+                    this.modalShow = false;
+                }
+            });
+        },
+        onSubmit (v) {
+            this.modalShow = !v;
         },
         cancel () {
+            this.modalShow = false;
         },
         removeFile (file) {
             axios.post("/api/cms/RemoveAttachment", {id: file.ID}, msg => {
@@ -583,7 +598,10 @@ export default {
             this.newDptId = departId;
             this.recordData = {
                 position,
-                user: {},
+                user: {
+                    JoinCPCTime: "",
+                    JoinCCYLTime: ""
+                },
                 changeLogs: []
             };
             this.callbackFunc = who === "tutor" ? this.getTutorTable : this.getMemberTable;
@@ -801,6 +819,8 @@ export default {
     data () {
         let THIS = this;
         return {
+            modalShow: false,
+            modalLoading: false,
             app,
             loadingStatus: false,
             formData: null,
@@ -896,7 +916,6 @@ export default {
                         h('span', '（' + this.tableData.member.length + '人）')
                     ])
             },
-            modalShow: false,
             password: {},
             pwdRule: {
                 password: {
