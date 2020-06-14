@@ -53,7 +53,7 @@
                                         </i-form-item>
                                     </i-col>
                                     <i-col span="10" offset="2">
-                                        <i-form-item label="挂靠单位">
+                                        <i-form-item label="业务指导单位">
                                             <org-selector v-model="orgInfo.ParentId"/>
                                         </i-form-item>
                                     </i-col>
@@ -67,7 +67,7 @@
                                     <i-col span="10" offset="2">
                                         <i-form-item label="部门类型">
                                             <i-select v-model="orgInfo.Type">
-                                                <i-option :value="0" key="挂靠单位">挂靠单位</i-option>
+                                                <i-option :value="0" key="业务指导单位">业务指导单位</i-option>
                                                 <i-option :value="1" key="社团">社团</i-option>
                                             </i-select>
                                         </i-form-item>
@@ -756,12 +756,12 @@ export default {
             if (value === oldValue || oldValue === undefined) return;
             this.$Modal.confirm({
                 title: "确实要更改部门类型吗？",
-                content: `将部门类型由<strong>${oldValue === 0 ? "挂靠单位" : "社团"}</strong>更改为
-                    <strong>${value === 0 ? "挂靠单位" : "社团"}</strong>`,
+                content: `将部门类型由<strong>${oldValue === 0 ? "业务指导单位" : "社团"}</strong>更改为
+                    <strong>${value === 0 ? "业务指导单位" : "社团"}</strong>`,
                 onOk: () => {
                     axios.post("/api/security/SwitchDepartType", {
                         id: this.orgInfo.ID,
-                        cate: this.orgInfo.Type === 0 ? "挂靠单位" : "社团",
+                        cate: this.orgInfo.Type === 0 ? "业务指导单位" : "社团",
                         type: value
                     }, msg => {
                         this.getOrgDetail();

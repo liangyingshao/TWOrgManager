@@ -178,7 +178,7 @@
                                     </td>
                                 </tr>
                                 <tr v-show="io.fieldAccess.AffiliatedDepartOpinion">
-                                    <td class="smallhang">挂靠单位意见</td>
+                                    <td class="smallhang">业务指导单位意见</td>
                                     <td class="longhang" colspan="4">
                                         <div v-show="io.fieldAccess.AffiliatedDepartIsPass === 'w' && io.isMyStep">
                                             是否通过：
@@ -317,8 +317,8 @@ export default {
                 label: "指导老师"
                 },
                 {
-                value: "挂靠单位",
-                label: "挂靠单位"
+                value: "业务指导单位",
+                label: "业务指导单位"
                 },
                 {
                 value: "学生联合会",
@@ -355,8 +355,8 @@ export default {
                     value: "指导老师审核",
                     label: "指导老师审核"
                 }, {
-                    value: '挂靠单位审核',
-                    label: '挂靠单位审核'
+                    value: '业务指导单位审核',
+                    label: '业务指导单位审核'
                 }, {
                     value: '学生联合会审核',
                     label: '学生联合会审核'

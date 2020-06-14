@@ -136,7 +136,7 @@
                                                 <i-button shape="circle" v-if="row.admin === ''" @click="addMember('member', '管理员', row.id)">添加管理员</i-button>
                                             </template>
                                             <template slot="Type" slot-scope="{row}">
-                                                {{row.Type === 0 ? "挂靠单位" : "社团"}}
+                                                {{row.Type === 0 ? "业务指导单位" : "社团"}}
                                             </template>
                                         </i-table>
                                         <br/>
@@ -516,12 +516,12 @@ export default {
             }
             this.$Modal.confirm({
                 title: "确实要更改部门类型吗？",
-                content: `将部门类型由<strong>${oldValue === 0 ? "挂靠单位" : "社团"}</strong>更改为
-                    <strong>${value === 0 ? "挂靠单位" : "社团"}</strong>`,
+                content: `将部门类型由<strong>${oldValue === 0 ? "业务指导单位" : "社团"}</strong>更改为
+                    <strong>${value === 0 ? "业务指导单位" : "社团"}</strong>`,
                 onOk: () => {
                     axios.post("/api/security/SwitchDepartType", {
                         id: this.orgInfo.ID,
-                        cate: this.orgInfo.Type === 0 ? "挂靠单位" : "社团",
+                        cate: this.orgInfo.Type === 0 ? "业务指导单位" : "社团",
                         type: value
                     }, msg => {
                         this.getOrgDetail();
