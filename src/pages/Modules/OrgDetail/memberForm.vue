@@ -120,10 +120,10 @@
         },
         watch: {
             "modalData.user.JoinCPCTime" (value) {
-                this.haveJoinCPC = value.toLocaleDateString() !== badDate.toLocaleDateString();
+                this.haveJoinCPC = !!value.toLocaleDateString && value.toLocaleDateString() !== badDate.toLocaleDateString();
             },
             "modalData.user.JoinCCYLTime" (value) {
-                this.haveJoinCPC = value.toLocaleDateString() !== badDate.toLocaleDateString();
+                this.haveJoinCPC = !!value.toLocaleDateString && value.toLocaleDateString() !== badDate.toLocaleDateString();
             }
         },
         data () {
@@ -204,8 +204,14 @@
             },
             submit (departId, callback) {
                 let form = this.$refs["Form"];
+                // 注：在ES6的严格模式中，不允许回调函数直接返回bool类型的true和false，以免程序被误导。所以这里使用常量，也可以使用字符串返回。
+                const TRUE = true;
+                const FALSE = false;
                 form.validate(res => {
-                    if (!res) return;
+                    if (!res) {
+                        callback(FALSE);
+                        return;
+                    }
                     axios.post("/api/security/SaveUserV2", {
                         ...this.modalData.user,
                         JoinCPCTime: this.haveJoinCPC ? this.modalData.user.JoinCPCTime : "1900-01-01",
@@ -215,8 +221,9 @@
                         }, msg => {
                         this.resetFields();
                         if (msg.success) {
-                            callback();
+                            callback(TRUE, msg);
                         } else {
+                            callback(FALSE);
                             this.$Message.warning(msg.msg);
                         }
                     });
