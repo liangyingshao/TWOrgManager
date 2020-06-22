@@ -38,7 +38,7 @@
                             </Dropdown>
                         </i-col> -->
                         <i-col span="1">
-                            <Icon :style="[{margin: '0 5px'},{cursor: 'pointer'}]" @click="$Notice.info({title: '您当前没有通知'});" type="md-notifications-outline" size="24"></Icon>
+                            <Icon :style="[{margin: '0 5px'},{cursor: 'pointer'}, {display: 'none'}]" @click="$Notice.info({title: '您当前没有通知'});" type="md-notifications-outline" size="24"></Icon>
                         </i-col>
                         <i-col span="1">
                             <Dropdown trigger="click">
@@ -49,9 +49,6 @@
                                 <DropdownMenu slot="list">
                                     <DropdownItem>
                                         <router-link :to="{name: 'Profile'}" tag="div">个人中心</router-link>
-                                    </DropdownItem>
-                                    <DropdownItem>
-                                        <router-link :to="{name: 'Profile'}" tag="div">账户设置</router-link>
                                     </DropdownItem>
                                     <DropdownItem @click.native="logout()">
                                         <router-link :to="{name: 'Index'}" tag="div">退出</router-link>
