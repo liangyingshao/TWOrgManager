@@ -53,7 +53,7 @@
                                         </i-form-item>
                                     </i-col>
                                     <i-col span="10" offset="2">
-                                        <i-form-item label="挂靠单位">
+                                        <i-form-item label="业务指导单位">
                                             <org-selector v-model="orgInfo.ParentId"/>
                                         </i-form-item>
                                     </i-col>
@@ -67,7 +67,7 @@
                                     <i-col span="10" offset="2">
                                         <i-form-item label="部门类型">
                                             <i-select v-model="orgInfo.Type">
-                                                <i-option :value="0" key="挂靠单位">挂靠单位</i-option>
+                                                <i-option :value="0" key="业务指导单位">业务指导单位</i-option>
                                                 <i-option :value="1" key="社团">社团</i-option>
                                             </i-select>
                                         </i-form-item>
@@ -372,8 +372,12 @@
                 </i-tab-pane>
             </i-tabs>
         </i-card>
-        <i-modal :z-index="10" v-model="modalShow" :title="component.title || '暂无'" @on-ok="submit()" @on-cancel="cancel()">
-            <component :is="component.name" ref="Form" :modalData="recordData"></component>
+        <i-modal :z-index="10" v-model="modalShow" :loading="true" :title="component.title || '暂无'">
+            <component :is="component.name" ref="Form" :loading.sync="modalLoading" :modalData="recordData"></component>
+            <div slot="footer">
+                <i-button type="primary" :loading="modalLoading" @click="submit">确认</i-button>
+                <i-button @click="cancel">取消</i-button>
+            </div>
         </i-modal>
     </i-row>
 </template>
@@ -396,11 +400,19 @@ export default {
         "subDept-form": subDeptForm
     },
     methods: {
-        submit () {
+        async submit () {
             let form = this.$refs["Form"];
-            form.submit(this.newDptId || this.orgInfo.ID, this.callbackFunc);
+            this.modalLoading = true;
+            form.submit(this.newDptId || this.orgInfo.ID, (res, msg) => {
+                this.modalLoading = false;
+                if (res) {
+                    this.callbackFunc(msg);
+                    this.modalShow = false;
+                }
+            });
         },
         cancel () {
+            this.modalShow = false;
         },
         removeFile (file) {
             axios.post("/api/cms/RemoveAttachment", {id: file.ID}, msg => {
@@ -583,7 +595,10 @@ export default {
             this.newDptId = departId;
             this.recordData = {
                 position,
-                user: {},
+                user: {
+                    JoinCPCTime: "",
+                    JoinCCYLTime: ""
+                },
                 changeLogs: []
             };
             this.callbackFunc = who === "tutor" ? this.getTutorTable : this.getMemberTable;
@@ -741,12 +756,12 @@ export default {
             if (value === oldValue || oldValue === undefined) return;
             this.$Modal.confirm({
                 title: "确实要更改部门类型吗？",
-                content: `将部门类型由<strong>${oldValue === 0 ? "挂靠单位" : "社团"}</strong>更改为
-                    <strong>${value === 0 ? "挂靠单位" : "社团"}</strong>`,
+                content: `将部门类型由<strong>${oldValue === 0 ? "业务指导单位" : "社团"}</strong>更改为
+                    <strong>${value === 0 ? "业务指导单位" : "社团"}</strong>`,
                 onOk: () => {
                     axios.post("/api/security/SwitchDepartType", {
                         id: this.orgInfo.ID,
-                        cate: this.orgInfo.Type === 0 ? "挂靠单位" : "社团",
+                        cate: this.orgInfo.Type === 0 ? "业务指导单位" : "社团",
                         type: value
                     }, msg => {
                         this.getOrgDetail();
@@ -801,6 +816,8 @@ export default {
     data () {
         let THIS = this;
         return {
+            modalShow: false,
+            modalLoading: false,
             app,
             loadingStatus: false,
             formData: null,
@@ -896,7 +913,6 @@ export default {
                         h('span', '（' + this.tableData.member.length + '人）')
                     ])
             },
-            modalShow: false,
             password: {},
             pwdRule: {
                 password: {

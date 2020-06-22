@@ -57,7 +57,7 @@
                                         <span v-else>{{io.data.StartDate}}</span>
                                         至
                                         <i-date-picker type="date" format="yyyy年MM月dd日" v-if="io.fieldAccess.EndDate === 'w' && io.isMyStep" v-model="io.data.EndDate"/>
-                                        <span v-else>{{io.data.EndDate}}</span>
+                                         <span v-else>{{io.data.EndDate}}</span>
                                     </td>
                                 </tr>
                                 <tr>
@@ -114,9 +114,7 @@
                                     <td class="longhang" colspan="4">
                                         <i-upload  v-if="io.fieldAccess.Description === 'w' && io.isMyStep" action="//jsonplaceholder.typicode.com/posts/" :before-upload="handleUpload">
                                             <i-button icon="ios-cloud-upload-outline" type="primary">上传文件</i-button>
-                                            <i-tooltip content="文件内容应包括活动策划、经费预算、经费来源等" placement="right">
-                                                <i-icon type="md-information-circle" />
-                                            </i-tooltip>
+                                            文件内容应包括活动策划、经费预算、经费来源等
                                         </i-upload>
                                         <div v-if="formData !== null">
                                             <i-row>
@@ -170,7 +168,7 @@
                                     </td>
                                 </tr>
                                 <tr v-show="io.fieldAccess.AffiliatedDepartOpinion">
-                                    <td class="smallhang">挂靠单位意见</td>
+                                    <td class="smallhang">业务指导单位意见</td>
                                     <td class="longhang" colspan="4">
                                         <div v-show="io.fieldAccess.AffiliatedDepartIsPass === 'w' && io.isMyStep">
                                             是否通过：
@@ -289,8 +287,8 @@ export default {
                 label: "指导老师"
                 },
                 {
-                value: "挂靠单位",
-                label: "挂靠单位"
+                value: "业务指导单位",
+                label: "业务指导单位"
                 },
                 {
                 value: "学生联合会",
@@ -327,8 +325,8 @@ export default {
                     value: "指导老师审核",
                     label: "指导老师审核"
                 }, {
-                    value: '挂靠单位审核',
-                    label: '挂靠单位审核'
+                    value: '业务指导单位审核',
+                    label: '业务指导单位审核'
                 }, {
                     value: '学生联合会审核',
                     label: '学生联合会审核'

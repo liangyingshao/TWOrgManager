@@ -2,6 +2,24 @@
     <div id="activity-form">
         <div>
             <div class="paper">
+                <i-card>
+                    <i-table stripe :columns="signCol" :data="signData">
+                        <template slot="SignUpOn" slot-scope="{row}">
+                            <p v-if="row.SignUpState === 99">没有报名</p>
+                            <p v-else>{{row.SignUpOn}}</p>
+                        </template>
+                        <template slot="SignInOn" slot-scope="{row}">
+                            <p v-if="row.SignInState === 99">没有签到</p>
+                            <p v-else>{{row.SignInOn}}</p>
+                        </template>
+                        <template slot="Action" slot-scope="{row}">
+                            <i-button v-show="row.SignUpState === 0" @click="signUp(row.ActivityId, 99, row.UserId)">踢出</i-button>
+                            <Tag v-show="row.SignUpState === 99" size="large">已取消</Tag>
+                        </template>
+                    </i-table>
+                </i-card>
+            </div>
+            <div class="paper">
                 <div>
                     <div class="status-bar" v-if="isAdmin">
                         <p class="smallhang"/>
@@ -160,7 +178,7 @@
                                     </td>
                                 </tr>
                                 <tr v-show="io.fieldAccess.AffiliatedDepartOpinion">
-                                    <td class="smallhang">挂靠单位意见</td>
+                                    <td class="smallhang">业务指导单位意见</td>
                                     <td class="longhang" colspan="4">
                                         <div v-show="io.fieldAccess.AffiliatedDepartIsPass === 'w' && io.isMyStep">
                                             是否通过：
@@ -247,24 +265,6 @@
                     </TimelineItem>
                 </i-timeline>
             </div>
-            <div class="paper">
-                <i-card>
-                    <i-table stripe :columns="signCol" :data="signData">
-                        <template slot="SignUpOn" slot-scope="{row}">
-                            <p v-if="row.SignUpState === 99">没有报名</p>
-                            <p v-else>{{row.SignUpOn}}</p>
-                        </template>
-                        <template slot="SignInOn" slot-scope="{row}">
-                            <p v-if="row.SignInState === 99">没有签到</p>
-                            <p v-else>{{row.SignInOn}}</p>
-                        </template>
-                        <template slot="Action" slot-scope="{row}">
-                            <i-button v-show="row.SignUpState === 0" @click="signUp(row.ActivityId, 99, row.UserId)">踢出</i-button>
-                            <Tag v-show="row.SignUpState === 99" size="large">已取消</Tag>
-                        </template>
-                    </i-table>
-                </i-card>
-            </div>
         </div>
     </div>
 </template>
@@ -317,8 +317,8 @@ export default {
                 label: "指导老师"
                 },
                 {
-                value: "挂靠单位",
-                label: "挂靠单位"
+                value: "业务指导单位",
+                label: "业务指导单位"
                 },
                 {
                 value: "学生联合会",
@@ -355,8 +355,8 @@ export default {
                     value: "指导老师审核",
                     label: "指导老师审核"
                 }, {
-                    value: '挂靠单位审核',
-                    label: '挂靠单位审核'
+                    value: '业务指导单位审核',
+                    label: '业务指导单位审核'
                 }, {
                     value: '学生联合会审核',
                     label: '学生联合会审核'

@@ -2,7 +2,7 @@
     <i-row>
         <i-row type="flex" align="middle" :style="bgImg" class="head">
             <i-col push="5">
-                <i-row type="flex"><img :src="xmuWordImg" style="margin-right: 16px" />学生社团管理</i-row>
+                <!-- <i-row type="flex"><img :src="xmuWordImg" style="margin-right: 16px" />学生社团管理</i-row> -->
             </i-col>
         </i-row>
         <i-row>
@@ -17,7 +17,7 @@
                                 {{app.userInfo.permissons.includes('Organization.Organization.TeacherAdmin')?"指导老师":""}}
                                 {{app.userInfo.permissons.includes('Organization.TwAdminUser')?"校团委管理员":""}}
                                 {{app.userInfo.permissons.includes('Organization.DepartAdminUser')?"社团管理员":""}}
-                                {{app.userInfo.permissons.includes('Organization.UnitAdminUser')?"挂靠单位管理员":""}}
+                                {{app.userInfo.permissons.includes('Organization.UnitAdminUser')?"业务指导单位管理员":""}}
                                 {{app.userInfo.permissons.includes('Organization.XSLHH')?"学生社团联合会":""}}<br/>
                                 登录IP：{{app.userInfo.region.ip}}<br/>
                                 登录地点：{{app.userInfo.region.province}}&nbsp;{{app.userInfo.region.city}}
@@ -100,12 +100,13 @@
 const axios = require("axios");
 let app = require("@/config");
 const md5 = require("md5");
+const banner = require("@/assets/banner.png")
 export default {
     data () {
         return {
             app,
             bgImg: {
-                backgroundImage: 'url(' + require("@/assets/XMU.png") + ')'
+                backgroundImage: `url(${banner})`
             },
             loginValue: {
                 username: '',
@@ -298,7 +299,7 @@ export default {
 }
 .head{
     background-repeat: no-repeat;
-    background-position: 80% 0%;
+    background-position: 50% 0%;
     height: 250px;
     background-color: #122e66;
     margin-bottom: 24px;
