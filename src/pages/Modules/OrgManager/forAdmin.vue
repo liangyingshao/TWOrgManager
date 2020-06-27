@@ -51,7 +51,7 @@
             </i-col>
             <i-col span="8" offset="2" style="padding: 24px;background-color: lightgrey;"
                 v-if='app.checkPermission("Organization.DepartAdminUser") || app.checkPermission("Organization.UnitAdminUser")
-                ||app.checkPermission("Organization.TwAdminUser")'>
+                ||app.checkPermission("Organization.TwAdminUser") || app.checkPermission("Organization.TeacherAdmin") '>
                 <i-card :to="dashBoard.DepartType === 0 ? routers[1]:routers[0]" v-if="true">
                     <template slot="title">
                         {{dashBoard.Name}}

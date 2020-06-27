@@ -408,7 +408,7 @@
                                         <i-input prefix="ios-search" placeholder="搜索成员" v-model="keyword" @keyup.enter.native="getMemberTable()"/>
                                     </i-col>
                                     <i-col>
-                                        <i-button type="primary" @click="addMember('member', '成员')">添加成员</i-button>
+                                        <i-button v-if="!app.userInfo.permissons.includes('Organization.DepartAdminUser')" type="primary" @click="addMember('member', '成员')">添加成员</i-button>
                                     </i-col>
                                 </i-row>
                             </i-col>
@@ -419,9 +419,9 @@
                                     <i-tag v-if="row.isAdmin">管理员</i-tag>
                             </template>
                             <template slot="Action" slot-scope="{row}">
-                                <i-button @click="modifyMember(row)" v-if="(level+orgInfo.Type>1)">修改</i-button>
+                                <i-button :disabled="app.userInfo.permissons.includes('Organization.DepartAdminUser')" @click="modifyMember(row)" v-if="(level+orgInfo.Type>1)">修改</i-button>
                                 <i-tooltip :disabled="!row.isAdmin" content="不能删除管理员" placement="top">
-                                    <i-button :disabled="row.isAdmin" @click="delMember(row)" v-if="(2*orgInfo.Type+level>=3)">删除</i-button>
+                                    <i-button :disabled="app.userInfo.permissons.includes('Organization.DepartAdminUser')" @click="delMember(row)" v-if="(2*orgInfo.Type+level>=3)">删除</i-button>
                                 </i-tooltip>
                                 <i-button v-if="(level === 3)&&(!row.isAdmin)" @click="setPositon(row.ID,'管理员')">设置管理员</i-button>
                                 <i-poptip transfer v-model="visible" v-if="row.isAdmin">
