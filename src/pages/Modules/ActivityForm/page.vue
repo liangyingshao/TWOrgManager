@@ -415,7 +415,7 @@ export default {
                 } else {
                     this.$Message.warning(msg.msg);
                 }
-            })
+            });
         },
         submit () {
             this.io.shouldUpload.forEach(value => {
