@@ -384,7 +384,15 @@ export default {
             file: [],
             fileName: "",
             stepInfo: enums.stepInfo,
-            upLoad: {}
+            upLoad: {},
+            icons: [
+                "",
+                "",
+                "success",
+                "success",
+                "error",
+                "warning"
+            ]
         }
     },
     methods: {

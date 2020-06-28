@@ -1,7 +1,7 @@
 <template>
     <i-table :columns="columns" :data="tableData" :loading="loading">
         <template slot="Action" slot-scope="{row}">
-            <i-button @click="checkWorkflow(row.InstanceId, row.StepId)">查看</i-button>
+            <i-button @click="checkWorkflow(row)">查看</i-button>
         </template>
     </i-table>
 </template>
@@ -29,7 +29,11 @@ export default {
                     title: "操作",
                     slot: "Action"
                 }
-            ]
+            ],
+            dic: {
+                "修改社团基本信息申请": "/manage/org/orgdetailform",
+                "社团活动申请": "/manage/org/activityform"
+            }
         }
     },
     mounted () {
@@ -47,8 +51,8 @@ export default {
                 this.loading = false;
             });
         },
-        checkWorkflow (instanceId, stepId) {
-            window.open(`/manage/org/activityform?instanceId=${instanceId}&stepId=${stepId}&detail=true`);
+        checkWorkflow (row) {
+            window.open(`${this.dic[row.WorkflowName]}?instanceId=${row.InstanceId}&stepId=${row.StepId}&detail=true`);
         }
     }
 }
