@@ -35,7 +35,7 @@
                                         <i-input placeholder="用户名" prefix="ios-contact" v-model="loginValue.username"/>
                                     </i-form-item>
                                     <i-form-item>
-                                        <i-input placeholder="密码"  prefix="ios-lock" type="password" password v-model="loginValue.password"/>
+                                        <i-input placeholder="密码" @on-enter="login" prefix="ios-lock" type="password" password v-model="loginValue.password"/>
                                     </i-form-item>
                                 </i-form>
                             </i-row>

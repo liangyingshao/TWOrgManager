@@ -34,7 +34,7 @@
                     <i-row>
                         <i-col>
                             <p class="headline">社团活动申请表</p>
-                            <p class="date">填表时间：{{nowDate}}</p>
+                            <p class="date">填表时间：{{io.data.CreatedTime}}</p>
                             <table border="1">
                                 <tr>
                                     <td class="smallhang">社团名称</td>
@@ -304,7 +304,6 @@ export default {
             stepId: "",
             instanceId: "",
             detailMode: true,
-            nowDate: "",
             upLoad: [],
             io: {
                 fieldAccess: {},
@@ -415,7 +414,7 @@ export default {
                 } else {
                     this.$Message.warning(msg.msg);
                 }
-            })
+            });
         },
         submit () {
             this.io.shouldUpload.forEach(value => {
@@ -438,11 +437,6 @@ export default {
         app.title = "社团活动";
         this.getFromPrepage();
         this.getFiles();
-        const date = new Date();
-        const year = date.getFullYear(); // 获取当前年份
-        const month = date.getMonth() + 1; // 获取当前月份(0-11,0代表1月所以要加1);
-        const day = date.getDate();
-        this.nowDate = `${year}年${month}月${day}日`; // 显示在最上方的填写日期
         for (let index in app.userInfo.permissons) {
             if (app.userInfo.permissons[index] === "Workflow.ManageAllWorkflow") {
                 this.isAdmin = true;

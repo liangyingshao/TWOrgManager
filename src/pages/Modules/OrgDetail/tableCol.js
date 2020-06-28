@@ -154,6 +154,20 @@ let tableCol = {
             title: '操作',
             slot: 'Action'
         }
+    ],
+    organization: [
+        {
+            title: '申请时间',
+            key: 'CreatedTime'
+        },
+        {
+            title: '状态',
+            key: 'CurrentStep'
+        },
+        {
+            title: '操作',
+            slot: 'Action'
+        }
     ]
 };
 module.exports = tableCol;
