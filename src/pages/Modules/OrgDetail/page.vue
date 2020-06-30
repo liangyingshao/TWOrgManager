@@ -25,46 +25,48 @@
                 <i-tab-pane label="基本信息" name="basicInfo">
                     <i-row>
                         <i-spin fix size="large" v-show="tableLoading"></i-spin>
-                        <i-col span="16">
-                            <i-form :model="orgInfo" :rules="ruleForBasic" ref="form">
+                        <i-col span="14">
+                            <i-button @click="changeOrgDetail">修改社团信息</i-button>
+                            <i-form :disabled="level !== 3" :model="orgInfo" :rules="ruleForBasic" ref="form">
+                                <Divider orientation="left">基本信息</Divider>
                                 <i-row type="flex" justify="space-between">
-                                    <i-col span="22">
+                                    <i-col span="24">
                                         <i-form-item label="社团名称" span="8" prop="Name">
                                             <i-input v-model="orgInfo.Name"/>
                                         </i-form-item>
                                     </i-col>
                                 </i-row>
                                 <i-row type="flex">
-                                    <i-col span="10">
+                                    <i-col span="11">
                                         <i-form-item label="社团类型" prop="DepartType">
                                             <dic-select dic="社团类型" v-model="orgInfo.DepartType" />
                                         </i-form-item>
                                     </i-col>
-                                    <i-col span="10" offset="2">
+                                    <i-col span="11" offset="2">
                                         <i-form-item label="成立时间" prop="BirthTime">
                                             <i-date-picker type="date" v-model="orgInfo.BirthTime" format="yyyy年MM月dd日" />
                                         </i-form-item>
                                     </i-col>
                                 </i-row>
                                 <i-row type="flex">
-                                    <i-col span="10">
+                                    <i-col span="11">
                                         <i-form-item label="部门电话">
                                             <i-input v-model="orgInfo.Phone"/>
                                         </i-form-item>
                                     </i-col>
-                                    <i-col span="10" offset="2">
+                                    <i-col span="11" offset="2">
                                         <i-form-item label="业务指导单位">
                                             <org-selector v-model="orgInfo.ParentId"/>
                                         </i-form-item>
                                     </i-col>
                                 </i-row>
-                                <i-row type="flex" v-if="level === 3">
-                                    <i-col span="10">
+                                <i-row type="flex">
+                                    <i-col span="11">
                                         <i-form-item label="排序号">
                                             <i-input v-model="orgInfo.Sort"/>
                                         </i-form-item>
                                     </i-col>
-                                    <i-col span="10" offset="2">
+                                    <i-col span="11" offset="2">
                                         <i-form-item label="部门类型">
                                             <i-select v-model="orgInfo.Type">
                                                 <i-option :value="0" key="业务指导单位">业务指导单位</i-option>
@@ -74,20 +76,49 @@
                                     </i-col>
                                 </i-row>
                                 <i-row type="flex">
-                                    <i-col span="22">
+                                    <i-col span="24">
                                         <i-form-item label="社团简介">
                                             <i-input type="textarea" maxlength="300" show-word-limit :autosize="{minRows: 3}" v-model="orgInfo.Description"/>
                                         </i-form-item>
                                     </i-col>
                                 </i-row>
                                 <i-row type="flex">
-                                    <i-col span="10">
+                                    <i-col span="11">
                                         <i-form-item label="是否有社团章程">
                                             <i-switch v-model="orgInfo.HaveDepartRule" />
+                                            <i-upload :disabled="!orgInfo.HaveDepartRule" action="/api/cms/UploadFile" :before-upload="handleUpload"
+                                            :data="{'usage': '附件', 'single': true, 'relateTable': 'AssociationCharter', 'id': this.orgInfo.ID, 'fileName': 'my-file'}">
+                                                <i-button shape="circle"
+                                                :disabled="!orgInfo.HaveDepartRule" icon="ios-cloud-upload-outline" type="primary" ></i-button>
+                                            </i-upload>
+                                            <div style="margin-bottom: 10px" v-if="formData !== null">
+                                                <i-row>
+                                                    <div class="fileInfo">
+                                                    <Button type="text" style="text-align: left;width: 200px;overflow: hidden;white-space: nowrap;text-overflow: ellipsis;">{{formData.name}}</Button>
+                                                    <Button type="text" @click="uploadFile" :loading="loadingStatus">上传</Button>
+                                                    <Button type="text" @click="removeFormData"><Icon type="ios-close" /></Button>
+                                                    </div>
+                                                </i-row>
+                                            </div>
+                                            <div v-if="files.length > 0">
+                                                <Divider v-if="formData !== null"/>
+                                                <template v-for="(item, index) in files">
+                                                    <i-row :key="index">
+                                                        <div class="fileInfo">
+                                                            <i-col span="18">
+                                                                <a style="display: inline-block;text-align: left;width: 200px;overflow: hidden;white-space: nowrap;text-overflow: ellipsis;" :href="'/api/cms/Download?id=' + item.ID" target="_blank">{{item.DisplayName}}</a>
+                                                            </i-col>
+                                                            <i-col span="5">
+                                                                <Button @click="removeFile(item)" type="text"><Icon type="ios-close" /></Button>
+                                                            </i-col>
+                                                        </div>
+                                                    </i-row>
+                                                </template>
+                                            </div>
                                             <i-date-picker :disabled="!orgInfo.HaveDepartRule" v-model="orgInfo.RuleCreatedOn"></i-date-picker>
                                         </i-form-item>
                                     </i-col>
-                                    <i-col span="10" offset="2">
+                                    <i-col span="11" offset="2">
                                         <i-form-item label="是否成立团支部">
                                             <i-switch v-model="orgInfo.HaveLeagueBranch" />
                                             <i-date-picker :disabled="!orgInfo.HaveLeagueBranch" v-model="orgInfo.LeagueBrachCreatedOn"></i-date-picker>
@@ -95,44 +126,241 @@
                                     </i-col>
                                 </i-row>
                                 <i-row type="flex">
-                                    <i-col span="10">
+                                    <i-col span="11">
                                         <i-form-item label="是否成立党支部">
                                             <i-switch v-model="orgInfo.HaveCPCBranch" />
                                             <i-date-picker :disabled="!orgInfo.HaveCPCBranch" v-model="orgInfo.CPCBranchCreatedOn"></i-date-picker>
                                         </i-form-item>
                                     </i-col>
-                                    <i-col span="10" offset="2">
+                                    <i-col span="11" offset="2">
                                         <i-form-item label="党支部类型">
                                             <dic-select dic="党支部类型" :disabled="!orgInfo.HaveCPCBranch" v-model="orgInfo.CPCBranchType"/>
                                         </i-form-item>
                                     </i-col>
                                 </i-row>
+                                <Divider orientation="left">指导老师情况</Divider>
                                 <i-row type="flex">
-                                    <i-col span="10">
-                                        <i-form-item label="宣传平台信息">
-                                            <i-input v-model="orgInfo.SocialMedia" placeholder="媒体平台：账号名称，粉丝数；"/>
-                                        </i-form-item>
-                                    </i-col>
-                                    <i-col span="10" offset="2">
-                                        <i-form-item label="经费来源">
-                                            <i-input v-model="orgInfo.ChannelForFunds"/>
-                                        </i-form-item>
-                                    </i-col>
-                                </i-row>
-                                <i-row type="flex" v-if="level > 1">
-                                    <i-col span="10">
-                                        <i-form-item label="指导老师产生方式">
+                                    <i-col span="11">
+                                        <i-form-item label="指导老师姓名">
                                             <i-input v-model="orgInfo.GuideElectionBy"/>
                                         </i-form-item>
                                     </i-col>
-                                    <i-col span="10" offset="2">
-                                        <i-form-item label="指导老师有无激励">
+                                    <i-col span="11" offset="2">
+                                        <i-form-item label="指导老师工号">
                                             <i-input v-model="orgInfo.GuideBonus"/>
                                         </i-form-item>
                                     </i-col>
                                 </i-row>
                                 <i-row type="flex">
-                                    <i-col span="22">
+                                    <i-col span="11">
+                                        <i-form-item label="指导教师类别">
+                                            <i-input v-model="orgInfo.GuideElectionBy"/>
+                                        </i-form-item>
+                                    </i-col>
+                                    <i-col span="11" offset="2">
+                                        <i-form-item label="指导教师政治面貌">
+                                            <i-input v-model="orgInfo.GuideBonus"/>
+                                        </i-form-item>
+                                    </i-col>
+                                </i-row>
+                                <i-row type="flex">
+                                    <i-col span="11">
+                                        <i-form-item label="指导教师单位">
+                                            <i-input v-model="orgInfo.GuideElectionBy"/>
+                                        </i-form-item>
+                                    </i-col>
+                                    <i-col span="11" offset="2">
+                                        <i-form-item label="指导教师手机">
+                                            <i-input v-model="orgInfo.GuideBonus"/>
+                                        </i-form-item>
+                                    </i-col>
+                                </i-row>
+                                <i-row type="flex">
+                                    <i-col span="11">
+                                        <i-form-item label="指导教师邮箱">
+                                            <i-input v-model="orgInfo.GuideElectionBy"/>
+                                        </i-form-item>
+                                    </i-col>
+                                    <i-col span="11" offset="2">
+                                        <i-form-item label="占位">
+                                            <i-input v-model="orgInfo.GuideBonus"/>
+                                        </i-form-item>
+                                    </i-col>
+                                </i-row>
+                                <i-row type="flex">
+                                    <i-col span="11">
+                                        <i-form-item label="指导老师产生方式">
+                                            <i-input v-model="orgInfo.GuideElectionBy"/>
+                                        </i-form-item>
+                                    </i-col>
+                                    <i-col span="11" offset="2">
+                                        <i-form-item label="指导老师有无激励">
+                                            <i-input v-model="orgInfo.GuideBonus"/>
+                                        </i-form-item>
+                                    </i-col>
+                                </i-row>
+                                <Divider orientation="left">社团负责人情况</Divider>
+                                <i-row type="flex">
+                                    <i-col span="11">
+                                        <i-form-item label="社团负责人姓名">
+                                            <i-input v-model="orgInfo.GuideElectionBy"/>
+                                        </i-form-item>
+                                    </i-col>
+                                    <i-col span="11" offset="2">
+                                        <i-form-item label="何时确定为社团负责人">
+                                            <i-input v-model="orgInfo.GuideBonus"/>
+                                        </i-form-item>
+                                    </i-col>
+                                </i-row>
+                                <i-row type="flex">
+                                    <i-col span="11">
+                                        <i-form-item label="社团负责人学号">
+                                            <i-input v-model="orgInfo.GuideElectionBy"/>
+                                        </i-form-item>
+                                    </i-col>
+                                    <i-col span="11" offset="2">
+                                        <i-form-item label="社团负责人政治面貌">
+                                            <i-input v-model="orgInfo.GuideBonus"/>
+                                        </i-form-item>
+                                    </i-col>
+                                </i-row>
+                                <i-row type="flex">
+                                    <i-col span="11">
+                                        <i-form-item label="社团负责人学院">
+                                            <i-input v-model="orgInfo.GuideElectionBy"/>
+                                        </i-form-item>
+                                    </i-col>
+                                    <i-col span="11" offset="2">
+                                        <i-form-item label="社团负责人年级专业">
+                                            <i-input v-model="orgInfo.GuideBonus"/>
+                                        </i-form-item>
+                                    </i-col>
+                                </i-row>
+                                <i-row type="flex">
+                                    <i-col span="11">
+                                        <i-form-item label="社团负责人手机">
+                                            <i-input v-model="orgInfo.GuideElectionBy"/>
+                                        </i-form-item>
+                                    </i-col>
+                                    <i-col span="11" offset="2">
+                                        <i-form-item label="社团负责人邮箱">
+                                            <i-input v-model="orgInfo.GuideBonus"/>
+                                        </i-form-item>
+                                    </i-col>
+                                </i-row>
+                                <Divider orientation="left">社团团支部情况</Divider>
+                                <i-row type="flex">
+                                    <i-col span="11">
+                                        <i-form-item label="社团团支部书记姓名">
+                                            <i-input v-model="orgInfo.GuideElectionBy"/>
+                                        </i-form-item>
+                                    </i-col>
+                                    <i-col span="11" offset="2">
+                                        <i-form-item label="何时被确定为社团团支部书记">
+                                            <i-input v-model="orgInfo.GuideBonus"/>
+                                        </i-form-item>
+                                    </i-col>
+                                </i-row>
+                                <i-row type="flex">
+                                    <i-col span="11">
+                                        <i-form-item label="社团团支部书记学号">
+                                            <i-input v-model="orgInfo.GuideElectionBy"/>
+                                        </i-form-item>
+                                    </i-col>
+                                    <i-col span="11" offset="2">
+                                        <i-form-item label="社团团支部书记所在学院">
+                                            <i-input v-model="orgInfo.GuideBonus"/>
+                                        </i-form-item>
+                                    </i-col>
+                                </i-row>
+                                <i-row type="flex">
+                                    <i-col span="11">
+                                        <i-form-item label="社团团支部书记年级专业">
+                                            <i-input v-model="orgInfo.GuideElectionBy"/>
+                                        </i-form-item>
+                                    </i-col>
+                                    <i-col span="11" offset="2">
+                                        <i-form-item label="社团团支部书记手机">
+                                            <i-input v-model="orgInfo.GuideBonus"/>
+                                        </i-form-item>
+                                    </i-col>
+                                </i-row>
+                                <i-row type="flex">
+                                    <i-col span="11">
+                                        <i-form-item label="社团团支部书记邮箱">
+                                            <i-input v-model="orgInfo.GuideElectionBy"/>
+                                        </i-form-item>
+                                    </i-col>
+                                    <i-col span="11" offset="2">
+                                        <i-form-item label="占位">
+                                            <i-input v-model="orgInfo.GuideBonus"/>
+                                        </i-form-item>
+                                    </i-col>
+                                </i-row>
+                                <Divider orientation="left">社团党支部情况</Divider>
+                                <i-row type="flex">
+                                    <i-col span="11">
+                                        <i-form-item label="社团党支部书记姓名">
+                                            <i-input v-model="orgInfo.GuideElectionBy"/>
+                                        </i-form-item>
+                                    </i-col>
+                                    <i-col span="11" offset="2">
+                                        <i-form-item label="何时被确定为社团党支部书记">
+                                            <i-input v-model="orgInfo.GuideBonus"/>
+                                        </i-form-item>
+                                    </i-col>
+                                </i-row>
+                                <i-row type="flex">
+                                    <i-col span="11">
+                                        <i-form-item label="社团党支部书记学号">
+                                            <i-input v-model="orgInfo.GuideElectionBy"/>
+                                        </i-form-item>
+                                    </i-col>
+                                    <i-col span="11" offset="2">
+                                        <i-form-item label="社团党支部书记所在学院">
+                                            <i-input v-model="orgInfo.GuideBonus"/>
+                                        </i-form-item>
+                                    </i-col>
+                                </i-row>
+                                <i-row type="flex">
+                                    <i-col span="11">
+                                        <i-form-item label="社团党支部书记年级专业">
+                                            <i-input v-model="orgInfo.GuideElectionBy"/>
+                                        </i-form-item>
+                                    </i-col>
+                                    <i-col span="11" offset="2">
+                                        <i-form-item label="社团党支部书记手机">
+                                            <i-input v-model="orgInfo.GuideBonus"/>
+                                        </i-form-item>
+                                    </i-col>
+                                </i-row>
+                                <i-row type="flex">
+                                    <i-col span="11">
+                                        <i-form-item label="社团党支部书记邮箱">
+                                            <i-input v-model="orgInfo.GuideElectionBy"/>
+                                        </i-form-item>
+                                    </i-col>
+                                    <i-col span="11" offset="2">
+                                        <i-form-item label="占位">
+                                            <i-input v-model="orgInfo.GuideBonus"/>
+                                        </i-form-item>
+                                    </i-col>
+                                </i-row>
+                                <Divider orientation="left">宣传平台信息</Divider>
+                                <i-row type="flex">
+                                    <i-col span="11">
+                                        <i-form-item label="宣传平台信息">
+                                            <i-input v-model="orgInfo.SocialMedia" placeholder="媒体平台：账号名称，粉丝数；"/>
+                                        </i-form-item>
+                                    </i-col>
+                                    <i-col span="11" offset="2">
+                                        <i-form-item label="经费来源">
+                                            <i-input v-model="orgInfo.ChannelForFunds"/>
+                                        </i-form-item>
+                                    </i-col>
+                                </i-row>
+                                <i-row type="flex">
+                                    <i-col span="24">
                                         <i-form-item label="备注1">
                                             <i-input type="textarea" v-model="orgInfo.Memo"/>
                                         </i-form-item>
@@ -141,85 +369,11 @@
                                         </i-form-item>
                                     </i-col>
                                 </i-row>
-                                <i-row type="flex">
-                                    <i-col span="11">
-                                        <i-form-item>
-                                            <div class="uploadBox">
-                                                <h3>上传章程</h3>
-                                                <div class="fileBox">
-                                                    <i-upload :disabled="!orgInfo.HaveDepartRule" action="//jsonplaceholder.typicode.com/posts/" :before-upload="handleUpload">
-                                                        <i-button :disabled="!orgInfo.HaveDepartRule" icon="ios-cloud-upload-outline" type="primary">上传文件</i-button>
-                                                    </i-upload>
-                                                </div>
-                                                <div style="margin-bottom: 10px" v-if="formData !== null">
-                                                    <i-row>
-                                                        <div class="fileInfo">
-                                                        <Button type="text" style="text-align: left;width: 200px;overflow: hidden;white-space: nowrap;text-overflow: ellipsis;">{{formData.name}}</Button>
-                                                        <Button type="text" @click="uploadFile" :loading="loadingStatus">上传</Button>
-                                                        <Button type="text" @click="removeFormData"><Icon type="ios-close" /></Button>
-                                                        </div>
-                                                    </i-row>
-                                                </div>
-                                                <div  v-if="files.length > 0">
-                                                    <Divider v-if="formData !== null"/>
-                                                    <template v-for="(item, index) in files">
-                                                        <i-row :key="index">
-                                                            <div class="fileInfo">
-                                                                <i-col span="18">
-                                                                    <a style="display: inline-block;text-align: left;width: 200px;overflow: hidden;white-space: nowrap;text-overflow: ellipsis;" :href="'/api/cms/Download?id=' + item.ID" target="_blank">{{item.DisplayName}}</a>
-                                                                </i-col>
-                                                                <i-col span="5">
-                                                                    <Button @click="removeFile(item)" type="text"><Icon type="ios-close" /></Button>
-                                                                </i-col>
-                                                            </div>
-                                                        </i-row>
-                                                    </template>
-                                                </div>
-                                            </div>
-                                        </i-form-item>
-                                    </i-col>
-                                    <i-col span="11" ooffset="2">
-                                        <i-form-item>
-                                            <div class="uploadBox">
-                                                <h3>上传活动照片</h3>
-                                                <div class="fileBox">
-                                                    <i-upload action="//jsonplaceholder.typicode.com/posts/" :before-upload="handleUpload">
-                                                        <i-button icon="ios-cloud-upload-outline" type="primary">上传照片</i-button>
-                                                    </i-upload>
-                                                </div>
-                                                <div style="margin-bottom: 10px" v-if="formData !== null">
-                                                    <i-row>
-                                                        <div class="fileInfo">
-                                                        <Button type="text" style="text-align: left;width: 200px;overflow: hidden;white-space: nowrap;text-overflow: ellipsis;">{{formData.name}}</Button>
-                                                        <Button type="text" @click="uploadFile" :loading="loadingStatus">上传</Button>
-                                                        <Button type="text" @click="removeFormData"><Icon type="ios-close" /></Button>
-                                                        </div>
-                                                    </i-row>
-                                                </div>
-                                                <div  v-if="files.length > 0">
-                                                    <Divider v-if="formData !== null"/>
-                                                    <template v-for="(item, index) in files">
-                                                        <i-row :key="index">
-                                                            <div class="fileInfo">
-                                                                <i-col span="18">
-                                                                    <a style="display: inline-block;text-align: left;width: 200px;overflow: hidden;white-space: nowrap;text-overflow: ellipsis;" :href="'/api/cms/Download?id=' + item.ID" target="_blank">{{item.DisplayName}}</a>
-                                                                </i-col>
-                                                                <i-col span="5">
-                                                                    <Button @click="removeFile(item)" type="text"><Icon type="ios-close" /></Button>
-                                                                </i-col>
-                                                            </div>
-                                                        </i-row>
-                                                    </template>
-                                                </div>
-                                            </div>
-                                        </i-form-item>
-                                    </i-col>
-                                </i-row>
                             </i-form>
                             <i-button type="primary" @click="saveOrgDetail()" :loading="isSaving">保存</i-button>
                         </i-col>
-                        <i-col span="7" offset="1">
-                            <i-timeline class="timeline i-scrollbar-hide">
+                        <i-col span="9" offset="1">
+                            <!--i-timeline class="timeline i-scrollbar-hide">
                                 <TimelineItem v-for="(item,index) in logs" :key="index">
                                     <i-row>
                                         <p class="time">{{item.OperateOn}} {{item.Operator}}</p>
@@ -230,7 +384,13 @@
                                         </p>
                                     </i-row>
                                 </TimelineItem>
-                            </i-timeline>
+                            </i-timeline-->
+                            <i-table stripe :columns="tableCol.organization" :data="tableData.organization">
+                                <template slot="Action" slot-scope="{row}">
+                                    <i-button @click="checkOrg(row)">查看</i-button>
+                                    <i-button v-if="row.VersionState !== 200" @click="abortOrg(row)">撤回</i-button>
+                                </template>
+                            </i-table>
                         </i-col>
                     </i-row>
                 </i-tab-pane>
@@ -431,7 +591,7 @@ export default {
         },
         handleUpload (file) {
             this.formData = file;
-            return false;
+            return true;
         },
         uploadFile () {
             let param = new FormData();
@@ -472,6 +632,48 @@ export default {
                     this.$Message.warning(msg.msg);
                 }
             })
+        },
+        changeOrgDetail () {
+            axios.post("/api/org/ModifyApplicate", {id: this.orgInfo.ID}, msg => {
+                if (msg.success) {
+                    const { href } = this.$router.resolve({
+                        path: "/manage/org/orgdetailform",
+                        query: {
+                            instanceId: msg.instanceId,
+                            stepId: msg.stepId,
+                            detail: false
+                        }
+                    });
+                    window.open(href);
+                } else {
+                    this.$Message.warning(msg.msg);
+                }
+            });
+        },
+        checkOrg (row) {
+            const { href } = this.$router.resolve({
+                path: "/manage/org/orgdetailform",
+                query: {
+                    instanceId: row.InstanceId,
+                    stepId: row.StepId,
+                    detail: true
+                }
+            });
+            window.open(href);
+        },
+        getAllOrgDetail () {
+            axios.post("/api/org/GetAllVersion", {departId: this.orgInfo.ID}, msg => {
+                this.tableData.organization = msg.data;
+            });
+        },
+        abortOrg (row) {
+            axios.post("/api/org/AbortVersion", {departId: this.orgInfo.ID, id: row.InstanceId}, msg => {
+                if (msg.success) {
+                    this.getAllOrgDetail();
+                } else {
+                    this.$Message.warning(msg.msg);
+                }
+            });
         },
         saveOrgDetail () {
             this.isSaving = true;
@@ -808,6 +1010,7 @@ export default {
                 this.getOptTable();
                 this.getActivityTable();
                 this.getApplicateTable();
+                this.getAllOrgDetail();
             }
             this.$Spin.hide();
             this.tabSelect = this.$route.query.tabSelect || "basicInfo";
@@ -848,7 +1051,8 @@ export default {
                 subDept: [],
                 activity: [],
                 tutor: [],
-                operation: []
+                operation: [],
+                organization: []
             },
             enumDic: {
                 0: "已通过",

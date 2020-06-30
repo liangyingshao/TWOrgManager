@@ -40,7 +40,7 @@
                         <ListItem :key="index">
                             <ListItemMeta :title="`${item.Owner}提交的${item.WorkflowName}流程已到达您的步骤`" :description="`到达时间:${item.ArriveOn}`"></ListItemMeta>
                             <template slot="action">
-                                <li @click="dealWorkflow(item.InstanceId, item.StepId)"><a>{{item.StepName}}</a></li>
+                                <li @click="dealWorkflow(item.InstanceId, item.StepId, item.WorkflowName)"><a>{{item.StepName}}</a></li>
                             </template>
                         </ListItem>
                     </template>
@@ -111,6 +111,10 @@ export default {
             messageNum: 0,
             message: [],
             time: "早上",
+            dic: {
+                "修改社团基本信息申请": "/manage/org/orgdetailform",
+                "社团活动申请": "/manage/org/activityform"
+            },
             dashBoard: {
                 users: 0,
                 teachers: [],
@@ -337,8 +341,8 @@ export default {
                 this.message = msg.data;
             })
         },
-        dealWorkflow (instanceId, stepId) {
-            window.open("/manage/org/activityform?instanceId=" + instanceId + '&stepId=' + stepId);
+        dealWorkflow (instanceId, stepId, WorkflowName) {
+            window.open(`${this.dic[WorkflowName]}?instanceId=${instanceId}&stepId=${stepId}&detail=false`);
         },
         navTo (url) {
             this.$router.push({name: 'OrgDetail'});
