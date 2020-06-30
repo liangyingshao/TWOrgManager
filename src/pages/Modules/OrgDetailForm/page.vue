@@ -37,7 +37,6 @@ export default {
         }
     },
     created () {
-        debugger;
         this.io.instanceId = this.$route.query.instanceId;
         this.io.stepId = this.$route.query.stepId;
         this.detailMode = this.$route.query.detail === "true";

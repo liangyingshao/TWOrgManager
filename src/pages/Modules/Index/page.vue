@@ -216,7 +216,7 @@ export default {
                         style: {
                             fontSize: '18px'
                         }
-                    }, '最新活动')
+                    }, '最新文件')
                 ])
             },
             newsLable: (h) => {
@@ -231,7 +231,7 @@ export default {
                         style: {
                             fontSize: '18px'
                         }
-                    }, '学院新闻', {
+                    }, '最新活动', {
                         style: {color: '#2d8cf0'}
                     })
                 ])

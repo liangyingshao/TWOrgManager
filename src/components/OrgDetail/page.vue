@@ -67,26 +67,6 @@
                 </i-row>
                 <i-row type="flex">
                     <i-col span="11">
-                        <i-form-item label="是否有社团章程">
-                            <i-switch :disabled="io.fieldAccess.HaveDepartRule === 'r' || !io.isMyStep" v-model="io.data.HaveDepartRule" />
-                            <i-upload :disabled="!io.data.HaveDepartRule" action="/api/cms/UploadFile" :default-file-list="file"
-                            :before-upload="beforeUpload" :on-preview="previewFile" :on-remove="removeUpload"
-                            :data="{'usage': '附件', 'single': true, 'relateTable': 'DepartRule', 'id': this.io.instanceId, 'fileName': this.fileName}">
-                                <i-button shape="circle"
-                                :disabled="!io.data.HaveDepartRule || !io.isMyStep" icon="ios-cloud-upload-outline" type="primary" ></i-button>
-                            </i-upload>
-                            <i-date-picker :disabled="!io.data.HaveDepartRule" v-model="io.data.RuleCreatedOn"></i-date-picker>
-                        </i-form-item>
-                    </i-col>
-                    <i-col span="11" offset="2">
-                        <i-form-item label="是否成立团支部">
-                            <i-switch :disabled="io.fieldAccess.HaveLeagueBranch === 'r'" v-model="io.data.HaveLeagueBranch" />
-                            <i-date-picker :disabled="!io.data.HaveLeagueBranch" v-model="io.data.LeagueBrachCreatedOn"></i-date-picker>
-                        </i-form-item>
-                    </i-col>
-                </i-row>
-                <i-row type="flex">
-                    <i-col span="11">
                         <i-form-item label="是否成立党支部">
                             <i-switch :disabled="io.fieldAccess.HaveCPCBranch === 'r'" v-model="io.data.HaveCPCBranch" />
                             <i-date-picker :disabled="!io.data.HaveCPCBranch" v-model="io.data.CPCBranchCreatedOn"></i-date-picker>
@@ -95,6 +75,31 @@
                     <i-col span="11" offset="2">
                         <i-form-item label="党支部类型">
                             <dic-select dic="党支部类型" :disabled="!io.data.HaveCPCBranch" v-model="io.data.CPCBranchType"/>
+                        </i-form-item>
+                    </i-col>
+                </i-row>
+                <i-row type="flex">
+                    <i-col span="11">
+                        <i-form-item label="是否有社团章程">
+                            <i-switch :disabled="io.fieldAccess.HaveDepartRule === 'r' || !io.isMyStep" v-model="io.data.HaveDepartRule" />
+                            <i-date-picker :disabled="!io.data.HaveDepartRule" v-model="io.data.RuleCreatedOn"></i-date-picker>
+                            <i-row v-if="io.data.HaveDepartRule && io.isMyStep" style="margin-top: 10px">
+                                <i-upload type="drag" :disabled="!io.data.HaveDepartRule" action="/api/cms/UploadFile" :default-file-list="file"
+                                :before-upload="beforeUpload" :on-preview="previewFile" :on-remove="removeUpload"
+                                :data="{'usage': '附件', 'single': true, 'relateTable': 'DepartRule', 'id': this.io.instanceId, 'fileName': this.fileName}"
+                                >
+                                    <div>
+                                        <Icon type="ios-cloud-upload" size="36" style="color: #3399ff"></Icon>
+                                        <p>Click or drag files here to upload</p>
+                                    </div>
+                                </i-upload>
+                            </i-row>
+                        </i-form-item>
+                    </i-col>
+                    <i-col span="11" offset="2">
+                        <i-form-item label="是否成立团支部">
+                            <i-switch :disabled="io.fieldAccess.HaveLeagueBranch === 'r'" v-model="io.data.HaveLeagueBranch" />
+                            <i-date-picker :disabled="!io.data.HaveLeagueBranch" v-model="io.data.LeagueBrachCreatedOn"></i-date-picker>
                         </i-form-item>
                     </i-col>
                 </i-row>
@@ -137,18 +142,6 @@
                 </i-row>
                 <i-row type="flex">
                     <i-col span="11">
-                        <i-form-item label="指导教师邮箱">
-                            <i-input :disabled="io.fieldAccess.GuideEmail === 'r'" v-model="io.data.GuideEmail"/>
-                        </i-form-item>
-                    </i-col>
-                    <i-col span="11" offset="2">
-                        <i-form-item label="占位">
-                            <i-input :disabled="io.fieldAccess.Name === 'r'" v-model="io.data.GuideBonus"/>
-                        </i-form-item>
-                    </i-col>
-                </i-row>
-                <i-row type="flex">
-                    <i-col span="11">
                         <i-form-item label="指导老师产生方式">
                             <i-input :disabled="io.fieldAccess.GuideElectionBy === 'r'" v-model="io.data.GuideElectionBy"/>
                         </i-form-item>
@@ -156,6 +149,13 @@
                     <i-col span="11" offset="2">
                         <i-form-item label="指导老师有无激励">
                             <i-input :disabled="io.fieldAccess.GuideBonus === 'r'" v-model="io.data.GuideBonus"/>
+                        </i-form-item>
+                    </i-col>
+                </i-row>
+                <i-row type="flex">
+                    <i-col span="11">
+                        <i-form-item label="指导教师邮箱">
+                            <i-input :disabled="io.fieldAccess.GuideEmail === 'r'" v-model="io.data.GuideEmail"/>
                         </i-form-item>
                     </i-col>
                 </i-row>
@@ -251,11 +251,6 @@
                             <i-input :disabled="io.fieldAccess.ASecretaryEmail === 'r'" v-model="io.data.ASecretaryEmail"/>
                         </i-form-item>
                     </i-col>
-                    <i-col span="11" offset="2">
-                        <i-form-item label="占位">
-                            <i-input :disabled="io.fieldAccess.Name === 'r'" v-model="io.data.GuideBonus"/>
-                        </i-form-item>
-                    </i-col>
                 </i-row>
                 <Divider orientation="left">社团党支部情况</Divider>
                 <i-row type="flex">
@@ -300,11 +295,6 @@
                             <i-input :disabled="io.fieldAccess.BSecretaryEmail === 'r'" v-model="io.data.BSecretaryEmail"/>
                         </i-form-item>
                     </i-col>
-                    <i-col span="11" offset="2">
-                        <i-form-item label="占位">
-                            <i-input :disabled="io.fieldAccess.Name === 'r'" v-model="io.data.GuideBonus"/>
-                        </i-form-item>
-                    </i-col>
                 </i-row>
                 <Divider orientation="left">宣传平台信息</Divider>
                 <i-row type="flex">
@@ -329,9 +319,83 @@
                         </i-form-item>
                     </i-col>
                 </i-row>
+                <Divider orientation="left" v-if="io.fieldAccess.GuideTeacherOpinion">指导老师审核</Divider>
+                <i-row type="flex">
+                    <div v-show="io.fieldAccess.GuideTeacherIsPass === 'w' && io.isMyStep">
+                        是否通过：
+                        <i-radio-group v-model="io.data.GuideTeacherIsPass">
+                            <i-radio label="true" class="iview-type-size" :disabled="io.fieldAccess.GuideTeacherOpinion === 'r' || !io.isMyStep"> 是</i-radio>
+                            <i-radio label="false" class="iview-type-size" :disabled="io.fieldAccess.GuideTeacherOpinion === 'r' || !io.isMyStep">否</i-radio>
+                        </i-radio-group>
+                        <i-button type="primary" size="small" class="button-position" :disabled="io.fieldAccess.GuideTeacherOpinion === 'r' || !io.isMyStep" @click="submit">确认</i-button>
+                    </div>
+                    <i-input type="textarea" class="opinionForm" :rows="3" placeholder="（审核意见）" v-model="io.data.GuideTeacherOpinion" v-if="io.fieldAccess.GuideTeacherOpinion === 'w' && io.isMyStep"/>
+                    <p v-else-if="io.fieldAccess.GuideTeacherOpinion === 'r'">指导老师审核意见：{{io.data.GuideTeacherOpinion===""?"无审核意见":io.data.GuideTeacherOpinion}}</p>
+                    <div class="wen-zi-ju-you" v-if="io.fieldAccess.GuideTeacherOpinion">
+                        <p >审核人（签名）：<i-input v-model="io.data.GuideTeacher" v-if="io.fieldAccess.GuideTeacher === 'w' && io.isMyStep"/>
+                            <span v-else>{{io.data.GuideTeacher}}</span>
+                        </p>
+                        <i-date-picker type="date" format="yyyy年MM月dd日" placeholder="审核时间" v-model="io.data.GuideTeacherTime" v-if="io.fieldAccess.GuideTeacherTime === 'w' && io.isMyStep"/>
+                        <p v-else>{{io.data.GuideTeacherTime}}</p>
+                    </div>
+                </i-row>
+                <Divider orientation="left" v-if="io.fieldAccess.AffiliatedDepartOpinion">业务指导单位审核</Divider>
+                <div v-show="io.fieldAccess.AffiliatedDepartIsPass === 'w' && io.isMyStep">
+                    是否通过：
+                    <i-radio-group v-model="io.data.AffiliatedDepartIsPass">
+                        <i-radio label="true" class="iview-type-size" :disabled="io.fieldAccess.AffiliatedDepartOpinion === 'r' || !io.isMyStep"> 是</i-radio>
+                        <i-radio label="false" class="iview-type-size" :disabled="io.fieldAccess.AffiliatedDepartOpinion === 'r' || !io.isMyStep">否</i-radio>
+                    </i-radio-group>
+                    <i-button type="primary" size="small" class="button-position" :disabled="io.fieldAccess.AffiliatedDepartOpinion === 'r' || !io.isMyStep" @click="submit">确认</i-button>
+                </div>
+                <i-input type="textarea" class="opinionForm" :rows="3" placeholder="（审核意见）" v-model="io.data.AffiliatedDepartOpinion" v-if="io.fieldAccess.AffiliatedDepartOpinion === 'w' && io.isMyStep"/>
+                <p v-else-if="io.fieldAccess.AffiliatedDepartOpinion==='r'">业务指导单位审核意见:{{io.data.AffiliatedDepartOpinion===""?"无审核意见":io.data.AffiliatedDepartOpinion}}</p>
+                <div class="wen-zi-ju-you" v-if="io.fieldAccess.AffiliatedDepartOpinion">
+                    <p>审核人（签名）：<i-input v-model="io.data.AffiliatedDepart" v-if="io.fieldAccess.AffiliatedDepart === 'w' && io.isMyStep"/>
+                        <span v-else>{{io.data.AffiliatedDepart}}</span>
+                    </p>
+                    <i-date-picker v-model="io.data.AffiliatedDepartTime" type="date" format="yyyy年MM月dd日" placeholder="审核时间" v-if="io.fieldAccess.AffiliatedDepartTime === 'w' && io.isMyStep"/>
+                    <p v-else>{{io.data.AffiliatedDepartTime}}</p>
+                </div>
+                <Divider orientation="left" v-if="io.fieldAccess.SauOpinion">学生社团管理部审核</Divider>
+                <div v-show="io.fieldAccess.SauIsPass === 'w' && io.isMyStep">
+                    是否通过：
+                    <i-radio-group v-model="io.data.SauIsPass">
+                        <i-radio label="true" class="iview-type-size" :disabled="io.fieldAccess.SauOpinion === 'r' || !io.isMyStep"> 是</i-radio>
+                        <i-radio label="false" class="iview-type-size" :disabled="io.fieldAccess.SauOpinion === 'r' || !io.isMyStep">否</i-radio>
+                    </i-radio-group>
+                    <i-button type="primary" size="small" class="button-position" :disabled="io.fieldAccess.SauOpinion === 'r' || !io.isMyStep" @click="submit">确认</i-button>
+                </div>
+                <i-input type="textarea" class="opinionForm" :rows="3" placeholder="（审核意见）" v-model="io.data.SauOpinion" v-if="io.fieldAccess.SauOpinion === 'w' && io.isMyStep"/>
+                <p v-else-if="io.fieldAccess.SauOpinion==='r'">学生社团管理部审核意见:{{io.data.SauOpinion===""?"无审核意见":io.data.SauOpinion}}</p>
+                <div class="wen-zi-ju-you" v-if="io.fieldAccess.SauOpinion">
+                    <p>审核人（签名）：<i-input v-model="io.data.Sau" v-if="io.fieldAccess.Sau === 'w' && io.isMyStep"/>
+                        <span v-else>{{io.data.Sau}}</span>
+                    </p>
+                    <i-date-picker v-model="io.data.SauTime" type="date" format="yyyy年MM月dd日" placeholder="审核时间" v-if="io.fieldAccess.SauTime === 'w' && io.isMyStep"/>
+                    <p v-else>{{io.data.SauTime}}</p>
+                </div>
+                <Divider orientation="left" v-if="io.fieldAccess.YlcOpinion">校团委审核</Divider>
+                <div v-show="io.fieldAccess.YlcIsPass === 'w' && io.isMyStep">
+                    是否通过：
+                    <i-radio-group v-model="io.data.YlcIsPass">
+                        <i-radio label="true" class="iview-type-size" :disabled="io.fieldAccess.YlcOpinion === 'r' || !io.isMyStep"> 是</i-radio>
+                        <i-radio label="false" class="iview-type-size" :disabled="io.fieldAccess.YlcOpinion === 'r' || !io.isMyStep">否</i-radio>
+                    </i-radio-group>
+                    <i-button type="primary" size="small" class="button-position" :disabled="io.fieldAccess.YlcOpinion === 'r' || !io.isMyStep" @click="submit">确认</i-button>
+                </div>
+                <i-input type="textarea" class="opinionForm" :rows="3" placeholder="（审核意见）" v-model="io.data.YlcOpinion" v-if="io.fieldAccess.YlcOpinion === 'w' && io.isMyStep"/>
+                <p v-else-if="io.fieldAccess.YlcOpinion==='r'">学生社团管理部审核意见:{{io.data.YlcOpinion===""?"无审核意见":io.data.YlcOpinion}}</p>
+                <div class="wen-zi-ju-you" v-if="io.fieldAccess.YlcOpinion">
+                    <p>审核人（签名）：<i-input v-model="io.data.Ylc" v-if="io.fieldAccess.Ylc === 'w' && io.isMyStep"/>
+                        <span v-else>{{io.data.Ylc}}</span>
+                    </p>
+                    <i-date-picker v-model="io.data.YlcTime" type="date" format="yyyy年MM月dd日" placeholder="审核时间" v-if="io.fieldAccess.YlcTime === 'w' && io.isMyStep"/>
+                    <p v-else>{{io.data.YlcTime}}</p>
+                </div>
             </i-form>
             <i-row>
-                <template v-if="io.isMyStep">
+                <template v-if="io.isMyStep && io.currentStep==='填写申请表'">
                     <i-button @click="submit" type="primary">提交修改</i-button>
                     <i-button @click="giveUp">放弃修改</i-button>
                 </template>
@@ -467,5 +531,13 @@ export default {
 }
 .content{
     padding-left: 5px;
+}
+.wen-zi-ju-you{
+    width: 100%;
+    text-align: right;
+}
+.opinionForm{
+    margin-top: 10px;
+    margin-bottom: 10px;
 }
 </style>
