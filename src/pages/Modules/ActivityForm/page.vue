@@ -34,7 +34,7 @@
                     <i-row>
                         <i-col>
                             <p class="headline">社团活动申请表</p>
-                            <p class="date">填表时间：{{nowDate}}</p>
+                            <p class="date">填表时间：{{io.data.CreatedTime}}</p>
                             <table border="1">
                                 <tr>
                                     <td class="smallhang">社团名称</td>
@@ -51,18 +51,25 @@
                                     </td>
                                 </tr>
                                 <tr>
-                                    <td class="smallhang" style="height:76px;">活动时间</td>
-                                    <td colspan="2" width="200" style="letter-spacing: 2px;">
+                                    <td class="smallhang">活动时间</td>
+                                    <td colspan="4" width="200" class="longhang wen-zi-ju-zhong" style="letter-spacing: 2px;">
                                         <i-date-picker type="date" format="yyyy年MM月dd日" v-if="io.fieldAccess.StartDate === 'w' && io.isMyStep" v-model="io.data.StartDate"/>
-                                        <p v-else>{{io.data.StartDate}}</p>
+                                        <span v-else>{{io.data.StartDate}}</span>
                                         至
                                         <i-date-picker type="date" format="yyyy年MM月dd日" v-if="io.fieldAccess.EndDate === 'w' && io.isMyStep" v-model="io.data.EndDate"/>
-                                        <p v-else>{{io.data.EndDate}}</p>
+                                         <span v-else>{{io.data.EndDate}}</span>
                                     </td>
+                                </tr>
+                                <tr>
                                     <td class="smallhang">活动人数</td>
                                     <td colspan="2" width="200">
                                         <i-input  v-if="io.fieldAccess.AttendanceFigures === 'w' && io.isMyStep" v-model="io.data.AttendanceFigures"/>
                                         <p v-else>{{io.data.AttendanceFigures}}人</p>
+                                    </td>
+                                    <td class="smallhang">预算金额</td>
+                                    <td colspan="2" width="200">
+                                        <i-input v-if="io.fieldAccess.AttendanceFigures === 'w' && io.isMyStep" v-model="io.data.Budget"/>
+                                        <p v-else>{{io.data.Budget}}</p>
                                     </td>
                                 </tr>
                                 <tr>
@@ -107,6 +114,7 @@
                                     <td class="longhang" colspan="4">
                                         <i-upload  v-if="io.fieldAccess.Description === 'w' && io.isMyStep" action="//jsonplaceholder.typicode.com/posts/" :before-upload="handleUpload">
                                             <i-button icon="ios-cloud-upload-outline" type="primary">上传文件</i-button>
+                                            文件内容应包括活动策划、经费预算、经费来源等
                                         </i-upload>
                                         <div v-if="formData !== null">
                                             <i-row>
@@ -160,7 +168,7 @@
                                     </td>
                                 </tr>
                                 <tr v-show="io.fieldAccess.AffiliatedDepartOpinion">
-                                    <td class="smallhang">挂靠单位意见</td>
+                                    <td class="smallhang">业务指导单位意见</td>
                                     <td class="longhang" colspan="4">
                                         <div v-show="io.fieldAccess.AffiliatedDepartIsPass === 'w' && io.isMyStep">
                                             是否通过：
@@ -279,8 +287,8 @@ export default {
                 label: "指导老师"
                 },
                 {
-                value: "挂靠单位",
-                label: "挂靠单位"
+                value: "业务指导单位",
+                label: "业务指导单位"
                 },
                 {
                 value: "学生联合会",
@@ -296,7 +304,6 @@ export default {
             stepId: "",
             instanceId: "",
             detailMode: true,
-            nowDate: "",
             upLoad: [],
             io: {
                 fieldAccess: {},
@@ -317,8 +324,8 @@ export default {
                     value: "指导老师审核",
                     label: "指导老师审核"
                 }, {
-                    value: '挂靠单位审核',
-                    label: '挂靠单位审核'
+                    value: '业务指导单位审核',
+                    label: '业务指导单位审核'
                 }, {
                     value: '学生联合会审核',
                     label: '学生联合会审核'
@@ -407,7 +414,7 @@ export default {
                 } else {
                     this.$Message.warning(msg.msg);
                 }
-            })
+            });
         },
         submit () {
             this.io.shouldUpload.forEach(value => {
@@ -430,11 +437,6 @@ export default {
         app.title = "社团活动";
         this.getFromPrepage();
         this.getFiles();
-        const date = new Date();
-        const year = date.getFullYear(); // 获取当前年份
-        const month = date.getMonth() + 1; // 获取当前月份(0-11,0代表1月所以要加1);
-        const day = date.getDate();
-        this.nowDate = `${year}年${month}月${day}日`; // 显示在最上方的填写日期
         for (let index in app.userInfo.permissons) {
             if (app.userInfo.permissons[index] === "Workflow.ManageAllWorkflow") {
                 this.isAdmin = true;

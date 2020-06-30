@@ -17,11 +17,11 @@
                 <i-row type="flex" justify="space-between">
                     <i-col span="11">
                         <i-form-item label="学历" prop="Educational">
-                            <i-input v-model="modalData.user.Educational" />
+                            <dic-select dic="学历" v-model="modalData.user.Educational"/>
                         </i-form-item>
                     </i-col>
                     <i-col span="11">
-                        <i-form-item label="专业" prop="Specialty">
+                        <i-form-item label="学院" prop="Specialty">
                             <i-input v-model="modalData.user.Specialty" />
                         </i-form-item>
                     </i-col>
@@ -29,7 +29,7 @@
                 <i-row type="flex" justify="space-between">
                     <i-col span="11">
                         <i-form-item label="政治面貌" prop="PoliticalStatus">
-                            <i-input v-model="modalData.user.PoliticalStatus" />
+                            <dic-select dic="政治面貌" v-model="modalData.user.PoliticalStatus"/>
                         </i-form-item>
                     </i-col>
                     <i-col span="11">
@@ -66,7 +66,7 @@
                 </i-row>
                 <i-row type="flex" justify="space-between">
                     <i-col span="11">
-                        <i-form-item label="籍贯" prop="BirthPlace">
+                        <i-form-item label="民族" prop="BirthPlace">
                             <i-input v-model="modalData.user.BirthPlace" />
                         </i-form-item>
                     </i-col>
@@ -75,6 +75,11 @@
                             <i-input v-model="modalData.user.Source" />
                         </i-form-item>
                     </i-col>
+                </i-row>
+                <i-row type="flex" justify="space-between">
+                    <i-form-item label="所属部门" prop="BelongDepart">
+                        <i-input v-model="modalData.user.BelongDepart" />
+                    </i-form-item>
                 </i-row>
                 <i-button @click="showLog = true" type="text" style="float:right; padding: 0;">查看修改记录</i-button>
             </i-form>
@@ -115,10 +120,10 @@
         },
         watch: {
             "modalData.user.JoinCPCTime" (value) {
-                this.haveJoinCPC = value.toLocaleDateString() !== badDate.toLocaleDateString();
+                this.haveJoinCPC = !!value.toLocaleDateString && value.toLocaleDateString() !== badDate.toLocaleDateString();
             },
             "modalData.user.JoinCCYLTime" (value) {
-                this.haveJoinCPC = value.toLocaleDateString() !== badDate.toLocaleDateString();
+                this.haveJoinCPC = !!value.toLocaleDateString && value.toLocaleDateString() !== badDate.toLocaleDateString();
             }
         },
         data () {
@@ -142,8 +147,43 @@
                             trigger: "blur"
                         }
                     ],
+                    PoliticalStatus: [
+                        {
+                            required: true,
+                            message: "必须选择政治面貌",
+                            trigger: "blur"
+                        }
+                    ],
+                    Educational: [
+                        {
+                            required: true,
+                            message: "必须选择政治学历",
+                            trigger: "blur"
+                        }
+                    ],
+                    Specialty: [
+                        {
+                            required: true,
+                            message: "必须选择学院",
+                            trigger: "blur"
+                        }
+                    ],
+                    BirthPlace: [
+                        {
+                            required: true,
+                            message: "必须填写民族",
+                            trigger: "blur"
+                        }
+                    ],
+                    Source: [
+                        {
+                            required: true,
+                            message: "必须选择生源地",
+                            trigger: "blur"
+                        }
+                    ],
                     "Mobile": [
-                        {type: "string", pattern: regex.mobile, message: "手机格式不正确", trigger: "blur"},
+                        {type: "string", required: true, pattern: regex.mobile, message: "手机格式不正确", trigger: "blur"},
                         _.debounce(function (rule, value, cb) {
                             let userId = THIS.modalData.user.ID;
                             axios.post("/api/security/MobileValidate", { userId, mobile: value }, msg => {
@@ -164,8 +204,14 @@
             },
             submit (departId, callback) {
                 let form = this.$refs["Form"];
+                // 注：在ES6的严格模式中，不允许回调函数直接返回bool类型的true和false，以免程序被误导。所以这里使用常量，也可以使用字符串返回。
+                const TRUE = true;
+                const FALSE = false;
                 form.validate(res => {
-                    if (!res) return;
+                    if (!res) {
+                        callback(FALSE);
+                        return;
+                    }
                     axios.post("/api/security/SaveUserV2", {
                         ...this.modalData.user,
                         JoinCPCTime: this.haveJoinCPC ? this.modalData.user.JoinCPCTime : "1900-01-01",
@@ -175,8 +221,9 @@
                         }, msg => {
                         this.resetFields();
                         if (msg.success) {
-                            callback();
+                            callback(TRUE, msg);
                         } else {
+                            callback(FALSE);
                             this.$Message.warning(msg.msg);
                         }
                     });

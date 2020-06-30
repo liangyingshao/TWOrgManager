@@ -2,11 +2,29 @@
     <div id="activity-form">
         <div>
             <div class="paper">
+                <i-card>
+                    <i-table stripe :columns="signCol" :data="signData">
+                        <template slot="SignUpOn" slot-scope="{row}">
+                            <p v-if="row.SignUpState === 99">没有报名</p>
+                            <p v-else>{{row.SignUpOn}}</p>
+                        </template>
+                        <template slot="SignInOn" slot-scope="{row}">
+                            <p v-if="row.SignInState === 99">没有签到</p>
+                            <p v-else>{{row.SignInOn}}</p>
+                        </template>
+                        <template slot="Action" slot-scope="{row}">
+                            <i-button v-show="row.SignUpState === 0" @click="signUp(row.ActivityId, 99, row.UserId)">踢出</i-button>
+                            <Tag v-show="row.SignUpState === 99" size="large">已取消</Tag>
+                        </template>
+                    </i-table>
+                </i-card>
+            </div>
+            <div class="paper">
                 <div>
                     <div class="status-bar" v-if="isAdmin">
                         <p class="smallhang"/>
                         <p class="headline">强制执行</p>
-                        <table border="0">
+                        <table border="0" class="table">
                             <tr>
                                 <td class="smallhang wen-zi-ju-you">执行人：</td>
                                 <td colspan="2">
@@ -35,7 +53,7 @@
                         <i-col>
                             <p class="headline">社团活动申请表</p>
                             <p class="date">填表时间：{{nowDate}}</p>
-                            <table border="1">
+                            <table border="1" class="table">
                                 <tr>
                                     <td class="smallhang">社团名称</td>
                                     <td class="longhang wen-zi-ju-zhong" colspan="4">
@@ -160,7 +178,7 @@
                                     </td>
                                 </tr>
                                 <tr v-show="io.fieldAccess.AffiliatedDepartOpinion">
-                                    <td class="smallhang">挂靠单位意见</td>
+                                    <td class="smallhang">业务指导单位意见</td>
                                     <td class="longhang" colspan="4">
                                         <div v-show="io.fieldAccess.AffiliatedDepartIsPass === 'w' && io.isMyStep">
                                             是否通过：
@@ -247,20 +265,6 @@
                     </TimelineItem>
                 </i-timeline>
             </div>
-            <div class="paper">
-                <i-card>
-                    <i-table stripe :columns="signCol" :data="signData">
-                        <template slot="SignUpState" slot-scope="{row}">
-                            <p v-show="row.SignUpState === 0">已报名</p>
-                            <p v-show="row.SignUpState === 99">已取消</p>
-                        </template>
-                        <template slot="Action" slot-scope="{row}">
-                            <i-button v-show="row.SignUpState === 0" @click="signUp(row.ActivityId, 99, row.UserId)">踢出</i-button>
-                            <Tag v-show="row.SignUpState === 99" size="large">已取消</Tag>
-                        </template>
-                    </i-table>
-                </i-card>
-            </div>
         </div>
     </div>
 </template>
@@ -293,12 +297,12 @@ export default {
                     key: 'RealName'
                 },
                 {
-                    title: '报名状态',
-                    slot: 'SignUpState'
+                    title: '报名时间',
+                    slot: 'SignUpOn'
                 },
                 {
-                    title: '报名时间',
-                    key: 'SignUpOn'
+                    title: '签到时间',
+                    slot: 'SignInOn'
                 },
                 {
                     title: '操作',
@@ -313,8 +317,8 @@ export default {
                 label: "指导老师"
                 },
                 {
-                value: "挂靠单位",
-                label: "挂靠单位"
+                value: "业务指导单位",
+                label: "业务指导单位"
                 },
                 {
                 value: "学生联合会",
@@ -351,8 +355,8 @@ export default {
                     value: "指导老师审核",
                     label: "指导老师审核"
                 }, {
-                    value: '挂靠单位审核',
-                    label: '挂靠单位审核'
+                    value: '业务指导单位审核',
+                    label: '业务指导单位审核'
                 }, {
                     value: '学生联合会审核',
                     label: '学生联合会审核'
@@ -500,6 +504,20 @@ export default {
 </script>
 
 <style lang="less">
+.date {
+    margin-top: 16px;
+    margin-left: 518px;
+    font-size: 12px;
+    font-family: 'FangSong';
+}
+.table {
+    margin: 15px auto;
+    border-collapse: collapse;
+    text-align: center;
+    font-family: 'FangSong';
+    font-size: 18.7px;
+    line-height: 30px;
+}
 #activity-form {
     .opinionForm .ivu-input {
     border:1px solid #dcdee2;
@@ -538,20 +556,6 @@ export default {
         text-align: center;
         font-size: 24px;
         font-family: '';
-    }
-    .date {
-        margin-top: 16px;
-        margin-left: 518px;
-        font-size: 12px;
-        font-family: 'FangSong';
-    }
-    table {
-        margin: 15px auto;
-        border-collapse: collapse;
-        text-align: center;
-        font-family: 'FangSong';
-        font-size: 18.7px;
-        line-height: 30px;
     }
     .smallhang {
         width: 101px;

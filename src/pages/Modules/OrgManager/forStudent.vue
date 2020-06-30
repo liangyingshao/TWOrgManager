@@ -67,7 +67,7 @@
                             <i-table stripe :columns="tableActCol" :data="tableAct">
                                 <template slot="Action" slot-scope="{row}">
                                     <i-button @click="signUp(row.ID, 0)" v-if="!row.isSignUp">报名</i-button>
-                                    <i-button @click="signUp(row.ID, 99)" v-else>取消</i-button>
+                                    <i-button @click="signUp(row.ID, 99)" v-else>取消报名</i-button>
                                 </template>
                             </i-table>
                         </i-card>
@@ -103,7 +103,7 @@
                                     <ListItemMeta :title="act.ActivityName"/>
                                     <template slot="action">
                                         <li>
-                                            <i-button type="text" @click="signUp(act.ID, 99)">取消活动</i-button>
+                                            <i-button type="text" @click="signUp(act.ID, 99)">取消报名</i-button>
                                         </li>
                                     </template>
                                 </ListItem>

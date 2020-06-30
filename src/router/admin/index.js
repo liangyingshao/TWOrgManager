@@ -17,13 +17,17 @@ module.exports = {
     OrgDetail: {
         path: "/manage/org/detail",
         layout: "admin",
-        showAs: "OrgManage",
         component: () => import(/* webpackChunkName: "OrgManager" */"@p/Modules/OrgDetail")
     },
     ActivityForm: {
         path: "/manage/org/activityform",
         layout: "admin",
         component: () => import(/* webpackChunkName: "OrgManager" */"@p/Modules/ActivityForm")
+    },
+    OrgDetailForm: {
+        path: "/manage/org/orgdetailform",
+        layout: "admin",
+        component: () => import(/* webpackChunkName: "OrgManager" */"@p/Modules/OrgDetailForm")
     },
     SignUpSituation: {
         path: "/manage/org/signUpSituation",
@@ -38,7 +42,6 @@ module.exports = {
     DepartSwitch: {
         path: "/manage/org/departSwitch",
         layout: "admin",
-        showAs: "OrgManage",
         component: () => import(/* webpackChunkName: "OrgManager" */"@p/Modules/OrgDetail/DepartSwitch")
     },
     WorkflowConfig: {
@@ -67,7 +70,7 @@ module.exports = {
         component: () => import(/* webpackChunkName: "WorkflowManager" */"@p/Modules/MyPending")
     },
     Index: {
-        path: "/index",
+        path: "/",
         layout: "empty",
         component: () => import(/* webpackChunkName: "OrgManager" */"@p/Modules/Index")
     },

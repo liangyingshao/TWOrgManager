@@ -24,7 +24,7 @@
         <Layout>
             <Affix>
                 <Header :style="{padding: 0}" class="layout-header-bar">
-                    <Row >
+                    <i-row type="flex" align="middle">
                         <i-col span="20">
                             <Icon @click.native="collapsedSider" :class="rotateIcon" :style="{margin: '0 20px'}" type="md-menu" size="24"></Icon>
                         </i-col>
@@ -38,7 +38,7 @@
                             </Dropdown>
                         </i-col> -->
                         <i-col span="1">
-                            <Icon :style="[{margin: '0 5px'},{cursor: 'pointer'}]" type="md-notifications-outline" size="24"></Icon>
+                            <Icon :style="[{margin: '0 5px'},{cursor: 'pointer'}, {display: 'none'}]" @click="$Notice.info({title: '您当前没有通知'});" type="md-notifications-outline" size="24"></Icon>
                         </i-col>
                         <i-col span="1">
                             <Dropdown trigger="click">
@@ -50,16 +50,14 @@
                                     <DropdownItem>
                                         <router-link :to="{name: 'Profile'}" tag="div">个人中心</router-link>
                                     </DropdownItem>
-                                    <DropdownItem>
-                                        <router-link :to="{name: 'Profile'}" tag="div">账户设置</router-link>
-                                    </DropdownItem>
                                     <DropdownItem @click.native="logout()">
-                                        <router-link :to="{name: 'Login'}" tag="div">退出</router-link>
+                                        <router-link :to="{name: 'Index'}" tag="div">退出</router-link>
                                     </DropdownItem>
                                 </DropdownMenu>
                             </Dropdown>
                         </i-col>
-                    </Row>
+                        <i-col span="2" />
+                    </i-row>
                 </Header>
             </Affix>
             <Content :style="{margin: '20px'}" class="content">
@@ -87,7 +85,7 @@ export default {
     mounted () {
         if (!app.checkPermission("Security.LoginAdmin")) {
             this.$Message.warning("你没有权限登录后台");
-            this.$router.push({ name: "Login" });
+            this.$router.push({ name: "Index" });
         }
         app.getMenus(menus => {
             this.$set(app, "menus", menus);
@@ -135,7 +133,7 @@ export default {
         logout () {
             Axios.post("/api/security/logout", {currentUserGuid: app.currentUserGuid}, msg => {
                 if (msg.success === true) {
-                    // this.$Message.success("登出成功");
+                    app.userInfo.isLogined = false;
                 } else {
                     this.$Message.warning("登出失败");
                 }

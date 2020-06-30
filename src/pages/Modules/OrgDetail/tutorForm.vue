@@ -11,6 +11,12 @@
                 <i-form-item label="手机" prop="Mobile">
                     <i-input v-model="modalData.user.Mobile" />
                 </i-form-item>
+                <i-form-item label="指导老师类别" prop="GuideTeacherType">
+                    <dic-select dic="指导老师类别" v-model="modalData.user.GuideTeacherType" />
+                </i-form-item>
+                <i-form-item label="所属部门" prop="BelongDepart">
+                    <i-input v-model="modalData.user.BelongDepart" />
+                </i-form-item>
                 <i-button @click="showLog = true" type="text" style="float:right; padding: 0;">查看修改记录</i-button>
             </i-form>
         </i-col>
@@ -67,7 +73,7 @@
                         }
                     ],
                     "Mobile": [
-                        {type: "string", pattern: regex.mobile, message: "手机格式不正确", trigger: "blur"},
+                        {type: "string", required: true, pattern: regex.mobile, message: "手机格式不正确", trigger: "blur"},
                         _.debounce(function (rule, value, cb) {
                             let userId = THIS.modalData.user.ID;
                             axios.post("/api/security/MobileValidate", { userId, mobile: value }, msg => {
@@ -89,13 +95,20 @@
             },
             submit (departId, callback) {
                 let form = this.$refs["Form"];
+                // 注：在ES6的严格模式中，不允许回调函数直接返回bool类型的true和false，以免程序被误导。所以这里使用常量，也可以使用字符串返回。
+                const TRUE = true;
+                const FALSE = false;
                 form.validate(res => {
-                    if (!res) return;
+                    if (!res) {
+                        callback(FALSE);
+                        return;
+                    }
                     axios.post("/api/security/SaveUserV2", {...this.modalData.user, departId, position: "指导老师"}, msg => {
                         this.resetFields();
                         if (msg.success) {
-                            callback();
+                            callback(TRUE);
                         } else {
+                            callback(FALSE);
                             this.$Message.warning(msg.msg);
                         }
                     })
