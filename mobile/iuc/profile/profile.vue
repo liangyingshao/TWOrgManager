@@ -53,15 +53,15 @@
 				realName: "",
 				avatar: "",
 				navs: [{
-					name: "我的待办",
+					name: "社团管理",
 					url: "../roomApplication/v2/todoList",
 					cuIcon: "profilefill"
 				}, {
-					name: "我的申请",
+					name: "社团信息",
 					url: "../roomApplication/v2/myAttend",
 					cuIcon: "newshotfill"
 				}, {
-					name: "实验室列表",
+					name: "活动申请",
 					url: "../roomView/labList?type=-1",
 					cuIcon: "formfill"
 				}, {
@@ -70,7 +70,7 @@
 					cuIcon: "card"
 				}],
 				list: [{
-					name: "实验室列表",
+					name: "我的社团",
 					url: "../roomView/labList?type=-1",
 					cuIcon: "presentfill"
 				}, {

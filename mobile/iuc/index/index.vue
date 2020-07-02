@@ -101,7 +101,7 @@
 					{
 						image: "../../static/我的待办.png",
 						text: "我的待办",
-						source: "../roomApplication/v2/todoList",
+						source: "../roomApplication/v2/processList",
 					},
 					{
 						image: "../../static/我的参与.png",
@@ -111,7 +111,7 @@
 					{
 						image: "../../static/扫一扫.png",
 						text: "扫一扫",
-						source: "../alert/developing"
+						source: "../login/login"
 					}
 				],
 				labList: [
