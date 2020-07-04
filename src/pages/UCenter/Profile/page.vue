@@ -166,6 +166,7 @@ export default {
     };
   },
   mounted () {
+    app.title = "个人中心";
     this.getUser();
   }
 };

@@ -239,6 +239,7 @@ export default {
         }
     },
     mounted () {
+        app.title = "登录";
     },
     methods: {
         toDetail (routerObj) {

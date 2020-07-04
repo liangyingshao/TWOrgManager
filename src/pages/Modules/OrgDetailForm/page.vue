@@ -8,6 +8,7 @@
 
 <script>
 import orgDetailChanger from "../../../components/OrgDetail";
+let app = require("@/config");
 const axios = require("axios");
 export default {
     components: {
@@ -42,6 +43,7 @@ export default {
         this.detailMode = this.$route.query.detail === "true";
     },
     mounted () {
+        app.title = "社团信息修改申请";
         this.loadWorkflow();
     }
 }
