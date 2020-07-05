@@ -17,8 +17,8 @@ let appSetting = {
         subtitle: "",
         title: ""
     },
-	domain: "http://item.ricebird.cn",//"http://localhost:2034", //
-    dashboard: "/iuc/index/index",
+	domain: "http://stgl.ricebird.cn",//"http://localhost:2034", //
+    dashboard: "/iuc/login/login",
     ueditor: {
         serverUrl: "/ueditor/process",
         topOffset: 64,

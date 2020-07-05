@@ -39,7 +39,7 @@
 		<view>
 			<view class="cu-bar bg-white">
 				<view class="action">
-					<text class="text-bold text-xl">申请实验室</text>
+					<text class="text-bold text-xl">社团管理</text>
 				</view>
 				<view class="action text-informatic-brown" @click="labShow=!labShow">{{labShow ? "收起" : "展开"}}<text :class="functionshow ? 'cuIcon-triangleupfill' : 'cuIcon-triangledownfill'"
 					 style="font-size:25px;"></text></view>
@@ -110,14 +110,14 @@
 					},
 					{
 						image: "../../static/扫一扫.png",
-						text: "扫一扫",
-						source: "../alert/developing"
+						text: "我的社团",
+						source: "../roomApplication/v2/myClub"
 					}
 				],
 				labList: [
 					{
 						image: "../../static/申请机位.png",
-						text: "按个人申请",
+						text: "社团基本信息",
 						source: "../roomView/labList?type=20"
 					},
 					{

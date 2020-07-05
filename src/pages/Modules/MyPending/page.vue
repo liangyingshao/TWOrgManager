@@ -7,6 +7,7 @@
 </template>
 <script>
 import axios from 'axios';
+let app = require("@/config");
 export default {
     data () {
         return {
@@ -37,6 +38,7 @@ export default {
         }
     },
     mounted () {
+        app.title = "我的待办";
         this.getFlows();
     },
     methods: {

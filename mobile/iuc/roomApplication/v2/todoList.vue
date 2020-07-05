@@ -2,7 +2,7 @@
 	<view>
 		<cu-custom bgColor="bg-informatic-brown" isBack>
 			<block slot="backText">返回</block>
-			<block slot="content">我的待办</block>
+			<block slot="content">流程列表</block>
 		</cu-custom>
 		<transition-group class="cu-card" name="list">
 			<view class="cu-item bg-informatic-brown shadow" v-for="(item,index) in todoList" :key="index" @click="toExecute(item)">

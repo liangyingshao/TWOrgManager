@@ -2,7 +2,19 @@
 	"pages": [
 		//pages数组中第一项表示应用启动页，参考：https://uniapp.dcloud.io/collocation/pages
 		{
+			"path": "iuc/login/login",
+			"style": {}
+		},
+		{
 			"path": "iuc/index/index",
+			"style": {}
+		},
+		{
+			"path": "iuc/login/pwd",
+			"style": {}
+		},
+		{
+			"path": "iuc/login/regist",
 			"style": {}
 		},
 		{
@@ -15,6 +27,10 @@
 		},
 		{
 			"path":"iuc/roomApplication/v2/myApplication",
+			"style": {}
+		},
+		{
+			"path":"iuc/roomApplication/v2/myClub",
 			"style": {}
 		},
 		{
