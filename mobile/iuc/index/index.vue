@@ -123,7 +123,7 @@
 					{
 						image: "../../static/实验室列表.png",
 						text: "按团队申请",
-						source: "../roomView/labList?type=10"
+						source: "../orgmanagement/orgmanagement"
 					}
 					/*{
 						image: "../../static/实验室列表.png",
