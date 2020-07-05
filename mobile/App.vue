@@ -14,7 +14,7 @@
 				})
 			} else {
 				uni.navigateTo({
-					url: "/iuc/index/index"
+					url: "/iuc/login/login"
 					// url: "uc/login/login"
 				})
 			}
