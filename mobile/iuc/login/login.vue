@@ -17,7 +17,7 @@
 					<input placeholder="请输入您的密码" name="password" password v-model="loginModel.password"></input>
 				</view>
 				<view class="flex flex-direction margin-tb">
-					<button class="cu-btn bg-blue lg" form-type="submit" @click="login">登录</button>
+					<button class="cu-btn bg-blue lg" form-type="submit">登录</button>
 				</view>
 			</form>
 			<view class="flex margin-tb justify-center">
@@ -58,14 +58,15 @@
 					if(msg.success){
 						app.userInfo = msg.userInfo;
 						app.currentUserGuid = msg.currentUserGuid;
+						uni.setStorageSync("currentUserGuid", msg.currentUserGuid);
 						uni.navigateTo({
 							url: '../index/index'
 						})
 					}
 					else{
-						 uni.showToast({
+						uni.showToast({
 							 title: msg.msg
-						 })
+						})
 					}
 				})
 			}

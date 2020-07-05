@@ -75,10 +75,11 @@
 </template>
 
 <script>
-	let app = require("@/config");
+	const app = require("@/config");
 	export default {
 		onLoad() {
-			this.loadNews()
+			this.loadNews();
+			this.getDashBoard();
 		},
 		data() {
 			return {
@@ -118,12 +119,12 @@
 					{
 						image: "../../static/申请机位.png",
 						text: "社团基本信息",
-						source: "../roomView/labList?type=20"
+						source: "../orgmanagement/orgmanagement?departId=3af99f86-115f-4e28-902f-59d088979c99"
 					},
 					{
 						image: "../../static/实验室列表.png",
 						text: "按团队申请",
-						source: "../orgmanagement/orgmanagement"
+						source: "../orgmanagement/orgmanagement?departId=3af99f86-115f-4e28-902f-59d088979c99"
 					}
 					/*{
 						image: "../../static/实验室列表.png",
@@ -155,7 +156,8 @@
 				],
 				mineShow: true,
 				functionshow: true,
-				labShow: true
+				labShow: true,
+				dashBoard: {}
 			}
 		},
 		methods: {
@@ -194,11 +196,17 @@
 			},
 			p: e => {
 				return e ? app.checkPermission(e) : true;
+			},
+			getDashBoard() {
+				uni.post("/api/org/GetDashboard", {}, msg => {
+					
+				})
 			}
+			
 		}
 	}
 </script>
 
-<style lang="scss">
+<style>
 
 </style>
