@@ -275,7 +275,7 @@ export default {
                     }
                     this.$nextTick(() => {
                         if (msg.success) {
-                            let path = this.$route.query.goto || app.dashboard;
+                            let path = this.$route.query.goto || app.dashboard
                             path = path === "/" ? app.dashboard : path;
                             if (path !== app.dashboard) this.$router.push(path);
                         } else {

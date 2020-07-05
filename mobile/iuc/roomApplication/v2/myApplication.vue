@@ -2,7 +2,7 @@
 	<view id="lab-apply-list">
 		<cu-custom bgColor="bg-informatic-brown" isBack>
 			<block slot="backText">返回</block>
-			<block slot="content">我的申请</block>
+			<block slot="content">流程列表</block>
 		</cu-custom>
 		<transition-group class="cu-card" name="list">
 			<view class="cu-item bg-informatic-brown shadow"

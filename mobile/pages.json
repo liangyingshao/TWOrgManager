@@ -30,15 +30,15 @@
 			"style": {}
 		},
 		{
+			"path":"iuc/roomApplication/v2/myClub",
+			"style": {}
+		},
+		{
 			"path":"iuc/roomApplication/v2/roomFlowsCtrl",
 			"style": {}
 		},
 		{
 			"path":"iuc/roomApplication/v2/seatFlowsCtrl",
-			"style": {}
-		},
-		{
-			"path":"iuc/roomApplication/v2/processList",
 			"style": {}
 		},
 		{
