@@ -35,16 +35,9 @@
 				})
 			},
 			toExecute(item) {
-				item.StepId=undefined;
-				if(item.WorkflowName==="按团队申请实验室"){
-					uni.setStorage({
-						key : 'jmpInfo',
-						data:item,
-						success: () => {	//如果缓存成功则跳转
-							uni.navigateTo({
-								url: './roomFlowsCtrl'
-							})
-						}
+				if(item.WorkflowName === "社团活动申请"){
+					uni.navigateTo({
+						url: `../../activity/activity?instanceId=${item.InstanceId}&stepId=${item.StepId}`
 					})
 				}
 				else if(item.WorkflowName==="按机位申请实验室"){

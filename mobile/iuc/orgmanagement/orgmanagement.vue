@@ -1,6 +1,6 @@
 <template>
 	<view>
-		<cu-custom bgColor="bg-gradual-blue">
+		<cu-custom isBack bgColor="bg-gradual-blue">
 			<block slot="content">社团管理</block>
 		</cu-custom>
 		<scroll-view scroll-y>
@@ -8,43 +8,40 @@
 				<text class="text-xl">{{orgInfo.Name}}</text>
 				<br>
 				<text>指导老师：</text>
-				<text v-for="(teacher, index) in teachers">{{teacher.RealName}}</text>
+				<text v-for="(teacher, index) in teachers" :key="index">{{teacher.RealName}}</text>
 			</view>
 			<scroll-view scroll-x class="bg-white nav" scroll-with-animation :scroll-left="scrollLeft">
 				<view class="cu-item" :class="index == TabCur?'text-green cur':''" v-for="(item, index) in tabTitle" :key="index" @tap="tabSelect" :data-id="index">
 					{{item}}
 				</view>
 				<view v-show="TabCur == 0" class="cu-list menu">
-					<view v-for="(item, index) in tableData.member" :key="index" class="cu-item">
+					<view v-for="(item, index) in tableData.member" :key="index" class="cu-item" @click="getMemberDetail(item)">
 						<view class="content">
 							<text class="cuIcon-btn text-green"></text>
 							<text class="text-grey">{{item.RealName}}</text>
 							<view v-if="item.isAdmin" class='cu-tag radius'>管理员</view>
 						</view>
 						<view class="action">
-							<button class="cu-btn round bg-green shadow">
-								<text class="">管理</text>
-							</button>
-							<button class="cu-btn round bg-red shadow margin-lr-xs">
+							<button @click="delMember(item)" class="cu-btn round bg-red shadow margin-lr-xs">
 								<text class="">删除</text>
 							</button>
 						</view>
 					</view>
-					<button class="margin">增加成员</button>
+					<button disabled="" class="margin">增加成员</button>
 				</view>
 				<view v-show="TabCur == 1" class="cu-list menu">
-					<view v-for="(item, index) in tableData.activity" :key="index" class="cu-item">
+					<view @click="toActivity(item)"  v-for="(item, index) in tableData.activity" :key="index" class="cu-item">
 						<view class="content">
 							<text class="cuIcon-btn text-green"></text>
 							<text class="text-grey">{{item.ActivityName}}</text>
 						</view>
-						<view class="action">
+						<!--view class="action">
 							<button class="cu-btn round bg-green shadow">
 								<text class="">查看</text>
 							</button>
-						</view>
+						</view-->
 					</view>
-					<button class="margin">创建活动</button>
+					<button @click="addActivity" class="margin">创建活动</button>
 				</view>
 				<view v-show="TabCur == 2" class="cu-list menu">
 					<view v-for="(item, index) in tableData.applicate" :key="index" class="cu-item">
@@ -53,18 +50,18 @@
 							<text class="text-grey">申请人：{{item.RealName}}</text>
 						</view>
 						<view class="action">
-							<button class="cu-btn round bg-blue shadow">
+							<button @click="acceptApplication(item.ID)" class="cu-btn round bg-blue shadow">
 								<text class="">通过</text>
 							</button>
-							<button class="cu-btn round bg-green shadow margin-lr-xs">
-								<text class="">详情</text>
+							<button @click="acceptApplication(item.ID)" class="cu-btn round bg-red shadow margin-lr-xs">
+								<text class="">拒绝</text>
 							</button>
 						</view>
 					</view>
 				</view>
 				<view v-show="TabCur == 3">
 					<form>
-						<view class="cu-form-group" v-for="(item, index) in orgInfo">
+						<view class="cu-form-group" v-for="(item, index) in orgInfo" :key="index">
 							<view class="title">{{index}}</view>
 							<input name="index">{{item}}</input>
 						</view>
@@ -74,6 +71,19 @@
 			<view class="cu-tabbar-height"></view>
 		</scroll-view>
 		<navTab :selection='0' />
+		<view class="cu-modal" :class="modalName === 'memberModal'?'show':''">
+			<view class="cu-dialog">
+				<view class="cu-bar bg-white justify-end">
+					<view class="content">成员详情</view>
+					<view class="action" @tap="hideModal">
+						<text class="cuIcon-close text-red"></text>
+					</view>
+				</view>
+				<view class="padding-xl">
+					{{memberInfo.user}}
+				</view>
+			</view>
+		</view>
 	</view>
 </template>
 
@@ -123,10 +133,15 @@ export default{
 				member: {},
 				applicate: {},
 				activity: {}
-			}
+			},
+			modalName: "",
+			memberInfo: {}
 		};
 	},
 	methods: {
+		hideModal() {
+			this.modalName = "";
+		},
 		tabSelect(e) {
 			this.TabCur = e.currentTarget.dataset.id;
 			this.scrollLeft = (e.currentTarget.dataset.id - 1) * 60
@@ -155,6 +170,55 @@ export default{
 				this.tableData.activity = msg.data;
 			});
 		},
+		getMemberDetail (row) {
+			uni.post("/api/security/GetUserById", {id: row.ID, departId: this.orgInfo.ID}, msg => {
+				this.modalName = "memberModal";
+				this.memberInfo = msg;
+			});
+		},
+		acceptApplication (appId) {
+			uni.post("/api/security/AcceptApplicate", {appId}, msg => {
+				if (msg.success) {
+					this.getApplicates();
+				} else {
+					
+				}
+			});
+		},
+		addActivity () {
+			uni.post("/api/org/Applicate", {id: this.orgInfo.ID}, msg => {
+				if (msg.success) {
+					uni.navigateTo({
+						url:"../activity/activity?instanceId=" + msg.instanceId + '&stepId=' + msg.stepId
+					});
+				} else {
+					
+				}
+			})
+		},
+		rejectApplication (appId) {
+			uni.xios.post("/api/security/DenyApplicate", {appId}, msg => {
+				if (msg.success) {
+					this.getApplicates();
+				} else {
+					
+				}
+			});
+		},
+		delMember (row) {
+			uni.post("/api/security/RemoveUserV2", { userId: row.ID, departId: row.departId }, msg => {
+				if (msg.success) {
+					this.getMembers();
+				} else {
+					
+				}
+			});
+		},
+		toActivity (row) {
+			uni.navigateTo({
+				url: `../activity/activity?instanceId=${row.InstanceId}&stepId=${row.StepId}&detail=true`
+			})
+		}
 	}
 }
 </script>
