@@ -119,6 +119,18 @@
                 </i-row>
                 <i-row type="flex">
                     <i-col span="11">
+                        <i-form-item label="指导老师产生方式">
+                            <i-input :disabled="io.fieldAccess.GuideElectionBy === 'r' || !io.isMyStep" v-model="io.data.GuideElectionBy"/>
+                        </i-form-item>
+                    </i-col>
+                    <i-col span="11" offset="2">
+                        <i-form-item label="指导老师有无激励">
+                            <i-input :disabled="io.fieldAccess.GuideBonus === 'r' || !io.isMyStep" v-model="io.data.GuideBonus"/>
+                        </i-form-item>
+                    </i-col>
+                </i-row>
+                <i-row type="flex">
+                    <i-col span="11">
                         <i-form-item label="指导教师类别">
                             <i-input disabled v-model="io.data.GuideType"/>
                         </i-form-item>
@@ -138,18 +150,6 @@
                     <i-col span="11" offset="2">
                         <i-form-item label="指导教师手机">
                             <i-input disabled v-model="io.data.GuidePhone"/>
-                        </i-form-item>
-                    </i-col>
-                </i-row>
-                <i-row type="flex">
-                    <i-col span="11">
-                        <i-form-item label="指导老师产生方式">
-                            <i-input disabled v-model="io.data.GuideElectionBy"/>
-                        </i-form-item>
-                    </i-col>
-                    <i-col span="11" offset="2">
-                        <i-form-item label="指导老师有无激励">
-                            <i-input disabled v-model="io.data.GuideBonus"/>
                         </i-form-item>
                     </i-col>
                 </i-row>
@@ -479,19 +479,19 @@ export default {
                     } else if (i === 1) {
                         this.io.data.ChargerName = msg.user.RealName;
                         this.io.data.ChargerPolitics = msg.user.PoliticalStatus;
-                        this.io.data.ChargerCollege = "信息学院";// msg.user.
+                        this.io.data.ChargerCollege = msg.user.BelongDepart;
                         this.io.data.ChargerMajor = msg.user.Specialty;
                         this.io.data.ChargerPhone = msg.user.Mobile;
                         this.io.data.ChargerEmail = msg.user.Email;
                     } else if (i === 2) {
                         this.io.data.ASecretaryName = msg.user.RealName;
-                        this.io.data.ASecretaryCollege = "信息学院";// msg.user.
+                        this.io.data.ASecretaryCollege = msg.user.BelongDepart;
                         this.io.data.ASecretaryMajor = msg.user.Specialty;
                         this.io.data.ASecretaryPhone = msg.user.Mobile;
                         this.io.data.ASecretaryEmail = msg.user.Email;
                     } else if (i === 3) {
                         this.io.data.BSecretaryName = msg.user.RealName;
-                        this.io.data.BSecretaryCollege = "信息学院";// msg.user.
+                        this.io.data.BSecretaryCollege = msg.user.BelongDepart;
                         this.io.data.BSecretaryMajor = msg.user.Specialty;
                         this.io.data.BSecretaryPhone = msg.user.Mobile;
                         this.io.data.BSecretaryEmail = msg.user.Email;
