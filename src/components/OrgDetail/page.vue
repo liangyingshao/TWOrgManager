@@ -69,240 +69,234 @@
                     <i-col span="11">
                         <i-form-item label="是否有社团章程">
                             <i-switch :disabled="io.fieldAccess.HaveDepartRule === 'r' || !io.isMyStep" v-model="io.data.HaveDepartRule" />
-                            <i-upload :disabled="!io.data.HaveDepartRule" action="/api/cms/UploadFile" :default-file-list="file"
-                            :before-upload="beforeUpload" :on-preview="previewFile" :on-remove="removeUpload"
-                            :data="{'usage': '附件', 'single': true, 'relateTable': 'DepartRule', 'id': this.io.instanceId, 'fileName': this.fileName}">
-                                <i-button shape="circle"
-                                :disabled="!io.data.HaveDepartRule || !io.isMyStep" icon="ios-cloud-upload-outline" type="primary" ></i-button>
-                            </i-upload>
-                            <i-date-picker :disabled="!io.data.HaveDepartRule" v-model="io.data.RuleCreatedOn"></i-date-picker>
+                            <i-date-picker :disabled="!io.data.HaveDepartRule || !io.isMyStep" v-model="io.data.RuleCreatedOn"></i-date-picker>
+                            <i-row v-if="io.data.HaveDepartRule && io.isMyStep" style="margin-top: 10px">
+                                <i-upload type="drag" :disabled="!io.data.HaveDepartRule || !io.isMyStep" action="/api/cms/UploadFile" :default-file-list="file"
+                                :before-upload="beforeUpload" :on-preview="previewFile" :on-remove="removeUpload"
+                                :data="{'usage': '附件', 'single': true, 'relateTable': 'DepartRule', 'id': this.io.instanceId, 'fileName': this.fileName}"
+                                >
+                                    <div>
+                                        <Icon type="ios-cloud-upload" size="36" style="color: #3399ff"></Icon>
+                                        <p>Click or drag files here to upload</p>
+                                    </div>
+                                </i-upload>
+                            </i-row>
                         </i-form-item>
                     </i-col>
                     <i-col span="11" offset="2">
                         <i-form-item label="是否成立团支部">
-                            <i-switch :disabled="io.fieldAccess.HaveLeagueBranch === 'r'" v-model="io.data.HaveLeagueBranch" />
-                            <i-date-picker :disabled="!io.data.HaveLeagueBranch" v-model="io.data.LeagueBrachCreatedOn"></i-date-picker>
+                            <i-switch :disabled="io.fieldAccess.HaveLeagueBranch === 'r' || !io.isMyStep" v-model="io.data.HaveLeagueBranch" />
+                            <i-date-picker :disabled="!io.data.HaveLeagueBranch || !io.isMyStep" v-model="io.data.LeagueBrachCreatedOn"></i-date-picker>
                         </i-form-item>
                     </i-col>
                 </i-row>
                 <i-row type="flex">
                     <i-col span="11">
                         <i-form-item label="是否成立党支部">
-                            <i-switch :disabled="io.fieldAccess.HaveCPCBranch === 'r'" v-model="io.data.HaveCPCBranch" />
-                            <i-date-picker :disabled="!io.data.HaveCPCBranch" v-model="io.data.CPCBranchCreatedOn"></i-date-picker>
+                            <i-switch :disabled="io.fieldAccess.HaveCPCBranch === 'r' || !io.isMyStep" v-model="io.data.HaveCPCBranch" />
+                            <i-date-picker :disabled="!io.data.HaveCPCBranch || !io.isMyStep" v-model="io.data.CPCBranchCreatedOn"></i-date-picker>
                         </i-form-item>
                     </i-col>
                     <i-col span="11" offset="2">
                         <i-form-item label="党支部类型">
-                            <dic-select dic="党支部类型" :disabled="!io.data.HaveCPCBranch" v-model="io.data.CPCBranchType"/>
+                            <dic-select dic="党支部类型" :disabled="!io.data.HaveCPCBranch || !io.isMyStep" v-model="io.data.CPCBranchType"/>
                         </i-form-item>
                     </i-col>
                 </i-row>
                 <Divider orientation="left">指导老师情况</Divider>
                 <i-row type="flex">
                     <i-col span="11">
-                        <i-form-item label="指导老师姓名">
-                            <i-input :disabled="io.fieldAccess.GuideName === 'r'" v-model="io.data.GuideName"/>
-                        </i-form-item>
-                    </i-col>
-                    <i-col span="11" offset="2">
                         <i-form-item label="指导老师工号">
-                            <i-input :disabled="io.fieldAccess.GuideCode === 'r'" v-model="io.data.GuideCode"/>
+                            <i-input prefix="ios-search" :disabled="io.fieldAccess.GuideCode === 'r' || !io.isMyStep"
+                            v-model="io.data.GuideCode" @on-enter="searchUser(io.data.GuideCode, 0)"/>
                         </i-form-item>
                     </i-col>
-                </i-row>
-                <i-row type="flex">
-                    <i-col span="11">
-                        <i-form-item label="指导教师类别">
-                            <i-input :disabled="io.fieldAccess.GuideType === 'r'" v-model="io.data.GuideType"/>
-                        </i-form-item>
-                    </i-col>
-                    <i-col span="11" offset="2">
-                        <i-form-item label="指导教师政治面貌">
-                            <i-input :disabled="io.fieldAccess.GuidePolitics === 'r'" v-model="io.data.GuidePolitics"/>
-                        </i-form-item>
-                    </i-col>
-                </i-row>
-                <i-row type="flex">
-                    <i-col span="11">
-                        <i-form-item label="指导教师单位">
-                            <i-input :disabled="io.fieldAccess.GuideDepart === 'r'" v-model="io.data.GuideDepart"/>
-                        </i-form-item>
-                    </i-col>
-                    <i-col span="11" offset="2">
-                        <i-form-item label="指导教师手机">
-                            <i-input :disabled="io.fieldAccess.GuidePhone === 'r'" v-model="io.data.GuidePhone"/>
-                        </i-form-item>
-                    </i-col>
-                </i-row>
-                <i-row type="flex">
-                    <i-col span="11">
-                        <i-form-item label="指导教师邮箱">
-                            <i-input :disabled="io.fieldAccess.GuideEmail === 'r'" v-model="io.data.GuideEmail"/>
-                        </i-form-item>
-                    </i-col>
-                    <i-col span="11" offset="2">
-                        <i-form-item label="占位">
-                            <i-input :disabled="io.fieldAccess.Name === 'r'" v-model="io.data.GuideBonus"/>
+                    <i-col span="11"  offset="2">
+                        <i-form-item label="指导老师姓名">
+                            <i-input disabled v-model="io.data.GuideName"/>
                         </i-form-item>
                     </i-col>
                 </i-row>
                 <i-row type="flex">
                     <i-col span="11">
                         <i-form-item label="指导老师产生方式">
-                            <i-input :disabled="io.fieldAccess.GuideElectionBy === 'r'" v-model="io.data.GuideElectionBy"/>
+                            <i-input :disabled="io.fieldAccess.GuideElectionBy === 'r' || !io.isMyStep" v-model="io.data.GuideElectionBy"/>
                         </i-form-item>
                     </i-col>
                     <i-col span="11" offset="2">
                         <i-form-item label="指导老师有无激励">
-                            <i-input :disabled="io.fieldAccess.GuideBonus === 'r'" v-model="io.data.GuideBonus"/>
+                            <i-input :disabled="io.fieldAccess.GuideBonus === 'r' || !io.isMyStep" v-model="io.data.GuideBonus"/>
+                        </i-form-item>
+                    </i-col>
+                </i-row>
+                <i-row type="flex">
+                    <i-col span="11">
+                        <i-form-item label="指导教师类别">
+                            <i-input disabled v-model="io.data.GuideType"/>
+                        </i-form-item>
+                    </i-col>
+                    <i-col span="11" offset="2">
+                        <i-form-item label="指导教师政治面貌">
+                            <i-input disabled v-model="io.data.GuidePolitics"/>
+                        </i-form-item>
+                    </i-col>
+                </i-row>
+                <i-row type="flex">
+                    <i-col span="11">
+                        <i-form-item label="指导教师单位">
+                            <i-input disabled v-model="io.data.GuideDepart"/>
+                        </i-form-item>
+                    </i-col>
+                    <i-col span="11" offset="2">
+                        <i-form-item label="指导教师手机">
+                            <i-input disabled v-model="io.data.GuidePhone"/>
+                        </i-form-item>
+                    </i-col>
+                </i-row>
+                <i-row type="flex">
+                    <i-col span="11">
+                        <i-form-item label="指导教师邮箱">
+                            <i-input disabled v-model="io.data.GuideEmail"/>
                         </i-form-item>
                     </i-col>
                 </i-row>
                 <Divider orientation="left">社团负责人情况</Divider>
                 <i-row type="flex">
                     <i-col span="11">
-                        <i-form-item label="社团负责人姓名">
-                            <i-input :disabled="io.fieldAccess.ChargerName === 'r'" v-model="io.data.ChargerName"/>
+                        <i-form-item label="社团负责人学号">
+                            <i-input prefix="ios-search" :disabled="io.fieldAccess.ChargerCode === 'r' || !io.isMyStep"
+                            v-model="io.data.ChargerCode" @on-enter="searchUser(io.data.ChargerCode, 1)"/>
                         </i-form-item>
                     </i-col>
                     <i-col span="11" offset="2">
                         <i-form-item label="何时确定为社团负责人">
-                            <i-input :disabled="io.fieldAccess.ChargerSelectedOn === 'r'" v-model="io.data.ChargerSelectedOn"/>
+                            <i-input :disabled="io.fieldAccess.ChargerSelectedOn === 'r' || !io.isMyStep" v-model="io.data.ChargerSelectedOn"/>
                         </i-form-item>
                     </i-col>
                 </i-row>
                 <i-row type="flex">
                     <i-col span="11">
-                        <i-form-item label="社团负责人学号">
-                            <i-input :disabled="io.fieldAccess.ChargerCode === 'r'" v-model="io.data.ChargerCode"/>
+                        <i-form-item label="社团负责人姓名">
+                            <i-input disabled v-model="io.data.ChargerName"/>
                         </i-form-item>
                     </i-col>
                     <i-col span="11" offset="2">
                         <i-form-item label="社团负责人政治面貌">
-                            <i-input :disabled="io.fieldAccess.ChargerPolitics === 'r'" v-model="io.data.ChargerPolitics"/>
+                            <i-input disabled v-model="io.data.ChargerPolitics"/>
                         </i-form-item>
                     </i-col>
                 </i-row>
                 <i-row type="flex">
                     <i-col span="11">
                         <i-form-item label="社团负责人学院">
-                            <i-input :disabled="io.fieldAccess.ChargerCollege === 'r'" v-model="io.data.ChargerCollege"/>
+                            <i-input disabled v-model="io.data.ChargerCollege"/>
                         </i-form-item>
                     </i-col>
                     <i-col span="11" offset="2">
                         <i-form-item label="社团负责人年级专业">
-                            <i-input :disabled="io.fieldAccess.ChargerMajor === 'r'" v-model="io.data.ChargerMajor"/>
+                            <i-input disabled v-model="io.data.ChargerMajor"/>
                         </i-form-item>
                     </i-col>
                 </i-row>
                 <i-row type="flex">
                     <i-col span="11">
                         <i-form-item label="社团负责人手机">
-                            <i-input :disabled="io.fieldAccess.ChargerPhone === 'r'" v-model="io.data.ChargerPhone"/>
+                            <i-input disabled v-model="io.data.ChargerPhone"/>
                         </i-form-item>
                     </i-col>
                     <i-col span="11" offset="2">
                         <i-form-item label="社团负责人邮箱">
-                            <i-input :disabled="io.fieldAccess.ChargerEmail === 'r'" v-model="io.data.ChargerEmail"/>
+                            <i-input disabled v-model="io.data.ChargerEmail"/>
                         </i-form-item>
                     </i-col>
                 </i-row>
                 <Divider orientation="left">社团团支部情况</Divider>
                 <i-row type="flex">
                     <i-col span="11">
-                        <i-form-item label="社团团支部书记姓名">
-                            <i-input :disabled="io.fieldAccess.ASecretaryName === 'r'" v-model="io.data.ASecretaryName"/>
+                        <i-form-item label="社团团支部书记学号">
+                            <i-input prefix="ios-search" :disabled="io.fieldAccess.ASecretaryCode === 'r' || !io.isMyStep || !io.data.HaveLeagueBranch"
+                            v-model="io.data.ASecretaryCode"  @on-enter="searchUser(io.data.ASecretaryCode, 2)"/>
                         </i-form-item>
                     </i-col>
                     <i-col span="11" offset="2">
                         <i-form-item label="何时被确定为社团团支部书记">
-                            <i-input :disabled="io.fieldAccess.ASecretarySelectedOn === 'r'" v-model="io.data.ASecretarySelectedOn"/>
+                            <i-input :disabled="io.fieldAccess.ASecretarySelectedOn === 'r' || !io.isMyStep || !io.data.HaveLeagueBranch" v-model="io.data.ASecretarySelectedOn"/>
                         </i-form-item>
                     </i-col>
                 </i-row>
                 <i-row type="flex">
                     <i-col span="11">
-                        <i-form-item label="社团团支部书记学号">
-                            <i-input :disabled="io.fieldAccess.ASecretaryCode === 'r'" v-model="io.data.ASecretaryCode"/>
+                        <i-form-item label="社团团支部书记姓名">
+                            <i-input disabled v-model="io.data.ASecretaryName"/>
                         </i-form-item>
                     </i-col>
                     <i-col span="11" offset="2">
                         <i-form-item label="社团团支部书记所在学院">
-                            <i-input :disabled="io.fieldAccess.ASecretaryCollege === 'r'" v-model="io.data.ASecretaryCollege"/>
+                            <i-input disabled v-model="io.data.ASecretaryCollege"/>
                         </i-form-item>
                     </i-col>
                 </i-row>
                 <i-row type="flex">
                     <i-col span="11">
                         <i-form-item label="社团团支部书记年级专业">
-                            <i-input :disabled="io.fieldAccess.ASecretaryMajor === 'r'" v-model="io.data.ASecretaryMajor"/>
+                            <i-input disabled v-model="io.data.ASecretaryMajor"/>
                         </i-form-item>
                     </i-col>
                     <i-col span="11" offset="2">
                         <i-form-item label="社团团支部书记手机">
-                            <i-input :disabled="io.fieldAccess.ASecretaryPhone === 'r'" v-model="io.data.ASecretaryPhone"/>
+                            <i-input disabled v-model="io.data.ASecretaryPhone"/>
                         </i-form-item>
                     </i-col>
                 </i-row>
                 <i-row type="flex">
                     <i-col span="11">
                         <i-form-item label="社团团支部书记邮箱">
-                            <i-input :disabled="io.fieldAccess.ASecretaryEmail === 'r'" v-model="io.data.ASecretaryEmail"/>
-                        </i-form-item>
-                    </i-col>
-                    <i-col span="11" offset="2">
-                        <i-form-item label="占位">
-                            <i-input :disabled="io.fieldAccess.Name === 'r'" v-model="io.data.GuideBonus"/>
+                            <i-input disabled v-model="io.data.ASecretaryEmail"/>
                         </i-form-item>
                     </i-col>
                 </i-row>
                 <Divider orientation="left">社团党支部情况</Divider>
                 <i-row type="flex">
                     <i-col span="11">
-                        <i-form-item label="社团党支部书记姓名">
-                            <i-input :disabled="io.fieldAccess.BSecretaryName === 'r'" v-model="io.data.BSecretaryName"/>
+                        <i-form-item label="社团党支部书记学号">
+                            <i-input prefix="ios-search" :disabled="io.fieldAccess.BSecretaryCode === 'r' || !io.isMyStep || !io.data.HaveCPCBranch"
+                            v-model="io.data.BSecretaryCode" @on-enter="searchUser(io.data.BSecretaryCode, 3)"/>
                         </i-form-item>
                     </i-col>
                     <i-col span="11" offset="2">
                         <i-form-item label="何时被确定为社团党支部书记">
-                            <i-input :disabled="io.fieldAccess.BSecretarySelectedOn === 'r'" v-model="io.data.BSecretarySelectedOn"/>
+                            <i-input :disabled="io.fieldAccess.BSecretarySelectedOn === 'r' || !io.isMyStep || !io.data.HaveCPCBranch" v-model="io.data.BSecretarySelectedOn"/>
                         </i-form-item>
                     </i-col>
                 </i-row>
                 <i-row type="flex">
                     <i-col span="11">
-                        <i-form-item label="社团党支部书记学号">
-                            <i-input :disabled="io.fieldAccess.BSecretaryCode === 'r'" v-model="io.data.BSecretaryCode"/>
+                        <i-form-item label="社团党支部书记姓名">
+                            <i-input disabled v-model="io.data.BSecretaryName"/>
                         </i-form-item>
                     </i-col>
                     <i-col span="11" offset="2">
                         <i-form-item label="社团党支部书记所在学院">
-                            <i-input :disabled="io.fieldAccess.BSecretaryCollege === 'r'" v-model="io.data.BSecretaryCollege"/>
+                            <i-input disabled v-model="io.data.BSecretaryCollege"/>
                         </i-form-item>
                     </i-col>
                 </i-row>
                 <i-row type="flex">
                     <i-col span="11">
                         <i-form-item label="社团党支部书记年级专业">
-                            <i-input :disabled="io.fieldAccess.BSecretaryMajor === 'r'" v-model="io.data.BSecretaryMajor"/>
+                            <i-input disabled v-model="io.data.BSecretaryMajor"/>
                         </i-form-item>
                     </i-col>
                     <i-col span="11" offset="2">
                         <i-form-item label="社团党支部书记手机">
-                            <i-input :disabled="io.fieldAccess.BSecretaryPhone === 'r'" v-model="io.data.BSecretaryPhone"/>
+                            <i-input disabled v-model="io.data.BSecretaryPhone"/>
                         </i-form-item>
                     </i-col>
                 </i-row>
                 <i-row type="flex">
                     <i-col span="11">
                         <i-form-item label="社团党支部书记邮箱">
-                            <i-input :disabled="io.fieldAccess.BSecretaryEmail === 'r'" v-model="io.data.BSecretaryEmail"/>
-                        </i-form-item>
-                    </i-col>
-                    <i-col span="11" offset="2">
-                        <i-form-item label="占位">
-                            <i-input :disabled="io.fieldAccess.Name === 'r'" v-model="io.data.GuideBonus"/>
+                            <i-input disabled v-model="io.data.BSecretaryEmail"/>
                         </i-form-item>
                     </i-col>
                 </i-row>
@@ -310,28 +304,102 @@
                 <i-row type="flex">
                     <i-col span="11">
                         <i-form-item label="开通新媒体平台情况">
-                            <i-input :disabled="io.fieldAccess.SocialMedia === 'r'" v-model="io.data.SocialMedia" placeholder="媒体平台：账号名称，粉丝数；"/>
+                            <i-input :disabled="io.fieldAccess.SocialMedia === 'r' || !io.isMyStep" v-model="io.data.SocialMedia" placeholder="媒体平台：账号名称，粉丝数；"/>
                         </i-form-item>
                     </i-col>
                     <i-col span="11" offset="2">
                         <i-form-item label="经费来源">
-                            <i-input :disabled="io.fieldAccess.ChannelForFunds === 'r'" v-model="io.data.ChannelForFunds"/>
+                            <i-input :disabled="io.fieldAccess.ChannelForFunds === 'r' || !io.isMyStep" v-model="io.data.ChannelForFunds"/>
                         </i-form-item>
                     </i-col>
                 </i-row>
                 <i-row type="flex">
                     <i-col span="24">
                         <i-form-item label="备注1">
-                            <i-input :disabled="io.fieldAccess.Name === 'r'" type="textarea" v-model="io.data.Memo"/>
+                            <i-input :disabled="io.fieldAccess.Name === 'r' || !io.isMyStep" type="textarea" v-model="io.data.Memo"/>
                         </i-form-item>
                         <i-form-item label="备注2">
-                            <i-input :disabled="io.fieldAccess.Name === 'r'" type="textarea" v-model="io.data.Remark"/>
+                            <i-input :disabled="io.fieldAccess.Name === 'r' || !io.isMyStep" type="textarea" v-model="io.data.Remark"/>
                         </i-form-item>
                     </i-col>
                 </i-row>
+                <Divider orientation="left" v-if="io.fieldAccess.GuideTeacherOpinion">指导老师审核</Divider>
+                <i-row type="flex">
+                    <div v-show="io.fieldAccess.GuideTeacherIsPass === 'w' && io.isMyStep">
+                        是否通过：
+                        <i-radio-group v-model="io.data.GuideTeacherIsPass">
+                            <i-radio label="true" class="iview-type-size" :disabled="io.fieldAccess.GuideTeacherOpinion === 'r' || !io.isMyStep"> 是</i-radio>
+                            <i-radio label="false" class="iview-type-size" :disabled="io.fieldAccess.GuideTeacherOpinion === 'r' || !io.isMyStep">否</i-radio>
+                        </i-radio-group>
+                        <i-button type="primary" size="small" class="button-position" :disabled="io.fieldAccess.GuideTeacherOpinion === 'r' || !io.isMyStep" @click="submit">确认</i-button>
+                    </div>
+                    <i-input type="textarea" class="opinionForm" :rows="3" placeholder="（审核意见）" v-model="io.data.GuideTeacherOpinion" v-if="io.fieldAccess.GuideTeacherOpinion === 'w' && io.isMyStep"/>
+                    <p v-else-if="io.fieldAccess.GuideTeacherOpinion === 'r'">指导老师审核意见：{{io.data.GuideTeacherOpinion===""?"无审核意见":io.data.GuideTeacherOpinion}}</p>
+                    <div class="wen-zi-ju-you" v-if="io.fieldAccess.GuideTeacherOpinion">
+                        <p >审核人（签名）：<i-input v-model="io.data.GuideTeacher" v-if="io.fieldAccess.GuideTeacher === 'w' && io.isMyStep"/>
+                            <span v-else>{{io.data.GuideTeacher}}</span>
+                        </p>
+                        <i-date-picker type="date" format="yyyy年MM月dd日" placeholder="审核时间" v-model="io.data.GuideTeacherTime" v-if="io.fieldAccess.GuideTeacherTime === 'w' && io.isMyStep"/>
+                        <p v-else>{{io.data.GuideTeacherTime}}</p>
+                    </div>
+                </i-row>
+                <Divider orientation="left" v-if="io.fieldAccess.AffiliatedDepartOpinion">业务指导单位审核</Divider>
+                <div v-show="io.fieldAccess.AffiliatedDepartIsPass === 'w' && io.isMyStep">
+                    是否通过：
+                    <i-radio-group v-model="io.data.AffiliatedDepartIsPass">
+                        <i-radio label="true" class="iview-type-size" :disabled="io.fieldAccess.AffiliatedDepartOpinion === 'r' || !io.isMyStep"> 是</i-radio>
+                        <i-radio label="false" class="iview-type-size" :disabled="io.fieldAccess.AffiliatedDepartOpinion === 'r' || !io.isMyStep">否</i-radio>
+                    </i-radio-group>
+                    <i-button type="primary" size="small" class="button-position" :disabled="io.fieldAccess.AffiliatedDepartOpinion === 'r' || !io.isMyStep" @click="submit">确认</i-button>
+                </div>
+                <i-input type="textarea" class="opinionForm" :rows="3" placeholder="（审核意见）" v-model="io.data.AffiliatedDepartOpinion" v-if="io.fieldAccess.AffiliatedDepartOpinion === 'w' && io.isMyStep"/>
+                <p v-else-if="io.fieldAccess.AffiliatedDepartOpinion==='r'">业务指导单位审核意见:{{io.data.AffiliatedDepartOpinion===""?"无审核意见":io.data.AffiliatedDepartOpinion}}</p>
+                <div class="wen-zi-ju-you" v-if="io.fieldAccess.AffiliatedDepartOpinion">
+                    <p>审核人（签名）：<i-input v-model="io.data.AffiliatedDepart" v-if="io.fieldAccess.AffiliatedDepart === 'w' && io.isMyStep"/>
+                        <span v-else>{{io.data.AffiliatedDepart}}</span>
+                    </p>
+                    <i-date-picker v-model="io.data.AffiliatedDepartTime" type="date" format="yyyy年MM月dd日" placeholder="审核时间" v-if="io.fieldAccess.AffiliatedDepartTime === 'w' && io.isMyStep"/>
+                    <p v-else>{{io.data.AffiliatedDepartTime}}</p>
+                </div>
+                <Divider orientation="left" v-if="io.fieldAccess.SauOpinion">学生社团管理部审核</Divider>
+                <div v-show="io.fieldAccess.SauIsPass === 'w' && io.isMyStep">
+                    是否通过：
+                    <i-radio-group v-model="io.data.SauIsPass">
+                        <i-radio label="true" class="iview-type-size" :disabled="io.fieldAccess.SauOpinion === 'r' || !io.isMyStep"> 是</i-radio>
+                        <i-radio label="false" class="iview-type-size" :disabled="io.fieldAccess.SauOpinion === 'r' || !io.isMyStep">否</i-radio>
+                    </i-radio-group>
+                    <i-button type="primary" size="small" class="button-position" :disabled="io.fieldAccess.SauOpinion === 'r' || !io.isMyStep" @click="submit">确认</i-button>
+                </div>
+                <i-input type="textarea" class="opinionForm" :rows="3" placeholder="（审核意见）" v-model="io.data.SauOpinion" v-if="io.fieldAccess.SauOpinion === 'w' && io.isMyStep"/>
+                <p v-else-if="io.fieldAccess.SauOpinion==='r'">学生社团管理部审核意见:{{io.data.SauOpinion===""?"无审核意见":io.data.SauOpinion}}</p>
+                <div class="wen-zi-ju-you" v-if="io.fieldAccess.SauOpinion">
+                    <p>审核人（签名）：<i-input v-model="io.data.Sau" v-if="io.fieldAccess.Sau === 'w' && io.isMyStep"/>
+                        <span v-else>{{io.data.Sau}}</span>
+                    </p>
+                    <i-date-picker v-model="io.data.SauTime" type="date" format="yyyy年MM月dd日" placeholder="审核时间" v-if="io.fieldAccess.SauTime === 'w' && io.isMyStep"/>
+                    <p v-else>{{io.data.SauTime}}</p>
+                </div>
+                <Divider orientation="left" v-if="io.fieldAccess.YlcOpinion">校团委审核</Divider>
+                <div v-show="io.fieldAccess.YlcIsPass === 'w' && io.isMyStep">
+                    是否通过：
+                    <i-radio-group v-model="io.data.YlcIsPass">
+                        <i-radio label="true" class="iview-type-size" :disabled="io.fieldAccess.YlcOpinion === 'r' || !io.isMyStep"> 是</i-radio>
+                        <i-radio label="false" class="iview-type-size" :disabled="io.fieldAccess.YlcOpinion === 'r' || !io.isMyStep">否</i-radio>
+                    </i-radio-group>
+                    <i-button type="primary" size="small" class="button-position" :disabled="io.fieldAccess.YlcOpinion === 'r' || !io.isMyStep" @click="submit">确认</i-button>
+                </div>
+                <i-input type="textarea" class="opinionForm" :rows="3" placeholder="（审核意见）" v-model="io.data.YlcOpinion" v-if="io.fieldAccess.YlcOpinion === 'w' && io.isMyStep"/>
+                <p v-else-if="io.fieldAccess.YlcOpinion==='r'">校团委审核意见:{{io.data.YlcOpinion===""?"无审核意见":io.data.YlcOpinion}}</p>
+                <div class="wen-zi-ju-you" v-if="io.fieldAccess.YlcOpinion">
+                    <p>审核人（签名）：<i-input v-model="io.data.Ylc" v-if="io.fieldAccess.Ylc === 'w' && io.isMyStep"/>
+                        <span v-else>{{io.data.Ylc}}</span>
+                    </p>
+                    <i-date-picker v-model="io.data.YlcTime" type="date" format="yyyy年MM月dd日" placeholder="审核时间" v-if="io.fieldAccess.YlcTime === 'w' && io.isMyStep"/>
+                    <p v-else>{{io.data.YlcTime}}</p>
+                </div>
             </i-form>
-            <i-row>
-                <template v-if="io.isMyStep">
+            <i-row style="margin-top: 40px;">
+                <template v-if="io.isMyStep && io.currentStep==='填写申请表'">
                     <i-button @click="submit" type="primary">提交修改</i-button>
                     <i-button @click="giveUp">放弃修改</i-button>
                 </template>
@@ -384,14 +452,59 @@ export default {
             file: [],
             fileName: "",
             stepInfo: enums.stepInfo,
-            upLoad: {}
+            upLoad: {},
+            icons: [
+                "",
+                "",
+                "success",
+                "success",
+                "error",
+                "warning"
+            ]
         }
     },
     methods: {
+        searchUser (code, i) {
+            axios.post("/api/security/GetUserByCode", {code: code}, msg => {
+                if (msg.success) {
+                    if (i === 0) {
+                        this.io.data.GuideName = msg.user.RealName;
+                        this.io.data.GuideType = msg.user.GuideTeacherType;
+                        this.io.data.GuidePolitics = msg.user.PoliticalStatus;
+                        this.io.data.GuideDepart = msg.user.BelongDepart;
+                        this.io.data.GuidePhone = msg.user.Mobile;
+                        // this.io.data.GuideElectionBy = msg.user.
+                        // this.io.data.GuideBonus = msg.user.
+                        this.io.data.GuideEmail = msg.user.Email;
+                    } else if (i === 1) {
+                        this.io.data.ChargerName = msg.user.RealName;
+                        this.io.data.ChargerPolitics = msg.user.PoliticalStatus;
+                        this.io.data.ChargerCollege = msg.user.BelongDepart;
+                        this.io.data.ChargerMajor = msg.user.Specialty;
+                        this.io.data.ChargerPhone = msg.user.Mobile;
+                        this.io.data.ChargerEmail = msg.user.Email;
+                    } else if (i === 2) {
+                        this.io.data.ASecretaryName = msg.user.RealName;
+                        this.io.data.ASecretaryCollege = msg.user.BelongDepart;
+                        this.io.data.ASecretaryMajor = msg.user.Specialty;
+                        this.io.data.ASecretaryPhone = msg.user.Mobile;
+                        this.io.data.ASecretaryEmail = msg.user.Email;
+                    } else if (i === 3) {
+                        this.io.data.BSecretaryName = msg.user.RealName;
+                        this.io.data.BSecretaryCollege = msg.user.BelongDepart;
+                        this.io.data.BSecretaryMajor = msg.user.Specialty;
+                        this.io.data.BSecretaryPhone = msg.user.Mobile;
+                        this.io.data.BSecretaryEmail = msg.user.Email;
+                    }
+                } else {
+                    alert(msg.msg);
+                }
+            });
+        },
         getFile () {
             axios.post("/api/cms/GetAttachments", {id: this.io.instanceId, relateTable: "DepartRule", usage: "附件"}, msg => {
                 if (msg.success) {
-                    console.log(msg);
+                    // console.log(msg);
                     this.file = msg.data.map(e => {
                         return {
                             name: e.DisplayName,
@@ -459,5 +572,13 @@ export default {
 }
 .content{
     padding-left: 5px;
+}
+.wen-zi-ju-you{
+    width: 100%;
+    text-align: right;
+}
+.opinionForm{
+    margin-top: 10px;
+    margin-bottom: 10px;
 }
 </style>

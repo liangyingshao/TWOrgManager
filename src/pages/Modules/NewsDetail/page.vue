@@ -29,6 +29,7 @@
     </i-row>
 </template>
 <script>
+let app = require("@/config");
 export default {
     data () {
         return {
@@ -37,6 +38,9 @@ export default {
                 backgroundImage: 'url(' + require("@/assets/XMU.png") + ')'
             }
         }
+    },
+    mounted () {
+        app.title = "新闻详细";
     }
 }
 </script>

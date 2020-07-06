@@ -216,7 +216,7 @@ export default {
                         style: {
                             fontSize: '18px'
                         }
-                    }, '最新活动')
+                    }, '最新文件')
                 ])
             },
             newsLable: (h) => {
@@ -231,7 +231,7 @@ export default {
                         style: {
                             fontSize: '18px'
                         }
-                    }, '学院新闻', {
+                    }, '最新活动', {
                         style: {color: '#2d8cf0'}
                     })
                 ])
@@ -239,6 +239,7 @@ export default {
         }
     },
     mounted () {
+        app.title = "登录";
     },
     methods: {
         toDetail (routerObj) {
@@ -275,7 +276,7 @@ export default {
                     }
                     this.$nextTick(() => {
                         if (msg.success) {
-                            let path = this.$route.query.goto || app.dashboard;
+                            let path = this.$route.query.goto || app.dashboard
                             path = path === "/" ? app.dashboard : path;
                             if (path !== app.dashboard) this.$router.push(path);
                         } else {

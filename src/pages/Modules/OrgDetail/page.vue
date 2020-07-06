@@ -641,7 +641,7 @@ export default {
                         query: {
                             instanceId: msg.instanceId,
                             stepId: msg.stepId,
-                            detailMode: false
+                            detail: false
                         }
                     });
                     window.open(href);
@@ -656,7 +656,7 @@ export default {
                 query: {
                     instanceId: row.InstanceId,
                     stepId: row.StepId,
-                    detailMode: true
+                    detail: true
                 }
             });
             window.open(href);
