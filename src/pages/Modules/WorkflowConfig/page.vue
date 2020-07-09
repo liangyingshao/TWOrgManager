@@ -29,6 +29,7 @@
 </template>
 
 <script>
+let app = require("@/config");
 const axios = require("axios");
 export default {
     data () {
@@ -126,6 +127,7 @@ export default {
         }
     },
     mounted () {
+        app.title = "工作流配置";
         this.getWorkFlows();
     }
 }

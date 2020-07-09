@@ -285,7 +285,7 @@ export default {
     },
     mounted () {
         // if (checkPermission("Organization.Student")) this.$router.push()
-        app.title = "社团管理";
+        app.title = "主页";
         this.getDashBoard();
         this.judgeTime();
         this.getPending();

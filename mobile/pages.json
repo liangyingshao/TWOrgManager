@@ -2,11 +2,11 @@
 	"pages": [
 		//pages数组中第一项表示应用启动页，参考：https://uniapp.dcloud.io/collocation/pages
 		{
-			"path": "iuc/login/login",
+			"path": "iuc/index/index",
 			"style": {}
 		},
 		{
-			"path": "iuc/index/index",
+			"path": "iuc/login/login",
 			"style": {}
 		},
 		{
@@ -96,26 +96,12 @@
         ,{
             "path" : "components/labComponent/labTimeLine",
             "style" : {}
-        }
-		,{
-		    "path" : "iuc/epidemicRpt/rptForm",
-		    "style" : {}
-		}
-		,{
-		    "path" : "iuc/alert/developing",
-		    "style" : {}
-		}
-		,{
-		    "path" : "iuc/alert/success",
-		    "style" : {}
-		}
-		,{
-		    "path" : "iuc/alert/fail",
-		    "style" : {}
-		}
-		,{
-		    "path" : "iuc/bindWeChat/bind",
-		    "style" : {}
+        },{
+			"path" : "iuc/orgmanagement/orgmanagement",
+			"style" : {}
+		},{
+			"path":"iuc/activity/activity",
+			"style" : {}
 		}
     ],
 	"globalStyle": {

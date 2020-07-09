@@ -175,7 +175,7 @@ export default {
         };
     },
     mounted () {
-        app.title = "社团管理";
+        app.title = "主页";
         this.getDashBoard();
         this.getAllOrgs();
         this.judgeTime();
