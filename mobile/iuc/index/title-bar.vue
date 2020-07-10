@@ -1,7 +1,7 @@
 <template>
 	<view class="bar bg-blue search-bar" id="search-bar">
 		<view class="cu-bar search">
-			<view class="cu-avatar round" :style="{backgroundImage: `url(${avatar})`}"></view>
+			<view @click="toProfile" class="cu-avatar round" :style="{backgroundImage: `url(${avatar})`}"></view>
 			<view class="search-form radius">
 				<text class="cuIcon-search"></text>
 				<input @confirm="doSearch" v-model="searchText" :adjust-position="false" type="text" :placeholder="placeholder" confirm-type="search"></input>
@@ -34,6 +34,9 @@
 			},
 			doSearch () {
 				this.$emit("input", this.searchText);
+			},
+			toProfile () {
+				uni.toProfile();
 			}
 		},
 		data () {
