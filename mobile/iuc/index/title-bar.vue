@@ -29,7 +29,7 @@
 		methods: {
 			handleScroll () {
 			  let scrollTop = window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop;
-			  let offsetTop = this.offsetTop + 20;
+			  let offsetTop = this.offsetTop - 20;
 			  this.isFixed = (scrollTop > offsetTop);
 			},
 			doSearch () {

@@ -18,7 +18,7 @@
 			<p class="p pt-3">
 				{{model.abstract}}
 			</p>
-			<a class="btn bg-green1-dark btn-m btn-full font-900 rounded-sm shadow-l">申请加入</a>
+			<a class="btn bg-green1-dark btn-m btn-full font-900 rounded-sm shadow-l">{{btnText}}</a>
 		</view>
 	</view>
 </template>
@@ -36,6 +36,10 @@
 						"abstract": "这是一个测试学院"
 					}
 				}
+			},
+			btnText: {
+				type: String,
+				default: "申请加入"
 			}
 		},
 		data () {

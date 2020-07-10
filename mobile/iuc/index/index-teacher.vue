@@ -9,6 +9,10 @@
 				<text class="icon cuIcon-activity"></text>
 				<text>社团活动</text>
 			</view>
+			<view class="act-btn">
+				<text class="icon cuIcon-list"></text>
+				<text >我的待办</text>
+			</view>
 			<view class="act-btn" @click="toProfile">
 				<text class="icon cuIcon-profile"></text>
 				<text>个人中心</text>
