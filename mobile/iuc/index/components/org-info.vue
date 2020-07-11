@@ -7,18 +7,18 @@
 				</view>
 				<view>
 					<view class="h1 mb-0 font-600 font-22" style="padding-left: 1em;">{{model.Name}}</view>
-					<text class="pl-2 opacity-30">
+					<text class="pl-2 opacity-30 font-14">
 						<text class="fa cuIcon-calendar pl-2"></text>{{model.date}}
 					</text>
-					<text class="pl-2 opacity-30">
+					<text class="pl-2 opacity-30 font-14">
 						<text class="fa cuIcon-apps pl-2"></text>{{model.college}}
 					</text>
 				</view>
 			</view>
-			<p class="p pt-3">
+			<p class="p pt-3 font-14">
 				{{model.abstract}}
 			</p>
-			<a class="btn bg-green1-dark btn-m btn-full font-900 rounded-sm shadow-l">{{btnText}}</a>
+			<a class="btn bg-green1-dark btn-m btn-full font-900 rounded-sm shadow-l font-14">{{btnText}}</a>
 		</view>
 	</view>
 </template>
@@ -44,15 +44,15 @@
 		},
 		data () {
 			return{
-				
+
 			}
 		},
 		methods: {
-			
+
 		}
 	}
 </script>
 
 <style lang="scss">
-	
+
 </style>
