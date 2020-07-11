@@ -1,0 +1,46 @@
+.fab {
+	-moz-osx-font-smoothing: grayscale;
+	-webkit-font-smoothing: antialiased;
+	display: inline-block;
+	font-style: normal;
+	font-variant: normal;
+	text-rendering: auto;
+	line-height: 1;
+}
+
+.fa-4x {
+	font-size: 4em!important;
+}
+
+.hide {
+	display: none !important;
+}
+
+.actions {
+	align-items: center;
+	display: flex;
+	width: 100%;
+	justify-content: space-between;
+	position: relative;
+	padding: 20rpx 0rpx;
+	
+	.act-btn {
+		flex: 1;
+		text-align: center;
+		.icon {
+			font-size: 45rpx;
+			display: block;
+		}
+	}
+}
+
+.actions.fixed {
+	position: fixed;
+	top: 0px;
+	z-index: 9999;
+	padding: 20rpx 0rpx;
+}
+
+.menu {
+	position: inherit;
+}
