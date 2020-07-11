@@ -55,8 +55,8 @@
         }
     },
     "h5" : {
-        "title" : "信息学院实验平台",
-        "domain" : "item.ricebird.cn",
+        "title" : "厦门大学学生社团信息系统",
+        "domain" : "stgl.ricebird.cn",
         "router" : {
             "mode" : "history",
             "base" : "/mob/"

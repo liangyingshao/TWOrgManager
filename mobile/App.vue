@@ -8,10 +8,10 @@
 				app.checkPermission = (p) => {
 					return (ps && ps.indexOf(p)) >= 0;
 				}
+				let func = app.checkPermission;
 				// this.loginSuccess(app.userInfo.currentUserGuid);
-				uni.navigateTo({
-					url: app.dashboard
-				})
+				
+				uni.switchDashboard(func);
 			} else {
 				uni.navigateTo({
 					url: "/iuc/login/login"
@@ -129,7 +129,10 @@
 	}
 </script>
 
-<style>
+<style lang="scss">
+	@import "/scss/bootstrap.scss";
+	@import "/scss/style.scss";
+	@import "/scss/main.scss";
 	@import "colorui/main.css";
 	@import "colorui/icon.css";
 

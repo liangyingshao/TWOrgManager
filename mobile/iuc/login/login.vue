@@ -7,7 +7,7 @@
 			<view class="margin-bottom-xl text-center">
 				<image src="../../static/社团图标.png" style="width: 200px; height: 200px;" mode="aspectFit"></image>
 			</view>
-			<form @submit="login">
+			<form @submit="login()">
 				<view class="cu-form-group">
 					<view class="title">账号</view>
 					<input placeholder="请输入您的账号" name="userName" v-model="loginModel.userName"></input>
@@ -21,9 +21,17 @@
 				</view>
 			</form>
 			<view class="flex margin-tb justify-center">
-				<navigator url="../login/regist">注册账号</navigator>
+				<text @click="login('24320152356894', '123456')">学生</text>
 				<text class="padding-lr-xs">|</text>
-				<navigator url="../login/pwd">忘记密码</navigator>
+				<text @click="login('15102242660', '88888888')">社团</text>
+				<text class="padding-lr-xs">|</text>
+				<text @click="login('25648', '123456')">指导老师</text>
+				<text class="padding-lr-xs">|</text>
+				<text @click="login('13621345797', '88888888')">挂靠单位</text>
+				<text class="padding-lr-xs">|</text>
+				<text @click="login('15102246798', '123456')">学联会</text>
+				<text class="padding-lr-xs">|</text>
+				<text @click="login('admin', '88888888')">团委</text>
 			</view>
 		</view>
 	</view>
@@ -31,6 +39,7 @@
 
 <script>
 	let app = require("@/config");
+	let md5 = require("@/labs/md5.js");
 	export default {
 		data() {
 			return {
@@ -42,30 +51,35 @@
 			}
 		},
 		methods: {
-			login() {
-				let userName = this.loginModel.userName;
+			login(un, pwd) {
+				let userName = (un || this.loginModel.userName);
 				//let password = this.loginModel.password;
-				let password = '8ddcff3a80f4189ca1c9d4d902c3c909';
+				let password = md5(pwd || this.loginModel.password);
 				//let password = 'e10adc3949ba59abbe56e057f20f883e';
-				if(!(this.loginModel.userName && this.loginModel.password)){
+				if(!(userName && password)){
 					uni.showToast({
 					    title: '账户名和密码不能为空',
 						icon: 'none'
 					});
 					return;
 				}
+				app.currentUserGuid = 0;
 				uni.post("/api/security/Login",{method: 'password', username: userName, pwd: password, isRemember: false, isPwd: true},msg=>{
 					if(msg.success){
 						app.userInfo = msg.userInfo;
 						app.currentUserGuid = msg.currentUserGuid;
 						uni.setStorageSync("currentUserGuid", msg.currentUserGuid);
-						uni.navigateTo({
-							url: '../index/index'
-						})
+						let ps = msg.userInfo.permissons;
+						let func = (p) => {
+							return (ps && ps.indexOf(p)) >= 0;
+						};
+						app.checkPermission = func;
+						uni.switchDashboard(func);
 					}
 					else{
 						uni.showToast({
-							 title: msg.msg
+							 title: msg.msg,
+							 icon: 'none'
 						})
 					}
 				})
