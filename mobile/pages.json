@@ -10,6 +10,24 @@
 			"style": {}
 		},
 		{
+			"path": "iuc/index/index-student"
+		},
+		{
+			"path": "iuc/index/index-teacher"
+		},
+		{
+			"path": "iuc/index/index-manager"
+		},
+		{
+			"path": "iuc/index/index-depart-manager"
+		},
+		{
+			"path": "iuc/index/index-xslhh"
+		},
+		{
+			"path": "iuc/index/index-tw"
+		},
+		{
 			"path": "iuc/login/pwd",
 			"style": {}
 		},
