@@ -1,16 +1,16 @@
 <template>
 	<view>
 		<title-bar :placeholder="searchText" @input="doSearch">
-			<view class="act-btn">
+			<view class="act-btn" @click="navTo('../orgmanagement/orgmanagement')">
 				<text class="icon cuIcon-home"></text>
 				<text >我的社团</text>
 			</view>
-			<view class="act-btn">
+			<view class="act-btn" @click="navTo('../activity/activityList')">
 				<text class="icon cuIcon-activity"></text>
 				<text>社团活动</text>
 			</view>
 			<view class="act-btn">
-				<text class="icon cuIcon-list"></text>
+				<text class="icon cuIcon-list" @click="navTo('../roomApplication/v2/todoList')"></text>
 				<text >我的待办</text>
 			</view>
 			<view class="act-btn" @click="toProfile">
@@ -49,6 +49,11 @@
 			},
 			toProfile () {
 				 uni.toProfile()
+			},
+			navTo(url) {
+				uni.navigateTo({
+					url: url
+				})
 			}
 		},
 		data () {
