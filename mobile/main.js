@@ -37,6 +37,8 @@ Vue.component('sticky',sticky)
 import navTab from './components/labComponent/navTab.vue'
 Vue.component('navTab',navTab)
 
+require("@/labs/utils.js");
+
 Vue.config.productionTip = false
 
 App.mpType = 'app'
