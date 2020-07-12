@@ -8,15 +8,15 @@
 			<view v-for="(item, index) in model" :key="index" class="myclass" :class="{hide: !showDetail}">
 				<view class="d-flex">
 					<view class="text-center text-xxl">
-						<text class="mr-3 fa cuIcon-peoplefill rounded-circle shadow-l bg-blue light" style="width: 50px; height: 50px; line-height: 50px;"></text>
+						<text class="mr-3 fa cuIcon-peoplefill rounded-circle shadow-l bg-blue light" style="margin-top: 5px;width: 50px; height: 50px; line-height: 50px;"></text>
 					</view>
 					<view>
 						<view class="h5 mt-1 mb-0">{{item.name}}（{{item.college}}）</view>
-						<view class="p font-10 color-red2-dark" style="margin-top: 5px;">{{item.phone}}</view>
+						<view class="p font-14 color-red2-dark" style="margin-top: 5px;">{{item.phone}}</view>
 					</view>
 					<view style="margin-left: auto;">
-						<text class="next-slide-user badge bg-green1-dark mt-2 p-2 font-8">通过</text>
-						<text class="next-slide-user badge bg-red2-dark mt-2 p-2 font-8 margin-left-xs">拒绝</text>
+						<text class="next-slide-user badge bg-green1-dark mt-2 p-2 font-14">通过</text>
+						<text class="next-slide-user badge bg-red2-dark mt-2 p-2 font-14 margin-left-xs">拒绝</text>
 					</view>
 				</view>
 				<view class="divider mt-3"></view>

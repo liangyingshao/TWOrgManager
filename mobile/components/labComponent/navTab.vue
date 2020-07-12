@@ -40,7 +40,7 @@
 					},
 					{
 						icon: 'cuIcon-addressbook',
-						text: '通讯录',
+						text: '活动列表',
 						nav: '../../iuc/addressBook/addressBook'
 					},
 					{

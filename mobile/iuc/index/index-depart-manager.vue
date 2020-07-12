@@ -1,15 +1,15 @@
 <template>
 	<view>
 		<title-bar :placeholder="searchText" @input="doSearch">
-			<view class="act-btn">
+			<view class="act-btn" @click="navTo('../orgmanagement/orgmanagement')">
 				<text class="icon cuIcon-home"></text>
 				<text >我的社团</text>
 			</view>
-			<view class="act-btn">
+			<view class="act-btn" @click="navTo('../activity/activity')">
 				<text class="icon cuIcon-light"></text>
 				<text>申请活动</text>
 			</view>
-			<view class="act-btn">
+			<view class="act-btn" @click="navTo('../activity/activityList')">
 				<text class="icon cuIcon-activity"></text>
 				<text>社团活动</text>
 			</view>
@@ -50,6 +50,11 @@
 			},
 			toProfile () {
 				 uni.toProfile()
+			},
+			navTo(url) {
+				uni.navigateTo({
+					url: url
+				})
 			}
 		},
 		data () {
