@@ -30,10 +30,10 @@
 				type: Object,
 				default: () => {
 					return {
-						Name: "我的社团",
+						Name: "社团名称",
 						date: "2020年7月10日",
 						college: "信息学院",
-						"abstract": "这是一个测试学院"
+						abstract: "这里应该是社团简介"
 					}
 				}
 			},
