@@ -117,6 +117,9 @@
                     if (msg.success === true) {
                         app.userInfo.isLogined = false;
                         uni.showMessage("登出成功");
+                        uni.navigateTo({
+                          url: "../login/login"
+                        })
                     } else {
                         uni.showMessage("登出失败");
                     }
