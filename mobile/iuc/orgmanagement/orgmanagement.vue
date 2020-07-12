@@ -70,7 +70,6 @@
 			</scroll-view>
 			<view class="cu-tabbar-height"></view>
 		</scroll-view>
-		<navTab :selection='0' />
 		<view class="cu-modal" :class="modalName === 'memberModal'?'show':''">
 			<view class="cu-dialog">
 				<view class="cu-bar bg-white justify-end">
