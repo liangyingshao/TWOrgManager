@@ -1,15 +1,15 @@
 <template>
 	<view>
 		<title-bar :placeholder="searchText" @input="doSearch">
-			<view class="act-btn" @click="toTab('my-orgs')">
+			<view class="act-btn" @click="navTo('../orgmanagement/orgmanagement')">
 				<text class="icon cuIcon-home"></text>
 				<text v-html="firtstButtonText"></text>
 			</view>
-			<view class="act-btn" @click="toTab('applicate')">
+			<view class="act-btn">
 				<text class="icon cuIcon-light"></text>
 				<text>我要报名</text>
 			</view>
-			<view class="act-btn" @click="toTab('my-activity')">
+			<view class="act-btn" @click="toTab('../activity/activityList')">
 				<text class="icon cuIcon-activity"></text>
 				<text>我的活动</text>
 			</view>
@@ -18,19 +18,7 @@
 				<text>个人中心</text>
 			</view>
 		</title-bar>
-		<view v-if="showTab === 'my-orgs'" class="tab my-orgs">
-			<org-info></org-info>
-			<org-info></org-info>
-			<org-info></org-info>
-		</view>
 		<view v-if="showTab === 'applicate'" class="tab applicate">
-			<act-sign-up></act-sign-up>
-			<act-sign-up></act-sign-up>
-			<act-sign-up></act-sign-up>
-			<act-sign-up></act-sign-up>
-			<act-sign-up></act-sign-up>
-		</view>
-		<view v-if="showTab === 'my-activity'" class="tab my-activity">
 			<act-sign-up></act-sign-up>
 			<act-sign-up></act-sign-up>
 			<act-sign-up></act-sign-up>
@@ -63,6 +51,11 @@
 			},
 			toProfile () {
 				 uni.toProfile()
+			},
+			navTo(url) {
+				uni.navigateTo({
+					url: url
+				})
 			}
 		},
 		data () {

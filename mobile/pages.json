@@ -121,6 +121,10 @@
 			"path":"iuc/activity/activity",
 			"style" : {}
 		}
+        ,{
+            "path" : "iuc/activity/activityList",
+            "style" : {}
+        }
     ],
 	"globalStyle": {
 		"mp-alipay": {
