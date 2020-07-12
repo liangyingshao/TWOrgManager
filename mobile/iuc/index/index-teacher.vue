@@ -5,7 +5,7 @@
 				<text class="icon cuIcon-home"></text>
 				<text >我的社团</text>
 			</view>
-			<view class="act-btn" @click="navTo('../activity/activityList')">
+			<view class="act-btn" @click="toTab('activity2')">
 				<text class="icon cuIcon-activity"></text>
 				<text>社团活动</text>
 			</view>
@@ -18,8 +18,15 @@
 				<text>个人中心</text>
 			</view>
 		</title-bar>
-		<view class="tab my-orgs">
+		<view v-if="showTab === 'activity1'" class="tab my-orgs">
 			<act-detail></act-detail>
+		</view>
+		<view v-if="showTab === 'activity2'" class="tab applicate">
+			<act-sign-up detail></act-sign-up>
+			<act-sign-up detail></act-sign-up>
+			<act-sign-up detail></act-sign-up>
+			<act-sign-up detail></act-sign-up>
+			<act-sign-up detail></act-sign-up>
 		</view>
 	</view>
 </template>
@@ -62,7 +69,7 @@
 			return {
 				firtstButtonText: "我的社团",
 				searchText: "搜索活动",
-				showTab: "applicate" // "my-orgs"
+				showTab: "activity1" // "my-orgs"
 			}
 		}
 	}

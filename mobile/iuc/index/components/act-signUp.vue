@@ -8,13 +8,17 @@
 				<p class="font-16 opacity-80 mb-n1"><i class="cuIcon-calendar mr-1"></i> 7月20日 <i class="ml-4 cuIcon-time mr-1"></i> 21:00</p>
 				<p class="font-12 opacity-80"><i class="cuIcon-locationfill mr-1"></i> 厦门大学信息学院实验楼201</p>
 			</div>
-			<a href="#" class="float-right btn btn-s bg-highlight rounded-s shadow-xl text-uppercase font-900 mt-2">我要报名</a>
+			<a href="#" class="float-right btn btn-s bg-highlight rounded-s 
+			shadow-xl text-uppercase font-900 mt-2">{{detail?"查看详情":"我要报名"}}</a>
 		</div>
 	</div>
 </template>
 
 <script>
 	export default {
+		props:{
+			detail: Boolean
+		},
 		data() {
 			return {
 

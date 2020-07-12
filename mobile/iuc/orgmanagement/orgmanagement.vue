@@ -70,7 +70,6 @@
 			</scroll-view>
 			<view class="cu-tabbar-height"></view>
 		</scroll-view>
-		<navTab :selection='0' />
 		<view class="cu-modal" :class="modalName === 'memberModal'?'show':''">
 			<view class="cu-dialog">
 				<view class="cu-bar bg-white justify-end">
@@ -90,7 +89,7 @@
 <script>
 export default{
 	onLoad(query) {
-		uni.post("/api/security/GetOrgDetail", {id: query.departId ? query.departId : null}, msg => {
+		uni.post("/api/security/GetOrgDetail", {id: query.departId}, msg => {
 			if (msg.success) {
 				this.orgInfo = msg.data;
 				this.teachers = msg.teachers;
