@@ -60,7 +60,7 @@
 				uni.post("/api/org/Applicate", {id: this.orgInfo.ID}, msg => {
 					if (msg.success) {
 						uni.navigateTo({
-							url: '/manage/org/activityform?instanceId=' + msg.instanceId + '&stepId=' + msg.stepId
+							url: '../activity/activity?instanceId=' + msg.instanceId + '&stepId=' + msg.stepId
 						});
 					} else {
 						uni.showToast({
