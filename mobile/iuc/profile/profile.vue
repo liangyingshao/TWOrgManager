@@ -26,7 +26,7 @@
 		</view>
 		<view class="cu-list menu">
 			<view class="arrow cu-item" @click="navTo('../login/login')">
-				<view class="margin-tb-0 content margin-lr">
+				<view class="font-15 margin-lr">
 					<text class="text-informatic-brown cuIcon-exit"></text>
 					<text class="text-informatic-brown text-bold">登出</text>
 				</view>
@@ -122,10 +122,6 @@
 </script>
 
 <style lang="less">
-	.margin-tb-0 {
-		margin-top: 0px;
-		margin-bottom: 0;
-	}
 	.head {
 		height: 360rpx;
 		width: 100%;
