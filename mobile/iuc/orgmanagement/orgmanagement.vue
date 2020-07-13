@@ -4,11 +4,14 @@
 			<block slot="content">社团管理</block>
 		</cu-custom>
 		<scroll-view scroll-y>
-			<view class="margin">
-				<text class="text-xl">{{orgInfo.Name}}</text>
-				<br>
-				<text>指导老师：</text>
-				<text v-for="(teacher, index) in teachers" :key="index">{{teacher.RealName}}</text>
+			<view class="margin flex">
+				<view class="cu-avatar lg" :style="`background-image: url(${app.userInfo.avatar});`"></view>
+				<view class="margin-left">
+					<text class="text-xl">{{orgInfo.Name}}</text>
+					<br>
+					<text>指导老师：</text>
+					<text v-for="(teacher, index) in teachers" :key="index">{{teacher.RealName}}</text>
+				</view>
 			</view>
 			<scroll-view scroll-x class="bg-white nav" scroll-with-animation :scroll-left="scrollLeft">
 				<view class="cu-item" :class="index == TabCur?'text-green cur':''" v-for="(item, index) in tabTitle" :key="index" @tap="tabSelect" :data-id="index">
@@ -30,10 +33,10 @@
 					<button disabled="" class="margin">增加成员</button>
 				</view>
 				<view v-show="TabCur == 1" class="cu-list menu">
-					<view @click="toActivity(item)"  v-for="(item, index) in tableData.activity" :key="index" class="cu-item">
+					<view @click="toActivity(item)" v-for="(item, index) in tableData.activity" :key="index" class="cu-item">
 						<view class="content">
 							<text class="cuIcon-btn text-green"></text>
-							<text class="text-grey">{{item.ActivityName}}</text>
+							<text class="text-grey">{{item.ActivityName || "暂无名称"}}</text>
 						</view>
 						<!--view class="action">
 							<button class="cu-btn round bg-green shadow">
@@ -61,8 +64,8 @@
 				</view>
 				<view v-show="TabCur == 3">
 					<form>
-						<view class="cu-form-group" v-for="(item, index) in orgInfo" :key="index">
-							<view class="title">{{index}}</view>
+						<view v-if="index.toUpperCase().indexOf('ID') < 0" class="cu-form-group" v-for="(item, index) in orgInfo" :key="index">
+							<view class="title" >{{index}}</view>
 							<input name="index">{{item}}</input>
 						</view>
 					</form>
@@ -87,6 +90,7 @@
 </template>
 
 <script>
+const app = require("@/config");
 export default{
 	onLoad(query) {
 		uni.post("/api/security/GetOrgDetail", {id: query.departId}, msg => {
@@ -94,7 +98,7 @@ export default{
 				this.orgInfo = msg.data;
 				this.teachers = msg.teachers;
 				this.users = msg.users;
-				
+				console.log(app);
 				this.getMembers();
 				this.getActivities();
 				this.getApplicates();
@@ -134,7 +138,8 @@ export default{
 				activity: {}
 			},
 			modalName: "",
-			memberInfo: {}
+			memberInfo: {},
+			app
 		};
 	},
 	methods: {
@@ -223,4 +228,7 @@ export default{
 </script>
 
 <style>
+	.content{
+		margin: 0px;
+	}
 </style>

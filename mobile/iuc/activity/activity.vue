@@ -1,7 +1,7 @@
 <template>
 	<view>
 		<cu-custom isBack="" bgColor="bg-gradual-blue">
-			<block slot="content">新增活动</block>
+			<block slot="content">编辑活动</block>
 		</cu-custom>
 		<scroll-view scroll-y>
 			<form @submit="submit">
@@ -114,7 +114,7 @@
 					<input name="SauIsPass" :value="io.data.SauIsPass" :disabled="io.fieldAccess.SauIsPass !== 'w' || !io.isMyStep"></input>
 				</view>
 				<view class="cu-form-group">
-					<view class="title">学生社团管理部意见</view>
+					<view class="title">审核意见</view>
 					<input name="SauOpinion" :value="io.data.SauOpinion" :disabled="io.fieldAccess.SauOpinion !== 'w' || !io.isMyStep"></input>
 				</view>
 				<view class="cu-form-group">
@@ -122,7 +122,7 @@
 					<input name="Sau" :value="io.data.Sau" :disabled="io.fieldAccess.Sau !== 'w' || !io.isMyStep"></input>
 				</view>
 				<view class="cu-form-group">
-					<view class="title">学生社团管理部审核时间</view>
+					<view class="title">审核时间</view>
 					<input name="SauTime" :value="io.data.SauTime" :disabled="io.fieldAccess.SauTime !== 'w' || !io.isMyStep"></input>
 				</view>
 				<view class="cu-bar bg-white solids-bottom margin-top-xs">
