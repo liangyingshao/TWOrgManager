@@ -102,4 +102,7 @@
 </script>
 
 <style>
+.content{
+	margin: 0px
+}
 </style>

@@ -25,22 +25,13 @@
 			</view>
 		</view>
 		<view class="cu-list menu">
-			<view class="arrow cu-item" v-for="(item,index) in list" :key="index" @click="navTo(item.url)">
-				<view class="content margin-lr" :class="{'margin-top':index == 4}">
-					<text class="text-informatic-brown" :class="'cuIcon-'+item.cuIcon"></text>
-					<text class="text-informatic-brown text-bold">{{item.name}}</text>
+			<view class="arrow cu-item" @click="navTo('../login/login')">
+				<view class="font-15 margin-lr">
+					<text class="text-informatic-brown cuIcon-exit"></text>
+					<text class="text-informatic-brown text-bold">登出</text>
 				</view>
 			</view>
 		</view>
-		<view class="cu-list menu">
-			<view class="arrow cu-item" @click="navTo()">
-				<view class="content margin-lr">
-					<text class="text-informatic-brown cuIcon-roundcheckfill"></text>
-					<text class="text-informatic-brown text-bold">联系管理员</text>
-				</view>
-			</view>
-		</view>
-		<navTab :selection='3' />
 	</view>
 </template>
 
@@ -65,39 +56,21 @@
 					url: "../roomView/labList?type=-1",
 					cuIcon: "formfill"
 				}, {
-					name: "通讯录",
-					url: "../addressBook/addressBook",
+					name: "回到主页",
+					url: "../index/index",
 					cuIcon: "card"
-				}],
-				list: [{
-					name: "我的社团",
-					url: "../roomView/labList?type=-1",
-					cuIcon: "presentfill"
-				}, {
-					name: "测试入口",
-					url: "../index/testEntry",
-					cuIcon: "babyfill"
-				}, {
-					name: "历史记录",
-					url: "",
-					cuIcon: "newsfill"
-				}, {
-					name: "其他功能",
-					url: "",
-					cuIcon: "roundcheckfill"
 				}]
 			}
 		},
 		onLoad() {
-			
+
 		},
 		onShow() {
 			this.GetInfo();
 		},
 		methods: {
 			GetInfo() {
-				uni.post("/uc/GetUserInfo", {
-				}, msg => {
+				uni.post("/uc/GetUserInfo", {}, msg => {
 					if (msg.success) {
 						this.userInfo = msg.data;
 					}
@@ -109,10 +82,40 @@
 				})
 			},
 			navTo(e) {
-				if (!e) return;
-				uni.navigateTo({
-					url: e
-				})
+				if (e === "../login/login") {
+					uni.showModal({
+						title: "确认", // 标题
+						content: "确认登出？", // 内容
+						success: function(res) {
+							if (res.confirm) {
+								// console.log(uni.getStorageSync("currentUserGuid") + "?");
+								// uni.removeStorageSync('currentUserGuid');
+								uni.clearStorage();
+								uni.post("/api/security/logout", {
+									currentUserGuid: app.currentUserGuid
+								}, msg => {
+									if (msg.success === true) {
+										app.userInfo.isLogined = false;
+										uni.showMessage("登出成功");
+									} else {
+										uni.showMessage("登出失败");
+									}
+									uni.navigateTo({
+										url: e
+									})
+								})
+							} else if (res.cancel) {
+								// console.log('用户点击取消');
+							}
+						}
+					});
+				} else if(e === "../index/index") {
+					uni.switchDashboard(app.checkPermission);
+				} else {
+					uni.navigateTo({
+						url: e
+					})
+				}
 			}
 		},
 	}

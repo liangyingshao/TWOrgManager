@@ -1,17 +1,17 @@
 <template>
     <div class="card card-style" style="margin-top: 10px">
         <div class="content">
-			<h5 class="float-left font-16 font-600">一个活动的名称</h5>
+			<h5 class="float-left font-20 font-600">一个活动的名称</h5>
 			<div class="clearfix"></div>
 			<div class="divider mt-2 mb-2"></div>
 			<div class="actions">
 				<div class="act-btn">
 					<span class="icon">5</span>
-					<span>待审核</span>
+					<span  class="font-16">待审核</span>
 				</div>
 				<div class="act-btn">
 					<span class="icon">20</span>
-					<span>已报名</span>
+					<span class="font-16">已报名</span>
 				</div>
 			</div>
 			<div class="divider mt-2 mb-0"></div>
