@@ -21,9 +21,9 @@
 				</view>
 			</form>
 			<view class="flex margin-tb justify-center">
-				<text @click="login('24320152356894', '123456')">学生</text>
+				<text @click="login('15102242660', '88888888')">学生</text>
 				<text class="padding-lr-xs">|</text>
-				<text @click="login('15102242660', '88888888')">社团</text>
+				<text @click="login('24320152356894', '123456')">社团</text>
 				<text class="padding-lr-xs">|</text>
 				<text @click="login('25648', '123456')">指导老师</text>
 				<text class="padding-lr-xs">|</text>

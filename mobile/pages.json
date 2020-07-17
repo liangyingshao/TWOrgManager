@@ -88,6 +88,9 @@
 			"style" : {}
 		},
 		{
+		    "path" : "iuc/activity/activity-detail"
+		},
+		{
             "path" : "iuc/activity/activityList",
             "style" : {}
         }
