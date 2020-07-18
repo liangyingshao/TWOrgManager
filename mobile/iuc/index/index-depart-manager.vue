@@ -1,11 +1,11 @@
 <template>
 	<view>
 		<title-bar :placeholder="searchText" @input="doSearch">
-			<view class="act-btn">
+			<view class="act-btn" @click="navTo('../orgmanagement/orgmanagement')">
 				<text class="icon cuIcon-home"></text>
 				<text >我的社团</text>
 			</view>
-			<view class="act-btn">
+			<view class="act-btn" @click="newActivity">
 				<text class="icon cuIcon-light"></text>
 				<text>申请活动</text>
 			</view>
@@ -50,7 +50,36 @@
 			},
 			toProfile () {
 				 uni.toProfile()
+			},
+			navTo(url) {
+				uni.navigateTo({
+					url: url
+				})
+			},
+			newActivity() {
+				uni.post("/api/org/Applicate", {id: this.orgInfo.ID}, msg => {
+					if (msg.success) {
+						uni.navigateTo({
+							url: '../activity/activity?instanceId=' + msg.instanceId + '&stepId=' + msg.stepId
+						});
+					} else {
+						uni.showToast({
+							icon: 'none',
+							title: msg.msg
+						});
+					}
+				})
+			},
+			getOrgInfo(){
+				uni.post("/api/security/GetOrgDetail", {}, msg => {
+					if (msg.success) {
+						this.orgInfo = msg.data;
+					}
+				});
 			}
+		},
+		onLoad() {
+			this.getOrgInfo();
 		},
 		data () {
 			// 1. 在可以申请加入社团的时候，第一个按钮显示：“查找社团”
@@ -58,7 +87,8 @@
 			return {
 				firtstButtonText: "我的社团",
 				searchText: "搜索活动",
-				showTab: "applicate" // "my-orgs"
+				showTab: "applicate", // "my-orgs"
+				orgInfo: {}
 			}
 		}
 	}

@@ -1,16 +1,16 @@
 <template>
 	<view>
 		<title-bar :placeholder="searchText" @input="doSearch">
-			<view class="act-btn">
+			<view class="act-btn" @click="navTo('../orgmanagement/orgmanagement')">
 				<text class="icon cuIcon-home"></text>
 				<text >我的社团</text>
 			</view>
-			<view class="act-btn">
+			<view class="act-btn" @click="toTab('activity2')">
 				<text class="icon cuIcon-activity"></text>
 				<text>社团活动</text>
 			</view>
 			<view class="act-btn">
-				<text class="icon cuIcon-list"></text>
+				<text class="icon cuIcon-list" @click="navTo('../roomApplication/v2/todoList')"></text>
 				<text >我的待办</text>
 			</view>
 			<view class="act-btn" @click="toProfile">
@@ -18,8 +18,15 @@
 				<text>个人中心</text>
 			</view>
 		</title-bar>
-		<view class="tab my-orgs">
+		<view v-if="showTab === 'activity1'" class="tab my-orgs">
 			<act-detail></act-detail>
+		</view>
+		<view v-if="showTab === 'activity2'" class="tab applicate">
+			<act-sign-up detail></act-sign-up>
+			<act-sign-up detail></act-sign-up>
+			<act-sign-up detail></act-sign-up>
+			<act-sign-up detail></act-sign-up>
+			<act-sign-up detail></act-sign-up>
 		</view>
 	</view>
 </template>
@@ -49,6 +56,11 @@
 			},
 			toProfile () {
 				 uni.toProfile()
+			},
+			navTo(url) {
+				uni.navigateTo({
+					url: url
+				})
 			}
 		},
 		data () {
@@ -57,7 +69,7 @@
 			return {
 				firtstButtonText: "我的社团",
 				searchText: "搜索活动",
-				showTab: "applicate" // "my-orgs"
+				showTab: "activity1" // "my-orgs"
 			}
 		}
 	}
