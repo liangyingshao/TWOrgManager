@@ -91,6 +91,9 @@
 		    "path" : "iuc/activity/activity-detail"
 		},
 		{
+			"path": "iuc/profile/user-audit"
+		},
+		{
             "path" : "iuc/activity/activityList",
             "style" : {}
         }
