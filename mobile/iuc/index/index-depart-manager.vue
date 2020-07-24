@@ -5,10 +5,12 @@
 				<text class="icon cuIcon-home"></text>
 				<text >我的社团</text>
 			</view>
+			<!-- 此按钮效果同成员审核里的“所有申请” -->
 			<view class="act-btn">
 				<text class="icon cuIcon-light"></text>
 				<text>成员审核</text>
 			</view>
+			<!-- 此按钮效果同社团活动里的“所有活动” -->
 			<view class="act-btn">
 				<text class="icon cuIcon-activity"></text>
 				<text>社团活动</text>
