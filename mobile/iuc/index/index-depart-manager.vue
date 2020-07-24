@@ -84,12 +84,13 @@
 		<!-- 本列表只列出 进行中 的活动。 -->
 		<view class="cu-card no-card article">
 			<!--
-			 这个做一个组件，社团活动详细页面里不还可以再用一次，颜色：
+			 这个整个做一个组件，社团活动详细页面里不还可以再用一次，颜色：
 			 进行中 用绿色，
 			 未开始 用蓝色，
 			 已结束 用红色。
+			 同时，这个状态也可以做一个小组件，在activity-console里也要用到一次
 			-->
-			<view class="cu-item shadow">
+			<view class="cu-item shadow" @click="toConsole()">
 				<view class="title">
 					<view class="text-cut">
 						<view class='cu-tag bg-red margin-right-sm round'>进行中</view>
@@ -99,7 +100,7 @@
 				<view class="content">
 					<view class="desc">
 						<view class="text-content">
-							时间：2020-7-20 8时 ~ 10时<Br></Br>
+							时间：2020-7-20 8时 ~ 2020-7-10 10时<Br></Br>
 							地点：信息学院实验楼202
 						</view>
 					</view>
@@ -143,6 +144,11 @@
 			audit (userId) {
 				uni.navigateTo({
 					url: "/iuc/profile/user-audit"
+				});
+			},
+			toConsole (actId) {
+				uni.navigateTo({
+					url: "/iuc/activity/activity-console"
 				});
 			}
 		},

@@ -28,6 +28,9 @@
 			"path": "iuc/index/index-tw"
 		},
 		{
+			"path": "iuc/activity/activity-console"
+		},
+		{
 			"path": "iuc/login/pwd",
 			"style": {}
 		},
