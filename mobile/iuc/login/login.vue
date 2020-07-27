@@ -64,7 +64,7 @@
 					return;
 				}
 				app.currentUserGuid = 0;
-				uni.post("/api/security/Login",{method: 'password', username: userName, pwd: password, isRemember: false, isPwd: true},msg=>{
+				uni.post("/api/security/Login", {method: 'password', username: userName, pwd: password, isRemember: false, isPwd: true},msg=>{
 					if(msg.success){
 						app.userInfo = msg.userInfo;
 						app.currentUserGuid = msg.currentUserGuid;
@@ -73,8 +73,11 @@
 						let func = (p) => {
 							return (ps && ps.indexOf(p)) >= 0;
 						};
+						uni.redirectTo({
+							url: "./roleSelection"
+						})
 						app.checkPermission = func;
-						uni.switchDashboard(func);
+						// uni.switchDashboard(func);
 					}
 					else{
 						uni.showToast({
