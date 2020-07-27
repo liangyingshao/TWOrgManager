@@ -13,7 +13,7 @@ uni.switchDashboard = function (checkPermission) {
 	if (defaultDepartId === guidEmpty) {
 		flag = true;
 	}
-	
+
 	if (!app.hasChosePosition) {
 		page = "/iuc/login/roleSelection";
 		uni.navigateTo({
@@ -21,7 +21,7 @@ uni.switchDashboard = function (checkPermission) {
 		})
 		return;
 	}
-	
+
 	let page = "/iuc/index/index-";
 	if (checkPermission("Organization.TwAdminUser")) {
 		page += "tw";
@@ -38,11 +38,11 @@ uni.switchDashboard = function (checkPermission) {
 	} else {
 		page = "/iuc/index/index";
 	}
-	
+
 	if (flag) {
 		page = "/iuc/index/index-student";
 	}
-	
+
 	uni.navigateTo({
 		url: page
 		// url: "uc/login/login"
