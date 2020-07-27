@@ -1,5 +1,25 @@
 let app = require("@/config");
+const guidEmpty = "00000000-0000-0000-0000-000000000000";
+uni.chosePostion = function (departId) {
+	app.hasChosePosition = true;
+	app.defaultDepartId = departId;
+}
+
 uni.switchDashboard = function (checkPermission) {
+	let defaultDepartId = app.defaultDepartId || guidEmpty;
+	let flag = false;
+	if (defaultDepartId === guidEmpty) {
+		flag = true;
+	}
+	
+	if (!app.hasChosePosition) {
+		page = "/iuc/login/roleSelection";
+		uni.navigateTo({
+			url: page
+		})
+		return;
+	}
+	
 	let page = "/iuc/index/index-";
 	if (checkPermission("Organization.TwAdminUser")) {
 		page += "tw";
@@ -15,6 +35,10 @@ uni.switchDashboard = function (checkPermission) {
 		page += "student";
 	} else {
 		page = "/iuc/index/index";
+	}
+	
+	if (flag) {
+		page = "/iuc/index/index-student";
 	}
 	
 	uni.navigateTo({
