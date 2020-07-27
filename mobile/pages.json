@@ -28,6 +28,12 @@
 			"path": "iuc/index/index-tw"
 		},
 		{
+			"path": "iuc/login/roleSelection"
+		},
+		{
+			"path": "iuc/activity/activity-console"
+		},
+		{
 			"path": "iuc/login/pwd",
 			"style": {}
 		},
@@ -86,6 +92,12 @@
 		{
 			"path":"iuc/activity/activity",
 			"style" : {}
+		},
+		{
+		    "path" : "iuc/activity/activity-detail"
+		},
+		{
+			"path": "iuc/profile/user-audit"
 		},
 		{
             "path" : "iuc/activity/activityList",

@@ -5,10 +5,12 @@
 				<text class="icon cuIcon-home"></text>
 				<text >我的社团</text>
 			</view>
-			<view class="act-btn" @click="newActivity">
+			<!-- 此按钮效果同成员审核里的“所有申请” -->
+			<view class="act-btn">
 				<text class="icon cuIcon-light"></text>
-				<text>申请活动</text>
+				<text>成员审核</text>
 			</view>
+			<!-- 此按钮效果同社团活动里的“所有活动” -->
 			<view class="act-btn">
 				<text class="icon cuIcon-activity"></text>
 				<text>社团活动</text>
@@ -18,32 +20,119 @@
 				<text>个人中心</text>
 			</view>
 		</title-bar>
-		<view class="tab my-orgs">
-			<member-check></member-check>
-			<act-detail></act-detail>
+		<!-- 
+			这里做一个点击收起，这里的【所有申请】页也简单，把下面这个列表变成一个完整的页面就可以了。
+			注，这个页面只显示“待审核”的，我这写的以通过的是给详细页面用的。
+		-->
+		<view class="cu-bar bg-white solid-bottom margin-top">
+			<view class="action">
+				<text class="cuIcon-titles text-blue"></text>
+				<text class="block position-relative">
+					成员审核
+					<view class='cu-tag bg-red margin-left-sm round'>9</view>
+				</text>
+			</view>
+			<view class="action">
+				<view class="text-blue">[所有申请]</view>
+			</view>
+		</view>
+		<view class="cu-list menu">
+			<view class="cu-item">
+				<view class="content padding-tb-sm" @click="audit('userId')">
+					<view>
+						<text class="cuIcon-profilefill text-blue margin-right-xs"></text> 黄玺（2012231142）</view>
+					<view class="text-gray text-sm">
+						<text class="cuIcon-infofill margin-right-xs"></text> 信息学院，电话：13606924649</view>
+				</view>
+				<view class="action">
+					<button class="cu-btn bg-green shadow" @click="commitUser()">
+						通过
+					</button>
+				</view>
+			</view>
+			<view class="cu-item">
+				<view class="content padding-tb-sm" @click="audit('userId')">
+					<view>
+						<text class="cuIcon-profilefill text-blue margin-right-xs"></text> 黄玺（2012231142）</view>
+					<view class="text-gray text-sm">
+						<text class="cuIcon-infofill margin-right-xs"></text> 信息学院，电话：13606924649</view>
+				</view>
+				<view class="action">
+					<text class="text-green">已通过</text>
+				</view>
+			</view>
+			<view class="cu-item">
+				<view class="content padding-tb-sm" @click="audit('userId')">
+					<view>
+						<text class="cuIcon-profilefill text-blue margin-right-xs"></text> 黄玺（2012231142）</view>
+					<view class="text-gray text-sm">
+						<text class="cuIcon-infofill margin-right-xs"></text> 信息学院，电话：13606924649</view>
+				</view>
+				<view class="action">
+					<text class="text-red">已驳回</text>
+				</view>
+			</view>
+		</view>
+		
+		<view class="cu-bar bg-white solid-bottom margin-top">
+			<view class="action">
+				<text class="cuIcon-titles text-blue"></text>
+				社团活动
+			</view>
+			<view class="action">
+				<view class="text-blue">[所有活动]</view>
+			</view>
+		</view>
+		<!-- 本列表只列出 进行中 的活动。 -->
+		<view class="cu-card no-card article">
+			<!--
+			 这个整个做一个组件，社团活动详细页面里不还可以再用一次，颜色：
+			 进行中 用绿色，
+			 未开始 用蓝色，
+			 已结束 用红色。
+			 同时，这个状态也可以做一个小组件，在activity-console里也要用到一次
+			-->
+			<view class="cu-item shadow" @click="toConsole()">
+				<view class="title">
+					<view class="text-cut">
+						<view class='cu-tag bg-red margin-right-sm round'>进行中</view>
+						活动名称
+					</view>
+				</view>
+				<view class="content">
+					<view class="desc">
+						<view class="text-content">
+							时间：2020-7-20 8时 ~ 2020-7-10 10时<Br></Br>
+							地点：信息学院实验楼202
+						</view>
+					</view>
+				</view>
+				<view class="actions">
+					<view class="act-btn">
+						<text class="icon">20</text>
+						<text>待审核</text>
+					</view>
+					<view class="act-btn">
+						<text class="icon">20</text>
+						<text>已报名</text>
+					</view>
+					<view class="act-btn">
+						<text class="icon">20</text>
+						<text>已签到</text>
+					</view>
+				</view>
+			</view>
+			<!-- cu-item -->
 		</view>
 	</view>
 </template>
 
 <script>
 	import titleBar from './title-bar.vue'
-	import orgInfo from './components/org-info.vue'
-	import actSignUp from './components/act-signUp.vue'
-	import memberCheck from './components/member-check.vue'
-	import actDetail from './components/act-detail.vue'
 	let app = require("@/config")
 	export default {
-		components: { titleBar, orgInfo, actSignUp, memberCheck, actDetail },
+		components: { titleBar },
 		methods: {
-			toTab (name) {
-				document.body.scrollTop = 0;
-				this.showTab = name;
-				if (name === "my-orgs") {
-					this.searchText = "搜索社团"
-				} else {
-					this.searchText = "搜索活动"
-				}
-			},
 			doSearch (text) {
 				// text 即是输入的文本
 				console.log(text);
@@ -51,51 +140,34 @@
 			toProfile () {
 				 uni.toProfile()
 			},
-			navTo(url) {
+			commitUser () {
+				
+			},
+			audit (userId) {
 				uni.navigateTo({
-					url: url
-				})
+					url: "/iuc/profile/user-audit"
+				});
 			},
-			newActivity() {
-				uni.post("/api/org/Applicate", {id: this.orgInfo.ID}, msg => {
-					if (msg.success) {
-						uni.navigateTo({
-							url: '../activity/activity?instanceId=' + msg.instanceId + '&stepId=' + msg.stepId
-						});
-					} else {
-						uni.showToast({
-							icon: 'none',
-							title: msg.msg
-						});
-					}
-				})
-			},
-			getOrgInfo(){
-				uni.post("/api/security/GetOrgDetail", {}, msg => {
-					if (msg.success) {
-						this.orgInfo = msg.data;
-					}
+			toConsole (actId) {
+				uni.navigateTo({
+					url: "/iuc/activity/activity-console"
 				});
 			}
 		},
-		onLoad() {
-			this.getOrgInfo();
-		},
 		data () {
-			// 1. 在可以申请加入社团的时候，第一个按钮显示：“查找社团”
-			// 2. 如果用户已经加入了两个社团，显示：“我的社团”
 			return {
-				firtstButtonText: "我的社团",
-				searchText: "搜索活动",
-				showTab: "applicate", // "my-orgs"
-				orgInfo: {}
-			}
+				searchText: ""
+			};
 		}
 	}
 </script>
 
-<style lang="scss">
-	.tab {
-		padding-top: 15px;
+<style lang="less">
+	.cu-card.article>.cu-item .title {
+		font-size: 30rpx;
+		font-weight: 900;
+		color: #333333;
+		line-height: 100rpx;
+		padding: 0 30upx;
 	}
 </style>

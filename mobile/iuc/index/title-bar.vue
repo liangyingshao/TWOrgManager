@@ -51,8 +51,11 @@
 			this.$nextTick(function () {
 				let info = uni.createSelectorQuery().select(".search-bar");
 				info.boundingClientRect(rect => {
-					rect = document.getElementById("search-bar").getClientRects()[0];
-					this.offsetTop = rect.height;
+					let ele = document.getElementById("search-bar");
+					if (ele) {
+						let rect = ele.getClientRects()[0];
+						this.offsetTop = rect.height;
+					}
 				}).exec()
 			})
 			window.addEventListener('scroll', this.handleScroll);
