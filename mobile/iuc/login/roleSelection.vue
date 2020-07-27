@@ -1,6 +1,6 @@
 <template>
 	<view>
-		<cu-custom isBack="true" bgColor="bg-gradual-blue">
+		<cu-custom isBack="/iuc/login/login" bgColor="bg-gradual-blue">
 			<block slot="content">选择身份</block>
 		</cu-custom>
 		<view class="cu-list menu">

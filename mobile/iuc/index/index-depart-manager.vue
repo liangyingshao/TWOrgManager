@@ -129,7 +129,8 @@
 
 <script>
 	import titleBar from './title-bar.vue'
-	let app = require("@/config")
+	let app = require("@/config");
+	let departId = uni.getStorageSync("defaultDepartId");;
 	export default {
 		components: { titleBar },
 		methods: {
@@ -155,6 +156,7 @@
 			}
 		},
 		data () {
+			console.log(departId)
 			return {
 				searchText: ""
 			};
