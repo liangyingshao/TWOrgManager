@@ -6,6 +6,7 @@ uni.chosePostion = function (departId) {
 }
 
 uni.switchDashboard = function (checkPermission) {
+	checkPermission = app.checkPermission;
 	let defaultDepartId = app.defaultDepartId || guidEmpty;
 	let flag = false;
 	if (defaultDepartId === guidEmpty) {
