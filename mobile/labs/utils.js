@@ -3,6 +3,7 @@ const guidEmpty = "00000000-0000-0000-0000-000000000000";
 uni.chosePostion = function (departId) {
 	app.hasChosePosition = true;
 	app.defaultDepartId = departId;
+	uni.setStorageSync("defaultDepartId", departId);
 }
 
 uni.switchDashboard = function (checkPermission) {
