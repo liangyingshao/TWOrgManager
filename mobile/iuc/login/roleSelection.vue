@@ -1,6 +1,6 @@
 <template>
 	<view>
-		<cu-custom isBack="true" bgColor="bg-gradual-blue">
+		<cu-custom isBack="/iuc/login/login" bgColor="bg-gradual-blue">
 			<block slot="content">选择身份</block>
 		</cu-custom>
 		<view class="cu-list menu">
@@ -11,16 +11,10 @@
 				选择部门后，后续所有接口，实际 departId 的，都使用本步骤选择的ID。
 				PC版需要一样处理。
 			-->
-			<view class="cu-item arrow">
-				<view class="content">
+			<view class="cu-item arrow" v-for="role in availableRoles" :key="role.departId">
+				<view class="content" @click="choosePosition(role.departId)">
 					<text class="cuIcon-circlefill text-grey"></text>
-					<text class="text-grey">普通成员</text>
-				</view>
-			</view>
-			<view class="cu-item arrow">
-				<view class="content">
-					<text class="cuIcon-circlefill text-grey"></text>
-					<text class="text-grey">测试社团（管理员）</text>
+					<text class="text-grey">{{role.departName}}{{role.position}}</text>
 				</view>
 			</view>
 		</view>
@@ -28,9 +22,31 @@
 </template>
 
 <script>
+	let app = require("@/config");
 	export default {
 		data () {
-			return {}
+			return {
+				availableRoles: []
+			}
+		},
+		onLoad() {
+			this.getAvailablePositon();
+		},
+		methods: {
+			choosePosition(departId) {
+				uni.chosePostion(departId);
+				uni.switchDashboard(app.checkPermission);
+			},
+			getAvailablePositon() {
+				uni.post("/api/security/GetMyPositions", {}, msg => {
+					if(msg.success){
+						this.availableRoles = msg.data;
+						if(this.availableRoles.length === 1) {
+							this.choosePosition(this.availableRoles[0].departId);
+						}
+					}
+				})
+			}
 		}
 	}
 </script>
