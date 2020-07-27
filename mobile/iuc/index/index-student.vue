@@ -1,69 +1,69 @@
 <template>
-	<view>
-		<title-bar :placeholder="searchText" @input="doSearch">
-			<view class="act-btn" @click="navTo('../roomApplication/v2/myClub')">
-				<text class="icon cuIcon-home"></text>
-				<text v-html="firtstButtonText"></text>
+	<div>
+		<view class="cu-bar bg-white solid-bottom margin-top">
+			<view class="action">
+				<text class="cuIcon-titles text-blue"></text> 我的社团
 			</view>
-			<view class="act-btn" @click="toTab('applicate')">
-				<text class="icon cuIcon-light"></text>
-				<text>报名活动</text>
+			<view class="action">
+				<view class="text-blue">[报名参加]</view>
 			</view>
-			<view class="act-btn" @click="toTab('myactivity')">
-				<text class="icon cuIcon-activity"></text>
-				<text>我的活动</text>
-			</view>
-			<view class="act-btn" @click="toProfile()">
-				<text class="icon cuIcon-profile"></text>
-				<text>个人中心</text>
-			</view>
-		</title-bar>
-		<!--这是正在进行的，我可以参加的活动-->
-		<view v-if="showTab === 'applicate'" class="tab applicate">
-			<act-sign-up></act-sign-up>
-			<act-sign-up></act-sign-up>
-			<act-sign-up></act-sign-up>
-			<act-sign-up></act-sign-up>
-			<act-sign-up></act-sign-up>
 		</view>
-		<view v-if="showTab === 'myactivity'" class="tab applicate">
-			<act-sign-up detail></act-sign-up>
-			<act-sign-up detail></act-sign-up>
-			<act-sign-up detail></act-sign-up>
-			<act-sign-up detail></act-sign-up>
-			<act-sign-up detail></act-sign-up>
+		<view class="cu-card no-card">
+			<!-- 这个VIEW是暂无社团的时候用的 -->
+			<!-- <view class="cu-item shadow">
+				<image class="none" src="/static/none.png"></image>
+			</view> -->
+			<!-- 下面这个VIEW是有社团的情况，如果只有一个就只显示一个 -->
+			<view class="cu-item shadow flex">
+				<view class="flex-sub padding-sm">
+					<view class="cu-avatar round xl" style="background-image:url(https://ossweb-img.qq.com/images/lol/web201310/skin/big10001.jpg)"></view>
+					<view class="margin-top-sm">我的社团1</view>
+				</view>
+				<view class="flex-sub padding-sm">
+					<view class="cu-avatar round xl" style="background-image:url(https://ossweb-img.qq.com/images/lol/web201310/skin/big10001.jpg)"></view>
+					<view class="margin-top-sm">我的社团2</view>
+				</view>
+			</view>
 		</view>
-	</view>
+		<view class="cu-bar bg-white solid-bottom margin-top">
+			<view class="action">
+				<text class="cuIcon-titles text-blue"></text> 活动列表
+			</view>
+			<view class="action">
+				<view class="text-blue">[报名参加]</view>
+			</view>
+		</view>
+		<view class="cu-card article no-card">
+			<view class="cu-item shadow">
+				<act-thumb></act-thumb>
+			</view>
+		</view>
+		<view class="cu-bar bg-white solid-bottom margin-top">
+			<view class="action">
+				<text class="cuIcon-titles text-blue"></text> 我参加的活动
+			</view>
+			<view class="action">
+			</view>
+		</view>
+		<view class="cu-card article no-card">
+			<view class="cu-item shadow">
+				<act-thumb></act-thumb>
+				<act-thumb></act-thumb>
+			</view>
+		</view>
+	</div>
 </template>
 
 <script>
 	import titleBar from './title-bar.vue'
-	import orgInfo from './components/org-info.vue'
-	import actSignUp from './components/act-signUp.vue'
+	import actThumb from './components/act-thumb-v2.vue'
 	let app = require("@/config")
 	export default {
-		components: { titleBar, orgInfo, actSignUp },
+		components: { titleBar, actThumb },
 		methods: {
-			toTab (name) {
-				document.body.scrollTop = 0;
-				this.showTab = name;
-				if (name === "my-orgs") {
-					this.searchText = "搜索社团"
-				} else {
-					this.searchText = "搜索活动"
-				}
-			},
 			doSearch (text) {
 				// text 即是输入的文本
 				console.log(text);
-			},
-			toProfile () {
-				uni.toProfile()
-			},
-			navTo(url) {
-				uni.navigateTo({
-					url: url
-				})
 			}
 		},
 		data () {
@@ -78,8 +78,15 @@
 	}
 </script>
 
-<style lang="scss">
-	.tab {
-		padding-top: 15px;
+<style lang="less">
+	.none {
+		width: 100%;
+	}
+	.flex {
+		display: flex !important;
+	}
+	.flex-sub {
+		text-align: center;
+		margin: 0 auto;
 	}
 </style>

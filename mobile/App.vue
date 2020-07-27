@@ -130,8 +130,8 @@
 </script>
 
 <style lang="scss">
-	@import "/scss/bootstrap.scss";
-	@import "/scss/style.scss";
+	// @import "/scss/bootstrap.scss";
+	// @import "/scss/style.scss";
 	@import "/scss/main.scss";
 	@import "colorui/main.css";
 	@import "colorui/icon.css";
