@@ -107,6 +107,10 @@
             "path" : "iuc/activity/activityList",
             "style" : {}
         }
+        ,{
+            "path" : "iuc/index/index-all-application",
+            "style" : {}
+        }
     ],
 	"globalStyle": {
 		"mp-alipay": {
