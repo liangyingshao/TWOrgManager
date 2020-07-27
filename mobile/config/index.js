@@ -1,5 +1,7 @@
 let appSetting = {
     debug: true,
+	hasChosePosition: false,
+	defaultDepartId: "00000000-0000-0000-0000-000000000000",
     api: "",
     currentUserGuid: "",
     titlePerfix: " - ",
