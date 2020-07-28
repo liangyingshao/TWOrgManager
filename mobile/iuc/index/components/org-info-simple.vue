@@ -2,7 +2,7 @@
 	<view class="cu-item">
 		<view class="content padding-tb-sm">
 			<view>
-				<text class="cuIcon-profilefill text-blue margin-right-xs"></text>{{orgInfo.Name}}（业务指导单位）</view>
+				<text class="cuIcon-group_fill text-blue margin-right-xs"></text>{{orgInfo.Name}}</view>
 			<view class="text-gray text-sm">
 				{{orgInfo.Description ? orgInfo.Description : "暂无简介"}}
 			</view>
