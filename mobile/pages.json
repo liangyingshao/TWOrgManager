@@ -90,6 +90,10 @@
 			"style" : {}
 		},
 		{
+			"path" : "iuc/orgmanagement/orgList",
+			"style" : {}
+		},
+		{
 			"path":"iuc/activity/activity",
 			"style" : {}
 		},
@@ -101,6 +105,10 @@
 		},
 		{
             "path" : "iuc/activity/activityList",
+            "style" : {}
+        }
+        ,{
+            "path" : "iuc/index/index-all-application",
             "style" : {}
         }
     ],
