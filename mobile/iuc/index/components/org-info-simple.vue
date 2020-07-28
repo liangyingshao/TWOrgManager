@@ -8,13 +8,16 @@
 			</view>
 		</view>
 		<view class="action" v-if="app.checkPermission('Organization.Student') > -1">
-			<button class="cu-btn bg-orange shadow" @click="withdraw(orgInfo.app.ID)"
-			v-if="orgInfo.app && orgInfo.app.State === 3">
-				撤回
-			</button>
-			<button class="cu-btn bg-green shadow" @click="applicate(orgInfo.ID)" v-else>
-				申请
-			</button>
+			<view v-if="orgInfo.myDeparts">我的社团</view>
+			<view v-else>
+				<button class="cu-btn bg-orange shadow" @click="withdraw(orgInfo.app.ID)"
+				v-if="orgInfo.app && orgInfo.app.State === 3">
+					撤回
+				</button>
+				<button class="cu-btn bg-green shadow" @click="applicate(orgInfo.ID)" v-else>
+					申请
+				</button>
+			</view>
 		</view>
 	</view>
 </template>

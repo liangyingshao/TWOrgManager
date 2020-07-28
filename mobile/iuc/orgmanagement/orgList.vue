@@ -8,12 +8,11 @@
 				</view>
 				<view class="search-form radius">
 					<text class="cuIcon-search"></text>
-					<input @confirm="Search" @blur="Search" :adjust-position="false" type="text" 
-					placeholder="搜索社团名" confirm-type="search"></input>
+					<input @confirm="Search" @blur="Search" :adjust-position="false" type="text" placeholder="搜索社团名" confirm-type="search"></input>
 				</view>
 			</view>
 		</view>
-		<view >
+		<view>
 			<view v-if="orgs.length" class="cu-list menu">
 				<org-info v-for="org in orgs" :key="org.ID" :orgInfo="org"></org-info>
 			</view>
@@ -38,16 +37,25 @@
 				uni.post("/api/security/GetAllDeparts", {}, msg => {
 					if (msg.success) {
 						this.orgsOrigin = msg.data;
+						this.orgsOrigin.sort(function(a, b) {
+							if (a.myDeparts && !b.myDeparts) {
+								return -1;
+							} else if (!a.myDeparts && b.myDeparts) {
+								return 1;
+							} else {
+								return 0;
+							}
+						})
 						this.orgs = this.orgsOrigin;
 					}
 				})
 			},
-			navBack(){
+			navBack() {
 				uni.navigateBack({
 					delta: 1
 				})
 			},
-			Search(e){
+			Search(e) {
 				let keyword = e.detail.value;
 				this.orgs = this.orgsOrigin.filter(e => e.Name.indexOf(keyword) > -1);
 			}

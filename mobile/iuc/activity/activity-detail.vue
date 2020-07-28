@@ -12,7 +12,7 @@
 				<text class="text-gray">{{activity.StartDate}}</text>
 			</view>
 		</view>
-		<image class="topic-pic padding-sm" src="https://ossweb-img.qq.com/images/lol/web201310/skin/big10001.jpg" mode="aspectFill"></image>
+		<image class="topic-pic padding-sm" src="../../static/xmuScene1.jpg" mode="aspectFill"></image>
 		<view class="act-desc padding-left-sm padding-right-sm">
 			{{activity.Description}}
 		</view>
@@ -110,6 +110,17 @@
 						this.activity = msg.data;
 						this.signInState = msg.signInState;
 						this.signUpState = msg.signUpState;
+						debugger
+						let startDate = msg.data.StartDate.replace(/[年月]/g,"-").replace(/[日]/,"");
+						let endDate = msg.data.EndDate.replace(/[年月]/g,"-").replace(/[日]/,"");
+						if(new Date() > new Date(endDate)){
+							this.activity.StartState = 2;
+						} else if(new Date() > new Date(startDate)){
+							this.activity.StartState = 1;
+						} else {
+							this.activity.StartState = 0;
+						}
+						
 					}
 				})
 			},
@@ -133,6 +144,11 @@
 				})
 			},
 			signIn(state) {
+				uni.showToast({
+					title: "请进行线下签到",
+					icon: "none"
+				});
+				return
 				uni.post("/api/org/ChangeSignInState", {
 					actId: this.activity.ID,
 					state

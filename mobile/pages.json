@@ -101,6 +101,12 @@
 		    "path" : "iuc/activity/activity-detail"
 		},
 		{
+		    "path" : "iuc/activity/activity-signUp-list"
+		},
+		{
+		    "path" : "iuc/activity/activity-signIn-list"
+		},
+		{
 			"path": "iuc/profile/user-audit"
 		},
 		{
