@@ -1,33 +1,40 @@
 <template>
 	<view>
-		<cu-custom bgColor="bg-informatic-brown" isBack>
+		<cu-custom bgColor="bg-blue" isBack>
 			<block slot="backText">返回</block>
 			<block slot="content">活动列表</block>
 		</cu-custom>
-		<view class="margin-top-sm">
-			<act-sign-up></act-sign-up>
-			<act-sign-up></act-sign-up>
-			<act-sign-up></act-sign-up>
-			<act-sign-up></act-sign-up>
-			<act-sign-up></act-sign-up>
+		<view class="">
+			<view class="cu-card article no-card" v-for="activity in activities">
+				<view class="cu-item solid-bottom">
+					<act-thumb :activity="activity"></act-thumb>
+				</view>
+			</view>
 		</view>
 	</view>
 </template>
 
 <script>
 	import titleBar from '../index/title-bar.vue'
-	import actSignUp from '../index/components/act-signUp.vue'
+	import actThumb from '../index/components/act-thumb-v2.vue'
 	export default {
-		components: { titleBar, actSignUp},
+		components: { titleBar, actThumb},
 		data() {
 			return {
-				firtstButtonText: "我的社团",
-				searchText: "搜索活动",
-				showTab: "applicate" // "my-orgs"
+				activities: []
 			}
 		},
+		onLoad() {
+			this.getAllActivities()
+		},
 		methods: {
-			
+			getAllActivities(){
+				uni.post("/api/org/GetStartedApplications", {}, msg => {
+					if(msg.success){
+						this.activities = msg.data;
+					}
+				})
+			}
 		}
 	}
 </script>
