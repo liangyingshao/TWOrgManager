@@ -52,28 +52,28 @@
   	methods: {
       refuseUser (ID) {
         uni.post("/api/security/DenyApplicate", {appId: ID}, msg => {
+          uni.showToast({
+             title: msg.msg,
+             icon: 'none'
+          });
           if (msg.success) {
             uni.navigateBack({
               delta: 1
             });
           }
-          uni.showToast({
-             title: msg.msg,
-             icon: 'none'
-          })
         })
       },
       commitUser (ID) {
         uni.post("/api/security/AcceptApplicate", {appId: ID}, msg => {
+          uni.showToast({
+             title: msg.msg,
+             icon: 'none'
+          });
           if (msg.success) {
             uni.navigateBack({
               delta: 1
             });
-          }
-          uni.showToast({
-             title: msg.msg,
-             icon: 'none'
-          })
+          };
         })
       }
   	},
