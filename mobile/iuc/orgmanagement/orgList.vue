@@ -1,10 +1,27 @@
 <template>
 	<view>
-		<cu-custom isBack bgColor="bg-gradual-blue">
-			<block slot="content">社团列表</block>
-		</cu-custom>
-		<view class="cu-list menu">
-			<org-info v-for="org in orgs" :key="org.ID" :orgInfo="org"></org-info>
+		<view class="cu-custom" :style="[{height:CustomBar + 'px'}]">
+			<view class="cu-bar fixed bg-blue search" :style="{height:CustomBar + 'px'}">
+				<view class="action" @click="navBack">
+					<text class="cuIcon-back"></text>
+					<text>返回</text>
+				</view>
+				<view class="search-form radius">
+					<text class="cuIcon-search"></text>
+					<input @confirm="Search" @blur="Search" :adjust-position="false" type="text" placeholder="搜索社团名" confirm-type="search"></input>
+				</view>
+			</view>
+		</view>
+		<view>
+			<view v-if="orgs.length" class="cu-list menu">
+				<org-info v-for="org in orgs" :key="org.ID" :orgInfo="org"></org-info>
+			</view>
+			<view v-else class="flex justify-center text-center">
+				<view>
+					<image src="/static/none.png"></image>
+					<view class="text-xxl">暂无社团</view>
+				</view>
+			</view>
 		</view>
 	</view>
 </template>
@@ -19,14 +36,34 @@
 			getAllOrg() {
 				uni.post("/api/security/GetAllDeparts", {}, msg => {
 					if (msg.success) {
-						this.orgs = msg.data;
+						this.orgsOrigin = msg.data;
+						this.orgsOrigin.sort(function(a, b) {
+							if (a.myDeparts && !b.myDeparts) {
+								return -1;
+							} else if (!a.myDeparts && b.myDeparts) {
+								return 1;
+							} else {
+								return 0;
+							}
+						})
+						this.orgs = this.orgsOrigin;
 					}
 				})
+			},
+			navBack() {
+				uni.navigateBack({
+					delta: 1
+				})
+			},
+			Search(e) {
+				let keyword = e.detail.value;
+				this.orgs = this.orgsOrigin.filter(e => e.Name.indexOf(keyword) > -1);
 			}
 		},
 		data() {
 			return {
-				orgs: []
+				orgs: [],
+				orgsOrigin: []
 			}
 		},
 		onLoad() {
