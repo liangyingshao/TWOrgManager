@@ -24,7 +24,7 @@
 			这里做一个点击收起，这里的【所有申请】页也简单，把下面这个列表变成一个完整的页面就可以了。
 			注，这个页面只显示“待审核”的，我这写的以通过的是给详细页面用的。
 		-->
-    <view class="cu-bar bg-white solid-bottom margin-top" v-if="allAppNum !== 0">
+    <view class="cu-bar bg-white solid-bottom margin-top" v-if="inApplyingApp.length !== 0">
       <view class="action" @click="changeMemShow()">
         <text class="cuIcon-titles text-blue"></text>
         <text class="block position-relative">
@@ -47,9 +47,6 @@
         <view class="action">
           <button class="cu-btn bg-green shadow" @click="commitUser(item.ID)">
             通过
-          </button>
-          <button class="cu-btn bg-green shadow margin-left-sm" @click="refuseUser(item.ID)">
-            驳回
           </button>
         </view>
       </view>
@@ -109,11 +106,9 @@
     methods: {
       changeMemShow() {
         this.showMemberReview = !this.showMemberReview;
-        console.log(1);
       },
       changeActShow() {
         this.showAct = !this.showAct;
-        console.log(2);
       },
       doSearch(text) {
         // text 即是输入的文本
@@ -132,17 +127,6 @@
           url: "/iuc/activity/activity-console?ID=" + actId
         });
       },
-      refuseUser(ID) {
-        uni.post("/api/security/DenyApplicate", {
-          appId: ID
-        }, msg => {
-          uni.showToast({
-            title: msg.msg,
-            icon: 'none'
-          });
-          window.refresh();
-        })
-      },
       commitUser(ID) {
         uni.post("/api/security/AcceptApplicate", {
           appId: ID
@@ -151,13 +135,35 @@
             title: msg.msg,
             icon: 'none'
           });
-          window.refresh();
+          this.getPageData();
         })
       },
       navTo(e) {
         uni.navigateTo({
           url: e
         })
+      },
+      getPageData() {
+        uni.post("/api/security/GetApplicationsByDeparts", {
+          departId
+        }, msg => {
+          if (msg.success) {
+            this.allAppNum = msg.data.length;
+            this.inApplyingApp = [];
+            for (let i = 0; i < msg.data.length; i++) {
+              if (msg.data[i].State === 3) {
+                this.inApplyingApp.push(msg.data[i]);
+              }
+            }
+          }
+        });
+        uni.post("/api/org/GetActByDepartId", {
+          id: departId
+        }, msg => {
+          if (msg.success) {
+            this.allActivity = msg.data;
+          }
+        });
       }
     },
     data() {
@@ -181,25 +187,10 @@
       };
     },
     onLoad() {
-      uni.post("/api/security/GetApplicationsByDeparts", {
-        departId
-      }, msg => {
-        if (msg.success) {
-          this.allAppNum = msg.data.length;
-          for (let i = 0; i < msg.data.length; i++) {
-            if (msg.data[i].State === 3) {
-              this.inApplyingApp.push(msg.data[i]);
-            }
-          }
-        }
-      });
-      uni.post("/api/org/GetActByDepartId", {
-        id: departId
-      }, msg => {
-        if (msg.success) {
-          this.allActivity = msg.data;
-        }
-      });
+      this.getPageData();
+    },
+    onShow() {
+      this.getPageData();
     }
   }
 </script>
