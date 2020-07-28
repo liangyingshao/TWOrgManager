@@ -90,6 +90,10 @@
 			"style" : {}
 		},
 		{
+			"path" : "iuc/orgmanagement/orgList",
+			"style" : {}
+		},
+		{
 			"path":"iuc/activity/activity",
 			"style" : {}
 		},
