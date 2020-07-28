@@ -1,7 +1,7 @@
 <template>
 	<div>
 		<view class="bg-blue">
-			<view class="flex padding">
+			<view class="flex padding" @click="navTo('../profile/profile')">
 				<view class="margin-right-lg">
 					<image class="cu-avatar round xl center" :src="userInfo.avatar"/>
 				</view>

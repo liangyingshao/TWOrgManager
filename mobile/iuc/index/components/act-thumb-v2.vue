@@ -1,5 +1,5 @@
 <template>
-	<view class="act-main" @click="toDetail()">
+	<view class="act-main" @click="toDetail(activity.ID)">
 		<view class="title">
 			<view class="text-cut">{{activity.ActivityName}}</view>
 		</view>
@@ -24,9 +24,9 @@
 <script>
 	export default {
 		methods: {
-			toDetail () {
+			toDetail (ID) {
 				uni.navigateTo({
-					url: "/iuc/activity/activity-detail"
+					url: `/iuc/activity/activity-detail?ID=${ID}`
 				})
 			}
 		},
