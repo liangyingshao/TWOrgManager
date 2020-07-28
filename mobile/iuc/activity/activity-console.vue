@@ -27,7 +27,7 @@
 		</view>
 		<!-- 活动如果审批结束，但还没有开始，则显示这个 -->
 		<view class="qr-container margin-bottom-xl padding-lr-xl" v-else-if="actInfo.StartState === 0">
-			<button class="on-working btn bg-green">
+			<button class="on-working btn bg-green" @click="setActStart()">
 				点击开始
 			</button>
 		</view>
@@ -146,7 +146,7 @@
 			uni.navigateTo({
 			  url: "/iuc/activity/activity-signIn-list?ID=" + this.ID
 			});
-		},
+		}
 	}
 }
 </script>

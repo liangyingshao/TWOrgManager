@@ -1,5 +1,9 @@
 <template>
 	<view>
+		<cu-custom bgColor="bg-blue" isBack>
+			<block slot="backText">返回</block>
+			<block slot="content">活动详情</block>
+		</cu-custom>
 		<view class="cu-bar bg-white solid-bottom margin-top">
 			<view class="action">
 				<text class="cuIcon-titles text-blue"></text>
@@ -20,9 +24,6 @@
         <view class="action">
           <button class="cu-btn bg-green shadow" @click="commitUser(item.ID)">
             通过
-          </button>
-          <button class="cu-btn bg-green shadow margin-left-sm" @click="refuseUser(item.ID)">
-            驳回
           </button>
         </view>
       </view>
@@ -101,36 +102,33 @@
 			}
 		},
 		methods: {
-      refuseUser (ID) {
-        uni.post("/api/security/DenyApplicate", {appId: ID}, msg => {
-            uni.showToast({
-            	 title: msg.msg,
-            	 icon: 'none'
-            });
-          window.refresh();
-        })
-      },
       commitUser (ID) {
         uni.post("/api/security/AcceptApplicate", {appId: ID}, msg => {
-            uni.showToast({
-            	 title: msg.msg,
-            	 icon: 'none'
-            });
-          window.refresh();
+          uni.showToast({
+             title: msg.msg,
+             icon: 'none'
+          });
+          this.getPageData();
         })
       },
       audit(ID, userCode) {
         uni.navigateTo({
           url: "/iuc/profile/user-audit?userCode="+userCode+"&ID="+ID
         });
+      },
+      getPageData() {
+        uni.post("/api/security/GetApplicationsByDeparts", {
+          departId
+        }, msg => {
+          this.allApplication = msg.data;
+        })
       }
 		},
     onLoad() {
-      uni.post("/api/security/GetApplicationsByDeparts", {
-        departId
-      }, msg => {
-        this.allApplication = msg.data;
-      })
+      this.getPageData();
+    },
+    onShow() {
+      this.getPageData();
     }
 	}
 </script>

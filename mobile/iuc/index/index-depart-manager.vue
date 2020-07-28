@@ -24,42 +24,39 @@
 			这里做一个点击收起，这里的【所有申请】页也简单，把下面这个列表变成一个完整的页面就可以了。
 			注，这个页面只显示“待审核”的，我这写的以通过的是给详细页面用的。
 		-->
-		<view class="cu-bar bg-white solid-bottom margin-top" v-if="allAppNum !== 0">
-			<view class="action" @click="changeMemShow()">
-				<text class="cuIcon-titles text-blue"></text>
-				<text class="block position-relative">
-					成员审核
-					<view class='cu-tag bg-red margin-left-sm round'>{{inApplyingApp.length}}</view>
-				</text>
-			</view>
-			<view class="action" @click="navTo('/iuc/index/index-all-application')">
-				<view class="text-blue">[所有申请]</view>
-			</view>
-		</view>
-		<view class="cu-list menu" v-for="(item,index) in inApplyingApp" :key="index" v-show="showMemberReview">
-			<view class="cu-item">
-				<view class="content padding-tb-sm" @click="audit(item.ID, item.Code)">
-					<view>
-						<text class="cuIcon-profilefill text-blue margin-right-xs"></text> {{item.RealName}}（{{item.Code}}）</view>
-					<view class="text-gray text-sm">
-						<text class="cuIcon-infofill margin-right-xs"></text> {{item.BelongDepart}}，电话：{{item.Telephone}}</view>
-				</view>
-				<view class="action">
-					<button class="cu-btn bg-green shadow" @click="commitUser(item.ID)">
-						通过
-					</button>
-					<button class="cu-btn bg-green shadow margin-left-sm" @click="refuseUser(item.ID)">
-						驳回
-					</button>
-				</view>
-			</view>
-		</view>
-		<view class="cu-bar bg-white solid-bottom margin-top" @click="changeActShow()">
-			<view class="action">
-				<text class="cuIcon-titles text-blue"></text>
-				社团活动
-			</view>
-			<!--view class="action">
+    <view class="cu-bar bg-white solid-bottom margin-top" v-if="inApplyingApp.length !== 0">
+      <view class="action" @click="changeMemShow()">
+        <text class="cuIcon-titles text-blue"></text>
+        <text class="block position-relative">
+          成员审核
+          <view class='cu-tag bg-red margin-left-sm round'>{{inApplyingApp.length}}</view>
+        </text>
+      </view>
+      <view class="action" @click="navTo('/iuc/index/index-all-application')">
+        <view class="text-blue">[所有申请]</view>
+      </view>
+    </view>
+    <view class="cu-list menu" v-for="(item,index) in inApplyingApp" :key="index" v-show="showMemberReview">
+      <view class="cu-item">
+        <view class="content padding-tb-sm" @click="audit(item.ID, item.Code)">
+          <view>
+            <text class="cuIcon-profilefill text-blue margin-right-xs"></text> {{item.RealName}}（{{item.Code}}）</view>
+          <view class="text-gray text-sm">
+            <text class="cuIcon-infofill margin-right-xs"></text> {{item.BelongDepart}}，电话：{{item.Telephone}}</view>
+        </view>
+        <view class="action">
+          <button class="cu-btn bg-green shadow" @click="commitUser(item.ID)">
+            通过
+          </button>
+        </view>
+      </view>
+    </view>
+    <view class="cu-bar bg-white solid-bottom margin-top" @click="changeActShow()">
+      <view class="action">
+        <text class="cuIcon-titles text-blue"></text>
+        社团活动
+      </view>
+      <!--view class="action">
         <view class="text-blue">[所有活动]</view>
       </view-->
 		</view>
@@ -99,109 +96,103 @@
 </template>
 
 <script>
-	import titleBar from './title-bar.vue'
-	let app = require("@/config");
-	let departId = uni.getStorageSync("defaultDepartId");;
-	export default {
-		components: {
-			titleBar
-		},
-		methods: {
-			changeMemShow() {
-				this.showMemberReview = !this.showMemberReview;
-				console.log(1);
-			},
-			changeActShow() {
-				this.showAct = !this.showAct;
-				console.log(2);
-			},
-			doSearch(text) {
-				// text 即是输入的文本
-				console.log(text);
-			},
-			toProfile() {
-				uni.toProfile()
-			},
-			audit(ID, userCode) {
-				uni.navigateTo({
-					url: "/iuc/profile/user-audit?userCode=" + userCode + "&ID=" + ID
-				});
-			},
-			toConsole(actId) {
-				uni.navigateTo({
-					url: "/iuc/activity/activity-console?ID=" + actId
-				});
-			},
-			refuseUser(ID) {
-				uni.post("/api/security/DenyApplicate", {
-					appId: ID
-				}, msg => {
-					uni.showToast({
-						title: msg.msg,
-						icon: 'none'
-					});
-					window.refresh();
-				})
-			},
-			commitUser(ID) {
-				uni.post("/api/security/AcceptApplicate", {
-					appId: ID
-				}, msg => {
-					uni.showToast({
-						title: msg.msg,
-						icon: 'none'
-					});
-					window.refresh();
-				})
-			},
-			navTo(e) {
-				uni.navigateTo({
-					url: e
-				})
-			}
-		},
-		data() {
-			return {
-				showMemberReview: true,
-				showAct: true,
-				searchText: "",
-				allAppNum: 0,
-				inApplyingApp: [],
-				allActivity: [],
-				startState: {
-					0: "未开始",
-					1: "进行中",
-					2: "已结束"
-				},
-				stateColor: {
-					0: "green",
-					1: "blue",
-					2: "red"
-				}
-			};
-		},
-		onLoad() {
-			uni.post("/api/security/GetApplicationsByDeparts", {
-				departId
-			}, msg => {
-				if (msg.success) {
-					this.allAppNum = msg.data.length;
-					for (let i = 0; i < msg.data.length; i++) {
-						if (msg.data[i].State === 3) {
-							this.inApplyingApp.push(msg.data[i]);
-						}
-					}
-				}
-			});
-			uni.post("/api/org/GetActByDepartId", {
-				id: departId
-			}, msg => {
-				if (msg.success) {
-					this.allActivity = msg.data;
-				}
-			});
-		}
-	}
+  import titleBar from './title-bar.vue'
+  let app = require("@/config");
+  let departId = uni.getStorageSync("defaultDepartId");;
+  export default {
+    components: {
+      titleBar
+    },
+    methods: {
+      changeMemShow() {
+        this.showMemberReview = !this.showMemberReview;
+      },
+      changeActShow() {
+        this.showAct = !this.showAct;
+      },
+      doSearch(text) {
+        // text 即是输入的文本
+        console.log(text);
+      },
+      toProfile() {
+        uni.toProfile()
+      },
+      audit(ID, userCode) {
+        uni.navigateTo({
+          url: "/iuc/profile/user-audit?userCode=" + userCode + "&ID=" + ID
+        });
+      },
+      toConsole(actId) {
+        uni.navigateTo({
+          url: "/iuc/activity/activity-console?ID=" + actId
+        });
+      },
+      commitUser(ID) {
+        uni.post("/api/security/AcceptApplicate", {
+          appId: ID
+        }, msg => {
+          uni.showToast({
+            title: msg.msg,
+            icon: 'none'
+          });
+          this.getPageData();
+        })
+      },
+      navTo(e) {
+        uni.navigateTo({
+          url: e
+        })
+      },
+      getPageData() {
+        uni.post("/api/security/GetApplicationsByDeparts", {
+          departId
+        }, msg => {
+          if (msg.success) {
+            this.allAppNum = msg.data.length;
+            this.inApplyingApp = [];
+            for (let i = 0; i < msg.data.length; i++) {
+              if (msg.data[i].State === 3) {
+                this.inApplyingApp.push(msg.data[i]);
+              }
+            }
+          }
+        });
+        uni.post("/api/org/GetActByDepartId", {
+          id: departId
+        }, msg => {
+          if (msg.success) {
+            this.allActivity = msg.data;
+          }
+        });
+      }
+    },
+    data() {
+      return {
+        showMemberReview: true,
+        showAct: true,
+        searchText: "",
+        allAppNum: 0,
+        inApplyingApp: [],
+        allActivity: [],
+        startState: {
+          0: "未开始",
+          1: "进行中",
+          2: "已结束"
+        },
+        stateColor: {
+          0: "green",
+          1: "blue",
+          2: "red"
+        }
+      };
+    },
+    onLoad() {
+      this.getPageData();
+    },
+    onShow() {
+      this.getPageData();
+    }
+  }
 </script>
 
 <style lang="less">
