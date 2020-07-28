@@ -13,7 +13,7 @@
       <view v-if="item.State === 3" class="cu-item">
         <view class="content padding-tb-sm" @click="audit(item.ID, item.Code)">
           <view>
-            <text class="cuIcon-profilefill text-blue margin-right-xs"></text> {{item.RealName}}（{{item.Code}}）</view>
+            <text class="cuIcon-profilefill text-blue margin-right-xs"></text> {{item.RealName}}({{item.Code}})</view>
           <view class="text-gray text-sm">
             <text class="cuIcon-infofill margin-right-xs"></text> {{item.BelongDepart}}，电话：{{item.Telephone}}</view>
         </view>
@@ -26,10 +26,21 @@
           </button>
         </view>
       </view>
+      <view v-else-if="item.State === 2" class="cu-item">
+        <view class="content padding-tb-sm" @click="audit(item.ID, item.Code)">
+          <view>
+            <text class="cuIcon-profilefill text-blue margin-right-xs"></text> {{item.RealName}}({{item.Code}})</view>
+          <view class="text-gray text-sm">
+            <text class="cuIcon-infofill margin-right-xs"></text> {{item.BelongDepart}}，电话：{{item.Telephone}}</view>
+        </view>
+        <view class="action">
+          <text class="text-blue">自行撤回</text>
+        </view>
+      </view>
       <view v-else-if="item.State === 0" class="cu-item">
         <view class="content padding-tb-sm" @click="audit(item.ID, item.Code)">
           <view>
-            <text class="cuIcon-profilefill text-blue margin-right-xs"></text> {{item.RealName}}（{{item.Code}}）</view>
+            <text class="cuIcon-profilefill text-blue margin-right-xs"></text> {{item.RealName}}({{item.Code}})</view>
           <view class="text-gray text-sm">
             <text class="cuIcon-infofill margin-right-xs"></text> {{item.BelongDepart}}，电话：{{item.Telephone}}</view>
         </view>
@@ -40,7 +51,7 @@
       <view v-else-if="item.State === 1" class="cu-item">
         <view class="content padding-tb-sm" @click="audit(item.ID, item.Code)">
           <view>
-            <text class="cuIcon-profilefill text-blue margin-right-xs"></text> {{item.RealName}}（{{item.Code}}）</view>
+            <text class="cuIcon-profilefill text-blue margin-right-xs"></text> {{item.RealName}}({{item.Code}})</view>
           <view class="text-gray text-sm">
             <text class="cuIcon-infofill margin-right-xs"></text> {{item.BelongDepart}}，电话：{{item.Telephone}}</view>
         </view>
@@ -95,7 +106,8 @@
             uni.showToast({
             	 title: msg.msg,
             	 icon: 'none'
-            })
+            });
+          window.refresh();
         })
       },
       commitUser (ID) {
@@ -103,7 +115,8 @@
             uni.showToast({
             	 title: msg.msg,
             	 icon: 'none'
-            })
+            });
+          window.refresh();
         })
       },
       audit(ID, userCode) {

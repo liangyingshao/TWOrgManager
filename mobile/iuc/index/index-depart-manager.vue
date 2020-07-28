@@ -25,7 +25,7 @@
 			注，这个页面只显示“待审核”的，我这写的以通过的是给详细页面用的。
 		-->
     <view class="cu-bar bg-white solid-bottom margin-top" v-if="allAppNum !== 0">
-      <view class="action">
+      <view class="action" @click="changeMemShow()">
         <text class="cuIcon-titles text-blue"></text>
         <text class="block position-relative">
           成员审核
@@ -36,7 +36,7 @@
         <view class="text-blue">[所有申请]</view>
       </view>
     </view>
-    <view class="cu-list menu" v-for="(item,index) in inApplyingApp" :key="index">
+    <view class="cu-list menu" v-for="(item,index) in inApplyingApp" :key="index" v-show="showMemberReview">
       <view class="cu-item">
         <view class="content padding-tb-sm" @click="audit(item.ID, item.Code)">
           <view>
@@ -54,17 +54,17 @@
         </view>
       </view>
     </view>
-    <view class="cu-bar bg-white solid-bottom margin-top">
+    <view class="cu-bar bg-white solid-bottom margin-top" @click="changeActShow()">
       <view class="action">
         <text class="cuIcon-titles text-blue"></text>
         社团活动
       </view>
-      <view class="action">
+      <!--view class="action">
         <view class="text-blue">[所有活动]</view>
-      </view>
+      </view-->
     </view>
     <!-- 本列表只列出 进行中 的活动。 -->
-    <view class="cu-card no-card article">
+    <view class="cu-card no-card article" v-for="(item,index) in allActivity" :key="index" v-show="showAct">
       <!--
 			 这个整个做一个组件，社团活动详细页面里不还可以再用一次，颜色：
 			 进行中 用绿色，
@@ -72,33 +72,24 @@
 			 已结束 用红色。
 			 同时，这个状态也可以做一个小组件，在activity-console里也要用到一次
 			-->
-      <view class="cu-item shadow" @click="toConsole()">
+      <view class="cu-item shadow" @click="toConsole(item.ID)">
         <view class="title">
           <view class="text-cut">
-            <view class='cu-tag bg-red margin-right-sm round'>进行中</view>
-            活动名称
+            <template v-if="item.ApplicateState !== 3">
+              <view class='cu-tag bg-yellow margin-right-sm round'>审批中</view>
+            </template>
+            <template v-else>
+              <view :class="'cu-tag margin-right-sm round bg-' + stateColor[item.StartState]">{{startState[item.StartState]}}</view>
+            </template>
+            {{item.ActivityName ? item.ActivityName : "暂无社团活动名称"}}
           </view>
         </view>
         <view class="content">
           <view class="desc">
             <view class="text-content">
-              时间：2020-7-20 8时 ~ 2020-7-10 10时<Br></Br>
-              地点：信息学院实验楼202
+              时间：{{item.StartDate}} ~ {{item.EndDate}}<Br></Br>
+              地点：{{item.Address}}
             </view>
-          </view>
-        </view>
-        <view class="actions">
-          <view class="act-btn">
-            <text class="icon">20</text>
-            <text>待审核</text>
-          </view>
-          <view class="act-btn">
-            <text class="icon">20</text>
-            <text>已报名</text>
-          </view>
-          <view class="act-btn">
-            <text class="icon">20</text>
-            <text>已签到</text>
           </view>
         </view>
       </view>
@@ -116,6 +107,14 @@
       titleBar
     },
     methods: {
+      changeMemShow() {
+        this.showMemberReview = !this.showMemberReview;
+        console.log(1);
+      },
+      changeActShow() {
+        this.showAct = !this.showAct;
+        console.log(2);
+      },
       doSearch(text) {
         // text 即是输入的文本
         console.log(text);
@@ -125,37 +124,34 @@
       },
       audit(ID, userCode) {
         uni.navigateTo({
-          url: "/iuc/profile/user-audit?userCode="+userCode+"&ID="+ID
+          url: "/iuc/profile/user-audit?userCode=" + userCode + "&ID=" + ID
         });
       },
       toConsole(actId) {
         uni.navigateTo({
-          url: "/iuc/activity/activity-console"
+          url: "/iuc/activity/activity-console?ID=" + actId
         });
       },
-      selectApplication() {
-        uni.post("/api/security/GetApplicationsByDeparts", {
-          departId
+      refuseUser(ID) {
+        uni.post("/api/security/DenyApplicate", {
+          appId: ID
         }, msg => {
-          if (msg.success) {
-            console.log(msg.data);
-          }
+          uni.showToast({
+            title: msg.msg,
+            icon: 'none'
+          });
+          window.refresh();
         })
       },
-      refuseUser (ID) {
-        uni.post("/api/security/DenyApplicate", {appId: ID}, msg => {
-            uni.showToast({
-            	 title: msg.msg,
-            	 icon: 'none'
-            })
-        })
-      },
-      commitUser (ID) {
-        uni.post("/api/security/AcceptApplicate", {appId: ID}, msg => {
-            uni.showToast({
-            	 title: msg.msg,
-            	 icon: 'none'
-            })
+      commitUser(ID) {
+        uni.post("/api/security/AcceptApplicate", {
+          appId: ID
+        }, msg => {
+          uni.showToast({
+            title: msg.msg,
+            icon: 'none'
+          });
+          window.refresh();
         })
       },
       navTo(e) {
@@ -166,9 +162,22 @@
     },
     data() {
       return {
+        showMemberReview: true,
+        showAct: true,
         searchText: "",
         allAppNum: 0,
-        inApplyingApp: []
+        inApplyingApp: [],
+        allActivity: [],
+        startState: {
+          0: "未开始",
+          1: "进行中",
+          2: "已结束"
+        },
+        stateColor: {
+          0: "green",
+          1: "blue",
+          2: "red"
+        }
       };
     },
     onLoad() {
@@ -179,11 +188,18 @@
           this.allAppNum = msg.data.length;
           for (let i = 0; i < msg.data.length; i++) {
             if (msg.data[i].State === 3) {
-              inApplyingApp.push(msg.data[i]);
+              this.inApplyingApp.push(msg.data[i]);
             }
           }
         }
-      })
+      });
+      uni.post("/api/org/GetActByDepartId", {
+        id: departId
+      }, msg => {
+        if (msg.success) {
+          this.allActivity = msg.data;
+        }
+      });
     }
   }
 </script>
