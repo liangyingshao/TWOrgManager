@@ -66,7 +66,7 @@
 
 <script>
   let app = require("@/config");
-  let departId = uni.getStorageSync("defaultDepartId");;
+  let departId = uni.getStorageSync("defaultDepartId");
 	export default {
 		data() {
 			return {

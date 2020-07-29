@@ -1,6 +1,6 @@
 <template>
 	<view>
-		<cu-custom bgColor="bg-informatic-brown" isBack>
+		<cu-custom bgColor="bg-blue" isBack>
 			<block slot="backText">返回</block>
 			<block slot="content">我的参与</block>
 		</cu-custom>
@@ -10,10 +10,21 @@
 				<text class="padding-lr-xs" :class="displayRoom?'cuIcon-fold':'cuIcon-unfold'"></text>
 			</view>
 		</view>
-		<transition-group class="cu-list cu-card" name="list">
-			<view class="cu-item bg-informatic-brown shadow" v-for="(item,index) in roomData" :key="index" @click="toExecute(item)"
+		<transition-group class="cu-list menu" name="list">
+			<view class="cu-item" v-for="(item,index) in roomData" :key="index"
 			 v-show="displayRoom">
-				<sticky :item="item" />
+        <view class="content padding-tb-sm">
+        	<view>
+        		<text class="cuIcon-activityfill text-blue margin-right-xs"></text>{{item.WorkflowName}}</view>
+        	<view class="text-gray text-sm">
+        		<text class="cuIcon-infofill margin-right-xs"></text> {{item.Owner}}提交的{{item.WorkflowType}}</view>
+        </view>
+        <view class="action">
+        	<button class="cu-btn bg-green shadow"
+        	@click="toExecute(item)">
+        		详情
+        	</button>
+        </view>
 			</view>
 		</transition-group>
 		<template v-if="roomData.length===0 && displayRoom">
@@ -41,7 +52,7 @@
 			toExecute(item) {
 				if(item.WorkflowName === "社团活动申请"){
 					uni.navigateTo({
-						url: `../../activity/activity?instanceId=${item.InstanceId}&stepId=${item.StepId}`
+						url: `../../activity/activity?instanceId=${item.InstanceId}&stepId=${item.StepId}&detail=true`
 					})
 				} else if (item.WorkflowName === "按机位申请实验室") {
 					uni.setStorage({
@@ -117,4 +128,23 @@
 		opacity: 0;
 		transform: translateY(-30px);
 	}
+
+  .cu-list.menu>.cu-item {
+        position: relative;
+        display: -webkit-box;
+        display: -webkit-flex;
+        display: -ms-flexbox;
+        display: flex;
+        padding: 0 18px;
+        min-height: 60px;
+        background-color: #fff;
+        -webkit-box-pack: justify;
+        -webkit-justify-content: space-between;
+        -ms-flex-pack: justify;
+        justify-content: space-between;
+        -webkit-box-align: center;
+        -webkit-align-items: center;
+        -ms-flex-align: center;
+        align-items: center;
+    }
 </style>
