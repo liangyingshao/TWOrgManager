@@ -5,7 +5,7 @@
 		</cu-custom>
 		<view class="margin-lr margin-tb">
 			<view class="margin-bottom-xl text-center">
-				<image src="../../static/社团图标.png" style="width: 200px; height: 200px;" mode="aspectFit"></image>
+				<image src="../../static/社团管理信息系统.png" height="100%" mode="aspectFit"></image>
 			</view>
 			<form @submit="login()">
 				<view class="cu-form-group">
