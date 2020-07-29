@@ -85,9 +85,9 @@
 			"style": {}
 		},
 		{
-            "path" : "components/labComponent/labTimeLine",
-            "style" : {}
-        },
+        "path" : "components/labComponent/labTimeLine",
+        "style" : {}
+    },
 		{
 			"path" : "iuc/orgmanagement/orgmanagement",
 			"style" : {}

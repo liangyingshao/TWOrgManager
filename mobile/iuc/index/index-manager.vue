@@ -30,6 +30,7 @@
 				<text class="block position-relative">
 					成员审核
 					<view class='cu-tag bg-red margin-left-sm round'>{{inApplyingApp.length}}</view>
+
 				</text>
 			</view>
 			<view class="action" @click="navTo('/iuc/index/index-all-application')">
@@ -93,8 +94,8 @@
 					</view>
 				</view>
 			</view>
-			<!-- cu-item -->
 		</view>
+	</view>
 	</view>
 </template>
 

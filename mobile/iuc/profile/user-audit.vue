@@ -19,7 +19,7 @@
 		</view>
 		<view class="padding flex flex-direction">
 			<button class="cu-btn bg-green lg" @click="commitUser(ID)">通过</button>
-			<button class="cu-btn bg-red margin-tb-sm lg" @click="refuseUser(ID)">取消</button>
+			<button class="cu-btn bg-red margin-tb-sm lg" @click="refuseUser(ID)">驳回</button>
 		</view>
 		<!-- 这个用户的基本信息，提一个组件出去。输入一个对象，然后全部显示就行了。这样以后也可以用 -->
 		<view class="cu-bar bg-white solid-bottom margin-top">
@@ -84,7 +84,7 @@
       console.log(query.ID);
       uni.post("/api/security/GetUserByCode", {code: this.userCode}, msg => {
         if (msg.success) {
-          this.userInfo = msg.data;
+          this.userInfo = msg.user;
         } else {
           uni.showToast({
           	 title: msg.msg,
