@@ -2,7 +2,7 @@
 	<view>
 		<cu-custom bgColor="bg-blue" isBack>
 			<block slot="backText">返回</block>
-			<block slot="content">活动详情</block>
+			<block slot="content">所有申请</block>
 		</cu-custom>
 		<view class="cu-bar bg-white solid-bottom margin-top">
 			<view class="action">
@@ -13,7 +13,7 @@
 				</text>
 			</view>
 		</view>
-    <view class="cu-list menu margin-top" v-for="(item,index) in allApplication" :key="index">
+    <view class="cu-list menu" v-for="(item,index) in allApplication" style="margin-top: 1px;" :key="index">
       <view v-if="item.State === 3" class="cu-item">
         <view class="content padding-tb-sm" @click="audit(item.ID, item.Code)">
           <view>
