@@ -2,17 +2,8 @@
 	<view>
 		<cu-custom bgColor="bg-blue" isBack>
 			<block slot="backText">返回</block>
+			<block slot="content">社团列表</block>
 		</cu-custom>
-		<view>
-			<view class="cu-bar bg-white solids-bottom">
-				<view class="action">
-					<text class="cuIcon-titles text-blue"></text>
-					<text class="block position-relative">
-						社团列表
-						<view class='cu-tag bg-red margin-left-sm round' v-if="departs">{{departs.length}}</view>
-					</text>
-				</view>
-			</view>
 		<view class="padding bg-white solids-bottom" v-for="(item,index) in departs" :key="index" @click="toDetail(item.ID)">
 			<view class="cu-item">
 				<view class="content padding-tb-sm">
@@ -24,10 +15,9 @@
 					<view class="margin-top-sm" v-if="item.Description==''">
 						<text class="cuIcon-wenzi margin-right-xs"></text>暂无简介
 					</view>
-				</view>
-				
+				</view>				
 			  </view>
-		  </view>
+		 </view>
 		</view>
 	</view>
 </template>

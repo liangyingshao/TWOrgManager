@@ -61,7 +61,7 @@
       </view-->
 		</view>
 		<!-- 本列表只列出 进行中 的活动。 -->
-		<view class="cu-card no-card article" v-for="(item,index) in allActivity" :key="index" v-show="showAct">
+		<view class="cu-card no-card article" v-for="(item,index) in allActivity" :key="'act'+index" v-show="showAct">
 			<!--
 			 这个整个做一个组件，社团活动详细页面里不还可以再用一次，颜色：
 			 进行中 用绿色，
@@ -112,7 +112,7 @@
       },
       doSearch(text) {
         // text 即是输入的文本
-        console.log(text);
+        this.allActivity = this.data.filter(e=>e.ActivityName.indexOf(text)!==-1);
       },
       toProfile() {
         uni.toProfile()
@@ -162,6 +162,7 @@
         }, msg => {
           if (msg.success) {
             this.allActivity = msg.data;
+			this.data = this.allActivity;
           }
         });
       }
@@ -173,6 +174,7 @@
         searchText: "",
         allAppNum: 0,
         inApplyingApp: [],
+		data: [],
         allActivity: [],
         startState: {
           0: "未开始",

@@ -110,6 +110,7 @@
 				}, msg => {
 					if (msg.success) {
 						this.allActivity = msg.data;
+						this.data = this.allActivity;
 					}
 				});
 			},
@@ -122,7 +123,7 @@
 			},
 			doSearch(text) {
 				// text 即是输入的文本
-				console.log(text);
+				this.allActivity = this.data.filter(e=>e.ActivityName.indexOf(text)!==-1);
 			},
 			toProfile() {
 				uni.toProfile()
@@ -137,7 +138,8 @@
 			return {
 				searchText: "",
 				myPenging: [],
-				allActivity: []
+				allActivity: [],
+				data: []
 			};
 		},
 		onLoad() {
