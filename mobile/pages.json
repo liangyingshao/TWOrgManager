@@ -13,6 +13,9 @@
 			"path": "iuc/index/index-student"
 		},
 		{
+			"path": "iuc/index/manager-depart-choose"
+		},
+		{
 			"path": "iuc/index/index-teacher"
 		},
 		{
