@@ -120,6 +120,10 @@
             "path" : "iuc/index/index-all-application",
             "style" : {}
         }
+        ,{
+            "path" : "iuc/index/index-all-activity",
+            "style" : {}
+        }
     ],
 	"globalStyle": {
 		"mp-alipay": {
