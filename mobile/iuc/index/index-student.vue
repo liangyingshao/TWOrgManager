@@ -34,6 +34,7 @@
 				<image class="none" src="/static/none.png"></image>
 			</view>
 		</view>
+		
 		<view class="cu-bar bg-white solid-bottom margin-top">
 			<view class="action">
 				<text class="cuIcon-titles text-blue"></text> 活动列表
@@ -42,11 +43,15 @@
 				<view class="text-blue">[报名参加]</view>
 			</view>
 		</view>
-		<view class="cu-card article no-card" v-for="activity in activities" :key="activity.ID">
-			<view class="cu-item solid-bottom">
+		<view class="cu-card article no-card" v-if="activities.length" :key="activity.ID">
+			<view class="cu-item solid-bottom" v-for="activity in activities">
 				<act-thumb :activity="activity"></act-thumb>
 			</view>
 		</view>
+		<view class="bg-white" v-else>
+			<image class="none" src="/static/none.png"></image>
+		</view>
+		
 		<view class="cu-bar bg-white solid-bottom margin-top">
 			<view class="action">
 				<text class="cuIcon-titles text-blue"></text> 我参加的活动
@@ -54,11 +59,15 @@
 			<view class="action">
 			</view>
 		</view>
-		<view class="cu-card article no-card" v-for="activity in myActivities" :key="activity.ID">
-			<view class="cu-item shadow">
+		<view class="cu-card article no-card" v-if="myActivities.length" :key="activity.ID">
+			<view class="cu-item shadow"  v-for="activity in myActivities">
 				<act-thumb :activity="activity"></act-thumb>
 			</view>
 		</view>
+		<view class="bg-white" v-else>
+			<image class="none" src="/static/none.png"></image>
+		</view>
+		
 	</div>
 </template>
 

@@ -42,7 +42,7 @@
           <view>
             <text class="cuIcon-profilefill text-blue margin-right-xs"></text> {{item.RealName}}（{{item.Code}}）</view>
           <view class="text-gray text-sm">
-            <text class="cuIcon-infofill margin-right-xs"></text> {{item.BelongDepart}}，电话：{{item.Telephone}}</view>
+            <text class="cuIcon-infofill margin-right-xs"></text> {{item.BelongDepart}}，电话：{{item.Mobile}}</view>
         </view>
         <view class="action">
           <button class="cu-btn bg-green shadow" @click="commitUser(item.ID)">

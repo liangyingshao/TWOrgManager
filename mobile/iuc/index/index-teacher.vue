@@ -32,8 +32,8 @@
 					<view class='cu-tag bg-red margin-left-sm round'>{{myPenging.length}}</view>
 				</text>
 			</view>
-			<view class="action" @click="navTo('/iuc/index/index-all-application')">
-				<view class="text-blue">[所有申请]</view>
+			<view class="action" @click="navTo('/iuc/roomApplication/v2/myAttend')">
+				<view class="text-blue">[审核历史]</view>
 			</view>
 		</view>
 		<view class="cu-list menu">
