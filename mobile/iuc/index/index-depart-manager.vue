@@ -62,6 +62,7 @@
       </view>
 		</view>
 		<!-- 本列表只列出 进行中 的活动。 -->
+		<view class="cu-card no-card article" v-for="(item,index) in allActivity" :key="'act'+index" v-show="showAct">
 		<view class="cu-card no-card article" v-for="(item,index) in onGoingAct" :key="index + inApplyingApp.length" v-show="showAct">
 			<!--
 			 这个整个做一个组件，社团活动详细页面里不还可以再用一次，颜色：
@@ -108,7 +109,7 @@
       },
       doSearch(text) {
         // text 即是输入的文本
-        console.log(text);
+        this.allActivity = this.data.filter(e=>e.ActivityName.indexOf(text)!==-1);
       },
       toProfile() {
         uni.toProfile()
@@ -156,12 +157,8 @@
           id: departId
         }, msg => {
           if (msg.success) {
-            this.onGoingAct = [];
-            for (let i = 0; i < msg.data.length; i++) {
-              if (msg.data[i].ApplicateState === 3 && msg.data[i].StartState === 1) {
-                this.onGoingAct.push(msg.data[i]);
-              }
-            }
+            this.allActivity = msg.data;
+			this.data = this.allActivity;
           }
         });
       }
@@ -172,6 +169,18 @@
         showAct: true,
         searchText: "",
         inApplyingApp: [],
+		data: [],
+        allActivity: [],
+        startState: {
+          0: "未开始",
+          1: "进行中",
+          2: "已结束"
+        },
+        stateColor: {
+          0: "green",
+          1: "blue",
+          2: "red"
+        }
         onGoingAct: []
       };
     },
