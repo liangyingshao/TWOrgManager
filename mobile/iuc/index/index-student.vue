@@ -24,7 +24,7 @@
 		<view class="cu-card no-card">
 			<!-- 下面这个VIEW是有社团的情况，如果只有一个就只显示一个 -->
 			<view class="cu-item shadow flex" v-if="myOrgs.length">
-				<view class="flex-sub padding-sm" v-for="org in myOrgs">
+				<view class="flex-sub padding-sm" v-for="org in myOrgs" :key="org.ID">
 					<view class="cu-avatar round xl" style="background-image:url(https://ossweb-img.qq.com/images/lol/web201310/skin/big10001.jpg)"></view>
 					<view class="margin-top-sm">{{org.Name}}</view>
 				</view>
@@ -42,7 +42,7 @@
 				<view class="text-blue">[报名参加]</view>
 			</view>
 		</view>
-		<view class="cu-card article no-card" v-for="activity in activities">
+		<view class="cu-card article no-card" v-for="activity in activities" :key="activity.ID">
 			<view class="cu-item solid-bottom">
 				<act-thumb :activity="activity"></act-thumb>
 			</view>
@@ -54,7 +54,7 @@
 			<view class="action">
 			</view>
 		</view>
-		<view class="cu-card article no-card" v-for="activity in myActivities">
+		<view class="cu-card article no-card" v-for="activity in myActivities" :key="activity.ID">
 			<view class="cu-item shadow">
 				<act-thumb :activity="activity"></act-thumb>
 			</view>

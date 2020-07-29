@@ -13,6 +13,9 @@
 			"path": "iuc/index/index-student"
 		},
 		{
+			"path": "iuc/index/manager-depart-choose"
+		},
+		{
 			"path": "iuc/index/index-teacher"
 		},
 		{
@@ -82,9 +85,9 @@
 			"style": {}
 		},
 		{
-            "path" : "components/labComponent/labTimeLine",
-            "style" : {}
-        },
+        "path" : "components/labComponent/labTimeLine",
+        "style" : {}
+    },
 		{
 			"path" : "iuc/orgmanagement/orgmanagement",
 			"style" : {}
@@ -99,6 +102,12 @@
 		},
 		{
 		    "path" : "iuc/activity/activity-detail"
+		},
+		{
+		    "path" : "iuc/activity/activity-signUp-list"
+		},
+		{
+		    "path" : "iuc/activity/activity-signIn-list"
 		},
 		{
 			"path": "iuc/profile/user-audit"

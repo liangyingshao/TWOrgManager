@@ -27,7 +27,7 @@
 		</view>
 		<!-- 活动如果审批结束，但还没有开始，则显示这个 -->
 		<view class="qr-container margin-bottom-xl padding-lr-xl" v-else-if="actInfo.StartState === 0">
-			<button class="on-working btn bg-green">
+			<button class="on-working btn bg-green" @click="setActStart()">
 				点击开始
 			</button>
 		</view>
@@ -80,7 +80,7 @@
     </view>
 		<view class="cu-list grid col-2 border-top border shadow " style="position:fixed;bottom: 0px;width: 100%;">
 			<!-- 这里红点显示的是，是否有未审核的人。注意大于99则显示为 99+ 小于显示数字-->
-			<view class="cu-item">
+			<view class="cu-item" @click="toSignUP()">
 				<view class="cuIcon-friendfavor">
 					<view class="cu-tag badge">
 						<block>{{actInfo.needChecks>99 ? '99+' : actInfo.needChecks}}</block>
@@ -89,7 +89,7 @@
 				<text>报名情况</text>
 			</view>
 			<!-- 这里的红点显示的是签到人数 -->
-			<view class="cu-item">
+			<view class="cu-item" @click="toSignIn()">
 				<view class="cuIcon-selection">
 					<view class="cu-tag badge">
 						<block>{{actInfo.alreadeySignIns>99 ? '99+' : actInfo.alreadeySignIns}}</block>
@@ -135,8 +135,20 @@
           })
         }
       });
-    }
+    },
+	methods: {
+		toSignUP() {
+			uni.navigateTo({
+			  url: "/iuc/activity/activity-signUp-list?ID=" + this.ID
+			});
+		},
+		toSignIn() {
+			uni.navigateTo({
+			  url: "/iuc/activity/activity-signIn-list?ID=" + this.ID
+			});
+		}
 	}
+}
 </script>
 
 <style>

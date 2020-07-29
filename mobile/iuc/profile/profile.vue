@@ -25,16 +25,16 @@
 			</view>
 		</view>
 		<view class="cu-list menu">
+			<view class="arrow cu-item" v-if="availableRoles.length > 1" @click="navTo('../login/roleSelection')">
+				<view class="font-15 margin-lr">
+					<text class="text-informatic-brown cuIcon-pick margin-right-sm"></text>
+					<text class="text-informatic-brown text-bold">切换角色</text>
+				</view>
+			</view>
 			<view class="arrow cu-item" @click="navTo('../login/login')">
 				<view class="font-15 margin-lr">
 					<text class="text-informatic-brown cuIcon-exit margin-right-sm"></text>
 					<text class="text-informatic-brown text-bold">登出</text>
-				</view>
-			</view>
-			<view class="arrow cu-item" @click="navTo('../login/roleSelection')">
-				<view class="font-15 margin-lr">
-					<text class="text-informatic-brown cuIcon-pick margin-right-sm"></text>
-					<text class="text-informatic-brown text-bold">切换角色</text>
 				</view>
 			</view>
 		</view>
@@ -65,11 +65,12 @@
 					name: "回到主页",
 					url: "../index/index",
 					cuIcon: "card"
-				}]
+				}],
+				availableRoles: []
 			}
 		},
 		onLoad() {
-
+			this.getAvailablePositon();
 		},
 		onShow() {
 			this.GetInfo();
@@ -79,6 +80,13 @@
 				uni.post("/uc/GetUserInfo", {}, msg => {
 					if (msg.success) {
 						this.userInfo = msg.data;
+					}
+				})
+			},
+			getAvailablePositon() {
+				uni.post("/api/security/GetMyPositions", {}, msg => {
+					if (msg.success) {
+						this.availableRoles = msg.data;
 					}
 				})
 			},
@@ -115,7 +123,7 @@
 							}
 						}
 					});
-				} else if(e === "../index/index") {
+				} else if (e === "../index/index") {
 					uni.switchDashboard(app.checkPermission);
 				} else {
 					uni.navigateTo({

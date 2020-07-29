@@ -2,19 +2,22 @@
 	<view class="cu-item">
 		<view class="content padding-tb-sm">
 			<view>
-				<text class="cuIcon-profilefill text-blue margin-right-xs"></text>{{orgInfo.Name}}（业务指导单位）</view>
+				<text class="cuIcon-group_fill text-blue margin-right-xs"></text>{{orgInfo.Name}}</view>
 			<view class="text-gray text-sm">
 				{{orgInfo.Description ? orgInfo.Description : "暂无简介"}}
 			</view>
 		</view>
 		<view class="action" v-if="app.checkPermission('Organization.Student') > -1">
-			<button class="cu-btn bg-orange shadow" @click="withdraw(orgInfo.app.ID)"
-			v-if="orgInfo.app && orgInfo.app.State === 3">
-				撤回
-			</button>
-			<button class="cu-btn bg-green shadow" @click="applicate(orgInfo.ID)" v-else>
-				申请
-			</button>
+			<view v-if="orgInfo.myDeparts">我的社团</view>
+			<view v-else>
+				<button class="cu-btn bg-orange shadow" @click="withdraw(orgInfo.app.ID)"
+				v-if="orgInfo.app && orgInfo.app.State === 3">
+					撤回
+				</button>
+				<button class="cu-btn bg-green shadow" @click="applicate(orgInfo.ID)" v-else>
+					申请
+				</button>
+			</view>
 		</view>
 	</view>
 </template>

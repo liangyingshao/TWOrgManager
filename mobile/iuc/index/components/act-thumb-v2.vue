@@ -1,10 +1,10 @@
 <template>
 	<view class="act-main" @click="toDetail(activity.ID)">
 		<view class="title">
-			<view class="text-cut">{{activity.ActivityName}}</view>
+			<view class="text-cut">{{activity.ActivityName ? activity.ActivityName : "暂无标题"}}</view>
 		</view>
 		<view class="content margin-bottom-sm">
-			<image src="https://ossweb-img.qq.com/images/lol/web201310/skin/big10006.jpg"
+			<image src="../../../static/xmuScene1.jpg"
 			 mode="aspectFill"></image>
 			<view class="desc">
 				<view class="text-content"> 
