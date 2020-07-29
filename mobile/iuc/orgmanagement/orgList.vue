@@ -36,7 +36,7 @@
 			getAllOrg() {
 				uni.post("/api/security/GetAllDeparts", {}, msg => {
 					if (msg.success) {
-						this.orgsOrigin = msg.data;
+						this.orgsOrigin = msg.data.filter(e => e.Type === 1);
 						this.orgsOrigin.sort(function(a, b) {
 							if (a.myDeparts && !b.myDeparts) {
 								return -1;
