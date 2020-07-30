@@ -28,7 +28,7 @@ uni.switchDashboard = function (checkPermission) {
 	} else if (checkPermission("Organization.XSLHH")) {
 		page += "xslhh"
 	} else if (checkPermission("Organization.UnitAdminUser")) {
-		page = "/iuc/index/manager-depart-choose"; // 挂靠单位管理
+		page += "manager"; // 挂靠单位管理
 	} else if (checkPermission("Organization.DepartAdminUser")) {
 		page += "depart-manager"; // 社团管理
 	} else if (checkPermission("Organization.TeacherAdmin")) {
