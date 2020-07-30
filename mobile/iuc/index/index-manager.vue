@@ -199,6 +199,9 @@
 			};
 		},
 		onLoad() {
+			
+		},
+		onShow() {
 			this.getPending();
 			uni.post("/api/security/GetApplicationsByDeparts", {
 				departId

@@ -65,7 +65,7 @@
 				<view class="text-blue">[所有活动]</view>
 			</view>
 		</view>
-		<view class="flex justify-center text-center">
+		<view class="flex justify-center text-center" v-if="onGoingAct.length === 0">
 			<view>
 				<image src="/static/none.png"></image>
 				<view class="text-xl">暂无进行中的活动</view>
