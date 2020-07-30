@@ -11,7 +11,7 @@
 				<text>我的待办</text>
 			</view>
 			<!-- 此按钮效果同社团活动里的“所有活动” -->
-			<view class="act-btn">
+			<view class="act-btn" @click="navTo('/iuc/index/index-all-activity')">
 				<text class="icon cuIcon-activity"></text>
 				<text>社团活动</text>
 			</view>
@@ -32,13 +32,13 @@
 					<view class='cu-tag bg-red margin-left-sm round'>{{myPenging.length}}</view>
 				</text>
 			</view>
-			<view class="action" @click="navTo('/iuc/index/index-all-application')">
-				<view class="text-blue">[所有申请]</view>
+			<view class="action" @click="navTo('/iuc/roomApplication/v2/myAttend')">
+				<view class="text-blue">[审核历史]</view>
 			</view>
 		</view>
 		<view class="cu-list menu">
 			<view class="cu-item" v-for="item in myPenging" :key="item.InstanceId">
-				<view class="content padding-tb-sm" @click="audit(item.ID, item.Code)">
+				<view class="content padding-tb-sm">
 					<view>
 						<text class="cuIcon-activityfill text-blue margin-right-xs"></text>{{item.WorkflowName}}</view>
 					<view class="text-gray text-sm">
@@ -52,40 +52,35 @@
 				</view>
 			</view>
 		</view>
-		<view class="cu-bar bg-white solid-bottom margin-top" @click="changeActShow()">
-			<view class="action">
-				<text class="cuIcon-titles text-blue"></text>
-				社团活动
-			</view>
-			<!--view class="action">
+		<view class="cu-bar bg-white solid-bottom margin-top" v-if="onGoingAct.length !== 0">
+		    <view class="action" @click="changeActShow()">
+		      <text class="cuIcon-titles text-blue"></text>
+		      社团活动
+		      <view class='cu-tag bg-red margin-left-sm round'>{{onGoingAct.length}}</view>
+		    </view>
+		    <view class="action" @click="navTo('/iuc/index/index-all-activity')">
 		      <view class="text-blue">[所有活动]</view>
-		    </view-->
-		</view>
-		<view class="cu-card no-card article" v-for="item in allActivity" :key="item.ID">
-			<view class="cu-item shadow" @click="toConsole(item.ID)">
-				<view class="title">
-					<view class="text-cut">
-						<template v-if="item.ApplicateState !== 3">
-							<view class='cu-tag bg-yellow margin-right-sm round'>审批中</view>
-						</template>
-						<template v-else>
-							<view :class="'cu-tag margin-right-sm round bg-' + stateColor[item.StartState]">{{startState[item.StartState]}}</view>
-						</template>
-						{{item.ActivityName ? item.ActivityName : "暂无社团活动名称"}}
+		    </view>
+			</view>
+			<view class="cu-card no-card article" v-for="(item,index) in onGoingAct" :key="index + inApplyingApp.length" v-show="showAct">
+				<view class="cu-item shadow" @click="toConsole(item.ID)">
+					<view class="title">
+						<view class="text-cut">
+							<view class="cu-tag margin-right-sm round bg-red">进行中</view>
+							{{item.ActivityName ? item.ActivityName : "暂无社团活动名称"}}
+						</view>
 					</view>
-				</view>
-				<view class="content">
-					<view class="desc">
-						<view class="text-content">
-							时间：{{item.StartDate}} ~ {{item.EndDate}}<Br></Br>
-							地点：{{item.Address}}
+					<view class="content">
+						<view class="desc">
+							<view class="text-content">
+								时间：{{item.StartDate}} ~ {{item.EndDate}}<Br></Br>
+								地点：{{item.Address}}
+							</view>
 						</view>
 					</view>
 				</view>
 			</view>
 		</view>
-	</view>
-	</view>
 </template>
 
 <script>
@@ -97,6 +92,9 @@
 			titleBar
 		},
 		methods: {
+      changeActShow() {
+        this.showAct = !this.showAct;
+      },
 			getPending() {
 				uni.post("/api/workflow/pending", {}, msg => {
 					if (msg.success) {
@@ -106,10 +104,11 @@
 			},
 			getActivities() {
 				uni.post("/api/org/GetActByDepartId", {
-					id: departId
+				  id: departId
 				}, msg => {
 					if (msg.success) {
 						this.allActivity = msg.data;
+						this.data = this.allActivity;
 					}
 				});
 			},
@@ -120,9 +119,14 @@
 					}
 				})
 			},
+      toConsole(actId) {
+        uni.navigateTo({
+          url: "/iuc/activity/activity-console?ID=" + actId
+        });
+      },
 			doSearch(text) {
 				// text 即是输入的文本
-				console.log(text);
+				this.allActivity = this.data.filter(e=>e.ActivityName.indexOf(text)!==-1);
 			},
 			toProfile() {
 				uni.toProfile()
@@ -135,15 +139,21 @@
 		},
 		data() {
 			return {
+        showAct: true,
 				searchText: "",
 				myPenging: [],
-				allActivity: []
+				allActivity: [],
+				data: []
 			};
 		},
 		onLoad() {
 			this.getPending();
 			this.getActivities();
-		}
+		},
+    onShow() {
+      this.getPending();
+      this.getActivities();
+    }
 	}
 </script>
 

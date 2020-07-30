@@ -6,12 +6,12 @@
 				<text>我的社团</text>
 			</view>
 			<!-- 此按钮效果同成员审核里的“所有申请” -->
-			<view class="act-btn">
+			<view class="act-btn" @click="navTo('/iuc/index/index-all-application')">
 				<text class="icon cuIcon-light"></text>
 				<text>成员审核</text>
 			</view>
 			<!-- 此按钮效果同社团活动里的“所有活动” -->
-			<view class="act-btn">
+			<view class="act-btn" @click="navTo('/iuc/index/index-all-activity')">
 				<text class="icon cuIcon-activity"></text>
 				<text>社团活动</text>
 			</view>
@@ -42,7 +42,7 @@
           <view>
             <text class="cuIcon-profilefill text-blue margin-right-xs"></text> {{item.RealName}}（{{item.Code}}）</view>
           <view class="text-gray text-sm">
-            <text class="cuIcon-infofill margin-right-xs"></text> {{item.BelongDepart}}，电话：{{item.Telephone}}</view>
+            <text class="cuIcon-infofill margin-right-xs"></text> {{item.BelongDepart}}，电话：{{item.Mobile}}</view>
         </view>
         <view class="action">
           <button class="cu-btn bg-green shadow" @click="commitUser(item.ID)">
@@ -51,17 +51,19 @@
         </view>
       </view>
     </view>
-    <view class="cu-bar bg-white solid-bottom margin-top" @click="changeActShow()">
-      <view class="action">
+    <view class="cu-bar bg-white solid-bottom margin-top" v-if="onGoingAct.length !== 0">
+      <view class="action" @click="changeActShow()">
         <text class="cuIcon-titles text-blue"></text>
         社团活动
+        <view class='cu-tag bg-red margin-left-sm round'>{{onGoingAct.length}}</view>
       </view>
-      <!--view class="action">
+      <view class="action" @click="navTo('/iuc/index/index-all-activity')">
         <view class="text-blue">[所有活动]</view>
-      </view-->
+      </view>
 		</view>
 		<!-- 本列表只列出 进行中 的活动。 -->
-		<view class="cu-card no-card article" v-for="(item,index) in allActivity" :key="index" v-show="showAct">
+		<view class="cu-card no-card article" v-for="(item,index) in allActivity" :key="'act'+index" v-show="showAct">
+		<view class="cu-card no-card article" v-for="(item,index) in onGoingAct" :key="index + inApplyingApp.length" v-show="showAct">
 			<!--
 			 这个整个做一个组件，社团活动详细页面里不还可以再用一次，颜色：
 			 进行中 用绿色，
@@ -72,12 +74,7 @@
 			<view class="cu-item shadow" @click="toConsole(item.ID)">
 				<view class="title">
 					<view class="text-cut">
-						<template v-if="item.ApplicateState !== 3">
-							<view class='cu-tag bg-yellow margin-right-sm round'>审批中</view>
-						</template>
-						<template v-else>
-							<view :class="'cu-tag margin-right-sm round bg-' + stateColor[item.StartState]">{{startState[item.StartState]}}</view>
-						</template>
+						<view class="cu-tag margin-right-sm round bg-red">进行中</view>
 						{{item.ActivityName ? item.ActivityName : "暂无社团活动名称"}}
 					</view>
 				</view>
@@ -112,7 +109,7 @@
       },
       doSearch(text) {
         // text 即是输入的文本
-        console.log(text);
+        this.allActivity = this.data.filter(e=>e.ActivityName.indexOf(text)!==-1);
       },
       toProfile() {
         uni.toProfile()
@@ -148,7 +145,6 @@
           departId
         }, msg => {
           if (msg.success) {
-            this.allAppNum = msg.data.length;
             this.inApplyingApp = [];
             for (let i = 0; i < msg.data.length; i++) {
               if (msg.data[i].State === 3) {
@@ -162,6 +158,7 @@
         }, msg => {
           if (msg.success) {
             this.allActivity = msg.data;
+			this.data = this.allActivity;
           }
         });
       }
@@ -171,8 +168,8 @@
         showMemberReview: true,
         showAct: true,
         searchText: "",
-        allAppNum: 0,
         inApplyingApp: [],
+		data: [],
         allActivity: [],
         startState: {
           0: "未开始",
@@ -184,6 +181,7 @@
           1: "blue",
           2: "red"
         }
+        onGoingAct: []
       };
     },
     onLoad() {
