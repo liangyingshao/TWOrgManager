@@ -1,9 +1,9 @@
 <template>
 	<view>
 		<title-bar :placeholder="searchText" @input="doSearch">
-			<view class="act-btn" @click="navTo('../orgmanagement/orgmanagement')">
+			<view class="act-btn" @click="navTo('manager-depart-choose')">
 				<text class="icon cuIcon-home"></text>
-				<text>我的社团</text>
+				<text>社团列表</text>
 			</view>
 			<!-- 此按钮效果同成员审核里的“所有申请” -->
 			<view class="act-btn">
