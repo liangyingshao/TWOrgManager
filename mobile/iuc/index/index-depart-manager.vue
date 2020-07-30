@@ -62,8 +62,7 @@
 			</view>
 		</view>
 		<!-- 本列表只列出 进行中 的活动。 -->
-		<view class="cu-card no-card article" v-for="(item,index) in allActivity" :key="'act'+index" v-show="showAct">
-			<view class="cu-card no-card article" v-for="(item,index) in onGoingAct" :key="index + inApplyingApp.length" v-show="showAct">
+		<view class="cu-card no-card article" v-for="(item,index) in onGoingAct" :key="index + inApplyingApp.length" v-show="showAct">
 				<!--
 			 这个整个做一个组件，社团活动详细页面里不还可以再用一次，颜色：
 			 进行中 用绿色，
@@ -88,7 +87,6 @@
 					</view>
 				</view>
 				<!-- cu-item -->
-			</view>
 		</view>
 	</view>
 </template>
@@ -171,17 +169,7 @@
 				searchText: "",
 				inApplyingApp: [],
 				data: [],
-				allActivity: [],
-				startState: {
-					0: "未开始",
-					1: "进行中",
-					2: "已结束"
-				},
-				stateColor: {
-					0: "green",
-					1: "blue",
-					2: "red"
-				}
+				onGoingAct: []
 			};
 		},
 		onLoad() {
