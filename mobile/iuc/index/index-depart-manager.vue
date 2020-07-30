@@ -1,14 +1,14 @@
 <template>
 	<view>
 		<title-bar :placeholder="searchText" @input="doSearch">
-			<view class="act-btn" @click="navTo('../orgmanagement/orgmanagement')">
+			<view v-if="isTeacher" class="act-btn">
 				<text class="icon cuIcon-home"></text>
 				<text>我的社团</text>
 			</view>
 			<!-- 此按钮效果同成员审核里的“所有申请” -->
-			<view class="act-btn" @click="navTo('/iuc/index/index-all-application')">
+			<view class="act-btn" @click="navTo('/iuc/roomApplication/v2/myAttend')">
 				<text class="icon cuIcon-light"></text>
-				<text>成员审核</text>
+				<text>我的审批</text>
 			</view>
 			<!-- 此按钮效果同社团活动里的“所有活动” -->
 			<view class="act-btn" @click="navTo('/iuc/index/index-all-activity')">
@@ -24,53 +24,44 @@
 			这里做一个点击收起，这里的【所有申请】页也简单，把下面这个列表变成一个完整的页面就可以了。
 			注，这个页面只显示“待审核”的，我这写的以通过的是给详细页面用的。
 		-->
-    <view class="cu-bar bg-white solid-bottom margin-top" v-if="inApplyingApp.length !== 0">
-      <view class="action" @click="changeMemShow()">
-        <text class="cuIcon-titles text-blue"></text>
-        <text class="block position-relative">
-          成员审核
-          <view class='cu-tag bg-red margin-left-sm round'>{{inApplyingApp.length}}</view>
-        </text>
-      </view>
-      <view class="action" @click="navTo('/iuc/index/index-all-application')">
-        <view class="text-blue">[所有申请]</view>
-      </view>
-    </view>
-    <view class="cu-list menu" v-for="(item,index) in inApplyingApp" :key="index" v-show="showMemberReview">
-      <view class="cu-item">
-        <view class="content padding-tb-sm" @click="audit(item.ID, item.Code)">
-          <view>
-            <text class="cuIcon-profilefill text-blue margin-right-xs"></text> {{item.RealName}}（{{item.Code}}）</view>
-          <view class="text-gray text-sm">
-            <text class="cuIcon-infofill margin-right-xs"></text> {{item.BelongDepart}}，电话：{{item.Mobile}}</view>
-        </view>
-        <view class="action">
-          <button class="cu-btn bg-green shadow" @click="commitUser(item.ID)">
-            通过
-          </button>
-        </view>
-      </view>
-    </view>
-    <view class="cu-bar bg-white solid-bottom margin-top" v-if="onGoingAct.length !== 0">
-      <view class="action" @click="changeActShow()">
-        <text class="cuIcon-titles text-blue"></text>
-        社团活动
-        <view class='cu-tag bg-red margin-left-sm round'>{{onGoingAct.length}}</view>
-      </view>
-      <view class="action" @click="navTo('/iuc/index/index-all-activity')">
-        <view class="text-blue">[所有活动]</view>
-      </view>
+		<view class="cu-bar bg-white solid-bottom margin-top" v-if="myPenging.length !== 0">
+			<view class="action" @click="changeActReviewShow()">
+				<text class="cuIcon-titles text-blue"></text>
+				<text class="block position-relative">
+					活动审核
+					<view class='cu-tag bg-red margin-left-sm round'>{{myPenging.length}}</view>
+				</text>
+			</view>
+			<view class="action" @click="navTo('/iuc/roomApplication/v2/myAttend')">
+				<view class="text-blue">[审核历史]</view>
+			</view>
 		</view>
-		<!-- 本列表只列出 进行中 的活动。 -->
-		<view class="cu-card no-card article" v-for="(item,index) in allActivity" :key="'act'+index" v-show="showAct">
+		<view class="cu-list menu" v-show="showActReview">
+			<view class="cu-item" v-for="item in myPenging" :key="item.InstanceId">
+				<view class="content padding-tb-sm">
+					<view>
+						<text class="cuIcon-activityfill text-blue margin-right-xs"></text>{{item.WorkflowName}}</view>
+					<view class="text-gray text-sm">
+						<text class="cuIcon-infofill margin-right-xs"></text> {{item.Owner}}提交的{{item.WorkflowType}}</view>
+				</view>
+				<view class="action">
+					<button class="cu-btn bg-green shadow" @click="navTo(`../activity/activity?instanceId=${item.InstanceId}&stepId=${item.StepId}`)">
+						详情
+					</button>
+				</view>
+			</view>
+		</view>
+		<view class="cu-bar bg-white solid-bottom margin-top" v-if="onGoingAct.length !== 0">
+			<view class="action" @click="changeActShow()">
+				<text class="cuIcon-titles text-blue"></text>
+				社团活动
+				<view class='cu-tag bg-red margin-left-sm round'>{{onGoingAct.length}}</view>
+			</view>
+			<view class="action" @click="navTo('/iuc/index/index-all-activity')">
+				<view class="text-blue">[所有活动]</view>
+			</view>
+		</view>
 		<view class="cu-card no-card article" v-for="(item,index) in onGoingAct" :key="index + inApplyingApp.length" v-show="showAct">
-			<!--
-			 这个整个做一个组件，社团活动详细页面里不还可以再用一次，颜色：
-			 进行中 用绿色，
-			 未开始 用蓝色，
-			 已结束 用红色。
-			 同时，这个状态也可以做一个小组件，在activity-console里也要用到一次
-			-->
 			<view class="cu-item shadow" @click="toConsole(item.ID)">
 				<view class="title">
 					<view class="text-cut">
@@ -87,110 +78,89 @@
 					</view>
 				</view>
 			</view>
-			<!-- cu-item -->
 		</view>
 	</view>
 </template>
 
 <script>
-  import titleBar from './title-bar.vue'
-  let app = require("@/config");
-  let departId = uni.getStorageSync("defaultDepartId");;
-  export default {
-    components: {
-      titleBar
-    },
-    methods: {
-      changeMemShow() {
-        this.showMemberReview = !this.showMemberReview;
-      },
-      changeActShow() {
-        this.showAct = !this.showAct;
-      },
-      doSearch(text) {
-        // text 即是输入的文本
-        this.allActivity = this.data.filter(e=>e.ActivityName.indexOf(text)!==-1);
-      },
-      toProfile() {
-        uni.toProfile()
-      },
-      audit(ID, userCode) {
-        uni.navigateTo({
-          url: "/iuc/profile/user-audit?userCode=" + userCode + "&ID=" + ID
-        });
-      },
-      toConsole(actId) {
-        uni.navigateTo({
-          url: "/iuc/activity/activity-console?ID=" + actId
-        });
-      },
-      commitUser(ID) {
-        uni.post("/api/security/AcceptApplicate", {
-          appId: ID
-        }, msg => {
-          uni.showToast({
-            title: msg.msg,
-            icon: 'none'
-          });
-          this.getPageData();
-        })
-      },
-      navTo(e) {
-        uni.navigateTo({
-          url: e
-        })
-      },
-      getPageData() {
-        uni.post("/api/security/GetApplicationsByDeparts", {
-          departId
-        }, msg => {
-          if (msg.success) {
-            this.inApplyingApp = [];
-            for (let i = 0; i < msg.data.length; i++) {
-              if (msg.data[i].State === 3) {
-                this.inApplyingApp.push(msg.data[i]);
-              }
-            }
-          }
-        });
-        uni.post("/api/org/GetActByDepartId", {
-          id: departId
-        }, msg => {
-          if (msg.success) {
-            this.allActivity = msg.data;
-			this.data = this.allActivity;
-          }
-        });
-      }
-    },
-    data() {
-      return {
-        showMemberReview: true,
-        showAct: true,
-        searchText: "",
-        inApplyingApp: [],
-		data: [],
-        allActivity: [],
-        startState: {
-          0: "未开始",
-          1: "进行中",
-          2: "已结束"
-        },
-        stateColor: {
-          0: "green",
-          1: "blue",
-          2: "red"
-        }
-        onGoingAct: []
-      };
-    },
-    onLoad() {
-      this.getPageData();
-    },
-    onShow() {
-      this.getPageData();
-    }
-  }
+	import titleBar from './title-bar.vue'
+	let app = require("@/config");
+	export default {
+		components: {
+			titleBar
+		},
+		methods: {
+			changeActReviewShow() {
+				this.showActReview = !this.showActReview;
+			},
+			changeActShow() {
+				this.showAct = !this.showAct;
+			},
+			getPending() {
+				uni.post("/api/workflow/pending", {}, msg => {
+					if (msg.success) {
+						this.myPenging = msg.data;
+					}
+				})
+			},
+			getActivities() {
+				uni.post("/api/org/GetActByDepartId", {
+					id: app.defaultDepartId
+				}, msg => {
+					if (msg.success) {
+						this.onGoingAct = [];
+						for (let i = 0; i < msg.data.length; i++) {
+							if (msg.data[i].ApplicateState === 3 && msg.data[i].StartState === 1) {
+								this.onGoingAct.push(msg.data[i]);
+							}
+						}
+						this.data = this.onGoingAct;
+					}
+				});
+			},
+			getDashBoard() {
+				uni.post("/api/workflow/pending", {}, msg => {
+					if (msg.success) {
+						this.myPenging = msg.data;
+					}
+				})
+			},
+			toConsole(actId) {
+				uni.navigateTo({
+					url: "/iuc/activity/activity-console?ID=" + actId
+				});
+			},
+			doSearch(text) {
+				// text 即是输入的文本
+				this.onGoingAct = this.data.filter(e => e.ActivityName.indexOf(text) !== -1);
+			},
+			toProfile() {
+				uni.toProfile()
+			},
+			navTo(e) {
+				uni.navigateTo({
+					url: e
+				})
+			}
+		},
+		data() {
+			return {
+				showActReview: true,
+				showAct: true,
+				searchText: "",
+				myPenging: [],
+				data: [],
+				onGoingAct: []
+			};
+		},
+		onLoad(query) {
+			this.isTeacher = query.isTeacher || true
+		},
+		onShow() {
+			this.getPending();
+			this.getActivities();
+		}
+	}
 </script>
 
 <style lang="less">
