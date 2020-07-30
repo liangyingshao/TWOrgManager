@@ -420,7 +420,7 @@ export default {
             this.io.shouldUpload.forEach(value => {
                 this.upLoad[value] = this.io[value] || this.io.data[value]
             });
-            axios.post("/api/workflow/SubmitInstance", {...this.upLoad}, msg => {
+            axios.postStream("/api/workflow/SubmitInstance", {...this.upLoad}, msg => {
                 if (msg.success) {
                     this.$Message.info("保存成功");
                 } else {
