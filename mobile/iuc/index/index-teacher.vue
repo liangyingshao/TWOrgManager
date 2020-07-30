@@ -24,8 +24,8 @@
 			这里做一个点击收起，这里的【所有申请】页也简单，把下面这个列表变成一个完整的页面就可以了。
 			注，这个页面只显示“待审核”的，我这写的以通过的是给详细页面用的。
 		-->
-		<view class="cu-bar bg-white solid-bottom margin-top">
-			<view class="action" @click="changeMemShow()">
+		<view class="cu-bar bg-white solid-bottom margin-top" v-if="myPenging.length !== 0">
+			<view class="action" @click="changeActReviewShow()">
 				<text class="cuIcon-titles text-blue"></text>
 				<text class="block position-relative">
 					活动审核
@@ -36,7 +36,7 @@
 				<view class="text-blue">[审核历史]</view>
 			</view>
 		</view>
-		<view class="cu-list menu">
+		<view class="cu-list menu" v-show="showActReview">
 			<view class="cu-item" v-for="item in myPenging" :key="item.InstanceId">
 				<view class="content padding-tb-sm">
 					<view>
@@ -92,6 +92,9 @@
 			titleBar
 		},
 		methods: {
+      changeActReviewShow() {
+      	this.showActReview = !this.showActReview;
+      },
       changeActShow() {
         this.showAct = !this.showAct;
       },
@@ -107,8 +110,13 @@
 				  id: departId
 				}, msg => {
 					if (msg.success) {
-						this.allActivity = msg.data;
-						this.data = this.allActivity;
+						this.onGoingAct = [];
+            for (let i = 0; i < msg.data.length; i++) {
+              if (msg.data[i].ApplicateState === 3 && msg.data[i].StartState === 1) {
+                this.onGoingAct.push(msg.data[i]);
+              }
+            }
+						this.data = this.onGoingAct;
 					}
 				});
 			},
@@ -126,7 +134,7 @@
       },
 			doSearch(text) {
 				// text 即是输入的文本
-				this.allActivity = this.data.filter(e=>e.ActivityName.indexOf(text)!==-1);
+				this.onGoingAct = this.data.filter(e=>e.ActivityName.indexOf(text)!==-1);
 			},
 			toProfile() {
 				uni.toProfile()
@@ -139,11 +147,12 @@
 		},
 		data() {
 			return {
+        showActReview: true,
         showAct: true,
 				searchText: "",
 				myPenging: [],
-				allActivity: [],
-				data: []
+				data: [],
+        onGoingAct: []
 			};
 		},
 		onLoad() {

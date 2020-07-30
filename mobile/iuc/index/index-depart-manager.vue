@@ -108,7 +108,7 @@
 			},
 			doSearch(text) {
 				// text 即是输入的文本
-				this.allActivity = this.data.filter(e => e.ActivityName.indexOf(text) !== -1);
+				this.onGoingAct = this.data.filter(e => e.ActivityName.indexOf(text) !== -1);
 			},
 			toProfile() {
 				uni.toProfile()
@@ -156,8 +156,13 @@
 					id: departId
 				}, msg => {
 					if (msg.success) {
-						this.allActivity = msg.data;
-						this.data = this.allActivity;
+						this.onGoingAct = [];
+						for (let i = 0; i < msg.data.length; i++) {
+						  if (msg.data[i].ApplicateState === 3 && msg.data[i].StartState === 1) {
+						    this.onGoingAct.push(msg.data[i]);
+						  }
+						}
+						this.data = this.onGoingAct;
 					}
 				});
 			}
