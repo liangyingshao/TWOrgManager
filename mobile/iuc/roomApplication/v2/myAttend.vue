@@ -4,28 +4,10 @@
 			<block slot="backText">返回</block>
 			<block slot="content">我的参与</block>
 		</cu-custom>
-		<view class="cu-bar bg-white solids-bottom">
-			<view class="action" @click="foldUp('displayRoom')">
-				<text class="text-df">{{displayRoom?'收起':'展开'}}</text>
-				<text class="padding-lr-xs" :class="displayRoom?'cuIcon-fold':'cuIcon-unfold'"></text>
-			</view>
-		</view>
 		<transition-group class="cu-list menu" name="list">
-			<view class="cu-item" v-for="(item,index) in roomData" :key="index"
-			 v-show="displayRoom">
-        <view class="content padding-tb-sm">
-        	<view>
-        		<text class="cuIcon-activityfill text-blue margin-right-xs"></text>{{item.WorkflowName}}</view>
-        	<view class="text-gray text-sm">
-        		<text class="cuIcon-infofill margin-right-xs"></text> {{item.Owner}}提交的{{item.WorkflowType}}</view>
-        </view>
-        <view class="action">
-        	<button class="cu-btn bg-green shadow"
-        	@click="toExecute(item)">
-        		详情
-        	</button>
-        </view>
-			</view>
+			<template v-for="(item,index) in roomData">
+        <activityApply :data="item"  :key="index"></activityApply>
+      </template>
 		</transition-group>
 		<template v-if="roomData.length===0 && displayRoom">
 			<view class="padding-tb text-center text-lg">
@@ -36,21 +18,28 @@
 </template>
 
 <script>
+	const guidEmpty = "00000000-0000-0000-0000-000000000000";
 	let app = require("@/config");
 	let enums = require("../enumsv1.js");
 	export default {
 		onShow() {
-			this.getData();
+
 		},
-		onLoad() {},
+		onLoad(query) {
+			this.getData(query.departId);
+		},
 		methods: {
-			getData() {
-				uni.post("/api/workflow/MyAttend", {page:1, pageSize:10}, msg => {
+			getData(departId) {
+				uni.post("/api/workflow/MyAttend", {
+					page: 1,
+					pageSize: 10,
+					departId: departId || guidEmpty
+				}, msg => {
 					this.roomData = msg.data;
 				})
 			},
 			toExecute(item) {
-				if(item.WorkflowName === "社团活动申请"){
+				if (item.WorkflowType === "社团活动申请") {
 					uni.navigateTo({
 						url: `../../activity/activity?instanceId=${item.InstanceId}&stepId=${item.StepId}&detail=true`
 					})
@@ -129,22 +118,22 @@
 		transform: translateY(-30px);
 	}
 
-  .cu-list.menu>.cu-item {
-        position: relative;
-        display: -webkit-box;
-        display: -webkit-flex;
-        display: -ms-flexbox;
-        display: flex;
-        padding: 0 18px;
-        min-height: 60px;
-        background-color: #fff;
-        -webkit-box-pack: justify;
-        -webkit-justify-content: space-between;
-        -ms-flex-pack: justify;
-        justify-content: space-between;
-        -webkit-box-align: center;
-        -webkit-align-items: center;
-        -ms-flex-align: center;
-        align-items: center;
-    }
+	.cu-list.menu>.cu-item {
+		position: relative;
+		display: -webkit-box;
+		display: -webkit-flex;
+		display: -ms-flexbox;
+		display: flex;
+		padding: 0 18px;
+		min-height: 60px;
+		background-color: #fff;
+		-webkit-box-pack: justify;
+		-webkit-justify-content: space-between;
+		-ms-flex-pack: justify;
+		justify-content: space-between;
+		-webkit-box-align: center;
+		-webkit-align-items: center;
+		-ms-flex-align: center;
+		align-items: center;
+	}
 </style>

@@ -28,10 +28,10 @@
 			}
 		},
 		onLoad() {
-			uni.post("/api/security/GetDepartsByDepartId", {
-				id: app.defaultDepartId
+			uni.post("/api/security/GetAllAssociationsByDepartId", {
+				departId: app.defaultDepartId
 			}, msg => {
-				this.departs = msg.data.children
+				this.departs = msg.data;
 			});
 		},
 		methods: {

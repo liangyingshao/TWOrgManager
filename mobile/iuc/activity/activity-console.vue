@@ -30,12 +30,11 @@
 			<image class="qr-area" :src="'http://stgl.ricebird.cn/qr/'+actInfo.ShortCode"></image>
 		</view>
 		<!-- 活动如果审批结束，但还没有开始，则显示这个 -->
-		<!-- 这个功能取消了 -->
-		<!--view class="qr-container margin-bottom-xl padding-lr-xl" v-else-if="actInfo.StartState === 0">
-			<button class="on-working btn bg-green" @click="setActStart()">
+		<view class="qr-container margin-bottom-xl padding-lr-xl" v-else-if="actInfo.StartState === 0">
+			<button class="on-working btn bg-green" @click="setActStart(actInfo.ID)">
 				点击开始
 			</button>
-		</view-->
+		</view>
 		<view class="margin-lr text-center">
 			<view class="">活动时间：{{actInfo.StartDate}}~{{actInfo.EndDate}}</view>
 			<view class="">活动地点：{{actInfo.Address ? actInfo.Address : '暂无地点'}}</view>
@@ -86,20 +85,23 @@
 		},
 		onLoad(query) {
 			this.ID = query.ID;
-			uni.post("/api/org/GetApplicationDetail", {
-				id: this.ID
-			}, msg => {
-				if (msg.success) {
-					this.actInfo = msg.data;
-				} else {
-					uni.showToast({
-						title: msg.msg,
-						icon: "none"
-					})
-				}
-			});
+			this.getActInfo();
 		},
 		methods: {
+			getActInfo(){
+				uni.post("/api/org/GetApplicationDetail", {
+					id: this.ID
+				}, msg => {
+					if (msg.success) {
+						this.actInfo = msg.data;
+					} else {
+						uni.showToast({
+							title: msg.msg,
+							icon: "none"
+						})
+					}
+				});
+			},
 			toSignUP() {
 				uni.navigateTo({
 					url: "/iuc/activity/activity-signUp-list?ID=" + this.ID
@@ -108,6 +110,21 @@
 			toSignIn() {
 				uni.navigateTo({
 					url: "/iuc/activity/activity-signIn-list?ID=" + this.ID
+				});
+			},
+			setActStart(actId) {
+				uni.post("/api/org/ChangeActivityState", {
+					actId,
+					state: 1
+				}, msg => {
+					if (msg.success) {
+						this.getActInfo();
+					} else {
+						uni.showToast({
+							title: msg.msg,
+							icon: "none"
+						})
+					}
 				});
 			}
 		}
