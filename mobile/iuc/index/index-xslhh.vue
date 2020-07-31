@@ -94,7 +94,7 @@
 			<view class="cu-item">
 				<view class="content padding-tb-sm">
 					<view>
-						<text class="cuIcon-newsfill text-blue margin-right-xs"></text>[{{item.parent}}] {{item.name}}
+						<text class="cuIcon-newsfill text-blue margin-right-xs"></text>社团名称: {{item.name}}
 					</view>
 					<view class="text-gray text-sm text-cut margin-top-sm">
 						<text class="cuIcon-wenzi margin-right-xs"></text>管理员：{{item.admin}}
@@ -122,7 +122,7 @@
 			},
 			doSearch(text) {
 				// text 即是输入的文本
-				console.log(text);
+				this.departs = this.data.filter(e=>e.name.indexOf(text)!==-1);
 			},
 			toProfile() {
 				uni.toProfile()
@@ -181,9 +181,10 @@
 			return {
 				showMemberReview: true,
 				showAct: true,
-				searchText: "",
+				searchText: "搜索社团名称",
 				allAppNum: 0,
 				inApplyingApp: [],
+				data: [],
 				allActivity: [],
 				startState: {
 					0: "未开始",
@@ -221,6 +222,7 @@
 			}, msg => {
 				if (msg.success) {
           this.departs = msg.data;
+		  this.data = this.departs;
         } else {
           uni.showToast({
             title: msg.msg,

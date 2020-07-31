@@ -157,7 +157,7 @@
 			return {
 				showActReview: true,
 				showAct: true,
-				searchText: "",
+				searchText: "搜索社团活动",
 				myPenging: [],
 				data: [],
 				onGoingAct: [],
