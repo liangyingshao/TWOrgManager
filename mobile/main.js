@@ -37,6 +37,9 @@ Vue.component('sticky',sticky)
 import navTab from './components/labComponent/navTab.vue'
 Vue.component('navTab',navTab)
 
+import activityApply from './components/labComponent/activityApply.vue'
+Vue.component('activityApply',activityApply)
+
 require("@/labs/utils.js");
 
 Vue.config.productionTip = false
