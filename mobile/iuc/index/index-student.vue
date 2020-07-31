@@ -43,8 +43,8 @@
 				<view class="text-blue">[报名参加]</view>
 			</view>
 		</view>
-		<view class="cu-card article no-card" v-if="activities.length" :key="activity.ID">
-			<view class="cu-item solid-bottom" v-for="activity in activities">
+		<view class="cu-card article no-card" v-if="activities.length" >
+			<view class="cu-item solid-bottom" v-for="activity in activities" :key="activity.ID">
 				<act-thumb :activity="activity"></act-thumb>
 			</view>
 		</view>

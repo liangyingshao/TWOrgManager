@@ -7,7 +7,7 @@
 		<view class="cu-card no-card">
 			<view class="cu-item shadow padding-lg">
 				<view class="flex">
-					<view class="cu-avatar radius xl" style="background-image:url(https://ossweb-img.qq.com/images/lol/web201310/skin/big81005.jpg);"></view>
+					<view class="cu-avatar radius xl" :style="'background-image:url(' + app.userInfo.avatar + ');'"></view>
 					<view class="flex-sub padding-left-sm">
 						<text class="text-xl text-bold">{{userInfo.RealName}}</text>
 						<text class="text-lg text-gray block margin-top-xs">学号：{{userCode}}</text>
@@ -30,70 +30,104 @@
 		<view class="cu-list menu">
 			<view class="cu-item">
 				<view class="content">
+					<text class="text-grey">邮箱</text>
+				</view>
+				<view class="action">
+					<text class="text-sm">{{userInfo.Email}}</text>
+				</view>
+			</view>
+			<view class="cu-item">
+				<view class="content">
+					<text class="text-grey">政治面貌</text>
+				</view>
+				<view class="action">
+					<text class="text-sm">{{userInfo.PoliticalStatus}}</text>
+				</view>
+			</view>
+			<view class="cu-item">
+				<view class="content">
 					<text class="text-grey">入团时间</text>
 				</view>
 				<view class="action">
-					<text class="text-sm">{{userInfo.JoinCCYLTime}}</text>
+					<text class="text-sm">{{userInfo.JoinCCYLTime.includes('1900') ? '未入团' : userInfo.JoinCCYLTime}}</text>
 				</view>
 			</view>
+			<view class="cu-item">
+				<view class="content">
+					<text class="text-grey">入党时间</text>
+				</view>
+				<view class="action">
+					<text class="text-sm">{{userInfo.JoinCPCTime.includes('1900') ? '未入党' : userInfo.JoinCCYLTime}}</text>
+				</view>
+			</view>
+
 		</view>
 	</view>
 </template>
 
 <script>
-  export default {
-  	data() {
-  		return {
-        userInfo: {},
-        userCode: "",
-        ID: ""
-  		}
-  	},
-  	methods: {
-      refuseUser (ID) {
-        uni.post("/api/security/DenyApplicate", {appId: ID}, msg => {
-          uni.showToast({
-             title: msg.msg,
-             icon: 'none'
-          });
-          if (msg.success) {
-            uni.navigateBack({
-              delta: 1
-            });
-          }
-        })
-      },
-      commitUser (ID) {
-        uni.post("/api/security/AcceptApplicate", {appId: ID}, msg => {
-          uni.showToast({
-             title: msg.msg,
-             icon: 'none'
-          });
-          if (msg.success) {
-            uni.navigateBack({
-              delta: 1
-            });
-          };
-        })
-      }
-  	},
-    onLoad(query) {
-      this.userCode = query.userCode;
-      this.ID = query.ID;
-      console.log(query.userCode);
-      console.log(query.ID);
-      uni.post("/api/security/GetUserByCode", {code: this.userCode}, msg => {
-        if (msg.success) {
-          this.userInfo = msg.user;
-        } else {
-          uni.showToast({
-          	 title: msg.msg,
-          	 icon: 'none'
-          });
-        }
-      })
-    }
-  }
+	let app = require("@/config")
+	export default {
+		data() {
+			return {
+				userInfo: {
+					JoinCCYLTime: '',
+					JoinCPCTime: ''
+				},
+				userCode: "",
+				ID: "",
+				app
+			}
+		},
+		methods: {
+			refuseUser(ID) {
+				uni.post("/api/security/DenyApplicate", {
+					appId: ID
+				}, msg => {
+					uni.showToast({
+						title: msg.msg,
+						icon: 'none'
+					});
+					if (msg.success) {
+						uni.navigateBack({
+							delta: 1
+						});
+					}
+				})
+			},
+			commitUser(ID) {
+				uni.post("/api/security/AcceptApplicate", {
+					appId: ID
+				}, msg => {
+					uni.showToast({
+						title: msg.msg,
+						icon: 'none'
+					});
+					if (msg.success) {
+						uni.navigateBack({
+							delta: 1
+						});
+					};
+				})
+			}
+		},
+		onLoad(query) {
+			this.userCode = query.userCode;
+			this.ID = query.ID;
+			uni.post("/api/security/GetUserByCode", {
+				code: this.userCode
+			}, msg => {
+				if (msg.success) {
+					this.userInfo = msg.user;
+				} else {
+					uni.showToast({
+						title: msg.msg,
+						icon: 'none'
+					});
+				}
+			})
+		}
+	}
 </script>
 
 <style>
