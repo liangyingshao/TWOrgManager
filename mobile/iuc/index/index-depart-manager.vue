@@ -198,7 +198,7 @@
 				showMemberReview: true,
 				showActReview: true,
 				showAct: true,
-				searchText: "搜索社团活动",
+				searchText: "",
 				myPenging: [],
 				data: [],
 				onGoingAct: [],

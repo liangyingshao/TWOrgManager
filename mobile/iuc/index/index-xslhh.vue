@@ -122,7 +122,7 @@
 			},
 			doSearch(text) {
 				// text 即是输入的文本
-				this.departs = this.data.filter(e=>e.name.indexOf(text)!==-1);
+				console.log(text);
 			},
 			toProfile() {
 				uni.toProfile()
@@ -181,10 +181,9 @@
 			return {
 				showMemberReview: true,
 				showAct: true,
-				searchText: "搜索社团名称",
+				searchText: "",
 				allAppNum: 0,
 				inApplyingApp: [],
-				data: [],
 				allActivity: [],
 				startState: {
 					0: "未开始",
@@ -222,7 +221,6 @@
 			}, msg => {
 				if (msg.success) {
           this.departs = msg.data;
-		  this.data = this.departs;
         } else {
           uni.showToast({
             title: msg.msg,
