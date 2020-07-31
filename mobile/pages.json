@@ -113,17 +113,21 @@
 			"path": "iuc/profile/user-audit"
 		},
 		{
-            "path" : "iuc/activity/activityList",
-            "style" : {}
-        }
-        ,{
-            "path" : "iuc/index/index-all-application",
-            "style" : {}
-        }
-        ,{
-            "path" : "iuc/index/index-all-activity",
-            "style" : {}
-        }
+        "path" : "iuc/activity/activityList",
+        "style" : {}
+    }
+    ,{
+        "path" : "iuc/index/index-all-application",
+        "style" : {}
+    }
+    ,{
+        "path" : "iuc/index/index-all-activity",
+        "style" : {}
+    }
+    ,{
+        "path" : "iuc/index/index-all-associations",
+        "style" : {}
+    }
     ],
 	"globalStyle": {
 		"mp-alipay": {
