@@ -32,7 +32,7 @@
 				<view class="text-blue">[审核历史]</view>
 			</view>
 		</view>
-		<view class="cu-list menu">
+		<view class="cu-list menu" v-if="showList">
 			<view class="cu-item" v-for="item in myPenging" :key="item.InstanceId">
 				<view class="content padding-tb-sm">
 					<view>
@@ -124,7 +124,9 @@
 			},
 			doSearch(text) {
 				// text 即是输入的文本
-				console.log(text);
+				if(text==="") this.showList = true;
+				else this.showList = false;
+				this.departs = this.data.filter(e=>e.name.indexOf(text)!==-1)
 			},
 			toProfile() {
 				uni.toProfile()
@@ -177,13 +179,16 @@
 				uni.navigateTo({
 					url: './index-teacher?departId=' + id
 				})
+			},
+			doShow() {
+				console.log("hello")
 			}
 		},
 		data() {
 			return {
 				showMemberReview: true,
 				showAct: true,
-				searchText: "",
+				searchText: "搜索社团名称",
 				allAppNum: 0,
 				inApplyingApp: [],
 				allActivity: [],
@@ -198,7 +203,9 @@
 					2: "red"
 				},
 				departs: [],
-				myPenging: []
+				myPenging: [],
+				data: [],
+				showList: true
 			};
 		},
 		onLoad() {
@@ -223,6 +230,7 @@
 			}, msg => {
 				if (msg.success) {
 					this.departs = msg.data;
+					this.data = this.departs;
 				} else {
 					uni.showToast({
 						title: msg.msg,

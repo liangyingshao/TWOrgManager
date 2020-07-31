@@ -124,7 +124,7 @@
 			},
 			doSearch(text) {
 				// text 即是输入的文本
-				console.log(text);
+				this.departs = this.data.filter(e=>e.name.indexOf(text)!==-1);
 			},
 			toProfile() {
 				uni.toProfile()
@@ -183,10 +183,11 @@
 			return {
 				showMemberReview: true,
 				showAct: true,
-				searchText: "",
+				searchText: "搜索社团名称",
 				allAppNum: 0,
 				inApplyingApp: [],
 				allActivity: [],
+				data: [],
 				startState: {
 					0: "未开始",
 					1: "进行中",
@@ -222,6 +223,7 @@
 				id: app.defaultDepartId
 			}, msg => {
 				this.departs = msg.data.children
+				this.data = this.departs
 			});
 			uni.post("/api/org/GetActByDepartId", {
 				id: departId
