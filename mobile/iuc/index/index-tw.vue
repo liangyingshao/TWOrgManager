@@ -96,7 +96,7 @@
 			<view class="cu-item">
 				<view class="content padding-tb-sm">
 					<view>
-						<text class="cuIcon-newsfill text-blue margin-right-xs"></text>社团名称: {{item.name}}
+						<text class="cuIcon-newsfill text-blue margin-right-xs"></text>[{{item.parent}}] {{item.name}}
 					</view>
 					<view class="text-gray text-sm text-cut margin-top-sm">
 						<text class="cuIcon-wenzi margin-right-xs"></text>管理员：{{item.admin}}
