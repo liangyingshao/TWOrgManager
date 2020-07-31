@@ -127,6 +127,7 @@
 				</view>
 				<view class="cu-form-group" v-if="io.fieldAccess.SauIsPass">
 					<view class="title">是否通过
+          {{io.data.SauIsPass}}
 					</view>
 					<radio-group class="block" @change="RadioChange">
 						<radio :disabled="!io.fieldAccess.SauOpinion || io.fieldAccess.SauOpinion === 'r' || !io.isMyStep" class=' margin-right-xs'
@@ -215,10 +216,10 @@
 				} else if (this.io.fieldAccess.AffiliatedDepartIsPass === 'w') {
 					this.io.data.AffiliatedDepartIsPass = e.detail.value;
 					//console.log("2")
-				} else if (this.io.data.SauIsPass === 'w') {
+				} else if (this.io.fieldAccess.SauIsPass === 'w') {
 					this.io.data.SauIsPass = e.detail.value;
-					//console.log("3")
-				} else if (this.io.data.YlcIsPass === 'w') {
+					//console.log(e.detail.value)
+				} else if (this.io.fieldAccess.YlcIsPass === 'w') {
 					this.io.data.YlcIsPass = e.detail.value;
 					//console.log("4")
 				}
