@@ -85,13 +85,13 @@
 					<view class="title">教师姓名</view>
 					<input name="GuideTeacher" v-model="io.data.GuideTeacher" :disabled="io.fieldAccess.GuideTeacher !== 'w' || !io.isMyStep"></input>
 				</view>
-				<view class="cu-form-group" v-if="io.fieldAccess.GuideTeacherOpinion">
+				<view class="cu-form-group" v-if="io.fieldAccess.GuideTeacherTime">
 					<view class="title">审核时间</view>
 					<input name="GuideTeacherTime" v-model="io.data.GuideTeacherTime" :disabled="io.fieldAccess.GuideTeacherTime !== 'w' || !io.isMyStep"></input>
 				</view>
 				<view class="cu-bar bg-white solids-bottom margin-top-xs" v-if="io.fieldAccess.AffiliatedDepartOpinion">
 					<view class="action">
-						<text class="cuIcon-title text-"></text>
+						<text class="text-bold" :class="io.data.AffiliatedDepartIsPass ? 'cuIcon-check text-green' : 'cuIcon-close text-red'"></text>
 						<text class="text-xl text-bold">业务指导单位审核</text>
 					</view>
 				</view>
@@ -115,19 +115,19 @@
 					<view class="title">审核人员</view>
 					<input name="AffiliatedDepart" v-model="io.data.AffiliatedDepart" :disabled="io.fieldAccess.AffiliatedDepart !== 'w' || !io.isMyStep"></input>
 				</view>
-				<view class="cu-form-group" v-if="io.fieldAccess.AffiliatedDepartOpinion">
+				<view class="cu-form-group" v-if="io.fieldAccess.AffiliatedDepartTime">
 					<view class="title">审核时间</view>
 					<input name="AffiliatedDepartTime" v-model="io.data.AffiliatedDepartTime" :disabled="io.fieldAccess.AffiliatedDepartTime !== 'w' || !io.isMyStep"></input>
 				</view>
 				<view class="cu-bar bg-white solids-bottom margin-top-xs" v-if="io.fieldAccess.SauOpinion">
 					<view class="action">
-						<text class="cuIcon-title text-green"></text>
+						<text class="text-bold" :class="io.data.SauIsPass ? 'cuIcon-check text-green' : 'cuIcon-close text-red'"></text>
 						<text class="text-xl text-bold">学生社团管理部审核</text>
 					</view>
 				</view>
 				<view class="cu-form-group" v-if="io.fieldAccess.SauIsPass">
-					<view class="title">是否通过
-          {{io.data.SauIsPass}}
+					<view class="title">
+						是否通过
 					</view>
 					<radio-group class="block" @change="RadioChange">
 						<radio :disabled="!io.fieldAccess.SauOpinion || io.fieldAccess.SauOpinion === 'r' || !io.isMyStep" class=' margin-right-xs'
@@ -144,13 +144,13 @@
 					<view class="title">审核人员</view>
 					<input name="Sau" v-model="io.data.Sau" :disabled="io.fieldAccess.Sau !== 'w' || !io.isMyStep"></input>
 				</view>
-				<view class="cu-form-group" v-if="io.fieldAccess.SauOpinion">
+				<view class="cu-form-group" v-if="io.fieldAccess.SauTime">
 					<view class="title">审核时间</view>
 					<input name="SauTime" v-model="io.data.SauTime" :disabled="io.fieldAccess.SauTime !== 'w' || !io.isMyStep"></input>
 				</view>
 				<view class="cu-bar bg-white solids-bottom margin-top-xs" v-if="io.fieldAccess.YlcOpinion">
 					<view class="action">
-						<text class="cuIcon-title text-green"></text>
+						<text class="text-bold" :class="io.data.YlcIsPass ? 'cuIcon-check text-green' : 'cuIcon-close text-red'"></text>
 						<text class="text-xl text-bold">校团委审核</text>
 					</view>
 				</view>
@@ -168,13 +168,13 @@
 				</view>
 				<view class="cu-form-group" v-if="io.fieldAccess.YlcOpinion">
 					<view class="title">审核意见</view>
-					<input name="YlcOpinion" v-model="io.data.YlcOpinion" :disabled="io.fieldAccess.YlcOpinion !== 'w' || !io.YlcOpinion"></input>
+					<input name="YlcOpinion" v-model="io.data.YlcOpinion" :disabled="io.fieldAccess.YlcOpinion !== 'w' || !io.isMyStep"></input>
 				</view>
 				<view class="cu-form-group" v-if="io.fieldAccess.YlcOpinion">
 					<view class="title">审核人员</view>
 					<input name="Ylc" v-model="io.data.Ylc" :disabled="io.fieldAccess.Ylc !== 'w' || !io.Ylc"></input>
 				</view>
-				<view class="cu-form-group" v-if="io.fieldAccess.YlcOpinion">
+				<view class="cu-form-group" v-if="io.fieldAccess.YlcTime">
 					<view class="title">审核时间</view>
 					<input name="YlcTime" v-model="io.data.YlcTime" :disabled="io.fieldAccess.YlcTime !== 'w' || !io.YlcTime"></input>
 				</view>

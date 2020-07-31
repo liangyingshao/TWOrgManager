@@ -4,19 +4,36 @@
 			<block slot="backText">返回</block>
 			<block slot="content">我的参与</block>
 		</cu-custom>
-		<view class="cu-bar bg-white solids-bottom">
-			<view class="action" @click="foldUp('displayRoom')">
-				<text class="text-df">{{displayRoom?'收起':'展开'}}</text>
-				<text class="padding-lr-xs" :class="displayRoom?'cuIcon-fold':'cuIcon-unfold'"></text>
-			</view>
-		</view>
 		<transition-group class="cu-list menu" name="list">
-			<view class="cu-item" v-for="(item,index) in roomData" :key="index" v-show="displayRoom">
+			<view class="cu-item" v-for="(item,index) in roomData" :key="index">
 				<view class="content padding-tb-sm">
-					<view>
-						<text class="cuIcon-activityfill text-blue margin-right-xs"></text>{{item.WorkflowName}}</view>
+					<view v-if="item.State === 3">
+						<text class="cuIcon-roundcheck text-green margin-right-xs"></text>{{item.WorkflowName}}
+					</view>
+					<view v-else-if="item.State === 4">
+						<text class="cuIcon-roundclose text-red margin-right-xs"></text>{{item.WorkflowName}}
+					</view>
+					<view v-else-if="item.State === 5">
+						<text class="cuIcon-warn text-red margin-right-xs"></text>{{item.WorkflowName}}
+					</view>
+					<view v-else>
+						<text class="cuIcon-activityfill text-blue margin-right-xs"></text>{{item.WorkflowName}}
+					</view>
 					<view class="text-gray text-sm">
-						<text class="cuIcon-infofill margin-right-xs"></text> {{item.Owner}}提交的{{item.WorkflowType}}</view>
+						<text class="cuIcon-infofill margin-right-xs"></text> {{item.Owner}}提交的{{item.WorkflowType}}
+					</view>
+					<view class="text-gray text-sm" v-if="item.State === 3">
+						<text class="cuIcon-repairfill margin-right-xs"></text> 工作流已完成/{{item.ArriveOn}}
+					</view>
+					<view class="text-gray text-sm" v-else-if="item.State === 4">
+						<text class="cuIcon-repairfill margin-right-xs"></text> 工作流已取消/{{item.ArriveOn}}
+					</view>
+					<view class="text-gray text-sm" v-else-if="item.State === 5">
+						<text class="cuIcon-repairfill margin-right-xs"></text> 工作流已结束/{{item.ArriveOn}}
+					</view>
+					<view class="text-gray text-sm" v-else>
+						<text class="cuIcon-repairfill margin-right-xs"></text> 当前步骤：{{item.StepName}} @{{item.ExecutorName}}/{{item.ArriveOn}}
+					</view>
 				</view>
 				<view class="action">
 					<button class="cu-btn bg-green shadow" @click="toExecute(item)">
