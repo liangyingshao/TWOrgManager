@@ -85,7 +85,7 @@
 					<view class="title">教师姓名</view>
 					<input name="GuideTeacher" v-model="io.data.GuideTeacher" :disabled="io.fieldAccess.GuideTeacher !== 'w' || !io.isMyStep"></input>
 				</view>
-				<view class="cu-form-group" v-if="io.fieldAccess.GuideTeacherOpinion">
+				<view class="cu-form-group" v-if="io.fieldAccess.GuideTeacherTime">
 					<view class="title">审核时间</view>
 					<input name="GuideTeacherTime" v-model="io.data.GuideTeacherTime" :disabled="io.fieldAccess.GuideTeacherTime !== 'w' || !io.isMyStep"></input>
 				</view>
@@ -115,7 +115,7 @@
 					<view class="title">审核人员</view>
 					<input name="AffiliatedDepart" v-model="io.data.AffiliatedDepart" :disabled="io.fieldAccess.AffiliatedDepart !== 'w' || !io.isMyStep"></input>
 				</view>
-				<view class="cu-form-group" v-if="io.fieldAccess.AffiliatedDepartOpinion">
+				<view class="cu-form-group" v-if="io.fieldAccess.AffiliatedDepartTime">
 					<view class="title">审核时间</view>
 					<input name="AffiliatedDepartTime" v-model="io.data.AffiliatedDepartTime" :disabled="io.fieldAccess.AffiliatedDepartTime !== 'w' || !io.isMyStep"></input>
 				</view>
@@ -144,7 +144,7 @@
 					<view class="title">审核人员</view>
 					<input name="Sau" v-model="io.data.Sau" :disabled="io.fieldAccess.Sau !== 'w' || !io.isMyStep"></input>
 				</view>
-				<view class="cu-form-group" v-if="io.fieldAccess.SauOpinion">
+				<view class="cu-form-group" v-if="io.fieldAccess.SauTime">
 					<view class="title">审核时间</view>
 					<input name="SauTime" v-model="io.data.SauTime" :disabled="io.fieldAccess.SauTime !== 'w' || !io.isMyStep"></input>
 				</view>
@@ -168,13 +168,13 @@
 				</view>
 				<view class="cu-form-group" v-if="io.fieldAccess.YlcOpinion">
 					<view class="title">审核意见</view>
-					<input name="YlcOpinion" v-model="io.data.YlcOpinion" :disabled="io.fieldAccess.YlcOpinion !== 'w' || !io.YlcOpinion"></input>
+					<input name="YlcOpinion" v-model="io.data.YlcOpinion" :disabled="io.fieldAccess.YlcOpinion !== 'w' || !io.isMyStep"></input>
 				</view>
 				<view class="cu-form-group" v-if="io.fieldAccess.YlcOpinion">
 					<view class="title">审核人员</view>
 					<input name="Ylc" v-model="io.data.Ylc" :disabled="io.fieldAccess.Ylc !== 'w' || !io.Ylc"></input>
 				</view>
-				<view class="cu-form-group" v-if="io.fieldAccess.YlcOpinion">
+				<view class="cu-form-group" v-if="io.fieldAccess.YlcTime">
 					<view class="title">审核时间</view>
 					<input name="YlcTime" v-model="io.data.YlcTime" :disabled="io.fieldAccess.YlcTime !== 'w' || !io.YlcTime"></input>
 				</view>
@@ -210,7 +210,6 @@
 		},
 		methods: {
 			RadioChange(e) {
-				debugger
 				if (this.io.fieldAccess.GuideTeacherIsPass === 'w') {
 					this.io.data.GuideTeacherIsPass = e.detail.value;
 					//console.log(this.io.data.GuideTeacherIsPass)
