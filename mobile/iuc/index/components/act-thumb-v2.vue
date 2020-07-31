@@ -1,7 +1,10 @@
 <template>
 	<view class="act-main" @click="toDetail(activity.ID)">
 		<view class="title">
-			<view class="text-cut">{{activity.ActivityName ? activity.ActivityName : "暂无标题"}}</view>
+			<text v-if="state === 2" class="cu-tag margin-right-sm round bg-blue">已结束</text>
+			<text v-if="state === 1" class="cu-tag margin-right-sm round bg-blue">进行中</text>
+			<text v-if="state === 0" class="cu-tag margin-right-sm round bg-blue">报名中</text>
+			<text class="text-cut">{{activity.ActivityName ? activity.ActivityName : "暂无标题"}}</text>
 		</view>
 		<view class="content margin-bottom-sm">
 			<image src="../../../static/xmuScene1.jpg"
@@ -33,8 +36,22 @@
 		props:{
 			activity: Object
 		},
+		mounted() {
+			debugger
+			let startDate = new Date(this.activity.Start);
+			let endDate = new Date(this.activity.End);
+			if(new Date() > endDate){
+				this.state = 2;
+			} else if(new Date() > startDate){
+				this.state = 1;
+			} else {
+				this.state = 0;
+			}
+		},
 		data () {
-			return {};
+			return {
+				state: -1
+			};
 		}
 	}
 </script>
