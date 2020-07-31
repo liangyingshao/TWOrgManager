@@ -71,7 +71,8 @@
 			<view class="cu-item shadow" @click="toConsole(item.ID)">
 				<view class="title">
 					<view class="text-cut">
-						<view class="cu-tag margin-right-sm round bg-red">进行中</view>
+						<view v-if="item.StartState === 1" class="cu-tag margin-right-sm round bg-blue">进行中</view>
+						<view v-else-if="item.StartState === 0" class="cu-tag margin-right-sm round bg-green">未开始</view>
 						{{item.ActivityName ? item.ActivityName : "暂无社团活动名称"}}
 					</view>
 				</view>
@@ -144,7 +145,7 @@
 					if (msg.success) {
 						this.onGoingAct = [];
 						for (let i = 0; i < msg.data.length; i++) {
-							if (msg.data[i].ApplicateState === 3 && msg.data[i].StartState === 1) {
+							if (msg.data[i].ApplicateState === 3) {
 								this.onGoingAct.push(msg.data[i]);
 							}
 						}
@@ -159,7 +160,7 @@
 					if (msg.success) {
 						this.onGoingAct = [];
 						for (let i = 0; i < msg.data.length; i++) {
-							if (msg.data[i].ApplicateState === 3 && msg.data[i].StartState === 1) {
+							if (msg.data[i].ApplicateState === 3) {
 								this.onGoingAct.push(msg.data[i]);
 							}
 						}
