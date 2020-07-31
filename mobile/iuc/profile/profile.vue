@@ -18,13 +18,19 @@
 				</view>
 			</view>
 		</view>
-		<view class="cu-list grid no-border col-4 margin margin-lr-xl navs-bar shadow">
+		<!--view class="cu-list grid no-border col-4 margin margin-lr-xl navs-bar shadow">
 			<view class="cu-item" v-for="(item,index) in navs" :key="index" @click="navTo(item.url)">
 				<view :class="'cuIcon-'+item.cuIcon" class="text-blue "></view>
 				<text class="text-blue text-bold ">{{item.name}}</text>
 			</view>
-		</view>
+		</view-->
 		<view class="cu-list menu">
+			<view class="arrow cu-item" v-if="availableRoles.length > 1" @click="navTo('../index/index')">
+				<view class="font-15 margin-lr">
+					<text class="text-blue cuIcon-pick margin-right-sm"></text>
+					<text class="text-blue text-bold">回到主页</text>
+				</view>
+			</view>
 			<view class="arrow cu-item" v-if="availableRoles.length > 1" @click="navTo('../login/roleSelection')">
 				<view class="font-15 margin-lr">
 					<text class="text-blue cuIcon-pick margin-right-sm"></text>
