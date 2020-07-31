@@ -39,7 +39,10 @@
 						<text class="cuIcon-activityfill text-blue margin-right-xs"></text>{{item.WorkflowName}}</view>
 					<view class="text-gray text-sm">
 						<text class="cuIcon-infofill margin-right-xs"></text> {{item.Owner}}提交的{{item.WorkflowType}}</view>
-				</view>
+          <view class="text-gray text-sm">
+          	<text class="cuIcon-repairfill margin-right-xs"></text> 当前步骤：{{item.StepName}} @{{item.ExecutorName}}/{{item.ArriveOn}}
+          </view>
+        </view>
 				<view class="action">
 					<button class="cu-btn bg-green shadow" @click="navTo(`../activity/activity?instanceId=${item.InstanceId}&stepId=${item.StepId}`)">
 						详情
@@ -199,6 +202,9 @@
 			};
 		},
 		onLoad() {
+			
+		},
+		onShow() {
 			this.getPending();
 			uni.post("/api/security/GetApplicationsByDeparts", {
 				departId
