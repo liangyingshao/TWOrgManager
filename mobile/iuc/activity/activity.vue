@@ -91,7 +91,7 @@
 				</view>
 				<view class="cu-bar bg-white solids-bottom margin-top-xs" v-if="io.fieldAccess.AffiliatedDepartOpinion">
 					<view class="action">
-						<text class="cuIcon-title text-"></text>
+						<text class="text-bold" :class="io.data.AffiliatedDepartIsPass ? 'cuIcon-check text-green' : 'cuIcon-close text-red'"></text>
 						<text class="text-xl text-bold">业务指导单位审核</text>
 					</view>
 				</view>
@@ -121,13 +121,13 @@
 				</view>
 				<view class="cu-bar bg-white solids-bottom margin-top-xs" v-if="io.fieldAccess.SauOpinion">
 					<view class="action">
-						<text class="cuIcon-title text-green"></text>
+						<text class="text-bold" :class="io.data.SauIsPass ? 'cuIcon-check text-green' : 'cuIcon-close text-red'"></text>
 						<text class="text-xl text-bold">学生社团管理部审核</text>
 					</view>
 				</view>
 				<view class="cu-form-group" v-if="io.fieldAccess.SauIsPass">
-					<view class="title">是否通过
-          {{io.data.SauIsPass}}
+					<view class="title">
+						是否通过
 					</view>
 					<radio-group class="block" @change="RadioChange">
 						<radio :disabled="!io.fieldAccess.SauOpinion || io.fieldAccess.SauOpinion === 'r' || !io.isMyStep" class=' margin-right-xs'
@@ -150,7 +150,7 @@
 				</view>
 				<view class="cu-bar bg-white solids-bottom margin-top-xs" v-if="io.fieldAccess.YlcOpinion">
 					<view class="action">
-						<text class="cuIcon-title text-green"></text>
+						<text class="text-bold" :class="io.data.YlcIsPass ? 'cuIcon-check text-green' : 'cuIcon-close text-red'"></text>
 						<text class="text-xl text-bold">校团委审核</text>
 					</view>
 				</view>
@@ -210,6 +210,7 @@
 		},
 		methods: {
 			RadioChange(e) {
+				debugger
 				if (this.io.fieldAccess.GuideTeacherIsPass === 'w') {
 					this.io.data.GuideTeacherIsPass = e.detail.value;
 					//console.log(this.io.data.GuideTeacherIsPass)
