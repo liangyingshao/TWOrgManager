@@ -110,7 +110,6 @@
 						this.activity = msg.data;
 						this.signInState = msg.signInState;
 						this.signUpState = msg.signUpState;
-						debugger
 						let startDate = msg.data.StartDate.replace(/[年月]/g,"-").replace(/[日]/,"");
 						let endDate = msg.data.EndDate.replace(/[年月]/g,"-").replace(/[日]/,"");
 						if(new Date() > new Date(endDate)){

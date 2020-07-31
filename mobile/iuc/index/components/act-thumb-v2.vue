@@ -4,7 +4,7 @@
 			<view class="text-cut">{{activity.ActivityName ? activity.ActivityName : "暂无标题"}}</view>
 		</view>
 		<view class="content margin-bottom-sm">
-			<image src="../../../static/xmuScene1.jpg"
+			<image src="/static/xmuScene1.jpg"
 			 mode="aspectFill"></image>
 			<view class="desc">
 				<view class="text-content"> 
