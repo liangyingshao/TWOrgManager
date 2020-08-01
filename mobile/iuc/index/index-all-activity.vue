@@ -4,13 +4,6 @@
 			<block slot="backText">返回</block>
 			<block slot="content">所有活动</block>
 		</cu-custom>
-		<view class="cu-bar bg-white solid-bottom margin-top">
-			<view class="action">
-				<text class="cuIcon-titles text-blue"></text>
-				社团活动
-				<view class='cu-tag bg-red margin-left-sm round'>{{allActivity.length}}</view>
-			</view>
-		</view>
 		<view class="cu-card no-card article" v-for="(item,index) in allActivity" :key="index">
 			<view class="cu-item shadow" @click="toConsole(item.ID)">
 				<view class="title">

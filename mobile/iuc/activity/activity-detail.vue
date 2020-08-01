@@ -6,7 +6,7 @@
 		</cu-custom>
 		<view class="text-xl padding-sm act-title">{{activity.ActivityName}}</view>
 		<view class="padding-left-sm padding-right-sm author-area">
-			<view class="cu-avatar round md" style="background-image:url(https://ossweb-img.qq.com/images/lol/web201310/skin/big10001.jpg)"></view>
+			<view class="cu-avatar round md" :style="'background-image:url(' + app.userInfo.avatar + ');'"></view>
 			<view class="desc-text padding-left-sm">
 				<text class="author-name">{{activity.DepartName}}</text>
 				<text class="text-gray">{{activity.StartDate}}</text>
@@ -100,6 +100,7 @@
 </template>
 
 <script>
+	const app = require("@/config");
 	export default {
 		methods: {
 			getActivityDetail() {
@@ -110,16 +111,16 @@
 						this.activity = msg.data;
 						this.signInState = msg.signInState;
 						this.signUpState = msg.signUpState;
-						let startDate = msg.data.StartDate.replace(/[年月]/g,"-").replace(/[日]/,"");
-						let endDate = msg.data.EndDate.replace(/[年月]/g,"-").replace(/[日]/,"");
-						if(new Date() > new Date(endDate)){
+						
+						let startDate = new Date(msg.data.Start);
+						let endDate = new Date(msg.data.End);
+						if(new Date() > endDate){
 							this.activity.StartState = 2;
-						} else if(new Date() > new Date(startDate)){
+						} else if(new Date() > startDate){
 							this.activity.StartState = 1;
 						} else {
 							this.activity.StartState = 0;
 						}
-						
 					}
 				})
 			},
@@ -174,7 +175,8 @@
 			return {
 				activity: {},
 				signInState: {},
-				signUpState: {}
+				signUpState: {},
+				app
 			}
 		}
 	}

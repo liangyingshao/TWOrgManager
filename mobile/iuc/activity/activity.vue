@@ -65,16 +65,14 @@
 						<text class="text-xl text-bold">指导老师审核</text>
 					</view>
 				</view>
-				<view class="cu-form-group" v-if="io.fieldAccess.GuideTeacherIsPass">
+				<view class="cu-form-group" v-if="io.fieldAccess.GuideTeacherIsPass !== 'r'">
 					<view class="title">是否通过
 					</view>
 					<radio-group class="block" @change="RadioChange">
-						<radio :disabled="!io.fieldAccess.GuideTeacherOpinion || io.fieldAccess.GuideTeacherOpinion === 'r' || !io.isMyStep"
-						 class=' margin-right-xs' :class="io.data.GuideTeacherIsPass==='true'?'checked':''" :checked="io.data.GuideTeacherIsPass==='true'?true:false"
-						 value='true'></radio>是
-						<radio :disabled="!io.fieldAccess.GuideTeacherOpinion || io.fieldAccess.GuideTeacherOpinion === 'r' || !io.isMyStep"
-						 class=' margin-left-sm margin-right-xs' :class="io.data.GuideTeacherIsPass==='false'?'checked':''" :checked="io.data.GuideTeacherIsPass==='false'?true:false"
-						 value='false'></radio>否
+						<radio :disabled="io.fieldAccess.GuideTeacherIsPass === 'r' || !io.isMyStep" class=' margin-right-xs' :class="io.data.GuideTeacherIsPass === true ? 'checked' : ''"
+						 :checked="io.data.GuideTeacherIsPass === true" value="true"></radio>是
+						<radio :disabled="io.fieldAccess.GuideTeacherIsPass === 'r' || !io.isMyStep" class=' margin-left-sm margin-right-xs'
+						 :class="io.data.GuideTeacherIsPass === false ? 'checked red' : ''" :checked="io.data.GuideTeacherIsPass === false" value="false"></radio>否
 					</radio-group>
 				</view>
 				<view class="cu-form-group" v-if="io.fieldAccess.GuideTeacherOpinion">
@@ -95,16 +93,14 @@
 						<text class="text-xl text-bold">业务指导单位审核</text>
 					</view>
 				</view>
-				<view class="cu-form-group" v-if="io.fieldAccess.AffiliatedDepartIsPass">
+				<view class="cu-form-group" v-if="io.fieldAccess.AffiliatedDepartIsPass !== 'r'">
 					<view class="title">是否通过
 					</view>
 					<radio-group class="block" @change="RadioChange">
-						<radio :disabled="!io.fieldAccess.AffiliatedDepartOpinion || io.fieldAccess.AffiliatedDepartOpinion === 'r' || !io.isMyStep"
-						 class=' margin-right-xs' :class="io.data.AffiliatedDepartIsPass==='true'?'checked':''" :checked="io.data.AffiliatedDepartIsPass==='true'?true:false"
-						 value='true'></radio>是
-						<radio :disabled="!io.fieldAccess.AffiliatedDepartOpinion || io.fieldAccess.AffiliatedDepartOpinion === 'r' || !io.isMyStep"
-						 class=' margin-left-sm margin-right-xs' :class="io.data.AffiliatedDepartIsPass==='false'?'checked':''" :checked="io.data.AffiliatedDepartIsPass==='false'?true:false"
-						 value='false'></radio>否
+						<radio :disabled="io.fieldAccess.AffiliatedDepartIsPass === 'r' || !io.isMyStep" class=' margin-right-xs' value="true"
+						 :class="io.data.AffiliatedDepartIsPass === true ? 'checked' : ''" :checked="io.data.AffiliatedDepartIsPass === true"></radio>是
+						<radio :disabled="io.fieldAccess.AffiliatedDepartIsPass === 'r' || !io.isMyStep" class=' margin-left-sm margin-right-xs' value="false"
+						 :class="io.data.AffiliatedDepartIsPass === false ? 'checked red' : ''" :checked="io.data.AffiliatedDepartIsPass === false"></radio>否
 					</radio-group>
 				</view>
 				<view class="cu-form-group" v-if="io.fieldAccess.AffiliatedDepartOpinion">
@@ -125,15 +121,15 @@
 						<text class="text-xl text-bold">学生社团管理部审核</text>
 					</view>
 				</view>
-				<view class="cu-form-group" v-if="io.fieldAccess.SauIsPass">
+				<view class="cu-form-group" v-if="io.fieldAccess.SauIsPass !== 'r'">
 					<view class="title">
 						是否通过
 					</view>
 					<radio-group class="block" @change="RadioChange">
-						<radio :disabled="!io.fieldAccess.SauOpinion || io.fieldAccess.SauOpinion === 'r' || !io.isMyStep" class=' margin-right-xs'
-						 :class="io.data.SauIsPass==='true'?'checked':''" :checked="io.data.SauIsPass==='true'?true:false" value='true'></radio>是
-						<radio :disabled="!io.fieldAccess.SauOpinion || io.fieldAccess.SauOpinion === 'r' || !io.isMyStep" class=' margin-left-sm margin-right-xs'
-						 :class="io.data.SauIsPass==='false'?'checked':''" :checked="io.data.SauIsPass==='false'?true:false" value='false'></radio>否
+						<radio :disabled="io.fieldAccess.SauIsPass === 'r' || !io.isMyStep" class=' margin-right-xs'
+						 :class="io.data.SauIsPass === true? 'checked' : ''" :checked="io.data.SauIsPass === true " value='true'></radio>是
+						<radio :disabled="io.fieldAccess.SauIsPass === 'r' || !io.isMyStep" class=' margin-left-sm margin-right-xs'
+						 :class="io.data.SauIsPass === false ? 'checked red' : ''" :checked="io.data.SauIsPass === false" value='false'></radio>否
 					</radio-group>
 				</view>
 				<view class="cu-form-group" v-if="io.fieldAccess.SauOpinion">
@@ -154,15 +150,15 @@
 						<text class="text-xl text-bold">校团委审核</text>
 					</view>
 				</view>
-				<view class="cu-form-group" v-if="io.fieldAccess.YlcIsPass">
+				<view class="cu-form-group" v-if="io.fieldAccess.YlcIsPass !== 'r'">
 					<view class="title">是否通过
 					</view>
 					<radio-group class="block" @change="RadioChange">
-						<radio :disabled="!io.fieldAccess.YlcOpinion || io.fieldAccess.YlcOpinion === 'r' || !io.isMyStep" class=' margin-right-xs'
-						 :class="io.data.YlcIsPass==='true'?'checked':''" :checked="io.data.AffiliatedDepartIsPass==='true'?true:false"
+						<radio :disabled="io.fieldAccess.YlcIsPass === 'r' || !io.isMyStep" class='margin-right-xs'
+						 :class="io.data.YlcIsPass === true ? 'checked' : ''" :checked="io.data.YlcIsPass === true"
 						 value='true'></radio>是
-						<radio :disabled="!io.fieldAccess.YlcOpinion || io.fieldAccess.YlcOpinion === 'r' || !io.isMyStep" class=' margin-left-sm margin-right-xs'
-						 :class="io.data.YlcIsPass==='false'?'checked':''" :checked="io.data.AffiliatedDepartIsPass==='false'?true:false"
+						<radio :disabled="io.fieldAccess.YlcIsPass === 'r' || !io.isMyStep" class='margin-left-sm margin-right-xs'
+						 :class="io.data.YlcIsPass === false? 'checked red' : ''" :checked="io.data.YlcIsPass === false"
 						 value='false'></radio>否
 					</radio-group>
 				</view>
@@ -211,16 +207,16 @@
 		methods: {
 			RadioChange(e) {
 				if (this.io.fieldAccess.GuideTeacherIsPass === 'w') {
-					this.io.data.GuideTeacherIsPass = e.detail.value;
+					this.io.data.GuideTeacherIsPass = e.detail.value === 'true';
 					//console.log(this.io.data.GuideTeacherIsPass)
 				} else if (this.io.fieldAccess.AffiliatedDepartIsPass === 'w') {
-					this.io.data.AffiliatedDepartIsPass = e.detail.value;
+					this.io.data.AffiliatedDepartIsPass = e.detail.value === 'true';
 					//console.log("2")
 				} else if (this.io.fieldAccess.SauIsPass === 'w') {
-					this.io.data.SauIsPass = e.detail.value;
+					this.io.data.SauIsPass = e.detail.value === 'true';
 					//console.log(e.detail.value)
 				} else if (this.io.fieldAccess.YlcIsPass === 'w') {
-					this.io.data.YlcIsPass = e.detail.value;
+					this.io.data.YlcIsPass = e.detail.value === 'true';
 					//console.log("4")
 				}
 			},
