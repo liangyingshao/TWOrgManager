@@ -15,7 +15,7 @@
 		</view>
     <view class="cu-list menu" v-for="(item,index) in allApplication" style="margin-top: 1px;" :key="index">
       <view v-if="item.State === 3" class="cu-item">
-        <view class="content padding-tb-sm" @click="audit(item.ID, item.Code)">
+        <view class="content padding-tb-sm" @click="audit(item.ID, item.Code, item.State)">
           <view>
             <text class="cuIcon-profilefill text-blue margin-right-xs"></text> {{item.RealName}}({{item.Code}})</view>
           <view class="text-gray text-sm">
@@ -28,7 +28,7 @@
         </view>
       </view>
       <view v-else-if="item.State === 2" class="cu-item">
-        <view class="content padding-tb-sm" @click="audit(item.ID, item.Code)">
+        <view class="content padding-tb-sm" @click="audit(item.ID, item.Code, item.State)">
           <view>
             <text class="cuIcon-profilefill text-blue margin-right-xs"></text> {{item.RealName}}({{item.Code}})</view>
           <view class="text-gray text-sm">
@@ -39,7 +39,7 @@
         </view>
       </view>
       <view v-else-if="item.State === 0" class="cu-item">
-        <view class="content padding-tb-sm" @click="audit(item.ID, item.Code)">
+        <view class="content padding-tb-sm" @click="audit(item.ID, item.Code, item.State)">
           <view>
             <text class="cuIcon-profilefill text-blue margin-right-xs"></text> {{item.RealName}}({{item.Code}})</view>
           <view class="text-gray text-sm">
@@ -50,7 +50,7 @@
         </view>
       </view>
       <view v-else-if="item.State === 1" class="cu-item">
-        <view class="content padding-tb-sm" @click="audit(item.ID, item.Code)">
+        <view class="content padding-tb-sm" @click="audit(item.ID, item.Code, item.State)">
           <view>
             <text class="cuIcon-profilefill text-blue margin-right-xs"></text> {{item.RealName}}({{item.Code}})</view>
           <view class="text-gray text-sm">
@@ -111,9 +111,9 @@
           this.getPageData();
         })
       },
-      audit(ID, userCode) {
+      audit(ID, userCode, State) {
         uni.navigateTo({
-          url: "/iuc/profile/user-audit?userCode="+userCode+"&ID="+ID
+          url: "/iuc/profile/user-audit?userCode="+userCode+"&ID="+ID+"&State="+State
         });
       },
       getPageData() {
