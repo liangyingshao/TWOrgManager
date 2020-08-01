@@ -17,7 +17,7 @@
 				</view>
 			</view>
 		</view>
-		<view class="padding flex flex-direction">
+		<view class="padding flex flex-direction"  v-if="State==3">
 			<button class="cu-btn bg-green lg" @click="commitUser(ID)">通过</button>
 			<button class="cu-btn bg-red margin-tb-sm lg" @click="refuseUser(ID)">驳回</button>
 		</view>
@@ -76,6 +76,7 @@
 				},
 				userCode: "",
 				ID: "",
+				State: 0,
 				app
 			}
 		},
@@ -114,6 +115,7 @@
 		onLoad(query) {
 			this.userCode = query.userCode;
 			this.ID = query.ID;
+			this.State = query.State;
 			uni.post("/api/security/GetUserByCode", {
 				code: this.userCode
 			}, msg => {
