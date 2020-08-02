@@ -1,7 +1,7 @@
 <template>
 	<view>
 		<title-bar :placeholder="searchText" @input="doSearch">
-			<view v-if="overRideId" class="act-btn" @click="navTo('./index-manager')">
+			<view v-if="overRideId" class="act-btn" @click="navBack">
 				<text class="icon cuIcon-home"></text>
 				<text>我的单位</text>
 			</view>
@@ -105,6 +105,11 @@
 			titleBar
 		},
 		methods: {
+			navBack(){
+				uni.navigateBack({
+					
+				})
+			},
 			changeActReviewShow() {
 				this.showActReview = !this.showActReview;
 			},
