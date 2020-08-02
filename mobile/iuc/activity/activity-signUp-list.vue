@@ -35,22 +35,7 @@
 	export default {
 		data() {
 			return {
-				allSignUp: [{
-						RealName: "小宋",
-						SignUpOn: "2020年7月1日",
-						SignUpState: 0
-					},
-					{
-						RealName: "小宋",
-						SignUpOn: "2020年7月1日",
-						SignUpState: 0
-					},
-					{
-						RealName: "小宋",
-						SignUpOn: "2020年7月1日",
-						SignUpState: 0
-					}
-				],
+				allSignUp: [],
 				actId: ""
 			}
 		},
