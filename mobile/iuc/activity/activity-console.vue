@@ -16,7 +16,10 @@
 				<view class='text-sm cu-tag bg-yellow margin-top-xs round'>审批中</view>
 			</template>
 			<template v-else>
-				<view :class="'text-sm cu-tag margin-top-xs round bg-' + stateColor[actInfo.StartState]">{{startState[actInfo.StartState]}}</view>
+				<view v-if="actInfo.StartState === 1" class="text-sm cu-tag margin-top-xs round bg-blue">
+					{{startState[actInfo.StartState]}}:{{actInfo.isSignUping}}
+				</view>
+				<view v-else :class="'text-sm cu-tag margin-top-xs round bg-' + stateColor[actInfo.StartState]">{{startState[actInfo.StartState]}}</view>
 			</template>
 		</view>
 		<!-- 如果活动如果申请流程还没有结束 -->
@@ -94,6 +97,16 @@
 				}, msg => {
 					if (msg.success) {
 						this.actInfo = msg.data;
+						
+						let startDate = new Date(msg.data.Start);
+						let endDate = new Date(msg.data.End);
+						if(new Date() > endDate){
+							this.actInfo.isSignUping = "已结束";
+						} else if(new Date() > startDate){
+							this.actInfo.isSignUping = "活动阶段";
+						} else {
+							this.actInfo.isSignUping = "报名阶段";
+						}
 					} else {
 						uni.showToast({
 							title: msg.msg,
