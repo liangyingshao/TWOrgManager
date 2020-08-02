@@ -37,7 +37,6 @@
 			activity: Object
 		},
 		mounted() {
-			debugger
 			let startDate = new Date(this.activity.Start);
 			let endDate = new Date(this.activity.End);
 			if(new Date() > endDate){
