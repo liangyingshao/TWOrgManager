@@ -65,7 +65,7 @@
 						<text class="text-xl text-bold">指导老师审核</text>
 					</view>
 				</view>
-				<view class="cu-form-group" v-if="io.fieldAccess.GuideTeacherIsPass !== 'r'">
+				<view class="cu-form-group" v-if="io.fieldAccess.GuideTeacherIsPass !== 'w'">
 					<view class="title">是否通过
 					</view>
 					<radio-group class="block" @change="RadioChange">
@@ -93,7 +93,7 @@
 						<text class="text-xl text-bold">业务指导单位审核</text>
 					</view>
 				</view>
-				<view class="cu-form-group" v-if="io.fieldAccess.AffiliatedDepartIsPass !== 'r'">
+				<view class="cu-form-group" v-if="io.fieldAccess.AffiliatedDepartIsPass === 'w'">
 					<view class="title">是否通过
 					</view>
 					<radio-group class="block" @change="RadioChange">
@@ -121,7 +121,7 @@
 						<text class="text-xl text-bold">学生社团管理部审核</text>
 					</view>
 				</view>
-				<view class="cu-form-group" v-if="io.fieldAccess.SauIsPass !== 'r'">
+				<view class="cu-form-group" v-if="io.fieldAccess.SauIsPass === 'w'">
 					<view class="title">
 						是否通过
 					</view>
@@ -150,7 +150,7 @@
 						<text class="text-xl text-bold">校团委审核</text>
 					</view>
 				</view>
-				<view class="cu-form-group" v-if="io.fieldAccess.YlcIsPass !== 'r'">
+				<view class="cu-form-group" v-if="io.fieldAccess.YlcIsPass === 'w'">
 					<view class="title">是否通过
 					</view>
 					<radio-group class="block" @change="RadioChange">

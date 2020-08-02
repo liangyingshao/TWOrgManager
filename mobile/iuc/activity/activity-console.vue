@@ -45,7 +45,7 @@
 			<view class="cu-item" @click="toSignUP()">
 				<view class="cuIcon-friendfavor">
 					<view class="cu-tag badge">
-						<block>{{actInfo.needChecks>99 ? '99+' : actInfo.needChecks}}</block>
+						<block>{{actInfo.needChecks>99 ? '99+' : actInfo.alreadeySignUps}}</block>
 					</view>
 				</view>
 				<text>报名情况</text>
