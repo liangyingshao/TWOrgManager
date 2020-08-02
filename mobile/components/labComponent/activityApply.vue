@@ -1,5 +1,5 @@
 <template>
-  <view class="cu-item">
+  <view class="cu-item" @click="toExecute(data)">
     <view class="content padding-tb-sm margin-right-xs">
   		<view v-if="data.State === 3">
   			<text class="cuIcon-roundcheck text-green margin-right-xs"></text>{{data.WorkflowName}}
