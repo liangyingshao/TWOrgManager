@@ -39,8 +39,8 @@
 			<view class="action">
 				<text class="cuIcon-titles text-blue"></text> 活动列表
 			</view>
-			<view class="action" @click="navTo('../activity/activityList')">
-				<view class="text-blue">[报名参加]</view>
+			<view class="action" @click="navTo('../orgmanagement/orgList')">
+				<view class="text-blue">[进行中的活动]</view>
 			</view>
 		</view>
 		<view class="cu-card article no-card" v-if="activities.length" >
@@ -56,7 +56,8 @@
 			<view class="action">
 				<text class="cuIcon-titles text-blue"></text> 我参加的活动
 			</view>
-			<view class="action">
+			<view class="action" @click="navTo('../activity/attendList')">
+				<view class="text-blue">[我参加的活动]</view>
 			</view>
 		</view>
 		<view class="cu-card article no-card" v-if="myActivities.length">

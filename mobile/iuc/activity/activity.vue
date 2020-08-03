@@ -178,12 +178,27 @@
 					<button class="cu-btn bg-blue lg" form-type="submit">提交</button>
 				</view>
 			</form>
+			<view class="cu-bar bg-white solids-bottom margin-top">
+				<view class="action text-xl">
+					<text class="cuIcon-title text-blue text-xl"></text>
+					<text class="text-bold text-xl">操作流程</text>
+				</view>
+				<view class="action" @click="foldUp">
+					<text class="text-df">{{displayTimeline?'收起':'展开'}}</text>
+					<text class="padding-lr-xs text-bold" :class="displayTimeline?'cuIcon-fold':'cuIcon-unfold'"></text>
+				</view>
+			</view>
+			<labTimeLine :timeline="io.timelines" v-show="displayTimeline"></labTimeLine>
 		</scroll-view>
 	</view>
 </template>
 
 <script>
+	import actTimeline from './act-timeline.vue'
 	export default {
+		components: {
+			actTimeline
+		},
 		onLoad(query) {
 			this.instanceId = query.instanceId;
 			this.stepId = query.stepId;
@@ -198,6 +213,7 @@
 				},
 				instanceId: "",
 				stepId: "",
+				displayTimeline: true,
 				detailMode: true,
 				upLoad: {
 
@@ -205,6 +221,9 @@
 			}
 		},
 		methods: {
+			foldUp() {
+				this.displayTimeline = !this.displayTimeline;
+			},
 			RadioChange(e) {
 				if (this.io.fieldAccess.GuideTeacherIsPass === 'w') {
 					this.io.data.GuideTeacherIsPass = e.detail.value === 'true';

@@ -1,14 +1,21 @@
 <template>
 	<view class="act-main" @click="toDetail(activity.ID)">
 		<view class="title">
-			<text v-if="state === 2" class="cu-tag margin-right-sm round bg-blue">已结束</text>
-			<text v-if="state === 1" class="cu-tag margin-right-sm round bg-blue">进行中</text>
-			<text v-if="state === 0" class="cu-tag margin-right-sm round bg-blue">报名中</text>
+			<template v-if="activity.isSigIn">
+				<text class="cu-tag margin-right-sm round bg-olive">我已签到</text>
+			</template>
+			<template v-else-if="activity.isSignUp">
+				<text class="cu-tag margin-right-sm round bg-olive">我已报名</text>
+			</template>
+			<template v-else>
+				<text v-if="state === 2" class="cu-tag margin-right-sm round bg-blue">已结束</text>
+				<text v-if="state === 1" class="cu-tag margin-right-sm round bg-blue">活动进行中</text>
+				<text v-if="state === 0" class="cu-tag margin-right-sm round bg-blue">活动报名中</text>
+			</template>
 			<text class="text-cut">{{activity.ActivityName ? activity.ActivityName : "暂无标题"}}</text>
 		</view>
 		<view class="content margin-bottom-sm">
-			<image src="/static/xmuScene1.jpg"
-			 mode="aspectFill"></image>
+			<image src="/static/xmuScene1.jpg" mode="aspectFill"></image>
 			<view class="desc">
 				<view class="text-content"> 
 					{{activity.Description ? activity.Description : "暂无简介"}}

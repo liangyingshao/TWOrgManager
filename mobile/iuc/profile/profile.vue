@@ -37,6 +37,12 @@
 					<text class="text-blue text-bold">切换角色</text>
 				</view>
 			</view>
+			<view class="arrow cu-item" v-if="userRole === 'departmanager'" @click="navTo('/iuc/profile/memberReviewHistory')">
+				<view class="font-15 margin-lr">
+					<text class="text-blue cuIcon-pick margin-right-sm"></text>
+					<text class="text-blue text-bold">成员审核历史</text>
+				</view>
+			</view>
 			<view class="arrow cu-item" @click="navTo('../login/login')">
 				<view class="font-15 margin-lr">
 					<text class="text-blue cuIcon-exit margin-right-sm"></text>
@@ -75,7 +81,8 @@
 				availableRoles: []
 			}
 		},
-		onLoad() {
+		onLoad(query) {
+			this.userRole = query.role;
 			this.getAvailablePositon();
 		},
 		onShow() {
