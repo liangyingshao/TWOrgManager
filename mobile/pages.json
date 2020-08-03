@@ -37,6 +37,9 @@
 			"path": "iuc/activity/activity-console"
 		},
 		{
+			"path": "iuc/activity/attendList"
+		},
+		{
 			"path": "iuc/login/pwd",
 			"style": {}
 		},
@@ -45,90 +48,95 @@
 			"style": {}
 		},
 		{
-			"path":"iuc/roomApplication/v2/myApplication",
+			"path": "iuc/roomApplication/v2/myApplication",
 			"style": {}
 		},
 		{
-			"path":"iuc/roomApplication/v2/myClub",
+			"path": "iuc/roomApplication/v2/myClub",
 			"style": {}
 		},
 		{
-			"path":"iuc/roomApplication/v2/todoList",
+			"path": "iuc/roomApplication/v2/todoList",
 			"style": {}
 		},
 		{
-			"path":"iuc/roomApplication/v2/myAttend",
+			"path": "iuc/roomApplication/v2/myAttend",
 			"style": {}
 		},
 		{
-			"path":"iuc/roomApplication/v2/allList",
+			"path": "iuc/roomApplication/v2/allList",
 			"style": {}
 		},
 		{
-			"path":"iuc/roomView/labDetail",
+			"path": "iuc/roomView/labDetail",
 			"style": {}
 		},
 		{
-			"path":"iuc/roomView/labList",
+			"path": "iuc/roomView/labList",
 			"style": {}
 		},
 		{
-			"path":"iuc/profile/profile",
+			"path": "iuc/profile/profile",
 			"style": {}
 		},
 		{
-			"path":"iuc/News/newsList",
+			"path": "iuc/profile/user-detail",
 			"style": {}
 		},
 		{
-			"path":"iuc/News/newsDetail",
+			"path": "iuc/profile/memberReviewHistory",
 			"style": {}
 		},
 		{
-        "path" : "components/labComponent/labTimeLine",
-        "style" : {}
-    },
-		{
-			"path" : "iuc/orgmanagement/orgmanagement",
-			"style" : {}
+			"path": "iuc/News/newsList",
+			"style": {}
 		},
 		{
-			"path" : "iuc/orgmanagement/orgList",
-			"style" : {}
+			"path": "iuc/News/newsDetail",
+			"style": {}
 		},
 		{
-			"path":"iuc/activity/activity",
-			"style" : {}
+			"path": "components/labComponent/labTimeLine",
+			"style": {}
 		},
 		{
-		    "path" : "iuc/activity/activity-detail"
+			"path": "iuc/orgmanagement/orgmanagement",
+			"style": {}
 		},
 		{
-		    "path" : "iuc/activity/activity-signUp-list"
+			"path": "iuc/orgmanagement/orgList",
+			"style": {}
 		},
 		{
-		    "path" : "iuc/activity/activity-signIn-list"
+			"path": "iuc/activity/activity",
+			"style": {}
+		},
+		{
+			"path": "iuc/activity/activity-detail"
+		},
+		{
+			"path": "iuc/activity/activity-signUp-list"
+		},
+		{
+			"path": "iuc/activity/activity-signIn-list"
 		},
 		{
 			"path": "iuc/profile/user-audit"
 		},
 		{
-        "path" : "iuc/activity/activityList",
-        "style" : {}
-    }
-    ,{
-        "path" : "iuc/index/index-all-application",
-        "style" : {}
-    }
-    ,{
-        "path" : "iuc/index/index-all-activity",
-        "style" : {}
-    }
-    ,{
-        "path" : "iuc/index/index-all-associations",
-        "style" : {}
-    }
-    ],
+			"path": "iuc/activity/activityList",
+			"style": {}
+		}, {
+			"path": "iuc/index/index-all-application",
+			"style": {}
+		}, {
+			"path": "iuc/index/index-all-activity",
+			"style": {}
+		}, {
+			"path": "iuc/index/index-all-associations",
+			"style": {}
+		}
+	],
 	"globalStyle": {
 		"mp-alipay": {
 			/* 支付宝小程序特有相关 */
@@ -141,14 +149,13 @@
 		"navigationBarTextStyle": "white"
 	},
 	"usingComponts": true,
-		"condition": { //模式配置，仅开发期间生效
+	"condition": { //模式配置，仅开发期间生效
 		"current": 0, //当前激活的模式(list 的索引项)
 		"list": [{
-				"name": "表单", //模式名称
-				"path": "pages/component/form", //启动页面
-				"query": "" //启动参数
-			}
-		]
+			"name": "表单", //模式名称
+			"path": "pages/component/form", //启动页面
+			"query": "" //启动参数
+		}]
 	}
 
 }

@@ -27,7 +27,7 @@
 		},
 		methods: {
 			getAllActivities(){
-				uni.post("/api/org/GetStartedApplications", {}, msg => {
+				uni.post("/api/org/GetMyApplications", {}, msg => {
 					if(msg.success){
 						this.activities = msg.data;
 					}

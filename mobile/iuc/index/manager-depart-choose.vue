@@ -2,7 +2,7 @@
 	<view>
 		<cu-custom bgColor="bg-blue" isBack>
 			<block slot="backText">返回</block>
-			<block slot="content">社团列表</block>
+			<block slot="content">社团列表(废弃)</block>
 		</cu-custom>
 		<view class="padding-lr bg-white solids-bottom" v-for="(item,index) in departs" :key="index" @click="toDetail(item.id)">
 			<view class="cu-item">
@@ -15,7 +15,6 @@
 				</view>
 			</view>
 		</view>
-	</view>
 	</view>
 </template>
 

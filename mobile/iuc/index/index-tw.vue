@@ -11,7 +11,7 @@
 				<text>审核历史</text>
 			</view>
 			<!-- 此按钮效果同社团活动里的“所有活动” -->
-			<view class="act-btn" @click="navTo('manager-depart-choose')">
+			<view class="act-btn" @click="navTo('index-all-associations')">
 				<text class="icon cuIcon-activity"></text>
 				<text>社团管理</text>
 			</view>
