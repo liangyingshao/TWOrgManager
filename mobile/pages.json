@@ -136,7 +136,7 @@
 			"allowsBounceVertical": "NO"
 		},
 		"navigationBarBackgroundColor": "#0081ff",
-		"navigationBarTitleText": "信息学院平台",
+		"navigationBarTitleText": "厦门大学社团管理信息系统",
 		"navigationStyle": "custom",
 		"navigationBarTextStyle": "white"
 	},
