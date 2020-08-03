@@ -40,7 +40,7 @@
 			<view class="action">
 				<text class="cuIcon-titles text-blue"></text> 活动列表
 			</view>
-			<view class="action" @click="navTo('../orgmanagement/orgList')">
+			<view class="action" @click="navTo('../activity/activityList')">
 				<view class="text-blue">[进行中的活动]</view>
 			</view>
 		</view>
