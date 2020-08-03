@@ -16,6 +16,7 @@
 		<view class="cu-bar bg-white solid-bottom margin-top solid-bottom">
 			<view class="action">
 				<text class="cuIcon-titles text-blue"></text> 我的社团
+				<text class="margin-left">我申请的社团：{{applications.length}}个</text>
 			</view>
 			<view class="action" @click="navTo('../orgmanagement/orgList')">
 				<view class="text-blue">[报名参加]</view>
@@ -97,6 +98,13 @@
 					}
 				})
 			},
+			getMyApplicate() {
+				uni.post("/api/security/GetMyDepartAllications", {}, msg => {
+					if(msg.success){
+						this.applications = msg.data;
+					}
+				})
+			},
 			getMyActivities() {
 				uni.post("/api/org/GetMyApplications", {}, msg => {
 					if(msg.success){
@@ -114,6 +122,7 @@
 			this.getDashBoard();
 			this.getActivities();
 			this.getMyActivities();
+			this.getMyApplicate();
 		},
 		data () {
 			// 1. 在可以申请加入社团的时候，第一个按钮显示：“查找社团”
@@ -126,6 +135,7 @@
 				myOrgs: [],
 				activities: [],
 				myActivities: [],
+				applications: [],
 				app
 			}
 		}
