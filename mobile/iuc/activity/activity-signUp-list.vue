@@ -13,11 +13,14 @@
 						<view class="text-gray text-sm">
 							<text class="cuIcon-infofill margin-right-xs"></text>报名时间：{{item.SignUpOn}}</view>
 					</view>
-					<view class="action" v-if="item.SignUpState == 0">
+					<view class="action" v-if="item.SignUpState === 0">
 						<text class="text-green">已报名</text>
 					</view>
-					<view class="action" v-else-if="item.SignUpState == 99 || item.SignUpState == 999">
+					<view class="action" v-else-if="item.SignUpState === 99">
 						<text class="text-red">已取消</text>
+					</view>
+					<view class="action" v-else-if="item.SignUpState === 999">
+						<text class="text-red">未报名</text>
 					</view>
 				</view>
 			</view>
@@ -35,22 +38,7 @@
 	export default {
 		data() {
 			return {
-				allSignUp: [{
-						RealName: "小宋",
-						SignUpOn: "2020年7月1日",
-						SignUpState: 0
-					},
-					{
-						RealName: "小宋",
-						SignUpOn: "2020年7月1日",
-						SignUpState: 0
-					},
-					{
-						RealName: "小宋",
-						SignUpOn: "2020年7月1日",
-						SignUpState: 0
-					}
-				],
+				allSignUp: [],
 				actId: ""
 			}
 		},

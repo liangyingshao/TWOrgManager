@@ -19,7 +19,7 @@
 			<view v-else class="flex justify-center text-center">
 				<view>
 					<image src="/static/none.png"></image>
-					<view class="text-xxl">暂无社团</view>
+					<view class="text-xxl">{{orgText}}</view>
 				</view>
 			</view>
 		</view>
@@ -34,18 +34,22 @@
 		},
 		methods: {
 			getAllOrg() {
+				this.orgText = "社团列表加载中";
 				uni.post("/api/security/GetAllDeparts", {}, msg => {
 					if (msg.success) {
 						this.orgsOrigin = msg.data.filter(e => e.Type === 1);
-						this.orgsOrigin.sort(function(a, b) {
-							if (a.myDeparts && !b.myDeparts) {
-								return -1;
-							} else if (!a.myDeparts && b.myDeparts) {
-								return 1;
-							} else {
-								return 0;
-							}
-						})
+						// this.orgsOrigin.sort(function(a, b) {
+						// 	if (a.myDeparts && !b.myDeparts) {
+						// 		return -1;
+						// 	} else if (!a.myDeparts && b.myDeparts) {
+						// 		return 1;
+						// 	} else {
+						// 		return 0;
+						// 	}
+						// })
+						if (!this.orgsOrigin.length) {
+							this.orgText = "找不到社团";
+						}
 						this.orgs = this.orgsOrigin;
 					}
 				})
@@ -58,11 +62,15 @@
 			Search(e) {
 				let keyword = e.detail.value;
 				this.orgs = this.orgsOrigin.filter(e => e.Name.indexOf(keyword) > -1);
+				if (!this.orgs.length) {
+					this.orgText = "找不到社团";
+				}
 			}
 		},
 		data() {
 			return {
 				orgs: [],
+				orgText: "找不到社团",
 				orgsOrigin: []
 			}
 		},

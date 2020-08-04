@@ -1,7 +1,7 @@
 <template>
 	<view>
 		<title-bar :placeholder="searchText" @input="doSearch">
-			<view v-if="isTeacher" class="act-btn">
+			<view v-if="isTeacher" class="act-btn" @click="navTo('/iuc/orgmanagement/orgmanagement')">
 				<text class="icon cuIcon-home"></text>
 				<text>我的社团</text>
 			</view>
@@ -15,7 +15,7 @@
 				<text class="icon cuIcon-activity"></text>
 				<text>社团活动</text>
 			</view>
-			<view class="act-btn" @click="toProfile">
+			<view class="act-btn" @click="navTo('/iuc/profile/profile?role=departmanager')">
 				<text class="icon cuIcon-profile"></text>
 				<text>个人中心</text>
 			</view>
@@ -38,7 +38,7 @@
 		</view>
 		<view class="cu-list menu" v-for="(item,index) in inApplyingApp" :key="index" v-show="showMemberReview">
 			<view class="cu-item">
-				<view class="content padding-tb-sm" @click="audit(item.ID, item.Code)">
+				<view class="content padding-tb-sm" @click="audit(item.ID, item.Code, item.State)">
 					<view>
 						<text class="cuIcon-profilefill text-blue margin-right-xs"></text> {{item.RealName}}（{{item.Code}}）</view>
 					<view class="text-gray text-sm">
@@ -97,9 +97,9 @@
 			titleBar
 		},
 		methods: {
-			audit(ID, userCode) {
+			audit(ID, userCode, State) {
 				uni.navigateTo({
-					url: "/iuc/profile/user-audit?userCode=" + userCode + "&ID=" + ID,
+					url: "/iuc/profile/user-audit?userCode=" + userCode + "&ID=" + ID + "&State=" + State
 				})
 			},
 			changeActReviewShow() {
@@ -183,9 +183,6 @@
 			doSearch(text) {
 				// text 即是输入的文本
 				this.onGoingAct = this.data.filter(e => e.ActivityName.indexOf(text) !== -1);
-			},
-			toProfile() {
-				uni.toProfile()
 			},
 			navTo(e) {
 				uni.navigateTo({
