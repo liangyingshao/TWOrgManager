@@ -10,7 +10,7 @@
 					<view class="content padding-tb-sm">
 						<view>
 							<text class="cuIcon-profilefill text-blue margin-right-xs"></text> {{item.RealName}}</view>
-						<view class="text-gray text-sm">
+						<view v-if="item.SignUpState === 0" class="text-gray text-sm">
 							<text class="cuIcon-infofill margin-right-xs"></text>报名时间：{{item.SignUpOn}}</view>
 					</view>
 					<view class="action" v-if="item.SignUpState === 0">
