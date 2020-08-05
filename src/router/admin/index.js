@@ -9,6 +9,11 @@ module.exports = {
         layout: "admin",
         component: () => import(/* webpackChunkName: "OrgManager" */"@p/Modules/OrgManager/forAdmin")
     },
+    DepartManage: {
+        path: "/manage/depart",
+        layout: "admin",
+        component: () => import(/* webpackChunkName: "OrgManager" */"@p/Modules/OrgManager/departManager-index")
+    },
     StuManage: {
         path: "/manage/student",
         layout: "admin",
