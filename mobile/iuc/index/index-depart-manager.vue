@@ -1,7 +1,7 @@
 <template>
 	<view>
 		<title-bar :placeholder="searchText" @input="doSearch">
-			<view v-if="isTeacher" class="act-btn">
+			<view v-if="isTeacher" class="act-btn" @click="navTo('/iuc/orgmanagement/orgmanagement')">
 				<text class="icon cuIcon-home"></text>
 				<text>我的社团</text>
 			</view>
@@ -15,7 +15,7 @@
 				<text class="icon cuIcon-activity"></text>
 				<text>社团活动</text>
 			</view>
-			<view class="act-btn" @click="toProfile">
+			<view class="act-btn" @click="navTo('/iuc/profile/profile?role=departmanager')">
 				<text class="icon cuIcon-profile"></text>
 				<text>个人中心</text>
 			</view>
@@ -38,7 +38,7 @@
 		</view>
 		<view class="cu-list menu" v-for="(item,index) in inApplyingApp" :key="index" v-show="showMemberReview">
 			<view class="cu-item">
-				<view class="content padding-tb-sm" @click="audit(item.ID, item.Code)">
+				<view class="content padding-tb-sm" @click="audit(item.ID, item.Code, item.State)">
 					<view>
 						<text class="cuIcon-profilefill text-blue margin-right-xs"></text> {{item.RealName}}（{{item.Code}}）</view>
 					<view class="text-gray text-sm">
@@ -71,7 +71,8 @@
 			<view class="cu-item shadow" @click="toConsole(item.ID)">
 				<view class="title">
 					<view class="text-cut">
-						<view class="cu-tag margin-right-sm round bg-red">进行中</view>
+						<view v-if="item.StartState === 1" class="cu-tag margin-right-sm round bg-blue">进行中</view>
+						<view v-else-if="item.StartState === 0" class="cu-tag margin-right-sm round bg-green">未开始</view>
 						{{item.ActivityName ? item.ActivityName : "暂无社团活动名称"}}
 					</view>
 				</view>
@@ -96,9 +97,9 @@
 			titleBar
 		},
 		methods: {
-			audit(ID, userCode) {
+			audit(ID, userCode, State) {
 				uni.navigateTo({
-					url: "/iuc/profile/user-audit?userCode=" + userCode + "&ID=" + ID,
+					url: "/iuc/profile/user-audit?userCode=" + userCode + "&ID=" + ID + "&State=" + State
 				})
 			},
 			changeActReviewShow() {
@@ -144,7 +145,7 @@
 					if (msg.success) {
 						this.onGoingAct = [];
 						for (let i = 0; i < msg.data.length; i++) {
-							if (msg.data[i].ApplicateState === 3 && msg.data[i].StartState === 1) {
+							if (msg.data[i].ApplicateState === 3) {
 								this.onGoingAct.push(msg.data[i]);
 							}
 						}
@@ -159,7 +160,7 @@
 					if (msg.success) {
 						this.onGoingAct = [];
 						for (let i = 0; i < msg.data.length; i++) {
-							if (msg.data[i].ApplicateState === 3 && msg.data[i].StartState === 1) {
+							if (msg.data[i].ApplicateState === 3) {
 								this.onGoingAct.push(msg.data[i]);
 							}
 						}
@@ -183,9 +184,6 @@
 				// text 即是输入的文本
 				this.onGoingAct = this.data.filter(e => e.ActivityName.indexOf(text) !== -1);
 			},
-			toProfile() {
-				uni.toProfile()
-			},
 			navTo(e) {
 				uni.navigateTo({
 					url: e
@@ -197,7 +195,7 @@
 				showMemberReview: true,
 				showActReview: true,
 				showAct: true,
-				searchText: "",
+				searchText: "搜索社团活动",
 				myPenging: [],
 				data: [],
 				onGoingAct: [],

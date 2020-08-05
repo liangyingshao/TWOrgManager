@@ -2,7 +2,7 @@
 	<view>
 		<cu-custom bgColor="bg-white" isBack>
 			<block slot="backText">返回</block>
-			<block slot="content">加入社团审核</block>
+			<block slot="content">用户信息</block>
 		</cu-custom>
 		<view class="cu-card no-card">
 			<view class="cu-item shadow padding-lg">
@@ -17,9 +17,8 @@
 				</view>
 			</view>
 		</view>
-		<view class="padding flex flex-direction"  v-if="State==3">
-			<button class="cu-btn bg-green lg" @click="commitUser(ID)">通过</button>
-			<button class="cu-btn bg-red margin-tb-sm lg" @click="refuseUser(ID)">驳回</button>
+		<view class="padding flex flex-direction">
+			<button class="cu-btn bg-red lg" @click="delUser(ID)">删除成员</button>
 		</view>
 		<!-- 这个用户的基本信息，提一个组件出去。输入一个对象，然后全部显示就行了。这样以后也可以用 -->
 		<view class="cu-bar bg-white solid-bottom margin-top">
@@ -81,41 +80,34 @@
 			}
 		},
 		methods: {
-			refuseUser(ID) {
-				uni.post("/api/security/DenyApplicate", {
-					appId: ID
-				}, msg => {
-					uni.showToast({
-						title: msg.msg,
-						icon: 'none'
-					});
-					if (msg.success) {
-						uni.navigateBack({
-							delta: 1
-						});
+			delUser(ID) {
+				uni.showModal({
+					title: '删除成员',
+					content: '确实要删除成员吗？',
+					success: res => {
+						if (res.confirm) {
+							uni.post("/api/security/RemoveUserV2", {
+								userId: ID,
+								departId: app.defaultDepartId
+							}, msg => {
+								uni.showToast({
+									title: msg.msg,
+									icon: 'none'
+								});
+								if (msg.success) {
+									uni.navigateBack({
+										delta: 1
+									});
+								}
+							});
+						}
 					}
-				})
-			},
-			commitUser(ID) {
-				uni.post("/api/security/AcceptApplicate", {
-					appId: ID
-				}, msg => {
-					uni.showToast({
-						title: msg.msg,
-						icon: 'none'
-					});
-					if (msg.success) {
-						uni.navigateBack({
-							delta: 1
-						});
-					};
-				})
+				});
 			}
 		},
 		onLoad(query) {
 			this.userCode = query.userCode;
 			this.ID = query.ID;
-			this.State = query.State;
 			uni.post("/api/security/GetUserByCode", {
 				code: this.userCode
 			}, msg => {

@@ -1,7 +1,7 @@
 <template>
 	<view>
 		<title-bar :placeholder="searchText" @input="doSearch">
-			<view v-if="overRideId"  class="act-btn" @click="navTo('./index-manager')">
+			<view v-if="overRideId" class="act-btn" @click="navBack">
 				<text class="icon cuIcon-home"></text>
 				<text>我的单位</text>
 			</view>
@@ -46,7 +46,11 @@
 					<view>
 						<text class="cuIcon-activityfill text-blue margin-right-xs"></text>{{item.WorkflowName}}</view>
 					<view class="text-gray text-sm">
-						<text class="cuIcon-infofill margin-right-xs"></text> {{item.Owner}}提交的{{item.WorkflowType}}</view>
+						<text class="cuIcon-infofill margin-right-xs"></text> {{item.Owner}}提交的{{item.WorkflowType}}
+					</view>
+					<view class="text-gray text-sm">
+						<text class="cuIcon-repairfill margin-right-xs"></text> 当前步骤：{{item.StepName}} @{{item.ExecutorName}}/{{item.ArriveOn}}
+					</view>
 				</view>
 				<view class="action">
 					<button class="cu-btn bg-green shadow" @click="navTo(`../activity/activity?instanceId=${item.InstanceId}&stepId=${item.StepId}`)">
@@ -71,11 +75,12 @@
 				<view class="text-xl">暂无进行中的活动</view>
 			</view>
 		</view>
-		<view class="cu-card no-card article" v-for="(item,index) in onGoingAct" :key="index + inApplyingApp.length">
+		<view class="cu-card no-card article" v-for="(item,index) in onGoingAct" :key="index">
 			<view class="cu-item shadow" @click="toConsole(item.ID)">
 				<view class="title">
 					<view class="text-cut">
-						<view class="cu-tag margin-right-sm round bg-red">进行中</view>
+						<view v-if="item.StartState === 1" class="cu-tag margin-right-sm round bg-blue">进行中</view>
+						<view v-else-if="item.StartState === 0" class="cu-tag margin-right-sm round bg-green">未开始</view>
 						{{item.ActivityName ? item.ActivityName : "暂无社团活动名称"}}
 					</view>
 				</view>
@@ -100,6 +105,11 @@
 			titleBar
 		},
 		methods: {
+			navBack(){
+				uni.navigateBack({
+					
+				})
+			},
 			changeActReviewShow() {
 				this.showActReview = !this.showActReview;
 			},
@@ -122,7 +132,7 @@
 					if (msg.success) {
 						this.onGoingAct = [];
 						for (let i = 0; i < msg.data.length; i++) {
-							if (msg.data[i].ApplicateState === 3 && msg.data[i].StartState === 1) {
+							if (msg.data[i].ApplicateState === 3) {
 								this.onGoingAct.push(msg.data[i]);
 							}
 						}
@@ -152,7 +162,7 @@
 			return {
 				showActReview: true,
 				showAct: true,
-				searchText: "",
+				searchText: "搜索社团活动",
 				myPenging: [],
 				data: [],
 				onGoingAct: [],

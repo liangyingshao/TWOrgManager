@@ -16,6 +16,7 @@
 		<view class="cu-bar bg-white solid-bottom margin-top solid-bottom">
 			<view class="action">
 				<text class="cuIcon-titles text-blue"></text> 我的社团
+				<text class="margin-left">我申请的社团：{{applications.length}}个</text>
 			</view>
 			<view class="action" @click="navTo('../orgmanagement/orgList')">
 				<view class="text-blue">[报名参加]</view>
@@ -25,7 +26,7 @@
 			<!-- 下面这个VIEW是有社团的情况，如果只有一个就只显示一个 -->
 			<view class="cu-item shadow flex" v-if="myOrgs.length">
 				<view class="flex-sub padding-sm" v-for="org in myOrgs" :key="org.ID">
-					<view class="cu-avatar round xl" style="background-image:url(https://ossweb-img.qq.com/images/lol/web201310/skin/big10001.jpg)"></view>
+					<view class="cu-avatar round xl" :style="'background-image:url(' + app.userInfo.avatar + ');'"></view>
 					<view class="margin-top-sm">{{org.Name}}</view>
 				</view>
 			</view>
@@ -39,12 +40,12 @@
 			<view class="action">
 				<text class="cuIcon-titles text-blue"></text> 活动列表
 			</view>
-			<view class="action" @click="navTo('../activity/activityList')">
-				<view class="text-blue">[报名参加]</view>
+			<view class="action" @click="navTo('../orgmanagement/orgList')">
+				<view class="text-blue">[进行中的活动]</view>
 			</view>
 		</view>
-		<view class="cu-card article no-card" v-if="activities.length" :key="activity.ID">
-			<view class="cu-item solid-bottom" v-for="activity in activities">
+		<view class="cu-card article no-card" v-if="activities.length" >
+			<view class="cu-item solid-bottom" v-for="activity in activities" :key="activity.ID">
 				<act-thumb :activity="activity"></act-thumb>
 			</view>
 		</view>
@@ -56,11 +57,12 @@
 			<view class="action">
 				<text class="cuIcon-titles text-blue"></text> 我参加的活动
 			</view>
-			<view class="action">
+			<view class="action" @click="navTo('../activity/attendList')">
+				<view class="text-blue">[我参加的活动]</view>
 			</view>
 		</view>
-		<view class="cu-card article no-card" v-if="myActivities.length" :key="activity.ID">
-			<view class="cu-item shadow"  v-for="activity in myActivities">
+		<view class="cu-card article no-card" v-if="myActivities.length">
+			<view class="cu-item shadow"  v-for="activity in myActivities" :key="activity.ID">
 				<act-thumb :activity="activity"></act-thumb>
 			</view>
 		</view>
@@ -96,6 +98,13 @@
 					}
 				})
 			},
+			getMyApplicate() {
+				uni.post("/api/security/GetMyDepartAllications", {}, msg => {
+					if(msg.success){
+						this.applications = msg.data;
+					}
+				})
+			},
 			getMyActivities() {
 				uni.post("/api/org/GetMyApplications", {}, msg => {
 					if(msg.success){
@@ -113,6 +122,7 @@
 			this.getDashBoard();
 			this.getActivities();
 			this.getMyActivities();
+			this.getMyApplicate();
 		},
 		data () {
 			// 1. 在可以申请加入社团的时候，第一个按钮显示：“查找社团”
@@ -124,7 +134,9 @@
 				userInfo: app.userInfo,
 				myOrgs: [],
 				activities: [],
-				myActivities: []
+				myActivities: [],
+				applications: [],
+				app
 			}
 		}
 	}

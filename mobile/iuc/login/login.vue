@@ -27,9 +27,9 @@
 				<text class="padding-lr-xs">|</text>
 				<text @click="login('25648', '123456')">指导老师</text>
 				<text class="padding-lr-xs">|</text>
-				<text @click="login('13621345797', '88888888')">挂靠单位</text>
+				<text @click="login('13621345797', '88888888')">业务指导</text>
 				<text class="padding-lr-xs">|</text>
-				<text @click="login('15102246798', '123456')">学联会</text>
+				<text @click="login('15102246798', '123456')">社团管理部</text>
 				<text class="padding-lr-xs">|</text>
 				<text @click="login('admin', '88888888')">团委</text>
 			</view>

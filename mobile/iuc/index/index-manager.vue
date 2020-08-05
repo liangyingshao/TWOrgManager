@@ -11,7 +11,7 @@
 				<text>审核历史</text>
 			</view>
 			<!-- 此按钮效果同社团活动里的“所有活动” -->
-			<view class="act-btn" @click="navTo('manager-depart-choose')">
+			<view class="act-btn" @click="navTo('index-all-associations')">
 				<text class="icon cuIcon-activity"></text>
 				<text>社团管理</text>
 			</view>
@@ -39,10 +39,10 @@
 						<text class="cuIcon-activityfill text-blue margin-right-xs"></text>{{item.WorkflowName}}</view>
 					<view class="text-gray text-sm">
 						<text class="cuIcon-infofill margin-right-xs"></text> {{item.Owner}}提交的{{item.WorkflowType}}</view>
-          <view class="text-gray text-sm">
-          	<text class="cuIcon-repairfill margin-right-xs"></text> 当前步骤：{{item.StepName}} @{{item.ExecutorName}}/{{item.ArriveOn}}
-          </view>
-        </view>
+					<view class="text-gray text-sm">
+						<text class="cuIcon-repairfill margin-right-xs"></text> 当前步骤：{{item.StepName}} @{{item.ExecutorName}}/{{item.ArriveOn}}
+					</view>
+				</view>
 				<view class="action">
 					<button class="cu-btn bg-green shadow" @click="navTo(`../activity/activity?instanceId=${item.InstanceId}&stepId=${item.StepId}`)">
 						详情
@@ -86,7 +86,7 @@
 					社团列表
 				</text>
 			</view>
-			<view class="action" @click="navTo('/iuc/index/manager-depart-choose')">
+			<view class="action" @click="navTo('/iuc/index/index-all-associations')">
 				<view class="text-blue">[所有社团]</view>
 			</view>
 		</view>
@@ -94,7 +94,7 @@
 			<view class="cu-item">
 				<view class="content padding-tb-sm">
 					<view>
-						<text class="cuIcon-newsfill text-blue margin-right-xs"></text>社团名称: {{item.name}}
+						<text class="cuIcon-newsfill text-blue margin-right-xs"></text>[{{item.parent}}] {{item.name}}
 					</view>
 					<view class="text-gray text-sm text-cut margin-top-sm">
 						<text class="cuIcon-wenzi margin-right-xs"></text>管理员：{{item.admin}}
@@ -124,7 +124,7 @@
 			},
 			doSearch(text) {
 				// text 即是输入的文本
-				console.log(text);
+				this.departs = this.data.filter(e => e.name.indexOf(text) !== -1)
 			},
 			toProfile() {
 				uni.toProfile()
@@ -175,7 +175,7 @@
 			},
 			toOrg(id) {
 				uni.navigateTo({
-					url: './index-teacher?departId='+id
+					url: './index-teacher?departId=' + id
 				})
 			}
 		},
@@ -183,7 +183,7 @@
 			return {
 				showMemberReview: true,
 				showAct: true,
-				searchText: "",
+				searchText: "搜索社团名称",
 				allAppNum: 0,
 				inApplyingApp: [],
 				allActivity: [],
@@ -198,11 +198,12 @@
 					2: "red"
 				},
 				departs: [],
+				data: [],
 				myPenging: []
 			};
 		},
 		onLoad() {
-			
+
 		},
 		onShow() {
 			this.getPending();
@@ -218,10 +219,12 @@
 					}
 				}
 			});
-			uni.post("/api/security/GetDepartsByDepartId", {
-				id: app.defaultDepartId
+			uni.post("/api/security/GetAllAssociationsByDepartId", {
+				departId: app.defaultDepartId
 			}, msg => {
-				this.departs = msg.data.children
+				if (msg.success) {
+					this.departs = msg.data;
+				}
 			});
 			uni.post("/api/org/GetActByDepartId", {
 				id: departId

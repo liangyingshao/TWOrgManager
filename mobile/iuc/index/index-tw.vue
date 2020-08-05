@@ -11,7 +11,7 @@
 				<text>审核历史</text>
 			</view>
 			<!-- 此按钮效果同社团活动里的“所有活动” -->
-			<view class="act-btn" @click="navTo('manager-depart-choose')">
+			<view class="act-btn" @click="navTo('index-all-associations')">
 				<text class="icon cuIcon-activity"></text>
 				<text>社团管理</text>
 			</view>
@@ -32,17 +32,19 @@
 				<view class="text-blue">[审核历史]</view>
 			</view>
 		</view>
-		<view class="cu-list menu">
+		<view class="cu-list menu" v-if="showList">
 			<view class="cu-item" v-for="item in myPenging" :key="item.InstanceId">
 				<view class="content padding-tb-sm">
 					<view>
-						<text class="cuIcon-activityfill text-blue margin-right-xs"></text>{{item.WorkflowName}}</view>
+						<text class="cuIcon-activityfill text-blue margin-right-xs"></text>{{item.WorkflowName}}
+					</view>
 					<view class="text-gray text-sm">
-						<text class="cuIcon-infofill margin-right-xs"></text> {{item.Owner}}提交的{{item.WorkflowType}}</view>
-          <view class="text-gray text-sm">
-          	<text class="cuIcon-repairfill margin-right-xs"></text> 当前步骤：{{item.StepName}} @{{item.ExecutorName}}/{{item.ArriveOn}}
-          </view>
-        </view>
+						<text class="cuIcon-infofill margin-right-xs"></text> {{item.Owner}}提交的{{item.WorkflowType}}
+					</view>
+					<view class="text-gray text-sm">
+						<text class="cuIcon-repairfill margin-right-xs"></text> 当前步骤：{{item.StepName}} @{{item.ExecutorName}}/{{item.ArriveOn}}
+					</view>
+				</view>
 				<view class="action">
 					<button class="cu-btn bg-green shadow" @click="navTo(`../activity/activity?instanceId=${item.InstanceId}&stepId=${item.StepId}`)">
 						详情
@@ -94,7 +96,7 @@
 			<view class="cu-item">
 				<view class="content padding-tb-sm">
 					<view>
-						<text class="cuIcon-newsfill text-blue margin-right-xs"></text>社团名称: {{item.name}}
+						<text class="cuIcon-newsfill text-blue margin-right-xs"></text>[{{item.parent}}] {{item.name}}
 					</view>
 					<view class="text-gray text-sm text-cut margin-top-sm">
 						<text class="cuIcon-wenzi margin-right-xs"></text>管理员：{{item.admin}}
@@ -122,7 +124,8 @@
 			},
 			doSearch(text) {
 				// text 即是输入的文本
-				console.log(text);
+				this.showList = text === "" ? true: false;
+				this.departs = this.data.filter(e=>e.name.indexOf(text)!==-1)
 			},
 			toProfile() {
 				uni.toProfile()
@@ -173,7 +176,7 @@
 			},
 			toOrg(id) {
 				uni.navigateTo({
-					url: './index-teacher?departId='+id
+					url: './index-teacher?departId=' + id
 				})
 			}
 		},
@@ -181,7 +184,7 @@
 			return {
 				showMemberReview: true,
 				showAct: true,
-				searchText: "",
+				searchText: "搜索社团名称",
 				allAppNum: 0,
 				inApplyingApp: [],
 				allActivity: [],
@@ -196,6 +199,8 @@
 					2: "red"
 				},
 				departs: [],
+				data: [],
+				showList: true,
 				myPenging: []
 			};
 		},
@@ -220,13 +225,14 @@
 				departId: app.defaultDepartId
 			}, msg => {
 				if (msg.success) {
-          this.departs = msg.data;
-        } else {
-          uni.showToast({
-            title: msg.msg,
-            icon: 'none'
-          });
-        }
+					this.departs = msg.data;
+					this.data = this.departs;
+				} else {
+					uni.showToast({
+						title: msg.msg,
+						icon: 'none'
+					});
+				}
 			});
 			uni.post("/api/org/GetActByDepartId", {
 				id: departId

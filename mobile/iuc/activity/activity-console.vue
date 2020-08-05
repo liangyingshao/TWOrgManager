@@ -16,7 +16,10 @@
 				<view class='text-sm cu-tag bg-yellow margin-top-xs round'>审批中</view>
 			</template>
 			<template v-else>
-				<view :class="'text-sm cu-tag margin-top-xs round bg-' + stateColor[actInfo.StartState]">{{startState[actInfo.StartState]}}</view>
+				<view v-if="actInfo.StartState === 1" class="text-sm cu-tag margin-top-xs round bg-blue">
+					{{startState[actInfo.StartState]}}:{{actInfo.isSignUping}}
+				</view>
+				<view v-else :class="'text-sm cu-tag margin-top-xs round bg-' + stateColor[actInfo.StartState]">{{startState[actInfo.StartState]}}</view>
 			</template>
 		</view>
 		<!-- 如果活动如果申请流程还没有结束 -->
@@ -30,12 +33,11 @@
 			<image class="qr-area" :src="'http://stgl.ricebird.cn/qr/'+actInfo.ShortCode"></image>
 		</view>
 		<!-- 活动如果审批结束，但还没有开始，则显示这个 -->
-		<!-- 这个功能取消了 -->
-		<!--view class="qr-container margin-bottom-xl padding-lr-xl" v-else-if="actInfo.StartState === 0">
-			<button class="on-working btn bg-green" @click="setActStart()">
+		<view class="qr-container margin-bottom-xl padding-lr-xl" v-else-if="actInfo.StartState === 0">
+			<button class="on-working btn bg-green" @click="setActStart(actInfo.ID)">
 				点击开始
 			</button>
-		</view-->
+		</view>
 		<view class="margin-lr text-center">
 			<view class="">活动时间：{{actInfo.StartDate}}~{{actInfo.EndDate}}</view>
 			<view class="">活动地点：{{actInfo.Address ? actInfo.Address : '暂无地点'}}</view>
@@ -46,7 +48,7 @@
 			<view class="cu-item" @click="toSignUP()">
 				<view class="cuIcon-friendfavor">
 					<view class="cu-tag badge">
-						<block>{{actInfo.needChecks>99 ? '99+' : actInfo.needChecks}}</block>
+						<block>{{actInfo.needChecks>99 ? '99+' : actInfo.alreadeySignUps}}</block>
 					</view>
 				</view>
 				<text>报名情况</text>
@@ -86,20 +88,33 @@
 		},
 		onLoad(query) {
 			this.ID = query.ID;
-			uni.post("/api/org/GetApplicationDetail", {
-				id: this.ID
-			}, msg => {
-				if (msg.success) {
-					this.actInfo = msg.data;
-				} else {
-					uni.showToast({
-						title: msg.msg,
-						icon: "none"
-					})
-				}
-			});
+			this.getActInfo();
 		},
 		methods: {
+			getActInfo(){
+				uni.post("/api/org/GetApplicationDetail", {
+					id: this.ID
+				}, msg => {
+					if (msg.success) {
+						this.actInfo = msg.data;
+						
+						let startDate = new Date(msg.data.Start);
+						let endDate = new Date(msg.data.End);
+						if(new Date() > endDate){
+							this.actInfo.isSignUping = "已结束";
+						} else if(new Date() > startDate){
+							this.actInfo.isSignUping = "活动阶段";
+						} else {
+							this.actInfo.isSignUping = "报名阶段";
+						}
+					} else {
+						uni.showToast({
+							title: msg.msg,
+							icon: "none"
+						})
+					}
+				});
+			},
 			toSignUP() {
 				uni.navigateTo({
 					url: "/iuc/activity/activity-signUp-list?ID=" + this.ID
@@ -108,6 +123,21 @@
 			toSignIn() {
 				uni.navigateTo({
 					url: "/iuc/activity/activity-signIn-list?ID=" + this.ID
+				});
+			},
+			setActStart(actId) {
+				uni.post("/api/org/ChangeActivityState", {
+					actId,
+					state: 1
+				}, msg => {
+					if (msg.success) {
+						this.getActInfo();
+					} else {
+						uni.showToast({
+							title: msg.msg,
+							icon: "none"
+						})
+					}
 				});
 			}
 		}
