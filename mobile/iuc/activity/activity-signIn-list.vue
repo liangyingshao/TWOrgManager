@@ -10,7 +10,7 @@
 					<view class="content padding-tb-sm">
 						<view>
 							<text class="cuIcon-profilefill text-blue margin-right-xs"></text> {{item.RealName}}</view>
-						<view class="text-gray text-sm">
+						<view  v-if="item.SignInState == 0" class="text-gray text-sm">
 							<text class="cuIcon-infofill margin-right-xs"></text>签到时间：{{item.SignInOn}}</view>
 					</view>
 					<view class="action" v-if="item.SignInState == 0">

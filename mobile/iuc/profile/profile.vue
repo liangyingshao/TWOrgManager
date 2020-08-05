@@ -25,7 +25,7 @@
 			</view>
 		</view-->
 		<view class="cu-list menu">
-			<view class="arrow cu-item" v-if="availableRoles.length > 1" @click="navTo('../index/index')">
+			<view class="arrow cu-item" @click="navTo('../index/index')">
 				<view class="font-15 margin-lr">
 					<text class="text-blue cuIcon-pick margin-right-sm"></text>
 					<text class="text-blue text-bold">回到主页</text>

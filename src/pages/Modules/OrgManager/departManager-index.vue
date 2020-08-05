@@ -49,7 +49,7 @@
                     <i-row class="picture">所有工作已完成</i-row>
                 </template>
             </i-col>
-            <i-col span="8" offset="2" style="padding: 24px;background-color: lightgrey;"
+            <i-col span="9" offset="1" style="padding: 24px;background-color: lightgrey;"
                 v-if='app.checkPermission("Organization.DepartAdminUser") || app.checkPermission("Organization.UnitAdminUser")
                 ||app.checkPermission("Organization.TwAdminUser") || app.checkPermission("Organization.TeacherAdmin") '>
                 <div :to="dashBoard.DepartType === 0 ? routers[1]:routers[0]" v-if="true" style="background-color:#ffffff">
