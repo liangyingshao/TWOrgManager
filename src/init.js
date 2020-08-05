@@ -15,7 +15,10 @@ if (!appSettings.isInit) {
 
     axios.get = (url, params, callback) => {
         var result = get(appSettings.api + url, {
-            params
+            {
+                ...params,
+                currentUserGuid: appSettings.currentUserGuid
+            }
         });
 
         if (callback) {
