@@ -1,7 +1,7 @@
 <template>
     <i-row  :style="bgImg">
         <i-row type="flex" align="middle" class="head">
-            <img :src="newBanner" style="height: 100px;" />
+            <img :src="newBanner" style="height: 100px;"/>
         </i-row>
         <i-row>
             <i-col span="14" push="16">
@@ -10,19 +10,18 @@
                         <i-card v-if="app.userInfo.isLogined">
                             <i-divider style="font-size:32px">登录信息</i-divider>
                             <i-row style="margin: auto 24px">
-                                姓名：{{app.userInfo.realName}}<br/>
-                                您的身份：{{app.userInfo.permissons.includes('Organization.Student')?"学生":""}}
-                                {{app.userInfo.permissons.includes('Organization.Organization.TeacherAdmin')?"指导老师":""}}
-                                {{app.userInfo.permissons.includes('Organization.TwAdminUser')?"校团委管理员":""}}
-                                {{app.userInfo.permissons.includes('Organization.DepartAdminUser')?"社团管理员":""}}
-                                {{app.userInfo.permissons.includes('Organization.UnitAdminUser')?"业务指导单位管理员":""}}
-                                {{app.userInfo.permissons.includes('Organization.XSLHH')?"学生社团联合会":""}}<br/>
-                                登录IP：{{app.userInfo.region.ip}}<br/>
-                                登录地点：{{app.userInfo.region.province}}&nbsp;{{app.userInfo.region.city}}
+                                <CellGroup>
+                                    <Cell title="学生主页" to=""></Cell>
+                                    <Cell title="社团主页" to="/manage/depart"></Cell>
+                                    <Cell title="指导老师主页" to=""></Cell>
+                                    <Cell title="业务指导主页" to=""></Cell>
+                                    <Cell title="社团管理部主页" to=""></Cell>
+                                    <Cell title="团委主页" to=""></Cell>
+                                </CellGroup>
                             </i-row>
                             <i-row style="margin: 12px 24px 24px">
                                 <i-button @click="toOrgManage()" type="primary">进入系统</i-button>
-                                <i-button @click="logout()" :loading='isloading'>注销</i-button>
+                                <i-button style="float:right" @click="logout()" :loading='isloading'>注销</i-button>
                             </i-row>
                         </i-card>
                         <i-card v-else>
@@ -33,13 +32,25 @@
                                         <i-input placeholder="用户名" prefix="ios-contact" v-model="loginValue.username"/>
                                     </i-form-item>
                                     <i-form-item>
-                                        <i-input placeholder="密码" @on-enter="login" prefix="ios-lock" type="password" password v-model="loginValue.password"/>
+                                        <i-input placeholder="密码" @on-enter="login()" prefix="ios-lock" type="password" password v-model="loginValue.password"/>
                                     </i-form-item>
                                 </i-form>
                             </i-row>
                             <i-row style="margin: 0px 24px 40px 24px">
-                                <i-button type="primary" @click="toXMUIds()" style="margin-bottom: 10px;width: 100%">用厦大账号登录</i-button>
-                                <i-button @click="login" :loading='isloading' style="width: 100%">直接登录</i-button>
+                                <Dropdown style="width:100%">
+                                    <i-button type="primary" style="margin-bottom: 10px;width: 100%">用厦大账号登录
+                                        <Icon type="ios-arrow-down"/>
+                                    </i-button>
+                                    <DropdownMenu slot="list">
+                                        <DropdownItem @click.native="login('15102242660', '88888888')">学生</DropdownItem>
+                                        <DropdownItem @click.native="login('24320152356894', '123456')">社团</DropdownItem>
+                                        <DropdownItem @click.native="login('25648', '123456')">指导老师</DropdownItem>
+                                        <DropdownItem @click.native="login('13621345797', '88888888')">业务指导</DropdownItem>
+                                        <DropdownItem @click.native="login('15102246798', '123456')">社团管理部</DropdownItem>
+                                        <DropdownItem @click.native="login('admin', '88888888')">团委</DropdownItem>
+                                    </DropdownMenu>
+                                </Dropdown>
+                                <i-button @click="login()" :loading='isloading' style="width: 100%">直接登录</i-button>
                             </i-row>
                         </i-card>
                     </i-col>
@@ -66,7 +77,9 @@ export default {
                 "min-height": "100vh",
                 "background-repeat": "no-repeat",
                 "background-size": "100% 100%",
-                "background-attachment": "fixed"
+                "background-attachment": "fixed",
+                "overflow": "auto",
+                "overflow-x": "hidden"
             },
             loginValue: {
                 username: '',
@@ -102,10 +115,10 @@ export default {
                 }
             })
         },
-        login () {
+        login (un, pwd) {
             this.isloading = true;
-            let userName = this.loginValue.username;
-            let password = this.loginValue.password;
+            let userName = (un || this.loginValue.username);
+            let password = (pwd || this.loginValue.password);
             axios.post("/api/security/Login", { method: 'password', username: userName, pwd: md5(password), isRemember: false, isPwd: true }, msg => {
                 this.isloading = false;
                 if (msg.success) {
