@@ -8,19 +8,19 @@
                 <i-row type="flex" :gutter="24">
                     <i-col span="9">
                         <i-card v-if="app.userInfo.isLogined">
-                            <i-divider style="font-size:32px">登录信息</i-divider>
+                            <i-divider style="font-size:32px">选择身份</i-divider>
                             <i-row style="margin: auto 24px">
-                                <CellGroup>
-                                    <Cell title="学生主页" to=""></Cell>
-                                    <Cell title="社团主页" to="/manage/depart"></Cell>
+                                <CellGroup v-for="role in availableRoles" :key="role.departId">
+                                    <Cell :title="role.departName + role.position" :to="role.url"></Cell>
+                                    <!-- <Cell title="社团主页" to="/manage/depart"></Cell>
                                     <Cell title="指导老师主页" to=""></Cell>
                                     <Cell title="业务指导主页" to=""></Cell>
                                     <Cell title="社团管理部主页" to=""></Cell>
-                                    <Cell title="团委主页" to=""></Cell>
+                                    <Cell title="团委主页" to=""></Cell> -->
                                 </CellGroup>
                             </i-row>
                             <i-row style="margin: 12px 24px 24px">
-                                <i-button @click="toOrgManage()" type="primary">进入系统</i-button>
+                                <!-- <i-button @click="toOrgManage()" type="primary">进入系统</i-button> -->
                                 <i-button style="float:right" @click="logout()" :loading='isloading'>注销</i-button>
                             </i-row>
                         </i-card>
@@ -88,13 +88,37 @@ export default {
             isloading: false,
             xmuWordImg: require("@/assets/XMUWordBlue.png"),
             xmuLogoImg: require("@/assets/logoBlue.png"),
-            newBanner: require("@/assets/newBanner.png")
+            newBanner: require("@/assets/newBanner.png"),
+            availableRoles: []
         }
     },
     mounted () {
         app.title = "登录";
     },
     methods: {
+        getAvailablePositon () {
+            axios.post("/api/security/GetMyPositions", {}, msg => {
+                if (msg.success) {
+                    this.availableRoles = msg.data;
+                    let checkPermission = app.checkPermission;
+                    if (checkPermission("Organization.TwAdminUser") || checkPermission("Organization.XSLHH") ||
+                    checkPermission("Organization.UnitAdminUser") || checkPermission("Organization.TeacherAdmin")) {
+                        this.availableRoles.forEach(element => {
+                            if (element.position === "普通用户") {
+                                this.availableRoles.pop(element);
+                            }
+                        });
+                    }
+                    for (let i = 0; i < this.availableRoles.length; i++) {
+                        if (this.availableRoles[i].position === "管理员" && this.availableRoles[i].departName !== "学生社团管理部") {
+                            this.availableRoles[i].url = "/manage/depart";
+                        } else {
+                            this.availableRoles[i].url = "/manage/switch";
+                        }
+                    }
+                }
+            })
+        },
         toDetail (routerObj) {
             this.$router.push(routerObj);
         },
@@ -137,6 +161,7 @@ export default {
                             this.$Message.warning(msg.msg);
                         }
                     });
+                    this.getAvailablePositon();
                 } else {
                     this.$Message.warning(msg.msg);
                 }
