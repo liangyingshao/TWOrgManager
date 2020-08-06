@@ -40,6 +40,9 @@ Vue.component('navTab',navTab)
 import activityApply from './components/labComponent/activityApply.vue'
 Vue.component('activityApply',activityApply)
 
+import titleBar from './iuc/index/title-bar.vue'
+Vue.component('titleBar',titleBar)
+
 require("@/labs/utils.js");
 
 Vue.config.productionTip = false
