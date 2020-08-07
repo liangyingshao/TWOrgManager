@@ -43,7 +43,6 @@ if (!appSettings.isInit) {
                 currentUserGuid: appSettings.currentUserGuid
               }
           });
-
         if (callback) {
             return result.then(msg => {
                 if (msg.code && msg.code === "40001") {
