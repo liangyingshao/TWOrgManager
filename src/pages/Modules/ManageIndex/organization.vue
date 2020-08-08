@@ -119,7 +119,6 @@
                         </i-row>
                     </div>
                 </i-card>
-                <i-row class="layout-con"><i-card style="font-size:20px;font-weight:bold">常用入口 </i-card></i-row>
                 <i-row  v-for="(item,index) in entrForManager" :key="index">
                     <i-card class="layout-con" :to="item.routerTo">
                         <i-row type="flex">

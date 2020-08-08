@@ -1,23 +1,33 @@
 module.exports = {
-    OrgManage: {
-        path: "/manage/switch",
+    OrganizationManage: {
+        path: "/manage/organization",
         layout: "admin",
-        component: () => import(/* webpackChunkName: "OrgManager" */"@p/Modules/OrgManager/OrgManager")
+        component: () => import(/* webpackChunkName: "ManageIndex" */"@p/Modules/ManageIndex/organization")
+    },
+    TeacherManage: {
+        path: "/manage/teacher",
+        layout: "admin",
+        component: () => import(/* webpackChunkName: "ManageIndex" */"@p/Modules/ManageIndex/teacher")
+    },
+    StudentManage: {
+        path: "/manage/student",
+        layout: "admin",
+        component: () => import(/* webpackChunkName: "ManageIndex" */"@p/Modules/ManageIndex/student")
+    },
+    CollegeManage: {
+        path: "/manage/college",
+        layout: "admin",
+        component: () => import(/* webpackChunkName: "ManageIndex" */"@p/Modules/ManageIndex/college")
     },
     AdminManage: {
         path: "/manage/admin",
         layout: "admin",
-        component: () => import(/* webpackChunkName: "OrgManager" */"@p/Modules/OrgManager/forAdmin")
+        component: () => import(/* webpackChunkName: "ManageIndex" */"@p/Modules/ManageIndex/admin")
     },
-    DepartManage: {
-        path: "/manage/depart",
+    TwManage: {
+        path: "/manage/tuanwei",
         layout: "admin",
-        component: () => import(/* webpackChunkName: "OrgManager" */"@p/Modules/OrgManager/departManager-index")
-    },
-    StuManage: {
-        path: "/manage/student",
-        layout: "admin",
-        component: () => import(/* webpackChunkName: "OrgManager" */"@p/Modules/OrgManager/forStudent")
+        component: () => import(/* webpackChunkName: "ManageIndex" */"@p/Modules/ManageIndex/tuanwei")
     },
     OrgDetail: {
         path: "/manage/org/detail",
