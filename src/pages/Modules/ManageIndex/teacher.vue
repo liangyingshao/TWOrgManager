@@ -261,10 +261,10 @@ export default {
                 })
             });
         },
-        getActivities(page, pageSize) {
-            let page = page || this.pager.page;
-            let pageSize = pageSize || this.pager.pageSize;
-            axios.post("/api/org/GetActByDepartId", {Id: this.orgInfo.ID}, msg => {
+        getActivities (targetPage, targetPageSize) {
+            let page = targetPage || this.pager.page;
+            let pageSize = targetPageSize || this.pager.pageSize;
+            axios.post("/api/org/GetActByDepartId", {Id: this.orgInfo.ID, page, pageSize}, msg => {
                 if (msg.success) {
                     this.activityData = msg.data;
                     this.entranceBadge.activityData = msg.totalRow;
