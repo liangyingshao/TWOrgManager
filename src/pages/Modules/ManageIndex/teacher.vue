@@ -30,7 +30,7 @@
                             </i-col>
                         </i-row>
                         <template v-slot:action>
-                            <Button type="success" @click="dealWorkflow(item.InstanceId, item.StepId, item.WorkflowName)">审核</Button>=
+                            <Button type="success" @click="dealWorkflow(item.InstanceId, item.StepId, item.WorkflowType)">审核</Button>=
                         </template>
                     </ListItem>
                 </List>
@@ -48,7 +48,8 @@
                             <i-button @click="checkWorkflow(row.InstanceId, row.StepId, row.ID)">查看</i-button>
                         </template>
                     </i-table>
-                    <Page :total="entranceBadge.activityData" show-sizer show-total :page-size="5" on-change="" />
+                    <Page :styles="{'margin-top': '16px'}" :total="pager.totalRow" show-sizer show-total :page-size="5"
+                     @on-change="getActivities($event)" @on-page-size-change="getActivities(null ,$event)" />
                 </i-row>
             </i-card>
         </i-col>
@@ -82,7 +83,7 @@
                             <div style="padding-top:20px;">
                                 <i-row type="flex">
                                     <i-col span="22">
-                                        <div style="font-size: 33px;text-align:center;">{{activityData.length}}</div>
+                                        <div style="font-size: 33px;text-align:center;">{{pager.totalRow}}</div>
                                         <div style="margin-bottom:10px;font-size:12px;text-align:center;">活动数</div>
                                     </i-col>
                                     <i-col span="1">
@@ -231,7 +232,8 @@ export default {
             },
             pager: {
                 page: 1,
-                pageSize: 5
+                pageSize: 5,
+                totalRow: 0
             }
         };
     },
@@ -267,7 +269,9 @@ export default {
             axios.post("/api/org/GetActByDepartId", {Id: this.orgInfo.ID, page, pageSize}, msg => {
                 if (msg.success) {
                     this.activityData = msg.data;
-                    this.entranceBadge.activityData = msg.totalRow;
+                    this.activitySearched = this.activityData;
+                    this.pager.totalRow = msg.totalRow;
+                    this.entranceBadge.activityData = msg.data.filter(e => e.ApplicateState === 3).length;
                 }
             });
         },
@@ -292,9 +296,6 @@ export default {
         },
         navTo (url) {
             this.$router.push({name: 'OrgDetail'});
-        },
-        checkWorkflow (instanceId, stepId, actId) {
-            window.open(`/manage/org/signUpSituation?instanceId=${instanceId}&stepId=${stepId}&detail=true&actId=${actId}`);
         },
         searchActivity (value) {
             this.activitySearched = this.activityData.filter(e => e.ActivityName.indexOf(value) > -1);

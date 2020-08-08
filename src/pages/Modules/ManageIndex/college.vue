@@ -39,9 +39,12 @@
                     <i-row class="picture">暂无待办事项</i-row>
                 </template>
             </i-card>
-            <i-card style="margin-top:10px" title="社团活动" :padding="24">
+            <i-card style="margin-top:10px" title="社团列表" :padding="24">
+                <template v-slot:extra>
+                    <i-input search placeholder="搜索社团名" @on-search="searchOrganization" />
+                </template>
                 <i-row>
-                    <i-table stripe :columns="activity" :data="activityData.slice(0,5)" :loading="tableLoading">
+                    <i-table stripe :columns="organizationCol" :data="organizationSearched" :loading="tableLoading">
                         <template slot="Action" slot-scope="{row}">
                             <i-button @click="checkWorkflow(row.InstanceId, row.StepId, row.ID)">查看</i-button>
                         </template>
@@ -79,8 +82,8 @@
                             <div style="padding-top:20px;">
                                 <i-row type="flex">
                                     <i-col span="22">
-                                        <div style="font-size: 33px;text-align:center;">{{activityData.length}}</div>
-                                        <div style="margin-bottom:10px;font-size:12px;text-align:center;">活动数</div>
+                                        <div style="font-size: 33px;text-align:center;">{{organizationData.length}}</div>
+                                        <div style="margin-bottom:10px;font-size:12px;text-align:center;">社团数</div>
                                     </i-col>
                                     <i-col span="1">
                                         <div style="border-right: 1px solid #fff;height: 36px;margin-top: 10px;opacity: .2;"/>
@@ -124,73 +127,16 @@
 
 <script>
 import axios from 'axios';
+import tableColumns from './tableColumns';
 // const echarts = require("echarts");
 const app = require("@/config");
 export default {
     data () {
         return {
             app,
-            activity: [
-                {
-                    title: '名称',
-                    key: 'ActivityName'
-                },
-                {
-                    title: '类型',
-                    key: 'ActivityType'
-                },
-                {
-                    title: '业务指导单位',
-                    key: 'CurrentStep'
-                },
-                {
-                    title: '业务指导单位管理员',
-                    key: 'Owner',
-                    children: [
-                        {
-                            title: '姓名',
-                            key: 'Owner'
-                        },
-                        {
-                            title: '教工号',
-                            key: 'Owner'
-                        }
-                    ]
-                },
-                {
-                    title: '学生社团指导老师',
-                    key: 'Owner',
-                    children: [
-                        {
-                            title: '姓名',
-                            key: 'Owner'
-                        },
-                        {
-                            title: '教工号',
-                            key: 'Owner'
-                        }
-                    ]
-                },
-                {
-                    title: '学生社团管理员',
-                    key: 'Owner',
-                    children: [
-                        {
-                            title: '姓名',
-                            key: 'Owner'
-                        },
-                        {
-                            title: '学号',
-                            key: 'Owner'
-                        }
-                    ]
-                },
-                {
-                    title: '操作',
-                    slot: 'Action'
-                }
-            ],
-            activityData: [],
+            organizationSearched: [],
+            organizationCol: tableColumns.organization,
+            organizationData: [],
             orgInfo: {},
             time: "早上",
             dic: {
@@ -251,9 +197,9 @@ export default {
                     icon: "ios-add-circle"
                 },
                 {
-                    title: "成员管理",
+                    title: "社团列表",
                     count: "membersData",
-                    description: "查看所管理社团的所有成员",
+                    description: "管理本单位所指导的社团，管理他们的基本信息。",
                     routerTo: {
                         name: "OrgDetail",
                         query: {
@@ -264,8 +210,8 @@ export default {
                 },
                 {
                     title: "活动管理",
-                    count: "activityData",
-                    description: "管理本社团的所有活动，对已经通过审核的活动可以选择开始活动。也可以在本页面下载活动签到二维码",
+                    count: "organizationData",
+                    description: "管理本单位所属所有社团的所有活动。查看他们的报名记录和签到记录。",
                     routerTo: {
                         name: "Affiliated",
                         query: {
@@ -279,9 +225,9 @@ export default {
             membersData: [],
             applicationsData: [],
             entranceBadge: {
-                "membersData": 0,
-                "activityData": 0,
-                "pendingData": 0
+                membersData: 0,
+                organizationData: 0,
+                pendingData: 0
             }
         };
     },
@@ -298,10 +244,11 @@ export default {
                 axios.post("/api/security/GetOrgDetail", {}, msg => {
                     this.orgInfo = msg.data;
 
-                    axios.post("/api/org/GetActByDepartId", {Id: this.orgInfo.ID}, msg => {
+                    axios.post("/api/security/GetAllAssociationsByDepartId", {departId: this.orgInfo.ID}, msg => {
                         if (msg.success) {
-                            this.activityData = msg.data;
-                            this.entranceBadge.activityData = this.activityData.length;
+                            this.organizationData = msg.data;
+                            this.organizationSearched = this.organizationData;
+                            this.entranceBadge.organizationData = this.organizationData.length;
                         }
                     });
                     axios.post("/api/security/GetUsersByDepartId", {departId: this.orgInfo.ID}, msg => {
@@ -340,6 +287,9 @@ export default {
         },
         checkWorkflow (instanceId, stepId, actId) {
             window.open(`/manage/org/signUpSituation?instanceId=${instanceId}&stepId=${stepId}&detail=true&actId=${actId}`);
+        },
+        searchOrganization (value) {
+            this.organizationSearched = this.organizationData.filter(e => e.name.indexOf(value) > -1);
         }
     }
 }
