@@ -7,7 +7,7 @@
             <i-col span="5" offset="17" class="card" v-show="app.userInfo.isLogined">
                 <i-card title="选择用户角色" icon="ios-options" :padding="0">
                     <CellGroup v-for="role in availableRoles" :key="role.departId">
-                        <Cell :title="role.departName + role.position" :to="role.url"></Cell>
+                        <Cell :title="role.departName + role.position" @click.native="toManage(role)"></Cell>
                     </CellGroup>
                     <i-row style="margin: 12px 24px 24px">
                         <!-- <i-button @click="toOrgManage()" type="primary">进入系统</i-button> -->
@@ -103,30 +103,6 @@ export default {
                             }
                         });
                     } */
-                    for (let role of this.availableRoles) {
-                        if (role.position === "指导老师") {
-                            role.url = {name: 'TeacherManage'};
-                        } else if (role.position === "普通用户") {
-                            role.url = {name: 'StudentManage'};
-                        } else if (role.position === "管理员") {
-                            if (app.checkPermission("Organization.TwAdminUser")) {
-                                role.url = {name: 'TwManage'};
-                            } else if (app.checkPermission("Organization.XSLHH")) {
-                                role.url = {name: 'AdminManage'};
-                            } else if (app.checkPermission("Organization.UnitAdminUser")) {
-                                role.url = {name: 'CollegeManage'}; // 挂靠单位管理
-                            } else if (app.checkPermission("Organization.DepartAdminUser")) {
-                                role.url = {name: 'OrganizationManage'}; // 社团管理
-                            } else {
-                                // 管理员权限不明
-                                role.url = {name: 'StudentManage'};
-                            }
-                        } else {
-                            // 用户身份不明
-                            role.url = {name: 'StudentManage'};
-                        }
-                    }
-
                     /* for (let i = 0; i < this.availableRoles.length; i++) {
                         if (this.availableRoles[i].position === "管理员" && this.availableRoles[i].departName !== "学生社团管理部") {
                             this.availableRoles[i].url = "/manage/depart";
@@ -136,6 +112,30 @@ export default {
                     } */
                 }
             })
+        },
+        toManage (role) {
+            localStorage.setItem("defaultDepartId", role.departId);
+            if (role.position === "指导老师") {
+                this.$router.push({name: 'TeacherManage'});
+            } else if (role.position === "普通用户") {
+                this.$router.push({name: 'StudentManage'});
+            } else if (role.position === "管理员") {
+                if (app.checkPermission("Organization.TwAdminUser")) {
+                    this.$router.push({name: 'TwManage'});
+                } else if (app.checkPermission("Organization.XSLHH")) {
+                    this.$router.push({name: 'AdminManage'});
+                } else if (app.checkPermission("Organization.UnitAdminUser")) {
+                    this.$router.push({name: 'CollegeManage'}); // 挂靠单位管理
+                } else if (app.checkPermission("Organization.DepartAdminUser")) {
+                    this.$router.push({name: 'OrganizationManage'}); // 社团管理
+                } else {
+                    // 管理员权限不明
+                    this.$router.push({name: 'StudentManage'});
+                }
+            } else {
+                // 用户身份不明
+                this.$router.push({name: 'StudentManage'});
+            }
         },
         toXMUIds () {
             this.$Notice.warning({title: '功能正在开发', desc: '将会跳转至厦大统一身份验证'});

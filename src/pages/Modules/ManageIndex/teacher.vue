@@ -30,7 +30,7 @@
                             </i-col>
                         </i-row>
                         <template v-slot:action>
-                            <Button type="success" @click="dealWorkflow(item.InstanceId, item.StepId, item.WorkflowName)">审核</Button>=
+                            <Button type="success" @click="dealWorkflow(item.InstanceId, item.StepId, item.WorkflowType)">审核</Button>=
                         </template>
                     </ListItem>
                 </List>
@@ -48,7 +48,8 @@
                             <i-button @click="checkWorkflow(row.InstanceId, row.StepId, row.ID)">查看</i-button>
                         </template>
                     </i-table>
-                    <Page :total="entranceBadge.activityData" show-sizer show-total :page-size="5" on-change="" />
+                    <Page :styles="{'margin-top': '16px'}" :total="pager.totalRow" show-sizer show-total :page-size="5"
+                     @on-change="getActivities($event)" @on-page-size-change="getActivities(null ,$event)" />
                 </i-row>
             </i-card>
         </i-col>
@@ -82,7 +83,7 @@
                             <div style="padding-top:20px;">
                                 <i-row type="flex">
                                     <i-col span="22">
-                                        <div style="font-size: 33px;text-align:center;">{{activityData.length}}</div>
+                                        <div style="font-size: 33px;text-align:center;">{{pager.totalRow}}</div>
                                         <div style="margin-bottom:10px;font-size:12px;text-align:center;">活动数</div>
                                     </i-col>
                                     <i-col span="1">
@@ -109,7 +110,7 @@
                     <i-row type="flex" align="middle">
                         <i-col span="3" offset="1">
                             <div>
-                                <Badge :count="entranceBadge[item.count]">
+                                <Badge :count="item.badge">
                                     <i-avatar :icon="item.icon" size="large" />
                                 </Badge>
                             </div>
@@ -185,20 +186,20 @@ export default {
                     }
                 }
             ],
-            entryForManager: [
-                {
+            entryForManager: {
+                pending: {
                     title: "我的待办",
-                    count: "pendingData",
+                    badge: 0,
                     description: "等待我处理的工作",
                     routerTo: {
                         name: "MyPending",
                         query: {}
                     },
-                    icon: "ios-add-circle"
+                    icon: "md-list"
                 },
-                {
+                member: {
                     title: "成员管理",
-                    count: "membersData",
+                    badge: 0,
                     description: "查看所管理社团的所有成员",
                     routerTo: {
                         name: "OrgDetail",
@@ -208,9 +209,9 @@ export default {
                     },
                     icon: "md-person-add"
                 },
-                {
+                activity: {
                     title: "活动管理",
-                    count: "activityData",
+                    badge: 0,
                     description: "管理本社团的所有活动，对已经通过审核的活动可以选择开始活动。也可以在本页面下载活动签到二维码",
                     routerTo: {
                         name: "Affiliated",
@@ -218,20 +219,16 @@ export default {
                             tabSelect: "activity"
                         }
                     },
-                    icon: "md-information"
+                    icon: "md-flag"
                 }
-            ],
+            },
             tableLoading: false,
             membersData: [],
             applicationsData: [],
-            entranceBadge: {
-                membersData: 0,
-                activityData: 0,
-                pendingData: 0
-            },
             pager: {
                 page: 1,
-                pageSize: 5
+                pageSize: 5,
+                totalRow: 0
             }
         };
     },
@@ -252,11 +249,13 @@ export default {
                     axios.post("/api/security/GetUsersByDepartId", {departId: this.orgInfo.ID}, msg => {
                         if (msg.success) {
                             this.membersData = msg.data;
-                            this.entranceBadge.membersData = this.membersData.length;
+                            this.entryForManager.member.badge = this.membersData.length;
                         }
                     });
                     axios.post("/api/security/GetApplicationsByDeparts", {departId: this.orgInfo.ID}, msg => {
-                        if (msg.success) this.applicationsData = msg.data;
+                        if (msg.success) {
+                            this.applicationsData = msg.data;
+                        }
                     })
                 })
             });
@@ -267,7 +266,9 @@ export default {
             axios.post("/api/org/GetActByDepartId", {Id: this.orgInfo.ID, page, pageSize}, msg => {
                 if (msg.success) {
                     this.activityData = msg.data;
-                    this.entranceBadge.activityData = msg.totalRow;
+                    this.activitySearched = this.activityData;
+                    this.pager.totalRow = msg.totalRow;
+                    this.entryForManager.activity.badge = msg.data.filter(e => e.ApplicateState === 3).length;
                 }
             });
         },
@@ -284,7 +285,7 @@ export default {
         getPending () {
             axios.post("/api/workflow/Pending", {}, msg => {
                 this.pendingData = msg.data;
-                this.entranceBadge.pendingData = this.pendingData.length;
+                this.entryForManager.pending.badge = this.pendingData.length;
             })
         },
         dealWorkflow (instanceId, stepId, WorkflowName) {
@@ -292,9 +293,6 @@ export default {
         },
         navTo (url) {
             this.$router.push({name: 'OrgDetail'});
-        },
-        checkWorkflow (instanceId, stepId, actId) {
-            window.open(`/manage/org/signUpSituation?instanceId=${instanceId}&stepId=${stepId}&detail=true&actId=${actId}`);
         },
         searchActivity (value) {
             this.activitySearched = this.activityData.filter(e => e.ActivityName.indexOf(value) > -1);
