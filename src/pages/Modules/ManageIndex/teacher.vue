@@ -108,14 +108,14 @@
             <i-row v-for="(item,index) in entryForManager" :key="index">
                 <i-card class="layout-con" :to="item.routerTo">
                     <i-row type="flex" align="middle">
-                        <i-col span="3" offset="1">
-                            <div>
+                        <i-col span="4">
+                            <i-row type="flex" justify="center">
                                 <Badge :count="item.badge">
                                     <i-avatar :icon="item.icon" size="large" />
                                 </Badge>
-                            </div>
+                            </i-row>
                         </i-col>
-                        <i-col span="19">
+                        <i-col span="20">
                             <p style="">{{item.title}}</p>
                             <p style="color: #808695; font-size:14px">{{item.description}}</p>
                         </i-col>
@@ -239,12 +239,14 @@ export default {
         this.getPending();
     },
     methods: {
+        checkWorkflow (instanceId, stepId, actId) {
+            window.open(`/manage/org/signUpSituation?instanceId=${instanceId}&stepId=${stepId}&detail=true&actId=${actId}`);
+        },
         getDashBoard () {
             axios.post("/api/org/GetDashboard", {}, msg => {
                 this.dashBoard = msg;
                 axios.post("/api/security/GetOrgDetail", {}, msg => {
                     this.orgInfo = msg.data;
-
                     this.getActivities();
                     axios.post("/api/security/GetUsersByDepartId", {departId: this.orgInfo.ID}, msg => {
                         if (msg.success) {
@@ -268,7 +270,14 @@ export default {
                     this.activityData = msg.data;
                     this.activitySearched = this.activityData;
                     this.pager.totalRow = msg.totalRow;
-                    this.entryForManager.activity.badge = msg.data.filter(e => e.ApplicateState === 3).length;
+                    let page = 1;
+                    let pageSize = this.pager.totalRow;
+                    axios.post("/api/org/GetActByDepartId", {Id: this.orgInfo.ID, page, pageSize}, msg => {
+                        if (msg.success) {
+                            this.entryForManager.activity.badge = msg.data.filter(e => e.ApplicateState === 3).length;
+                            console.log(this.entryForManager.activity.badge);
+                        }
+                    });
                 }
             });
         },
@@ -295,7 +304,14 @@ export default {
             this.$router.push({name: 'OrgDetail'});
         },
         searchActivity (value) {
-            this.activitySearched = this.activityData.filter(e => e.ActivityName.indexOf(value) > -1);
+            let page = 1;
+            let pageSize = this.pager.totalRow;
+            axios.post("/api/org/GetActByDepartId", {Id: this.orgInfo.ID, page, pageSize}, msg => {
+                if (msg.success) {
+                    // this.entryForManager.activity.badge = msg.data.filter(e => e.ApplicateState === 3).length;
+                    this.activitySearched = msg.data.filter(e => e.ActivityName.indexOf(value) > -1);
+                }
+            });
         }
     }
 }

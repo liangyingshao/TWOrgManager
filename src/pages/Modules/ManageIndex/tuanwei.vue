@@ -1,5 +1,5 @@
 <template>
-    <i-row type="flex" :gutter="24">
+    <i-row type="flex" :gutter="24" id="admin-index">
         <i-col span="15">
             <i-card :padding="24">
                 <template v-slot:title>
@@ -44,7 +44,7 @@
                     <i-input search placeholder="搜索社团名" @on-search="searchOrganization" />
                 </template>
                 <i-row>
-                    <i-table stripe :columns="organizationCol" :data="organizationSearched" :loading="tableLoading">
+                    <i-table :max-height="contentHeight" border stripe :columns="organizationCol" :data="organizationSearched" :loading="tableLoading">
                         <template slot="Action" slot-scope="{row}">
                             <i-button @click="checkWorkflow(row.InstanceId, row.StepId, row.ID)">查看</i-button>
                         </template>
@@ -95,8 +95,8 @@
                             <div style="padding-top:20px;">
                                 <i-row type="flex">
                                     <i-col span="22">
-                                        <div style="font-size: 33px;text-align:center;">{{applicationsData.length}}</div>
-                                        <div style="margin-bottom:10px;font-size:12px;text-align:center;">申请数</div>
+                                        <div style="font-size: 33px;text-align:center;">{{activityCount}}</div>
+                                        <div style="margin-bottom:10px;font-size:12px;text-align:center;">活动数</div>
                                     </i-col>
                                 </i-row>
                             </div>
@@ -109,7 +109,7 @@
                     <i-row type="flex" align="middle">
                         <i-col span="3" offset="1">
                             <div>
-                                <Badge :count="entranceBadge[item.count]">
+                                <Badge :count="item.badge">
                                     <i-avatar :icon="item.icon" size="large" />
                                 </Badge>
                             </div>
@@ -158,48 +158,23 @@ export default {
                     query: {
                         tabSelect: "member"
                     }
-                }, {
-                    name: "OrgDetail",
-                    query: {
-                        tabSelect: "member"
-                    }
-                }, {
-                    name: "OrgDetail",
-                    query: {
-                        tabSelect: "subDept"
-                    }
-                }, {
-                    name: "OrgDetail",
-                    query: {
-                        tabSelect: "tutor"
-                    }
-                }, {
-                    name: "OrgDetail",
-                    query: {
-                        tabSelect: "manager"
-                    }
-                }, {
-                    name: "OrgDetail",
-                    query: {
-                        tabSelect: "activity"
-                    }
                 }
             ],
-            entryForManager: [
-                {
+            entryForManager: {
+                pending: {
                     title: "我的待办",
-                    count: "pendingData",
+                    badge: 0,
                     description: "等待我处理的工作",
                     routerTo: {
                         name: "MyPending",
                         query: {}
                     },
-                    icon: "ios-add-circle"
+                    icon: "md-list"
                 },
-                {
-                    title: "成员管理",
-                    count: "membersData",
-                    description: "查看所管理社团的所有成员",
+                organization: {
+                    title: "社团列表",
+                    badge: 0,
+                    description: "管理本单位所指导的社团，管理他们的基本信息。",
                     routerTo: {
                         name: "OrgDetail",
                         query: {
@@ -208,19 +183,31 @@ export default {
                     },
                     icon: "md-person-add"
                 },
-                {
+                activity: {
+                    title: "活动管理",
+                    badge: 0,
+                    description: "管理本单位所属所有社团的所有活动。查看他们的报名记录和签到记录。",
+                    routerTo: {
+                        name: "Affiliated",
+                        query: {
+                            tabSelect: "activity"
+                        }
+                    },
+                    icon: "md-flag"
+                },
+                upload: {
                     title: "上传社团列表",
-                    description: "填写 模板EXCEL（做一个链接，先放空）后上传，可以同步系统中的社团信息。",
+                    badge: 0,
+                    description: "填写模板EXCEL（做一个链接，先放空）后上传，可以同步系统中的社团信息。",
                     routerTo: {
-                        name: "OrgDetail",
-                        query: {
-                            tabSelect: "member"
-                        }
+                        name: "UploadOrgList",
+                        query: {}
                     },
-                    icon: "md-person-add"
+                    icon: "md-cloud-upload"
                 },
-                {
+                download: {
                     title: "下载社团列表",
+                    badge: 0,
                     description: "下载社团信息，修改后使用“上传社团列表”功能即可修改系统中的社团信息。",
                     routerTo: {
                         name: "OrgDetail",
@@ -228,29 +215,13 @@ export default {
                             tabSelect: "member"
                         }
                     },
-                    icon: "md-person-add"
-                },
-                {
-                    title: "活动管理",
-                    count: "organizationData",
-                    description: "管理本社团的所有活动，对已经通过审核的活动可以选择开始活动。也可以在本页面下载活动签到二维码",
-                    routerTo: {
-                        name: "Affiliated",
-                        query: {
-                            tabSelect: "activity"
-                        }
-                    },
-                    icon: "md-information"
+                    icon: "md-cloud-download"
                 }
-            ],
+            },
             tableLoading: false,
             membersData: [],
-            applicationsData: [],
-            entranceBadge: {
-                membersData: 0,
-                organizationData: 0,
-                pendingData: 0
-            }
+            activityCount: 0,
+            contentHeight: ''
         };
     },
     mounted () {
@@ -263,25 +234,30 @@ export default {
         getDashBoard () {
             axios.post("/api/org/GetDashboard", {}, msg => {
                 this.dashBoard = msg;
-                axios.post("/api/security/GetOrgDetail", {}, msg => {
+                axios.post("/api/security/GetOrgDetail", {id: localStorage.getItem("defaultDepartId")}, msg => {
                     this.orgInfo = msg.data;
 
+                    this.getActivities();
                     axios.post("/api/security/GetAllAssociationsByDepartId", {departId: this.orgInfo.ID}, msg => {
                         if (msg.success) {
                             this.organizationData = msg.data;
                             this.organizationSearched = this.organizationData;
-                            this.entranceBadge.organizationData = this.organizationData.length;
+                            // this.entryForManager.organization.badge = this.organizationData.length;
+
+                            this.$nextTick(() => {
+                                this.contentHeight = document.getElementById("admin-index").offsetWidth;
+                            })
                         }
                     });
                     axios.post("/api/security/GetUsersByDepartId", {departId: this.orgInfo.ID}, msg => {
                         if (msg.success) {
                             this.membersData = msg.data;
-                            this.entranceBadge.membersData = this.membersData.length;
+                            // this.entranceBadge.membersData = this.membersData.length;
                         }
                     });
-                    axios.post("/api/security/GetApplicationsByDeparts", {departId: this.orgInfo.ID}, msg => {
+                    /* axios.post("/api/security/GetApplicationsByDeparts", {departId: this.orgInfo.ID}, msg => {
                         if (msg.success) this.applicationsData = msg.data;
-                    })
+                    }) */
                 })
             });
         },
@@ -295,10 +271,22 @@ export default {
             else if (s2 < 18) this.time = "下午";
             else if (s2 < 24) this.time = "晚上";
         },
+        getActivities () {
+            axios.post("/api/org/GetActByDepartId", {Id: this.orgInfo.ID, applicationState: 3}, msg => {
+                if (msg.success) {
+                    this.entryForManager.activity.badge = msg.data.length;
+                }
+            });
+            axios.post("/api/org/GetActByDepartId", {Id: this.orgInfo.ID}, msg => {
+                if (msg.success) {
+                    this.activityCount = msg.totalRow;
+                }
+            });
+        },
         getPending () {
             axios.post("/api/workflow/Pending", {}, msg => {
                 this.pendingData = msg.data;
-                this.entranceBadge.pendingData = this.pendingData.length;
+                this.entryForManager.pending.badge = this.pendingData.length;
             })
         },
         dealWorkflow (instanceId, stepId, WorkflowName) {

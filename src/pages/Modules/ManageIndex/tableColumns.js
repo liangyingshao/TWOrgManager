@@ -32,61 +32,81 @@ let columns = {
     organization: [
         {
             title: '名称',
-            key: 'name'
+            key: 'name',
+            fixed: 'left',
+            width: 200,
+            align: 'center'
         },
         {
-            title: '类型',
-            key: 'ActivityType'
+            title: '社团类型',
+            key: 'DepartType',
+            width: 100,
+            align: 'center'
         },
         {
             title: '业务指导单位',
-            key: 'CurrentStep'
+            key: 'parent',
+            width: 200,
+            align: 'center'
         },
         {
             title: '业务指导单位管理员',
-            key: 'Owner',
+            align: 'center',
             children: [
                 {
                     title: '姓名',
-                    key: 'Owner'
+                    key: 'parentAdminUser.RealName',
+                    width: 100,
+                    align: 'center'
                 },
                 {
                     title: '教工号',
-                    key: 'Owner'
+                    key: 'parentAdminUser.Code',
+                    width: 100,
+                    align: 'center'
                 }
             ]
         },
         {
             title: '学生社团指导老师',
-            key: 'Owner',
+            align: 'center',
+            key: 'guideTeachers',
             children: [
                 {
                     title: '姓名',
-                    key: 'Owner'
+                    key: 'RealName',
+                    width: 100
                 },
                 {
                     title: '教工号',
-                    key: 'Owner'
+                    key: 'Code',
+                    width: 100
                 }
             ]
         },
         {
             title: '学生社团管理员',
-            key: 'Owner',
+            align: 'center',
             children: [
                 {
                     title: '姓名',
-                    key: 'Owner'
+                    key: 'adminUser.RealName',
+                    width: 100,
+                    align: 'center'
                 },
                 {
                     title: '学号',
-                    key: 'Owner'
+                    key: 'adminUser.Code',
+                    width: 100,
+                    align: 'center'
                 }
             ]
         },
         {
             title: '操作',
-            slot: 'Action'
+            slot: 'Action',
+            width: 100,
+            align: 'center'
         }
     ]
 }
