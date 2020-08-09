@@ -108,14 +108,14 @@
             <i-row v-for="(item,index) in entryForManager" :key="index">
                 <i-card class="layout-con" :to="item.routerTo">
                     <i-row type="flex" align="middle">
-                        <i-col span="3" offset="1">
-                            <div>
+                        <i-col span="4">
+                            <i-row type="flex" justify="center">
                                 <Badge :count="item.badge">
                                     <i-avatar :icon="item.icon" size="large" />
                                 </Badge>
-                            </div>
+                            </i-row>
                         </i-col>
-                        <i-col span="19">
+                        <i-col span="20">
                             <p style="">{{item.title}}</p>
                             <p style="color: #808695; font-size:14px">{{item.description}}</p>
                         </i-col>
