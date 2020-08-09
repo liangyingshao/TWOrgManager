@@ -1,144 +1,132 @@
 <template>
-    <i-row>
-        <i-row id="chart">
-            <i-col span="15">
-                <i-card>
-                    <CellGroup>
-                        <Cell style="border-bottom: 1px solid #e8eaec;padding-top:20px">
-                            <i-row type="flex">
-                                <i-col style="font-weight: bold;margin-bottom: 20px;font-size:18px">
-                                    我的待办
-                                    <Badge :count="message.length" v-if="message.length >0"></Badge>
-                                </i-col>
-                            </i-row>
-                        </Cell>
-                    </CellGroup>
-                    <List v-if="messageNum>0">
-                        <template>
-                            <div v-for="(item,index) in message.slice(0,5)" :key="index">
-                                <i-row style="padding:10px;border-bottom: 1px solid #e8eaec;">
-                                    <i-col span="20" style="padding: 10px 0px 10px 10px;">
-                                        <div>
-                                            <Icon type="ios-checkmark-circle-outline" color="limegreen"/>
-                                            {{item.WorkflowName}}
-                                        </div>
-                                        <div style="color: #aaaaaa;font-size:14px">
-                                            <Icon type="md-information-circle" />
-                                            {{item.Owner}}提交的流程
-                                        </div>
-                                        <div style="color: #aaaaaa;font-size:14px">
-                                            <Icon type="md-shuffle" />
-                                            工作流到达时间{{item.ArriveOn}}
-                                        </div>
+    <i-row type="flex" :gutter="24">
+        <i-col span="15">
+            <i-card :padding="24">
+                <template v-slot:title>
+                    <i-row style="flex" align="middle">
+                        <span style="font-size:18px">我的待办</span>
+                        <Badge :count="message.length" v-if="message.length >0"></Badge>
+                    </i-row>
+                </template>
+                <template v-slot:extra>
+                   <router-link :to="{name: 'MyPending'}">查看所有待办</router-link>
+                </template>
+                <List v-if="messageNum>0">
+                    <ListItem v-for="(item,index) in message.slice(0,3)" :key="index">
+                        <i-row type="flex" align="middle" style="width:100%">
+                            <i-col span="20">
+                                <div>
+                                    <Icon type="ios-checkmark-circle-outline" color="limegreen"/>
+                                    {{item.WorkflowName}}
+                                </div>
+                                <div style="color: #aaaaaa;font-size:14px">
+                                    <Icon type="md-information-circle" />
+                                    {{item.Owner}}提交的流程
+                                </div>
+                                <div style="color: #808695;font-size:14px">
+                                    <Icon type="md-shuffle" />
+                                    工作流到达时间{{item.ArriveOn}}
+                                </div>
+                            </i-col>
+                        </i-row>
+                        <template v-slot:action>
+                            <Button type="success" @click="dealWorkflow(item.InstanceId, item.StepId, item.WorkflowType)">审核</Button>=
+                        </template>
+                    </ListItem>
+                </List>
+                <template v-else>
+                    <i-row class="picture">所有工作已完成</i-row>
+                </template>
+            </i-card>
+            <i-card style="margin-top:10px" title="社团活动" :padding="24">
+                <template v-slot:extra>
+                    <i-input search placeholder="搜索活动名称" @on-search="searchActivity" />
+                </template>
+                <i-row>
+                    <i-table stripe :columns="activity" :data="activitySearched" :loading="tableLoading">
+                        <template slot="Action" slot-scope="{row}">
+                            <i-button @click="checkWorkflow(row.InstanceId, row.StepId, row.ID)">查看</i-button>
+                        </template>
+                    </i-table>
+                    <Page :styles="{'margin-top': '16px'}" :total="pager.totalRow" show-sizer show-total :page-size="5"
+                     @on-change="getActivities($event)" @on-page-size-change="getActivities(null ,$event)" />
+                </i-row>
+            </i-card>
+        </i-col>
+        <i-col span="8">
+            <i-card :padding="0" style="margin-bottom:10px">
+                <div :to="dashBoard.DepartType === 0 ? routers[1]:routers[0]" v-if="true" style="background-color:#ffffff">
+                    <i-row type="flex" align="middle" style="padding:16px;margin: 16px 0px">
+                        <i-col span="4">
+                            <Avatar :size="48" :src="userInfo.avatar"/>
+                        </i-col>
+                        <i-col span="19">
+                            <div>{{time}}好! {{userInfo.realName}}</div>
+                            <a @click="navTo">{{data.Name}}的社团管理员</a>
+                        </i-col>
+                    </i-row>
+                    <i-row type="flex" class="background-purple">
+                        <i-col span="8">
+                            <div style="padding-top:20px;">
+                                <i-row type="flex">
+                                    <i-col span="22">
+                                        <div style="font-size: 33px;text-align:center;" v-if="membersData.length>0">{{membersData.length}}</div>
+                                        <div style="font-size: 33px;text-align:center;" v-else>0</div>
+                                        <div style="margin-bottom:10px;font-size:12px;text-align:center;">成员数</div>
                                     </i-col>
-                                    <i-col span="4" style="padding-top:20px;">
-                                        <Button type="success" @click="dealWorkflow(item.InstanceId, item.StepId, item.WorkflowName)" v-if="item.StepName.length<=6">{{item.StepName}}</Button>
-                                        <Button type="success" @click="dealWorkflow(item.InstanceId, item.StepId, item.WorkflowName)" v-else>详情</Button>
+                                    <i-col span="1">
+                                        <div style="border-right: 1px solid #fff;height: 36px;margin-top: 10px;opacity: .2;"/>
                                     </i-col>
                                 </i-row>
                             </div>
-                        </template>
-                    </List>
-                    <template v-else>
-                        <i-row class="picture">所有工作已完成</i-row>
-                    </template>
-                </i-card>
-                <i-card style="margin-top:10px">
-                    <CellGroup>
-                        <Cell>
-                            <i-row type="flex">
-                                <i-col style="font-weight: bold;margin-bottom: 20px;font-size:18px">
-                                    社团活动
-                                </i-col>
-                            </i-row>
-                        </Cell>
-                    </CellGroup>
-                    <i-row>
-                        <i-table stripe :columns="activity" :data="activityData.slice(0,5)" :loading="tableLoading">
-                            <template slot="Action" slot-scope="{row}">
-                                <i-button @click="checkWorkflow(row.InstanceId, row.StepId, row.ID)">查看</i-button>
-                            </template>
-                        </i-table>
+                        </i-col>
+                        <i-col span="8">
+                            <div style="padding-top:20px;">
+                                <i-row type="flex">
+                                    <i-col span="22">
+                                        <div style="font-size: 33px;text-align:center;" v-if="activityData.length>0">{{activityData.length}}</div>
+                                        <div style="font-size: 33px;text-align:center;" v-else>0</div>
+                                        <div style="margin-bottom:10px;font-size:12px;text-align:center;">活动数</div>
+                                    </i-col>
+                                    <i-col span="1">
+                                        <div style="border-right: 1px solid #fff;height: 36px;margin-top: 10px;opacity: .2;"/>
+                                    </i-col>
+                                </i-row>
+                            </div>
+                        </i-col>
+                        <i-col span="8">
+                            <div style="padding-top:20px;">
+                                <i-row type="flex">
+                                    <i-col span="22">
+                                        <div style="font-size: 33px;text-align:center;" v-if="applicationsData.length>0">{{applicationsData.length}}</div>
+                                        <div style="font-size: 33px;text-align:center;" v-else>0</div>
+                                        <div style="margin-bottom:10px;font-size:12px;text-align:center;">申请数</div>
+                                    </i-col>
+                                </i-row>
+                            </div>
+                        </i-col>
+                    </i-row>
+                </div>
+            </i-card>
+            <i-row  v-for="(item,index) in entryForManager" :key="index">
+                <i-card class="layout-con" :to="item.routerTo">
+                    <i-row type="flex" align="middle">
+                        <i-col span="3" offset="1">
+                            <div>
+                                <Badge :count="item.badge" v-if="item.title!='添加活动'">
+                                    <i-avatar :icon="item.icon" />
+                                </Badge>
+                                <i-avatar :icon="item.icon" v-else/>
+                            </div>
+                        </i-col>
+                        <i-col span="19">
+                            <div style="padding-top:5px">{{item.title}}</div>
+                            <div style="color: #808695;font-size:14px">{{item.descrip}}</div>
+                        </i-col>
                     </i-row>
                 </i-card>
-            </i-col>
-            <i-col span="8" style="margin-left:15px"
-                v-if='app.checkPermission("Organization.DepartAdminUser") || app.checkPermission("Organization.UnitAdminUser")
-                ||app.checkPermission("Organization.TwAdminUser") || app.checkPermission("Organization.TeacherAdmin") '>
-                <i-card :padding="0" style="margin-bottom:10px">
-                    <div :to="dashBoard.DepartType === 0 ? routers[1]:routers[0]" v-if="true" style="background-color:#ffffff">
-                        <i-row type="flex" style="padding:30px">
-                            <i-col span="4">
-                                <Avatar size="large" :src="userInfo.avatar"/>
-                            </i-col>
-                            <i-col span="19">
-                                <div>{{time}}好! {{userInfo.realName}}</div>
-                                <a @click="navTo">{{data.Name}}的社团管理员</a>
-                            </i-col>
-                        </i-row>
-                        <i-row type="flex" class="background-purple">
-                            <i-col span="8">
-                                <div style="padding-top:20px;">
-                                    <i-row type="flex">
-                                        <i-col span="22">
-                                            <div style="font-size: 33px;text-align:center;" v-if="membersData.length>0">{{membersData.length}}</div>
-                                            <div style="font-size: 33px;text-align:center;" v-else>0</div>
-                                            <div style="margin-bottom:10px;font-size:12px;text-align:center;">成员数</div>
-                                        </i-col>
-                                        <i-col span="1">
-                                            <div style="border-right: 1px solid #fff;height: 36px;margin-top: 10px;opacity: .2;"/>
-                                        </i-col>
-                                    </i-row>
-                                </div>
-                            </i-col>
-                            <i-col span="8">
-                                <div style="padding-top:20px;">
-                                    <i-row type="flex">
-                                        <i-col span="22">
-                                            <div style="font-size: 33px;text-align:center;" v-if="activityData.length>0">{{activityData.length}}</div>
-                                            <div style="font-size: 33px;text-align:center;" v-else>0</div>
-                                            <div style="margin-bottom:10px;font-size:12px;text-align:center;">活动数</div>
-                                        </i-col>
-                                        <i-col span="1">
-                                            <div style="border-right: 1px solid #fff;height: 36px;margin-top: 10px;opacity: .2;"/>
-                                        </i-col>
-                                    </i-row>
-                                </div>
-                            </i-col>
-                            <i-col span="8">
-                                <div style="padding-top:20px;">
-                                    <i-row type="flex">
-                                        <i-col span="22">
-                                            <div style="font-size: 33px;text-align:center;" v-if="applicationsData.length>0">{{applicationsData.length}}</div>
-                                            <div style="font-size: 33px;text-align:center;" v-else>0</div>
-                                            <div style="margin-bottom:10px;font-size:12px;text-align:center;">申请数</div>
-                                        </i-col>
-                                    </i-row>
-                                </div>
-                            </i-col>
-                        </i-row>
-                    </div>
-                </i-card>
-                <i-row  v-for="(item,index) in entrForManager" :key="index">
-                    <i-card class="layout-con" :to="item.routerTo">
-                        <i-row type="flex">
-                            <i-col span="4">
-                                <div style="padding:10px">
-                                    <Badge :count="entranceBadge[item.count]" v-if="item.title!='添加活动'">
-                                        <i-avatar :icon="item.icon" />
-                                    </Badge>
-                                    <i-avatar :icon="item.icon" v-else/>
-                                </div>
-                            </i-col>
-                            <i-col span="19">
-                                <div style="padding-top:5px">{{item.title}}</div>
-                                <div style="font-size:14px">{{item.descrip}}</div>
-                            </i-col>
-                        </i-row>
-                    </i-card>
-                </i-row>
-            </i-col>
-        </i-row>
+            </i-row>
+        </i-col>
     </i-row>
 </template>
 
@@ -248,10 +236,10 @@ export default {
                     }
                 }
             ],
-            entrForManager: [
-                {
+            entryForManager: {
+                member: {
                     title: "成员管理",
-                    count: "membersData",
+                    badge: 0,
                     descrip: "管理本社团的所有成员，处理成员加入申请以及踢除成员",
                     routerTo: {
                         name: "OrgDetail",
@@ -261,7 +249,7 @@ export default {
                     },
                     icon: "md-person-add"
                 },
-                {
+                addAct: {
                     title: "添加活动",
                     descrip: "添加一个活动的申请，需要指导老师，业务指导单位，学生联合会及团委审核",
                     routerTo: {
@@ -272,9 +260,9 @@ export default {
                     },
                     icon: "logo-buffer"
                 },
-                {
+                activity: {
                     title: "活动管理",
-                    count: "activityData",
+                    badge: 0,
                     descrip: "管理本社团的所有活动，对已经通过审核的活动可以选择开始活动。也可以在本页面下载活动签到二维码",
                     routerTo: {
                         name: "Affiliated",
@@ -284,9 +272,9 @@ export default {
                     },
                     icon: "md-information"
                 },
-                {
+                pending: {
                     title: "我的待办",
-                    count: "pendingData",
+                    badge: 0,
                     descrip: "等待我处理的工作",
                     routerTo: {
                         name: "MyPending",
@@ -294,16 +282,15 @@ export default {
                     },
                     icon: "ios-add-circle"
                 }
-            ],
-            page: 1,
-            pageSize: 5,
+            },
             tableLoading: false,
             membersData: [],
             applicationsData: [],
-            entranceBadge: {
-                "membersData": 0,
-                "activityData": 0,
-                "pendingData": 0
+            activitySearched: [],
+            pager: {
+                page: 1,
+                pageSize: 5,
+                totalRow: 0
             }
         };
     },
@@ -318,40 +305,16 @@ export default {
             axios.post("/api/org/GetDashboard", {}, msg => {
                 this.dashBoard = msg;
                 axios.post("/api/security/GetOrgDetail", {}, msg => {
-                    console.log(msg)
                     this.level = msg.level;
                     this.data = msg.data;
-                    console.log(this.data)
-                        // msg.charts.departType.forEach(element => {
-                        //     element.name = element.name ? element.name : "未分类";
-                        // });
-                        // this.depart.series.data = msg.charts.departType;
-                        // msg.charts.userType.forEach(element => {
-                        //     element.name = element.name ? element.name : "未填写";
-                        // });
-                        // this.member.series.data = msg.charts.userType;
-                        // let ele = document.getElementById("depart");
-                        // let instance = echarts.init(ele);
-                        // instance.setOption(this.depart);
-                        // let ele3 = document.getElementById("member");
-                        // let instance3 = echarts.init(ele3);
-                        // instance3.setOption(this.member);
-                        axios.post("/api/org/GetActByDepartId", {Id: msg.data.ID}, msg => {
-                            this.activityData = msg.data;
-                            this.entranceBadge["activityData"] = this.activityData.length;
-                            // this.guage.series.data[0].value = msg.charts.departCount;
-                            // this.guage.series.max = msg.charts.total;
-                            // let ele2 = document.getElementById("guage");
-                            // let instance2 = echarts.init(ele2);
-                            // instance2.setOption(this.guage);
-                        });
-                        axios.post("/api/security/GetUsersByDepartId", {departId: msg.data.ID}, msg => {
-                            this.membersData = msg.data;
-                            this.entranceBadge["membersData"] = this.membersData.length
-                        });
-                        axios.post("/api/security/GetApplicationsByDeparts", {departId: msg.data.ID}, msg => {
-                            this.applicationsData = msg.data;
-                        })
+                    this.getActivities();
+                    axios.post("/api/security/GetUsersByDepartId", {departId: msg.data.ID}, msg => {
+                        this.membersData = msg.data;
+                        this.entryForManager.member.badge = msg.data.length
+                    });
+                    axios.post("/api/security/GetApplicationsByDeparts", {departId: msg.data.ID}, msg => {
+                        this.applicationsData = msg.data;
+                    })
                 })
             });
         },
@@ -369,8 +332,20 @@ export default {
             axios.post("/api/workflow/Pending", {}, msg => {
                 this.messageNum = msg.totalRow;
                 this.message = msg.data;
-                this.entranceBadge["pendingData"] = this.messageNum;
+                this.entryForManager.pending.badge = this.messageNum;
             })
+        },
+        getActivities (targetPage, targetPageSize) {
+            let page = targetPage || this.pager.page;
+            let pageSize = targetPageSize || this.pager.pageSize;
+            axios.post("/api/org/GetActByDepartId", {Id: this.data.ID, page, pageSize}, msg => {
+                if (msg.success) {
+                    this.activityData = msg.data;
+                    this.activitySearched = this.activityData;
+                    this.pager.totalRow = msg.totalRow;
+                    this.entryForManager.activity.badge = msg.data.filter(e => e.ApplicateState === 3).length;
+                }
+            });
         },
         dealWorkflow (instanceId, stepId, WorkflowName) {
             window.open(`${this.dic[WorkflowName]}?instanceId=${instanceId}&stepId=${stepId}&detail=false`);
@@ -380,6 +355,9 @@ export default {
         },
         checkWorkflow (instanceId, stepId, actId) {
             window.open(`/manage/org/signUpSituation?instanceId=${instanceId}&stepId=${stepId}&detail=true&actId=${actId}`);
+        },
+        searchActivity (value) {
+            this.activitySearched = this.activityData.filter(e => e.ActivityName.indexOf(value) > -1);
         }
     }
 }
