@@ -55,34 +55,53 @@ let columns = {
             children: [
                 {
                     title: '姓名',
-                    key: 'parentAdminUser.RealName',
+                    key: 'parentAdminUser',
                     width: 100,
-                    align: 'center'
+                    align: 'center',
+                    render: (h, params) => {
+                        return h('div', params.row.parentAdminUser.RealName);
+                    }
                 },
                 {
                     title: '教工号',
-                    key: 'parentAdminUser.Code',
+                    key: 'parentAdminUser',
                     width: 100,
-                    align: 'center'
+                    align: 'center',
+                    render: (h, params) => {
+                        return h('div', params.row.parentAdminUser.Code);
+                    }
                 }
             ]
         },
         {
             title: '学生社团指导老师',
             align: 'center',
-            key: 'guideTeachers',
             children: [
                 {
                     title: '姓名',
-                    key: 'RealName',
+                    key: 'guideTeachers',
                     width: 100,
-                    align: 'center'
+                    align: 'center',
+                    render: (h, params) => {
+                        return h('div',
+                            params.row.guideTeachers.map(item => {
+                                return h('div', item.RealName)
+                            })
+                        );
+                    }
                 },
                 {
                     title: '教工号',
-                    key: 'Code',
+                    key: 'guideTeachers',
                     width: 100,
-                    align: 'center'
+                    align: 'center',
+                    render: (h, params) => {
+                        return h('div',
+                            params.row.guideTeachers.map(item => {
+                                return h('div', item.Code)
+                            })
+                        );
+                    }
                 }
             ]
         },
@@ -92,15 +111,21 @@ let columns = {
             children: [
                 {
                     title: '姓名',
-                    key: 'adminUser.RealName',
+                    key: 'adminUser',
                     width: 100,
-                    align: 'center'
+                    align: 'center',
+                    render: (h, params) => {
+                        return h('div', params.row.adminUser.RealName);
+                    }
                 },
                 {
-                    title: '学号',
-                    key: 'adminUser.Code',
+                    title: '教工号',
+                    key: 'adminUser',
                     width: 100,
-                    align: 'center'
+                    align: 'center',
+                    render: (h, params) => {
+                        return h('div', params.row.adminUser.Code);
+                    }
                 }
             ]
         },
