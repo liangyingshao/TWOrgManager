@@ -93,5 +93,10 @@ module.exports = {
         path: "/artical",
         layout: "empty",
         component: () => import(/* webpackChunkName: "Articals" */"@p/Modules/NewsDetail")
+    },
+    UploadOrgList: {
+        path: "/manage/upload-org-list",
+        layout: "admin",
+        component: () => import(/* webpackChunkName: "OrgManager" */"@p/Modules/UploadOrgList")
     }
 };

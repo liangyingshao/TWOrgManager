@@ -1,5 +1,5 @@
 <template>
-    <i-row type="flex" :gutter="24">
+    <i-row type="flex" :gutter="24" id="college-index">
         <i-col span="15">
             <i-card :padding="24">
                 <template v-slot:title>
@@ -29,8 +29,7 @@
                                 </p>
                             </i-col>
                             <i-col span="4">
-                                <Button type="success" @click="dealWorkflow(item.InstanceId, item.StepId, item.WorkflowName)" v-if="item.StepName.length <= 6">{{item.StepName}}</Button>
-                                <Button type="success" @click="dealWorkflow(item.InstanceId, item.StepId, item.WorkflowName)" v-else>查看详情</Button>
+                                <Button type="success" @click="dealWorkflow(item.InstanceId, item.StepId, item.WorkflowType)">审核</Button>
                             </i-col>
                         </i-row>
                     </ListItem>
@@ -44,9 +43,9 @@
                     <i-input search placeholder="搜索社团名" @on-search="searchOrganization" />
                 </template>
                 <i-row>
-                    <i-table stripe :columns="organizationCol" :data="organizationSearched" :loading="tableLoading">
+                    <i-table @on-row-dblclick="viewOrg($event.id)" :max-height="contentHeight" border stripe :columns="organizationCol" :data="organizationSearched" :loading="tableLoading">
                         <template slot="Action" slot-scope="{row}">
-                            <i-button @click="checkWorkflow(row.InstanceId, row.StepId, row.ID)">查看</i-button>
+                            <i-button @click="viewOrg(row.id)">查看</i-button>
                         </template>
                     </i-table>
                 </i-row>
@@ -95,8 +94,8 @@
                             <div style="padding-top:20px;">
                                 <i-row type="flex">
                                     <i-col span="22">
-                                        <div style="font-size: 33px;text-align:center;">{{applicationsData.length}}</div>
-                                        <div style="margin-bottom:10px;font-size:12px;text-align:center;">申请数</div>
+                                        <div style="font-size: 33px;text-align:center;">{{activityCount}}</div>
+                                        <div style="margin-bottom:10px;font-size:12px;text-align:center;">活动数</div>
                                     </i-col>
                                 </i-row>
                             </div>
@@ -109,7 +108,7 @@
                     <i-row type="flex" align="middle">
                         <i-col span="3" offset="1">
                             <div>
-                                <Badge :count="entranceBadge[item.count]">
+                                <Badge :count="item.badge">
                                     <i-avatar :icon="item.icon" size="large" />
                                 </Badge>
                             </div>
@@ -185,20 +184,22 @@ export default {
                     }
                 }
             ],
-            entryForManager: [
-                {
+            entryForManager: {
+                pending: {
                     title: "我的待办",
+                    badge: 0,
                     count: "pendingData",
                     description: "等待我处理的工作",
                     routerTo: {
                         name: "MyPending",
                         query: {}
                     },
-                    icon: "ios-add-circle"
+                    icon: "md-list"
                 },
-                {
+                organization: {
                     title: "社团列表",
                     count: "membersData",
+                    badge: 0,
                     description: "管理本单位所指导的社团，管理他们的基本信息。",
                     routerTo: {
                         name: "OrgDetail",
@@ -208,9 +209,10 @@ export default {
                     },
                     icon: "md-person-add"
                 },
-                {
+                activity: {
                     title: "活动管理",
                     count: "organizationData",
+                    badge: 0,
                     description: "管理本单位所属所有社团的所有活动。查看他们的报名记录和签到记录。",
                     routerTo: {
                         name: "Affiliated",
@@ -218,17 +220,13 @@ export default {
                             tabSelect: "activity"
                         }
                     },
-                    icon: "md-information"
+                    icon: "md-flag"
                 }
-            ],
+            },
             tableLoading: false,
             membersData: [],
-            applicationsData: [],
-            entranceBadge: {
-                membersData: 0,
-                organizationData: 0,
-                pendingData: 0
-            }
+            activityCount: 0,
+            contentHeight: 0
         };
     },
     mounted () {
@@ -244,22 +242,26 @@ export default {
                 axios.post("/api/security/GetOrgDetail", {}, msg => {
                     this.orgInfo = msg.data;
 
+                    this.getActivities();
                     axios.post("/api/security/GetAllAssociationsByDepartId", {departId: this.orgInfo.ID}, msg => {
                         if (msg.success) {
                             this.organizationData = msg.data;
                             this.organizationSearched = this.organizationData;
-                            this.entranceBadge.organizationData = this.organizationData.length;
+                            this.entryForManager.organization.badge = this.organizationData.length;
+
+                            this.$nextTick(() => {
+                                this.contentHeight = document.getElementById("college-index").offsetWidth;
+                            })
                         }
                     });
                     axios.post("/api/security/GetUsersByDepartId", {departId: this.orgInfo.ID}, msg => {
                         if (msg.success) {
                             this.membersData = msg.data;
-                            this.entranceBadge.membersData = this.membersData.length;
                         }
                     });
-                    axios.post("/api/security/GetApplicationsByDeparts", {departId: this.orgInfo.ID}, msg => {
+                    /* axios.post("/api/security/GetApplicationsByDeparts", {departId: this.orgInfo.ID}, msg => {
                         if (msg.success) this.applicationsData = msg.data;
-                    })
+                    }) */
                 })
             });
         },
@@ -273,10 +275,22 @@ export default {
             else if (s2 < 18) this.time = "下午";
             else if (s2 < 24) this.time = "晚上";
         },
+        getActivities () {
+            axios.post("/api/org/GetActByDepartId", {Id: this.orgInfo.ID, applicationState: 3}, msg => {
+                if (msg.success) {
+                    this.entryForManager.activity.badge = msg.data.length;
+                }
+            });
+            axios.post("/api/org/GetActByDepartId", {Id: this.orgInfo.ID}, msg => {
+                if (msg.success) {
+                    this.activityCount = msg.totalRow;
+                }
+            });
+        },
         getPending () {
             axios.post("/api/workflow/Pending", {}, msg => {
                 this.pendingData = msg.data;
-                this.entranceBadge.pendingData = this.pendingData.length;
+                this.entryForManager.pending.badge = this.pendingData.length;
             })
         },
         dealWorkflow (instanceId, stepId, WorkflowName) {
@@ -290,6 +304,14 @@ export default {
         },
         searchOrganization (value) {
             this.organizationSearched = this.organizationData.filter(e => e.name.indexOf(value) > -1);
+        },
+        viewOrg (overrideDptId) {
+            this.$router.push({
+                name: 'TeacherManage',
+                query: {
+                    overrideDptId
+                }
+            });
         }
     }
 }

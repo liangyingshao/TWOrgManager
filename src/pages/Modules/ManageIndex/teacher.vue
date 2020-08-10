@@ -43,12 +43,12 @@
                     <i-input search placeholder="搜索活动名称" @on-search="searchActivity" />
                 </template>
                 <i-row>
-                    <i-table stripe :columns="tableColumns.activity" :data="activitySearched" :loading="tableLoading">
+                    <i-table stripe :columns="tableColumns.activity" :data="activityData" :loading="tableLoading">
                         <template slot="Action" slot-scope="{row}">
                             <i-button @click="checkWorkflow(row.InstanceId, row.StepId, row.ID)">查看</i-button>
                         </template>
                     </i-table>
-                    <Page :styles="{'margin-top': '16px'}" :total="pager.totalRow" show-sizer show-total :page-size="5"
+                    <Page :styles="{'margin-top': '16px'}" :total="pager.totalRow" show-sizer show-total :page-size="5" :page-size-opts="[5, 10, 20, 100]"
                      @on-change="getActivities($event)" @on-page-size-change="getActivities(null ,$event)" />
                 </i-row>
             </i-card>
@@ -108,14 +108,14 @@
             <i-row v-for="(item,index) in entryForManager" :key="index">
                 <i-card class="layout-con" :to="item.routerTo">
                     <i-row type="flex" align="middle">
-                        <i-col span="3" offset="1">
-                            <div>
+                        <i-col span="4">
+                            <i-row type="flex" justify="center">
                                 <Badge :count="item.badge">
                                     <i-avatar :icon="item.icon" size="large" />
                                 </Badge>
-                            </div>
+                            </i-row>
                         </i-col>
-                        <i-col span="19">
+                        <i-col span="20">
                             <p style="">{{item.title}}</p>
                             <p style="color: #808695; font-size:14px">{{item.description}}</p>
                         </i-col>
@@ -137,7 +137,7 @@ export default {
             tableColumns,
             app,
             activityData: [],
-            activitySearched: [],
+            activitySearchValue: "",
             orgInfo: {},
             time: "早上",
             dic: {
@@ -235,17 +235,17 @@ export default {
     mounted () {
         this.judgeTime();
         app.title = "主页";
-        this.getDashBoard();
+        this.getDashBoard(this.$route.query.overrideDptId);
         this.getPending();
     },
     methods: {
         checkWorkflow (instanceId, stepId, actId) {
             window.open(`/manage/org/signUpSituation?instanceId=${instanceId}&stepId=${stepId}&detail=true&actId=${actId}`);
         },
-        getDashBoard () {
+        getDashBoard (id) {
             axios.post("/api/org/GetDashboard", {}, msg => {
                 this.dashBoard = msg;
-                axios.post("/api/security/GetOrgDetail", {}, msg => {
+                axios.post("/api/security/GetOrgDetail", {id}, msg => {
                     this.orgInfo = msg.data;
                     this.getActivities();
                     axios.post("/api/security/GetUsersByDepartId", {departId: this.orgInfo.ID}, msg => {
@@ -265,10 +265,9 @@ export default {
         getActivities (targetPage, targetPageSize) {
             let page = targetPage || this.pager.page;
             let pageSize = targetPageSize || this.pager.pageSize;
-            axios.post("/api/org/GetActByDepartId", {Id: this.orgInfo.ID, page, pageSize}, msg => {
+            axios.post("/api/org/GetActByDepartId", {Id: this.orgInfo.ID, page, pageSize, name: this.activitySearchValue}, msg => {
                 if (msg.success) {
                     this.activityData = msg.data;
-                    this.activitySearched = this.activityData;
                     this.pager.totalRow = msg.totalRow;
                     let page = 1;
                     let pageSize = this.pager.totalRow;
@@ -304,14 +303,8 @@ export default {
             this.$router.push({name: 'OrgDetail'});
         },
         searchActivity (value) {
-            let page = 1;
-            let pageSize = this.pager.totalRow;
-            axios.post("/api/org/GetActByDepartId", {Id: this.orgInfo.ID, page, pageSize}, msg => {
-                if (msg.success) {
-                    // this.entryForManager.activity.badge = msg.data.filter(e => e.ApplicateState === 3).length;
-                    this.activitySearched = msg.data.filter(e => e.ActivityName.indexOf(value) > -1);
-                }
-            });
+            this.activitySearchValue = value;
+            this.getActivities();
         }
     }
 }
