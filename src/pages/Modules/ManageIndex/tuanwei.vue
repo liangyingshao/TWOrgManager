@@ -29,8 +29,7 @@
                                 </p>
                             </i-col>
                             <i-col span="4">
-                                <Button type="success" @click="dealWorkflow(item.InstanceId, item.StepId, item.WorkflowName)" v-if="item.StepName.length <= 6">{{item.StepName}}</Button>
-                                <Button type="success" @click="dealWorkflow(item.InstanceId, item.StepId, item.WorkflowName)" v-else>查看详情</Button>
+                                <Button type="success" @click="dealWorkflow(item.InstanceId, item.StepId, item.WorkflowName)">审核</Button>
                             </i-col>
                         </i-row>
                     </ListItem>
@@ -44,9 +43,9 @@
                     <i-input search placeholder="搜索社团名" @on-search="searchOrganization" />
                 </template>
                 <i-row>
-                    <i-table :max-height="contentHeight" border stripe :columns="organizationCol" :data="organizationSearched" :loading="tableLoading">
+                    <i-table @on-row-dblclick="viewOrg($event.id)" :max-height="contentHeight" border stripe :columns="organizationCol" :data="organizationSearched" :loading="tableLoading">
                         <template slot="Action" slot-scope="{row}">
-                            <i-button @click="checkWorkflow(row.InstanceId, row.StepId, row.ID)">查看</i-button>
+                            <i-button @click="viewOrg(row.id)">查看</i-button>
                         </template>
                     </i-table>
                 </i-row>
@@ -300,6 +299,14 @@ export default {
         },
         searchOrganization (value) {
             this.organizationSearched = this.organizationData.filter(e => e.name.indexOf(value) > -1);
+        },
+        viewOrg (overrideDptId) {
+            this.$router.push({
+                name: 'TeacherManage',
+                query: {
+                    overrideDptId
+                }
+            });
         }
     }
 }

@@ -40,7 +40,7 @@ let columns = {
         {
             title: '社团类型',
             key: 'DepartType',
-            width: 100,
+            width: 120,
             align: 'center'
         },
         {
@@ -75,12 +75,14 @@ let columns = {
                 {
                     title: '姓名',
                     key: 'RealName',
-                    width: 100
+                    width: 100,
+                    align: 'center'
                 },
                 {
                     title: '教工号',
                     key: 'Code',
-                    width: 100
+                    width: 100,
+                    align: 'center'
                 }
             ]
         },
