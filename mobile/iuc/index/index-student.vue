@@ -123,7 +123,6 @@
 			this.getActivities();
 			this.getMyActivities();
 			this.getMyApplicate();
-			console.log(app.userInfo);
 		},
 		data () {
 			// 1. 在可以申请加入社团的时候，第一个按钮显示：“查找社团”
