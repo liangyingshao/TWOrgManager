@@ -12,7 +12,7 @@ module.exports = {
     assetsPublicPath: '/',
     proxyTable: {
       "/api": {
-        target: "http://stgl.ricebird.cn", //"http://localhost:2034", //
+        target: "http://localhost:2034", //"http://stgl.ricebird.cn", //
         changeOrigin: true
       },
       "/signalr": {
