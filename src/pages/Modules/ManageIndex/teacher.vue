@@ -47,6 +47,9 @@
                         <template slot="Action" slot-scope="{row}">
                             <i-button @click="checkWorkflow(row.InstanceId, row.StepId, row.ID)">查看</i-button>
                         </template>
+                        <template slot="QRCode" slot-scope="{row}">
+                            <img :src="'/qr/' + row.ShortCode" />
+                        </template>
                     </i-table>
                     <Page :styles="{'margin-top': '16px'}" :total="pager.totalRow" show-sizer show-total :page-size="5" :page-size-opts="[5, 10, 20, 100]"
                      @on-change="getActivities($event)" @on-page-size-change="getActivities(null ,$event)" />
