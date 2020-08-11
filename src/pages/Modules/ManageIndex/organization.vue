@@ -1,69 +1,77 @@
 <template>
-    <i-row class="background-white">
-        <i-row id="chart">
-            <i-col span="14">
-                <i-row type="flex" class="background-grey" style="padding: 20px 20px;">
-                    <i-col span="6"><Avatar style="width: 140px;height: 140px;" :src="app.webInfo.avatar"/></i-col>
-                    <i-col span="15" id="userInfo">
-                        <p class="welcome">厦门大学社团管理系统</p>
-                        <p>{{time}}好，{{userInfo.realName}}</p>
-                    </i-col>
-                </i-row>
-                <template v-if="level === 2 || level === 3">
-                    <i-col id="organization">
-                        <i-row class="difference">较去年<span class="number">+{{chart.organization.allChildrenIncrease}}</span></i-row>
-                        <i-row class="number">{{chart.organization.allChildrenCount}}</i-row>
-                        <i-row class="item-name">社团数</i-row>
-                    </i-col>
-                    <i-col>
-                        <i-divider type="vertical" />
-                    </i-col>
-                    <i-col id="member">
-                        <i-row class="difference">较去年<span class="number">+{{chart.member.allMemberIncrease}}</span></i-row>
-                        <i-row class="number">{{chart.member.allMemberCount}}</i-row>
-                        <i-row class="item-name">成员数</i-row>
-                    </i-col>
-                    <i-col>
-                        <i-divider type="vertical" />
-                    </i-col>
-                    <i-col id="activity">
-                        <i-row class="difference">较去年<span class="number">+{{chart.activity.increase}}</span></i-row>
-                        <i-row class="number">{{chart.activity.total}}</i-row>
-                        <i-row class="item-name">活动数</i-row>
-                    </i-col>
+    <i-row type="flex" :gutter="24">
+        <i-col span="15">
+            <i-card :padding="24">
+                <template v-slot:title>
+                    <i-row style="flex" align="middle">
+                        <span style="font-size:18px">我的待办</span>
+                        <Badge :count="message.length" v-if="message.length >0"></Badge>
+                    </i-row>
                 </template>
-                <i-row type="flex">
-                    <i-col v-if="message.length >0" style="font-weight: bold;margin-bottom: 20px">您当前有{{message.length}}条待办事项</i-col>
-                </i-row>
+                <template v-slot:extra>
+                   <router-link :to="{name: 'MyPending'}">查看所有待办</router-link>
+                </template>
                 <List v-if="messageNum>0">
-                    <template v-for="(item,index) in message.slice(0,5)" >
-                        <ListItem :key="index">
-                            <ListItemMeta :title="`${item.Owner}提交的${item.WorkflowName}流程已到达您的步骤`" :description="`到达时间:${item.ArriveOn}`"></ListItemMeta>
-                            <template slot="action">
-                                <li @click="dealWorkflow(item.InstanceId, item.StepId, item.WorkflowName)"><a>{{item.StepName}}</a></li>
-                            </template>
-                        </ListItem>
-                    </template>
+                    <ListItem v-for="(item,index) in message.slice(0,3)" :key="index">
+                        <i-row type="flex" align="middle" style="width:100%">
+                            <i-col span="20">
+                                <div>
+                                    <Icon type="ios-checkmark-circle-outline" color="limegreen"/>
+                                    {{item.WorkflowName}}
+                                </div>
+                                <div style="color: #aaaaaa;font-size:14px">
+                                    <Icon type="md-information-circle" />
+                                    {{item.Owner}}提交的流程
+                                </div>
+                                <div style="color: #808695;font-size:14px">
+                                    <Icon type="md-shuffle" />
+                                    工作流到达时间{{item.ArriveOn}}
+                                </div>
+                            </i-col>
+                        </i-row>
+                        <template v-slot:action>
+                            <Button type="success" @click="dealWorkflow(item.InstanceId, item.StepId, item.WorkflowType)">审核</Button>=
+                        </template>
+                    </ListItem>
                 </List>
                 <template v-else>
                     <i-row class="picture">所有工作已完成</i-row>
                 </template>
-            </i-col>
-            <i-col span="9" offset="1" style="padding: 24px;background-color: lightgrey;"
-                v-if='app.checkPermission("Organization.DepartAdminUser") || app.checkPermission("Organization.UnitAdminUser")
-                ||app.checkPermission("Organization.TwAdminUser") || app.checkPermission("Organization.TeacherAdmin") '>
+            </i-card>
+            <i-card style="margin-top:10px" title="社团活动" :padding="24">
+                <template v-slot:extra>
+                    <i-input search placeholder="搜索活动名称" @on-search="searchActivity" />
+                </template>
+                <i-row>
+                    <i-table stripe :columns="activity" :data="activitySearched" :loading="tableLoading">
+                        <template slot="Action" slot-scope="{row}">
+                            <i-button @click="checkWorkflow(row.InstanceId, row.StepId, row.ID)">查看</i-button>
+                        </template>
+                    </i-table>
+                    <Page :styles="{'margin-top': '16px'}" :total="pager.totalRow" show-sizer show-total :page-size="5"
+                     @on-change="getActivities($event)" @on-page-size-change="getActivities(null ,$event)" />
+                </i-row>
+            </i-card>
+        </i-col>
+        <i-col span="8">
+            <i-card :padding="0" style="margin-bottom:10px">
                 <div :to="dashBoard.DepartType === 0 ? routers[1]:routers[0]" v-if="true" style="background-color:#ffffff">
-                    <List>
-                        <ListItem  style="padding: 20px;">
-                            <ListItemMeta :title="'暂无名称'" avatar="https://dev-file.iviewui.com/userinfoPDvn9gKWYihR24SpgC319vXY8qniCqj4/avatar" description ="暂无描述"></ListItemMeta>
-                        </ListItem>
-                    </List>
+                    <i-row type="flex" align="middle" style="padding:16px;margin: 16px 0px">
+                        <i-col span="4">
+                            <Avatar :size="48" :src="userInfo.avatar"/>
+                        </i-col>
+                        <i-col span="19">
+                            <div>{{time}}好! {{userInfo.realName}}</div>
+                            <a @click="navTo">{{data.Name}}的社团管理员</a>
+                        </i-col>
+                    </i-row>
                     <i-row type="flex" class="background-purple">
                         <i-col span="8">
                             <div style="padding-top:20px;">
                                 <i-row type="flex">
                                     <i-col span="22">
-                                        <div style="font-size: 33px;text-align:center;">0</div>
+                                        <div style="font-size: 33px;text-align:center;" v-if="membersData.length>0">{{membersData.length}}</div>
+                                        <div style="font-size: 33px;text-align:center;" v-else>0</div>
                                         <div style="margin-bottom:10px;font-size:12px;text-align:center;">成员数</div>
                                     </i-col>
                                     <i-col span="1">
@@ -76,7 +84,8 @@
                             <div style="padding-top:20px;">
                                 <i-row type="flex">
                                     <i-col span="22">
-                                        <div style="font-size: 33px;text-align:center;">0</div>
+                                        <div style="font-size: 33px;text-align:center;" v-if="activityData.length>0">{{activityData.length}}</div>
+                                        <div style="font-size: 33px;text-align:center;" v-else>0</div>
                                         <div style="margin-bottom:10px;font-size:12px;text-align:center;">活动数</div>
                                     </i-col>
                                     <i-col span="1">
@@ -89,7 +98,8 @@
                             <div style="padding-top:20px;">
                                 <i-row type="flex">
                                     <i-col span="22">
-                                        <div style="font-size: 33px;text-align:center;">0</div>
+                                        <div style="font-size: 33px;text-align:center;" v-if="applicationsData.length>0">{{applicationsData.length}}</div>
+                                        <div style="font-size: 33px;text-align:center;" v-else>0</div>
                                         <div style="margin-bottom:10px;font-size:12px;text-align:center;">申请数</div>
                                     </i-col>
                                 </i-row>
@@ -97,22 +107,26 @@
                         </i-col>
                     </i-row>
                 </div>
-                <i-row class="title">常用入口</i-row>
-                <i-row type="flex" justify="space-between">
-                    <template>
-                        <i-col span="11"  v-for="(item,index) in entrForManager" :key="index">
-                            <i-card class="layout-con" :to="item.routerTo">
-                                <Badge :count="3" v-if="item.title!='添加活动'">
+            </i-card>
+            <i-row  v-for="(item,index) in entryForManager" :key="index">
+                <i-card class="layout-con" :to="item.routerTo">
+                    <i-row type="flex" align="middle">
+                        <i-col span="3" offset="1">
+                            <div>
+                                <Badge :count="item.badge" v-if="item.title!='添加活动'">
                                     <i-avatar :icon="item.icon" />
                                 </Badge>
                                 <i-avatar :icon="item.icon" v-else/>
-                                {{item.title}}
-                            </i-card>
+                            </div>
                         </i-col>
-                    </template>
-                </i-row>
-            </i-col>
-        </i-row>
+                        <i-col span="19">
+                            <div style="padding-top:5px">{{item.title}}</div>
+                            <div style="color: #808695;font-size:14px">{{item.descrip}}</div>
+                        </i-col>
+                    </i-row>
+                </i-card>
+            </i-row>
+        </i-col>
     </i-row>
 </template>
 
@@ -128,7 +142,46 @@ export default {
             level: -1,
             pic: pic,
             messageNum: 0,
-            message: [],
+            data: [],
+            activity: [
+                {
+                    title: '活动名称',
+                    key: 'ActivityName'
+                },
+                {
+                    title: '活动类型',
+                    key: 'ActivityType'
+                },
+                {
+                    title: '审核进度',
+                    key: 'CurrentStep'
+                },
+                {
+                    title: '负责人姓名',
+                    key: 'Owner'
+                },
+                {
+                    title: '活动开始时间',
+                    key: 'StartDate'
+                },
+                {
+                    title: '二维码',
+                    key: 'ShortCode'
+                },
+                {
+                    title: '操作',
+                    slot: 'Action'
+                }
+            ],
+            activityData: [],
+            message: [
+                {
+                    WorkflowName: "软件竞赛报名流程申请",
+                    StepName: "指导老师审核[强制执行]",
+                    Owner: "宋润涵",
+                    ArriveOn: "2020年7月1日"
+                }
+            ],
             time: "早上",
             dic: {
                 "修改社团基本信息申请": "/manage/org/orgdetailform",
@@ -183,9 +236,11 @@ export default {
                     }
                 }
             ],
-            entrForManager: [
-                {
+            entryForManager: {
+                member: {
                     title: "成员管理",
+                    badge: 0,
+                    descrip: "管理本社团的所有成员，处理成员加入申请以及踢除成员",
                     routerTo: {
                         name: "OrgDetail",
                         query: {
@@ -194,8 +249,9 @@ export default {
                     },
                     icon: "md-person-add"
                 },
-                {
+                addAct: {
                     title: "添加活动",
+                    descrip: "添加一个活动的申请，需要指导老师，业务指导单位，学生联合会及团委审核",
                     routerTo: {
                         name: "OrgDetail",
                         query: {
@@ -204,8 +260,10 @@ export default {
                     },
                     icon: "logo-buffer"
                 },
-                {
+                activity: {
                     title: "活动管理",
+                    badge: 0,
+                    descrip: "管理本社团的所有活动，对已经通过审核的活动可以选择开始活动。也可以在本页面下载活动签到二维码",
                     routerTo: {
                         name: "Affiliated",
                         query: {
@@ -214,80 +272,29 @@ export default {
                     },
                     icon: "md-information"
                 },
-                {
+                pending: {
                     title: "我的待办",
+                    badge: 0,
+                    descrip: "等待我处理的工作",
                     routerTo: {
                         name: "MyPending",
                         query: {}
                     },
                     icon: "ios-add-circle"
                 }
-            ],
-            entrForTeacher: [
-                {
-                    title: "添加成员",
-                    routerTo: {
-                        name: "Affiliated",
-                        query: {
-                            tabSelect: "member"
-                        }
-                    },
-                    icon: "md-person-add"
-                },
-                {
-                    title: "添加社团",
-                    routerTo: {
-                        name: "Affiliated",
-                        query: {
-                            tabSelect: "subDept"
-                        }
-                    },
-                    icon: "md-add"
-                },
-                {
-                    title: "申请活动",
-                    routerTo: {
-                        name: "Affiliated",
-                        query: {
-                            tabSelect: "activity"
-                        }
-                    },
-                    icon: "logo-buffer"
-                },
-                {
-                    title: "我创建的",
-                    routerTo: {
-                        name: "MyFlow",
-                        query: {}
-                    },
-                    icon: "ios-add-circle"
-                },
-                {
-                    title: "我参与的",
-                    routerTo: {
-                        name: "MyAttend",
-                        query: {}
-                    },
-                    icon: "ios-contacts"
-                },
-                {
-                    title: "所有流程",
-                    routerTo: {
-                        name: "AllFlow",
-                        query: {}
-                    },
-                    icon: "md-eye"
-                }
-            ],
-            chart: {
-                member: {},
-                activity: {},
-                organization: {}
+            },
+            tableLoading: false,
+            membersData: [],
+            applicationsData: [],
+            activitySearched: [],
+            pager: {
+                page: 1,
+                pageSize: 5,
+                totalRow: 0
             }
         };
     },
     mounted () {
-        // if (checkPermission("Organization.Student")) this.$router.push()
         app.title = "主页";
         this.getDashBoard();
         this.judgeTime();
@@ -299,32 +306,15 @@ export default {
                 this.dashBoard = msg;
                 axios.post("/api/security/GetOrgDetail", {}, msg => {
                     this.level = msg.level;
-                    if (this.level === 2 || this.level === 3) {
-                        this.chart.organization = msg.charts.allChildren;
-                        this.chart.member = msg.charts.allMember;
-                        // msg.charts.departType.forEach(element => {
-                        //     element.name = element.name ? element.name : "未分类";
-                        // });
-                        // this.depart.series.data = msg.charts.departType;
-                        // msg.charts.userType.forEach(element => {
-                        //     element.name = element.name ? element.name : "未填写";
-                        // });
-                        // this.member.series.data = msg.charts.userType;
-                        // let ele = document.getElementById("depart");
-                        // let instance = echarts.init(ele);
-                        // instance.setOption(this.depart);
-                        // let ele3 = document.getElementById("member");
-                        // let instance3 = echarts.init(ele3);
-                        // instance3.setOption(this.member);
-                        axios.post("/api/org/GetActByDepartId", {Id: msg.data.ID}, msg => {
-                            this.chart.activity = msg.charts;
-                            // this.guage.series.data[0].value = msg.charts.departCount;
-                            // this.guage.series.max = msg.charts.total;
-                            // let ele2 = document.getElementById("guage");
-                            // let instance2 = echarts.init(ele2);
-                            // instance2.setOption(this.guage);
-                        });
-                    }
+                    this.data = msg.data;
+                    this.getActivities();
+                    axios.post("/api/security/GetUsersByDepartId", {departId: msg.data.ID}, msg => {
+                        this.membersData = msg.data;
+                        this.entryForManager.member.badge = msg.data.length
+                    });
+                    axios.post("/api/security/GetApplicationsByDeparts", {departId: msg.data.ID}, msg => {
+                        this.applicationsData = msg.data;
+                    })
                 })
             });
         },
@@ -342,13 +332,32 @@ export default {
             axios.post("/api/workflow/Pending", {}, msg => {
                 this.messageNum = msg.totalRow;
                 this.message = msg.data;
+                this.entryForManager.pending.badge = this.messageNum;
             })
+        },
+        getActivities (targetPage, targetPageSize) {
+            let page = targetPage || this.pager.page;
+            let pageSize = targetPageSize || this.pager.pageSize;
+            axios.post("/api/org/GetActByDepartId", {Id: this.data.ID, page, pageSize}, msg => {
+                if (msg.success) {
+                    this.activityData = msg.data;
+                    this.activitySearched = this.activityData;
+                    this.pager.totalRow = msg.totalRow;
+                    this.entryForManager.activity.badge = msg.data.filter(e => e.ApplicateState === 3).length;
+                }
+            });
         },
         dealWorkflow (instanceId, stepId, WorkflowName) {
             window.open(`${this.dic[WorkflowName]}?instanceId=${instanceId}&stepId=${stepId}&detail=false`);
         },
         navTo (url) {
             this.$router.push({name: 'OrgDetail'});
+        },
+        checkWorkflow (instanceId, stepId, actId) {
+            window.open(`/manage/org/signUpSituation?instanceId=${instanceId}&stepId=${stepId}&detail=true&actId=${actId}`);
+        },
+        searchActivity (value) {
+            this.activitySearched = this.activityData.filter(e => e.ActivityName.indexOf(value) > -1);
         }
     }
 }
@@ -450,12 +459,11 @@ export default {
         margin: 5px;
     }
     .layout-con {
-        margin-bottom: 24px;
-        text-align: center;
+        margin-bottom: 12px;
         color: #515a6e;
     }
     .picture {
-        margin: 40px 0px 24px 0px;
+        margin: 0px 0px 24px 0px;
         text-align: center;
         color: #808695;
         letter-spacing: 5px;

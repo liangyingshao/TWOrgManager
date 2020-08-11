@@ -35,15 +35,14 @@ if (!appSettings.isInit) {
     }
 
     axios.post = (url, params, callback) => {
-        var result = axios({
-            method: "post",
-            url: appSettings.api + url,
-            params: {
+          var result = axios({
+              method: "post",
+              url: appSettings.api + url,
+              params: {
                 ...params,
                 currentUserGuid: appSettings.currentUserGuid
-            }
-        });
-
+              }
+          });
         if (callback) {
             return result.then(msg => {
                 if (msg.code && msg.code === "40001") {

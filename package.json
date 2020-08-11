@@ -24,11 +24,12 @@
     "lodash": "^4.17.11",
     "md5": "^2.2.1",
     "moment": "^2.24.0",
-    "view-design": "^4.1.1",
-    "vue": "^2.5.2",
+    "view-design": "^4.3.2",
+    "vue": "^2.6.11",
     "vue-cropper": "^0.4.9",
-    "vue-router": "^3.0.1",
-    "vue2-animate": "^2.1.0"
+    "vue-router": "^3.4.2",
+    "vue2-animate": "^2.1.0",
+    "xlsx": "^0.16.5"
   },
   "devDependencies": {
     "autoprefixer": "^7.1.2",
