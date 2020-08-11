@@ -98,5 +98,10 @@ module.exports = {
         path: "/manage/upload-org-list",
         layout: "admin",
         component: () => import(/* webpackChunkName: "OrgManager" */"@p/Modules/UploadOrgList")
+    },
+    DownloadOrgList: {
+        path: "/manage/download-org-list",
+        layout: "admin",
+        component: () => import(/* webpackChunkName: "OrgManager" */"@p/Modules/DownloadOrgList")
     }
 };

@@ -48,7 +48,7 @@
                             <i-button @click="checkWorkflow(row.InstanceId, row.StepId, row.ID)">查看</i-button>
                         </template>
                         <template slot="QRCode" slot-scope="{row}">
-                            <img :src="'/qr/' + row.ShortCode" />
+                            <img v-if="row.ShortCode" :src="'/qr/' + row.ShortCode" />
                         </template>
                     </i-table>
                     <Page :styles="{'margin-top': '16px'}" :total="pager.totalRow" show-sizer show-total :page-size="5" :page-size-opts="[5, 10, 20, 100]"
@@ -125,6 +125,19 @@
                     </i-row>
                 </i-card>
             </i-row>
+            <i-card class="layout-con" v-if="$route.query.overrideDptId" @click.native="goBack()">
+                <i-row type="flex" align="middle">
+                    <i-col span="4">
+                        <i-row type="flex" justify="center">
+                            <i-avatar icon="md-arrow-back" size="large" />
+                        </i-row>
+                    </i-col>
+                    <i-col span="20">
+                        <p style="">返回上一页面</p>
+                        <p style="color: #808695; font-size:14px"></p>
+                    </i-col>
+                </i-row>
+            </i-card>
         </i-col>
     </i-row>
 </template>
@@ -161,31 +174,6 @@ export default {
                     name: "Affiliated",
                     query: {
                         tabSelect: "member"
-                    }
-                }, {
-                    name: "OrgDetail",
-                    query: {
-                        tabSelect: "member"
-                    }
-                }, {
-                    name: "OrgDetail",
-                    query: {
-                        tabSelect: "subDept"
-                    }
-                }, {
-                    name: "OrgDetail",
-                    query: {
-                        tabSelect: "tutor"
-                    }
-                }, {
-                    name: "OrgDetail",
-                    query: {
-                        tabSelect: "manager"
-                    }
-                }, {
-                    name: "OrgDetail",
-                    query: {
-                        tabSelect: "activity"
                     }
                 }
             ],
@@ -254,12 +242,12 @@ export default {
                     axios.post("/api/security/GetUsersByDepartId", {departId: this.orgInfo.ID}, msg => {
                         if (msg.success) {
                             this.membersData = msg.data;
-                            this.entryForManager.member.badge = this.membersData.length;
                         }
                     });
                     axios.post("/api/security/GetApplicationsByDeparts", {departId: this.orgInfo.ID}, msg => {
                         if (msg.success) {
                             this.applicationsData = msg.data;
+                            this.entryForManager.member.badge = this.applicationsData.filter(e => e.State === 3).length;
                         }
                     })
                 })
@@ -308,6 +296,9 @@ export default {
         searchActivity (value) {
             this.activitySearchValue = value;
             this.getActivities();
+        },
+        goBack () {
+            this.$router.go(-1);
         }
     }
 }

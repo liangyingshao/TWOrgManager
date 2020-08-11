@@ -6,7 +6,7 @@
                     <i-row type="flex" :gutter="24">
                         <i-col span="3">
                             <Upload action="" accept=".xls,.xlsx" :before-upload="readFile">
-                                <Button>导入文件</Button>
+                                <Button :disabled="isUploading">导入文件</Button>
                             </Upload>
                         </i-col>
                         <i-col span="5">
@@ -21,7 +21,7 @@
                         <span style="margin-left: 16px;">文件大小：{{file.size}}KB</span>
                         <span style="margin-left: 16px;">修改日期：{{new Date(file.lastModifiedDate).toLocaleString()}}</span>
                         <br>
-                        <Button style="margin-top: 5px;" type="primary" :disabled="containError" @click="uploadOrgInfo">上传社团信息</Button>
+                        <Button style="margin-top: 5px;" type="primary" :disabled="containError" @click="uploadOrgInfo" :loading="isUploading">上传社团信息</Button>
                         <Progress v-if="showUploadProgress" :percent="uploadPercent"></Progress>
                     </i-row>
                 </i-col>
@@ -37,9 +37,9 @@
             <List>
                 <ListItem v-for="(error, index) in errorArray" :key="index">
                     <i-row style="width: 100%">{{error.errLevel}}：{{error.title}}</i-row>
-                    <template v-slot:action>
+                    <!--template v-slot:action>
                         <i-button v-if="error.type === 101">去除空格（未实现）</i-button>
-                    </template>
+                    </template-->
                 </ListItem>
             </List>
             <i-table :columns="tableTitle" :data="tableData">
@@ -65,6 +65,7 @@ export default {
             uploadPercent: 0,
             showReadProgress: false,
             showUploadProgress: false,
+            isUploading: false,
             currentStep: 0,
             targetTableHead: [
                 "序号", "社团名称", "社团类型", "业务指导单位", "业务指导单位管理员姓名", "业务指导单位管理员教工号", "指导老师姓名", "指导老师教工号", "社团管理员姓名", "社团管理员学号"
@@ -109,6 +110,11 @@ export default {
             /* 表格内容 */
             if (this.containError) return; // 表头出错时不继续检查接下来的内容
             for (let index in this.tableData) {
+                /* 去除所有字段空格 */
+                for (let key in this.tableData[index]) {
+                    this.tableData[index][key] = this.tableData[index][key].replace(/\s+/g, "");
+                }
+
                 /* 检查序号 */
                 if (!/\d+/.test(this.tableData[index].序号)) {
                     this.errorArray.push({
@@ -117,13 +123,6 @@ export default {
                         detail: ''
                     });
                     this.containError = true;
-                } else if (/\s/.test(this.tableData[index].序号)) {
-                    this.errorArray.push({
-                        errLevel: '警告',
-                        type: 101,
-                        title: `第${parseInt(index) + 1}项数据的“序号”字段不应该含有任何空白字符（例如空格等）。`,
-                        detail: ''
-                    });
                 }
 
                 /* 检查社团名称 */
@@ -294,6 +293,7 @@ export default {
         },
         async uploadOrgInfo () {
             this.showUploadProgress = true;
+            this.isUploading = true;
             for (let index in this.tableData) {
                 this.tableData[index].icon = "md-stopwatch";
                 this.tableData[index].color = "#2d8cf0";
@@ -318,6 +318,8 @@ export default {
                     this.tableData[index].color = "#ed4014";
                 }
             }
+            await axios.post("/api/security/UpdateAllOrgs", {})
+            this.isUploading = false;
         }
     }
 };
