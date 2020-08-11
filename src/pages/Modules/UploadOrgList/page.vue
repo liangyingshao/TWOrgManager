@@ -5,7 +5,7 @@
                 <i-col span="17">
                     <i-row type="flex" :gutter="24">
                         <i-col span="3">
-                            <Upload action="//jsonplaceholder.typicode.com/posts/" accept=".xls,.xlsx" :before-upload="readFile">
+                            <Upload action="" accept=".xls,.xlsx" :before-upload="readFile">
                                 <Button>导入文件</Button>
                             </Upload>
                         </i-col>
