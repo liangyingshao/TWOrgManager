@@ -5,35 +5,35 @@
 		</cu-custom>
 		<view class="margin-lr margin-tb">
 			<view class="margin-bottom-xl text-center">
-				<image src="../../static/社团管理信息系统.png" height="100%" mode="aspectFit"></image>
+				<image src="../../static/社团管理信息系统.png" style="width: 80%;" height="100%" mode="aspectFit"></image>
 			</view>
 			<form @submit="login()">
-				<view class="cu-form-group">
+				<view class="cu-form-group login-rl">
 					<view class="title">账号</view>
 					<input placeholder="请输入您的账号" name="userName" v-model="loginModel.userName"></input>
 				</view>
-				<view class="cu-form-group">
+				<view class="cu-form-group login-rl">
 					<view class="title">密码</view>
 					<input placeholder="请输入您的密码" name="password" password v-model="loginModel.password"></input>
 				</view>
-				<view class="flex flex-direction margin-tb">
+				<view class="flex flex-direction margin-tb login-rl">
 					<button class="cu-btn bg-blue lg" form-type="submit">登录</button>
 				</view>
 			</form>
-			<view class="flex margin-tb justify-center">
-				<text @click="login('15102242660', '88888888')">学生</text>
-				<text class="padding-lr-xs">|</text>
-				<text @click="login('24320152356894', '123456')">社团</text>
-				<text class="padding-lr-xs">|</text>
-				<text @click="login('25648', '123456')">指导老师</text>
-				<text class="padding-lr-xs">|</text>
-				<text @click="login('13621345797', '88888888')">业务指导</text>
-				<text class="padding-lr-xs">|</text>
-				<text @click="login('15102246798', '123456')">社团管理部</text>
-				<text class="padding-lr-xs">|</text>
-				<text @click="login('admin', '88888888')">团委</text>
-			</view>
 		</view>
+    <view class="flex margin-bottom-xl justify-center footer">
+    	<text @click="login('15102242660', '88888888')">学生</text>
+    	<text class="padding-lr-xs">|</text>
+    	<text @click="login('24320152356894', '123456')">社团</text>
+    	<text class="padding-lr-xs">|</text>
+    	<text @click="login('25648', '123456')">指导老师</text>
+    	<text class="padding-lr-xs">|</text>
+    	<text @click="login('13621345797', '88888888')">业务指导</text>
+    	<text class="padding-lr-xs">|</text>
+    	<text @click="login('15102246798', '123456')">社团管理部</text>
+    	<text class="padding-lr-xs">|</text>
+    	<text @click="login('admin', '88888888')">团委</text>
+    </view>
 	</view>
 </template>
 
@@ -47,7 +47,7 @@
 					userName: "",
 					password: ""
 				},
-				
+
 			}
 		},
 		methods: {
@@ -92,4 +92,14 @@
 </script>
 
 <style>
+  .footer {
+    width: 100%;
+    position: absolute;
+    bottom: 0;
+    color: #6C757D;
+  }
+  .login-rl {
+    margin-left: 40rpx;
+    margin-right: 40rpx;
+  }
 </style>
