@@ -1,14 +1,9 @@
 <template>
     <i-row type="flex" :gutter="24">
         <i-col span="15">
-            <i-card :padding="20">
-                <template v-slot:title>
-                    <i-row style="flex" align="middle">
-                        <span style="font-size:18px">报名参加</span>
-                    </i-row>
-                </template>
+            <i-card title="报名社团">
                 <template v-slot:extra>
-                   <i-input search placeholder="搜索社团名称" @on-search="searchOrg" />
+                    <i-input search placeholder="搜索社团名称" @on-search="searchOrg" />
                 </template>
                 <Scroll v-if="allOrgs.length">
                     <List style="margin-right:10px">
@@ -359,79 +354,6 @@ export default {
     .background-purple{
         color: #ffffff;
         background: #6882da;
-    }
-    #chart {
-        padding: 24px;
-        // text-align: center;
-        #userInfo {
-            margin: 0 24px;
-            font-size: 24px;
-        }
-        .difference {
-            font-size: 16px;
-            color: #808695;
-            .number {
-                font-size: 16px;
-            }
-        }
-        .item-name {
-            font-size: 20px;
-            color: #17233d;
-        }
-        .number {
-            font-size: 36px;
-            font-weight: bold;
-        }
-        #organization {
-            width: 11%;
-            text-align: center;
-            margin: 15px 0;
-            .number
-            {
-                color: #da5953;;
-            }
-        }
-        #member {
-            width: 11%;
-            text-align: center;
-            margin: 15px 0;
-            .number
-            {
-                color: #d37b33;
-            }
-        }
-        #activity {
-            width: 11%;
-            text-align: center;
-            margin: 15px 0;
-            .number
-            {
-                color: #53ac9a;
-            }
-        }
-    }
-    .welcome {
-        font-size: 40px;
-        color: #17233d;
-        padding: 15px 0;
-        font-weight: bold;
-    }
-    .tip {
-        font-size: 18px;
-        color: #808695;
-    }
-    .title {
-        font-size: 28px;
-        color: #17233d;
-        padding: 15px 0px;
-        margin-top: 10px;
-        //text-align: center;
-    }
-    .padding {
-        padding: 10px;
-    }
-    .margin {
-        margin: 5px;
     }
     .layout-con {
         margin-bottom: 12px;
