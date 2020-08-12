@@ -209,7 +209,11 @@ export default {
                 member: {
                     title: "修改个人资料",
                     descrip: "修改我的个人信息，包括姓名，入团时间，入党时间等",
-                    icon: "md-person-add"
+                    icon: "md-person-add",
+                    routerTo: {
+                        name: "Profile",
+                        query: {}
+                    }
                 },
                 addAct: {
                     title: "我参加过的活动",
