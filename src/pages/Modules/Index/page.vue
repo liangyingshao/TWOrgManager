@@ -94,6 +94,9 @@ export default {
             axios.post("/api/security/GetMyPositions", {}, msg => {
                 if (msg.success) {
                     this.availableRoles = msg.data;
+                   if (this.availableRoles.length === 1) {
+                        this.toManage(this.availableRoles[0]);
+                    }
                     /* let checkPermission = app.checkPermission;
                     if (checkPermission("Organization.TwAdminUser") || checkPermission("Organization.XSLHH") ||
                     checkPermission("Organization.UnitAdminUser") || checkPermission("Organization.TeacherAdmin")) {
@@ -115,6 +118,7 @@ export default {
         },
         toManage (role) {
             localStorage.setItem("defaultDepartId", role.departId);
+            localStorage.setItem("role", role.position);
             if (role.position === "指导老师") {
                 this.$router.push({name: 'TeacherManage'});
             } else if (role.position === "普通用户") {

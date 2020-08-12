@@ -209,10 +209,8 @@ export default {
                     badge: 0,
                     description: "下载社团信息，修改后使用“上传社团列表”功能即可修改系统中的社团信息。",
                     routerTo: {
-                        name: "OrgDetail",
-                        query: {
-                            tabSelect: "member"
-                        }
+                        name: "DownloadOrgList",
+                        query: {}
                     },
                     icon: "md-cloud-download"
                 }

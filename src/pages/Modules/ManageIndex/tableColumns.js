@@ -57,7 +57,7 @@ let columns = {
                 {
                     title: '姓名',
                     key: 'parentAdminUser',
-                    width: 100,
+                    width: 90,
                     align: 'center',
                     render: (h, params) => {
                         return h('div', params.row.parentAdminUser.RealName);
@@ -81,13 +81,13 @@ let columns = {
                 {
                     title: '姓名',
                     key: 'guideTeachers',
-                    width: 100,
+                    width: 110,
                     align: 'center',
                     render: (h, params) => {
                         return h('div',
                             params.row.guideTeachers.map(item => {
-                                return h('div', item.RealName)
-                            })
+                                return item.RealName
+                            }).join("、")
                         );
                     }
                 },
@@ -99,8 +99,8 @@ let columns = {
                     render: (h, params) => {
                         return h('div',
                             params.row.guideTeachers.map(item => {
-                                return h('div', item.Code)
-                            })
+                                return item.Code
+                            }).join("、")
                         );
                     }
                 }
@@ -113,7 +113,7 @@ let columns = {
                 {
                     title: '姓名',
                     key: 'adminUser',
-                    width: 100,
+                    width: 90,
                     align: 'center',
                     render: (h, params) => {
                         return h('div', params.row.adminUser.RealName);

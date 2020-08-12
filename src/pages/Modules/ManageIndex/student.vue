@@ -47,6 +47,11 @@
                         <template slot="Action" slot-scope="{row}">
                             <i-button @click="getActivityDetail(row)">详情</i-button>
                         </template>
+                        <template slot="signState" slot-scope="{row}">
+                            <div v-if="row.isSignUp">我已报名</div>
+                            <div v-else-if="row.isSignIn">我已签到</div>
+                            <div v-else>未报名</div>
+                        </template>
                     </i-table>
                     <Page :styles="{'margin-top': '16px'}" :total="pager.totalRow" show-sizer show-total :page-size="5"
                      @on-change="getActivities($event)" @on-page-size-change="getActivities(null ,$event)" />
@@ -110,25 +115,27 @@
                 </i-card>
             </i-row>
         </i-col>
-        <i-modal v-model="modelShow" title="活动详情" :z-index="10">
-            <i-row>
-                <div style="font-size:25px">{{activityDetail.ActivityName}}</div>
-            </i-row>
-            <i-row type="flex" align="middle" style="padding:16px;margin: 16px 0px">
-                <i-col span="4">
-                    <Avatar :size="48" :src="userInfo.avatar"/>
-                </i-col>
-                <i-col span="19">
-                    <div>{{activityDetail.DepartName}}</div>
-                    <div>{{activityDetail.StartDate}}</div>
-                </i-col>
-            </i-row>
-            <i-row>
-                <img src="../../../assets/xmuScene1.jpg" style="width:100%">
-            </i-row>
-            <i-row style="margin-top:10px">
-                <div>{{activityDetail.Description}}</div>
-            </i-row>
+        <i-modal v-model="modelShow" title="活动详情" :z-index="10" :scrollable="true">
+            <div style="max-height: 60vh; overflow: auto">
+                <i-row>
+                    <div style="font-size:25px">{{activityDetail.ActivityName}}</div>
+                </i-row>
+                <i-row type="flex" align="middle" style="padding:16px;margin: 16px 0px">
+                    <i-col span="4">
+                        <Avatar :size="48" :src="userInfo.avatar"/>
+                    </i-col>
+                    <i-col span="19">
+                        <div>{{activityDetail.DepartName}}</div>
+                        <div>{{activityDetail.StartDate}}</div>
+                    </i-col>
+                </i-row>
+                <i-row>
+                    <img src="../../../assets/xmuScene1.jpg" style="width:100%">
+                </i-row>
+                <i-row style="margin-top:10px;">
+                    <div>{{activityDetail.Description}}</div>
+                </i-row>
+            </div>
             <div slot="footer">
                 <i-button type="primary" :loading="modalLoading" @click="signUp(0)" v-if="signUpState.State!=0">立即报名</i-button>
                 <i-button @click="signUp(99)" v-else>取消报名</i-button>
@@ -169,8 +176,8 @@ export default {
                     key: 'Address'
                 },
                 {
-                    title: '负责人姓名',
-                    key: 'Leader'
+                    title: '报名状态',
+                    slot: 'signState'
                 },
                 {
                     title: '活动开始时间',

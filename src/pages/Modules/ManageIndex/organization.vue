@@ -43,12 +43,12 @@
                     <i-input search placeholder="搜索活动名称" @on-search="searchActivity" />
                 </template>
                 <i-row>
-                    <i-table stripe :columns="activity" :data="activitySearched" :loading="tableLoading">
+                    <i-table stripe :columns="tableColumns.activity" :data="activitySearched" :loading="tableLoading">
                         <template slot="Action" slot-scope="{row}">
                             <i-button @click="checkWorkflow(row.InstanceId, row.StepId, row.ID)">查看</i-button>
                         </template>
                         <template slot="QRCode" slot-scope="{row}">
-                            <img :src="'/qr/' + row.ShortCode" />
+                            <img v-if="row.ShortCode" :src="'/qr/' + row.ShortCode" />
                         </template>
                     </i-table>
                     <Page :styles="{'margin-top': '16px'}" :total="pager.totalRow" show-sizer show-total :page-size="5"
@@ -135,6 +135,7 @@
 
 <script>
 import axios from 'axios';
+import tableColumns from './tableColumns';
 // const echarts = require("echarts");
 const app = require("@/config");
 let pic = require("@/assets/icon.png");
@@ -145,37 +146,8 @@ export default {
             level: -1,
             pic: pic,
             messageNum: 0,
+            tableColumns,
             data: [],
-            activity: [
-                {
-                    title: '活动名称',
-                    key: 'ActivityName'
-                },
-                {
-                    title: '活动类型',
-                    key: 'ActivityType'
-                },
-                {
-                    title: '审核进度',
-                    key: 'CurrentStep'
-                },
-                {
-                    title: '负责人姓名',
-                    key: 'Owner'
-                },
-                {
-                    title: '活动开始时间',
-                    key: 'StartDate'
-                },
-                {
-                    title: '二维码',
-                    key: 'ShortCode'
-                },
-                {
-                    title: '操作',
-                    slot: 'Action'
-                }
-            ],
             activityData: [],
             message: [
                 {
@@ -313,10 +285,10 @@ export default {
                     this.getActivities();
                     axios.post("/api/security/GetUsersByDepartId", {departId: msg.data.ID}, msg => {
                         this.membersData = msg.data;
-                        this.entryForManager.member.badge = msg.data.length
                     });
                     axios.post("/api/security/GetApplicationsByDeparts", {departId: msg.data.ID}, msg => {
                         this.applicationsData = msg.data;
+                        this.entryForManager.member.badge = this.applicationsData.filter(e => e.State === 3).length;
                     })
                 })
             });
