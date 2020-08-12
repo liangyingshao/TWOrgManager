@@ -175,10 +175,8 @@ export default {
                     badge: 0,
                     description: "管理本单位所指导的社团，管理他们的基本信息。",
                     routerTo: {
-                        name: "OrgDetail",
-                        query: {
-                            tabSelect: "member"
-                        }
+                        name: "OrgList",
+                        query: {}
                     },
                     icon: "md-person-add"
                 },
