@@ -1,6 +1,6 @@
 <template>
     <i-row id="OrgList">
-        <i-card style="margin: 20px 50px;;font-size: 30px" title="社团列表" :padding="24">
+        <i-card style="margin: 20px 50px;" title="社团列表" :padding="24">
             <template v-slot:extra>
                 <i-input search placeholder="搜索社团名" @on-search="searchOrganization" />
             </template>
@@ -33,18 +33,15 @@ export default {
     },
     methods: {
         getDashBoard () {
-            axios.post("/api/security/GetOrgDetail", {}, msg => {
-                this.orgInfo = msg.data;
-                axios.post("/api/security/GetAllAssociationsByDepartId", {departId: this.orgInfo.ID}, msg => {
-                    if (msg.success) {
-                        this.organizationData = msg.data;
-                        this.organizationSearched = this.organizationData;
-                        this.$nextTick(() => {
-                            this.contentHeight = document.getElementById("OrgList").offsetWidth;
-                        })
-                    }
-                });
-            })
+            axios.post("/api/security/GetAllAssociationsByDepartId", {departId: localStorage.getItem("defaultDepartId")}, msg => {
+                if (msg.success) {
+                    this.organizationData = msg.data;
+                    this.organizationSearched = this.organizationData;
+                    this.$nextTick(() => {
+                        this.contentHeight = window.innerHeight * 0.8;
+                    })
+                }
+            });
         },
         searchOrganization (value) {
             this.organizationSearched = this.organizationData.filter(e => e.name.indexOf(value) > -1);

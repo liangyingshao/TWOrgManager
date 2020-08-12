@@ -66,7 +66,7 @@ let columns = {
                 {
                     title: '教工号',
                     key: 'parentAdminUser',
-                    width: 100,
+                    minWidth: 100,
                     align: 'center',
                     render: (h, params) => {
                         return h('div', params.row.parentAdminUser.Code);
@@ -94,7 +94,7 @@ let columns = {
                 {
                     title: '教工号',
                     key: 'guideTeachers',
-                    width: 100,
+                    minWidth: 100,
                     align: 'center',
                     render: (h, params) => {
                         return h('div',
@@ -120,9 +120,9 @@ let columns = {
                     }
                 },
                 {
-                    title: '教工号',
+                    title: '学号',
                     key: 'adminUser',
-                    width: 100,
+                    minWidth: 100,
                     align: 'center',
                     render: (h, params) => {
                         return h('div', params.row.adminUser.Code);
