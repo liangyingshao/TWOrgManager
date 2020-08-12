@@ -79,6 +79,16 @@ module.exports = {
         layout: "admin",
         component: () => import(/* webpackChunkName: "WorkflowManager" */"@p/Modules/MyAttend")
     },
+    MyApplications: {
+        path: "/manage/wwf/myapplications",
+        layout: "admin",
+        component: () => import(/* webpackChunkName: "WorkflowManager" */"@p/Modules/MyApplications")
+    },
+    MyDepartApplicate: {
+        path: "/manage/wwf/mydepartapplicate",
+        layout: "admin",
+        component: () => import(/* webpackChunkName: "WorkflowManager" */"@p/Modules/MyDepartApplicate")
+    },
     MyFlow: {
         path: "/manage/wwf/myflow",
         layout: "admin",
