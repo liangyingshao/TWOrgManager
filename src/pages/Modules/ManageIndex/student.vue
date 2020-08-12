@@ -47,6 +47,11 @@
                         <template slot="Action" slot-scope="{row}">
                             <i-button @click="getActivityDetail(row)">详情</i-button>
                         </template>
+                        <template slot="signState" slot-scope="{row}">
+                            <div v-if="row.isSignUp">我已报名</div>
+                            <div v-else-if="row.isSignIn">我已签到</div>
+                            <div v-else>未报名</div>
+                        </template>
                     </i-table>
                     <Page :styles="{'margin-top': '16px'}" :total="pager.totalRow" show-sizer show-total :page-size="5"
                      @on-change="getActivities($event)" @on-page-size-change="getActivities(null ,$event)" />
@@ -169,8 +174,8 @@ export default {
                     key: 'Address'
                 },
                 {
-                    title: '负责人姓名',
-                    key: 'Leader'
+                    title: '报名状态',
+                    slot: 'signState'
                 },
                 {
                     title: '活动开始时间',
