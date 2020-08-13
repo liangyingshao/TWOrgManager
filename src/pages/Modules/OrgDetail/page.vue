@@ -6,11 +6,12 @@
                     <avatar-uploader
                         :width="128"
                         :height="128"
-                        usage="departAvatar"
+                        usage="avatar"
                         single
+                        :id="orgInfo.ID"
                         :showText="false"
-                        relate-table="IDepart"
-                        v-model="orgInfo.Avatar"
+                        relate-table="DepartInfo"
+                        v-model="orgInfo.avatar"
                     />
                 </i-col>
                 <i-col span="21">

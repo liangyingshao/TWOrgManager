@@ -11,7 +11,13 @@
                         </i-col>
                         <i-col span="11">
                             <i-form-item label="学/工号" prop="Code">
-                                <i-input :value="model.Code" />
+                                <template slot="label">
+                                    <Tooltip placement="right" content="上级部门才有权限修改该字段">
+                                        学/工号
+                                        <i-icon type="md-information-circle" color="#2db7f5" />
+                                    </Tooltip>
+                                </template>
+                                <i-input :value="model.Code" readonly />
                             </i-form-item>
                         </i-col>
                     </i-row>
@@ -197,19 +203,6 @@ export default {
                         }
                         );
                     }, 500)
-                ],
-                Code: [
-                    {
-                        required: true,
-                        message: "必须输入学/工号",
-                        trigger: "blur"
-                    },
-                    {
-                        type: "string",
-                        pattern: /^\d+$/,
-                        message: "学/工号只能是连续数字",
-                        trigger: "blur"
-                    }
                 ],
                 Email: [
                     {
