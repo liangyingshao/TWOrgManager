@@ -10,7 +10,7 @@
                 您正处于编辑模式
                 <template slot="desc">您当前正在编辑社团基本信息，请单击“确定”按钮提交修改，单击“取消”按钮或关闭页面以放弃修改。</template>
             </i-alert>
-            <i-form :model="io" ref="form">
+            <i-form :model="io" ref="form" :rules="ruleInline">
                 <Divider orientation="left">基本信息</Divider>
                 <i-row type="flex" justify="space-between">
                     <i-col span="24">
@@ -67,7 +67,7 @@
                 </i-row>
                 <i-row type="flex">
                     <i-col span="11">
-                        <i-form-item label="是否有社团章程">
+                        <i-form-item label="章程制定时间">
                             <i-switch :disabled="io.fieldAccess.HaveDepartRule === 'r' || !io.isMyStep" v-model="io.data.HaveDepartRule" />
                             <i-date-picker :disabled="!io.data.HaveDepartRule || !io.isMyStep" v-model="io.data.RuleCreatedOn"></i-date-picker>
                             <i-row v-if="io.data.HaveDepartRule && io.isMyStep" style="margin-top: 10px">
@@ -77,14 +77,14 @@
                                 >
                                     <div>
                                         <Icon type="ios-cloud-upload" size="36" style="color: #3399ff"></Icon>
-                                        <p>Click or drag files here to upload</p>
+                                        <p>上传社团章程</p>
                                     </div>
                                 </i-upload>
                             </i-row>
                         </i-form-item>
                     </i-col>
                     <i-col span="11" offset="2">
-                        <i-form-item label="是否成立团支部">
+                        <i-form-item label="团支部成立时间">
                             <i-switch :disabled="io.fieldAccess.HaveLeagueBranch === 'r' || !io.isMyStep" v-model="io.data.HaveLeagueBranch" />
                             <i-date-picker :disabled="!io.data.HaveLeagueBranch || !io.isMyStep" v-model="io.data.LeagueBrachCreatedOn"></i-date-picker>
                         </i-form-item>
@@ -92,7 +92,7 @@
                 </i-row>
                 <i-row type="flex">
                     <i-col span="11">
-                        <i-form-item label="是否成立党支部">
+                        <i-form-item label="党支部成立时间">
                             <i-switch :disabled="io.fieldAccess.HaveCPCBranch === 'r' || !io.isMyStep" v-model="io.data.HaveCPCBranch" />
                             <i-date-picker :disabled="!io.data.HaveCPCBranch || !io.isMyStep" v-model="io.data.CPCBranchCreatedOn"></i-date-picker>
                         </i-form-item>
@@ -460,7 +460,12 @@ export default {
                 "success",
                 "error",
                 "warning"
-            ]
+            ],
+            ruleInline: {
+                Description: [
+                    { required: true, message: 'Please fill in the Description', trigger: 'blur' }
+                ]
+            }
         }
     },
     methods: {
@@ -538,16 +543,22 @@ export default {
         giveUp () {
         },
         submit () {
-            this.io.shouldUpload.forEach(value => {
-                this.upLoad[value] = this.io[value] || this.io.data[value];
-            });
-            axios.post("/api/workflow/SubmitInstance", {...this.upLoad}, msg => {
-                if (msg.success) {
-                    this.$Message.success("提交成功");
+            this.$refs['form'].validate((valid) => {
+                if (!valid) {
+                    this.$Message.error('请完整填写表单!');
                 } else {
-                    this.$Message.warning(msg.msg);
+                    this.io.shouldUpload.forEach(value => {
+                        this.upLoad[value] = this.io[value] || this.io.data[value];
+                    });
+                    axios.post("/api/workflow/SubmitInstance", {...this.upLoad}, msg => {
+                        if (msg.success) {
+                            this.$Message.success("提交成功");
+                        } else {
+                            this.$Message.warning(msg.msg);
+                        }
+                        //  setTimeout(window.close(), 8000);
+                    })
                 }
-                //  setTimeout(window.close(), 8000);
             })
         }
     },
