@@ -22,8 +22,8 @@
                             </i-form-item>
                         </i-col>
                         <i-col span="11">
-                            <i-form-item label="学院" prop="College">
-                                <i-input :value="model.College" />
+                            <i-form-item label="学院" prop="BelongDepart">
+                                <i-input :value="model.BelongDepart" />
                             </i-form-item>
                         </i-col>
                     </i-row>
@@ -84,16 +84,10 @@
                     <i-row type="flex" justify="space-between">
                         <i-col span="11">
                             <i-form-item label="所属部门" prop="BelongDepart">
-                                <template slot="label">
-                                <Tooltip placement="right" content="上级部门才有权限修改该字段">
-                                    所属部门
-                                    <i-icon type="md-information-circle" color="#2db7f5" />
-                                </Tooltip>
-                                </template>
-                                <i-input disabled v-model="model.BelongDepart" />
+                                <i-input v-model="model.BelongDepart" />
                             </i-form-item>
                         </i-col>
-                        <i-col span="11">
+                        <!--i-col span="11">
                             <i-form-item label="指导老师类别" prop="GuideTeacherType">
                                 <template slot="label">
                                 <Tooltip placement="right" content="上级部门才有权限修改该字段">
@@ -103,7 +97,7 @@
                                 </template>
                                 <i-input disabled v-model="model.GuideTeacherType" />
                             </i-form-item>
-                        </i-col>
+                        </i-col-->
                     </i-row>
                     <i-row type="flex" justify="space-between">
                         <i-form-item label="头像" prop="avatar">
@@ -143,7 +137,11 @@ export default {
                 if (!err) {
                 return;
                 }
-                axios.post("/api/security/SaveUserProfile", model, (msg) => {
+                axios.post("/api/security/SaveUserV2", {
+                    ...model,
+                    JoinCPCTime: this.haveJoinCPC ? this.model.JoinCPCTime : "1900-01-01",
+                    JoinCCYLTime: this.haveJoinCCYL ? this.model.JoinCCYLTime : "1900-01-01"
+                }, (msg) => {
                 this.isloading = false;
                 if (!msg.success) {
                     this.$Message.error(msg.msg);
@@ -199,6 +197,19 @@ export default {
                         }
                         );
                     }, 500)
+                ],
+                Code: [
+                    {
+                        required: true,
+                        message: "必须输入学/工号",
+                        trigger: "blur"
+                    },
+                    {
+                        type: "string",
+                        pattern: /^\d+$/,
+                        message: "学/工号只能是连续数字",
+                        trigger: "blur"
+                    }
                 ],
                 Email: [
                     {
