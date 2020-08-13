@@ -118,6 +118,7 @@ export default {
         },
         toManage (role) {
             localStorage.setItem("defaultDepartId", role.departId);
+            localStorage.setItem("role", role.position);
             if (role.position === "指导老师") {
                 this.$router.push({name: 'TeacherManage'});
             } else if (role.position === "普通用户") {
