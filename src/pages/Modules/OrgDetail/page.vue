@@ -79,14 +79,14 @@
                                 </i-row>
                                 <i-row type="flex">
                                     <i-col span="24">
-                                        <i-form-item label="社团简介">
+                                        <i-form-item label="社团简介" prop="Description">
                                             <i-input type="textarea" maxlength="300" show-word-limit :autosize="{minRows: 3}" v-model="orgInfo.Description"/>
                                         </i-form-item>
                                     </i-col>
                                 </i-row>
                                 <i-row type="flex">
                                     <i-col span="11">
-                                        <i-form-item label="是否有社团章程">
+                                        <i-form-item label="章程制定时间">
                                             <i-switch v-model="orgInfo.HaveDepartRule" />
                                             <i-upload :disabled="!orgInfo.HaveDepartRule" action="/api/cms/UploadFile" :before-upload="handleUpload"
                                             :data="{'usage': '附件', 'single': true, 'relateTable': 'AssociationCharter', 'id': this.orgInfo.ID, 'fileName': 'my-file'}">
@@ -121,7 +121,7 @@
                                         </i-form-item>
                                     </i-col>
                                     <i-col span="11" offset="2">
-                                        <i-form-item label="是否成立团支部">
+                                        <i-form-item label="团支部成立时间">
                                             <i-switch v-model="orgInfo.HaveLeagueBranch" />
                                             <i-date-picker :disabled="!orgInfo.HaveLeagueBranch" v-model="orgInfo.LeagueBrachCreatedOn"></i-date-picker>
                                         </i-form-item>
@@ -129,7 +129,7 @@
                                 </i-row>
                                 <i-row type="flex">
                                     <i-col span="11">
-                                        <i-form-item label="是否成立党支部">
+                                        <i-form-item label="党支部成立时间">
                                             <i-switch v-model="orgInfo.HaveCPCBranch" />
                                             <i-date-picker :disabled="!orgInfo.HaveCPCBranch" v-model="orgInfo.CPCBranchCreatedOn"></i-date-picker>
                                         </i-form-item>
@@ -568,13 +568,19 @@ export default {
         async submit () {
             let form = this.$refs["Form"];
             this.modalLoading = true;
-            form.submit(this.newDptId || this.orgInfo.ID, (res, msg) => {
-                this.modalLoading = false;
-                if (res) {
-                    this.callbackFunc(msg);
-                    this.modalShow = false;
+            this.$refs['form'].validate((valid) => {
+                if (!valid) {
+                    this.$Message.error('请完整填写表单!');
+                } else {
+                    form.submit(this.newDptId || this.orgInfo.ID, (res, msg) => {
+                        this.modalLoading = false;
+                        if (res) {
+                            this.callbackFunc(msg);
+                            this.modalShow = false;
+                        }
+                    });
                 }
-            });
+            })
         },
         cancel () {
             this.modalShow = false;
@@ -1082,12 +1088,15 @@ export default {
                         }
                     ],
                 BirthTime: [
-                    {
-                            required: true,
-                            type: "date",
-                            message: "必须填写成立时间",
-                            trigger: "change"
-                    }
+                        {
+                                required: true,
+                                type: "date",
+                                message: "必须填写成立时间",
+                                trigger: "change"
+                        }
+                    ],
+                Description: [
+                    { required: true, message: 'Please fill in the Description', trigger: 'blur' }
                 ]
             },
             pager: {
