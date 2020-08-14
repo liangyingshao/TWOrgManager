@@ -10,7 +10,7 @@
                 您正处于编辑模式
                 <template slot="desc">您当前正在编辑社团基本信息，请单击“确定”按钮提交修改，单击“取消”按钮或关闭页面以放弃修改。</template>
             </i-alert>
-            <i-form :model="io" ref="form" :rules="ruleInline">
+            <i-form :model="io.data" ref="form" :rules="ruleInline">
                 <Divider orientation="left">基本信息</Divider>
                 <i-row type="flex" justify="space-between">
                     <i-col span="24">
@@ -102,6 +102,19 @@
                             <dic-select dic="党支部类型" :disabled="!io.data.HaveCPCBranch || !io.isMyStep" v-model="io.data.CPCBranchType"/>
                         </i-form-item>
                     </i-col>
+                </i-row>
+                <i-row>
+                    <avatar-uploader
+                        :width="128"
+                        :height="128"
+                        usage="avatar"
+                        single
+                        :id="io.data.ID"
+                        :showText="false"
+                        relate-table="DepartInfo"
+                        :value="`/api/cms/downloadImage?id=${io.data.ID} `"
+                        :disabled="!io.isMyStep"
+                    />
                 </i-row>
                 <Divider orientation="left">指导老师情况</Divider>
                 <i-row type="flex">

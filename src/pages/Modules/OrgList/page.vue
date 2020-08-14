@@ -46,11 +46,11 @@ export default {
         searchOrganization (value) {
             this.organizationSearched = this.organizationData.filter(e => e.name.indexOf(value) > -1);
         },
-        viewOrg (overrideDptId) {
+        viewOrg (id) {
             this.$router.push({
-                name: 'TeacherManage',
+                name: 'OrgDetail',
                 query: {
-                    overrideDptId
+                    id
                 }
             });
         }
