@@ -10,7 +10,7 @@
                 您正处于编辑模式
                 <template slot="desc">您当前正在编辑社团基本信息，请单击“确定”按钮提交修改，单击“取消”按钮或关闭页面以放弃修改。</template>
             </i-alert>
-            <i-form :model="io" ref="form" :rules="ruleInline">
+            <i-form :model="io.data" ref="form" :rules="ruleInline">
                 <Divider orientation="left">基本信息</Divider>
                 <i-row type="flex" justify="space-between">
                     <i-col span="24">
@@ -112,7 +112,8 @@
                         :id="io.data.ID"
                         :showText="false"
                         relate-table="DepartInfo"
-                        v-model="io.data.avatar"
+                        :value="`/api/cms/downloadImage?id=${io.data.ID} `"
+                        :disabled="!io.isMyStep"
                     />
                 </i-row>
                 <Divider orientation="left">指导老师情况</Divider>
