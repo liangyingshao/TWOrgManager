@@ -103,6 +103,18 @@
                         </i-form-item>
                     </i-col>
                 </i-row>
+                <i-row>
+                    <avatar-uploader
+                        :width="128"
+                        :height="128"
+                        usage="avatar"
+                        single
+                        :id="io.data.ID"
+                        :showText="false"
+                        relate-table="DepartInfo"
+                        v-model="io.data.avatar"
+                    />
+                </i-row>
                 <Divider orientation="left">指导老师情况</Divider>
                 <i-row type="flex">
                     <i-col span="11">
