@@ -120,7 +120,7 @@
                 <i-row type="flex">
                     <i-col span="11">
                         <i-form-item label="指导老师工号">
-                            <i-input prefix="ios-search" :disabled="io.fieldAccess.GuideCode === 'r' || !io.isMyStep"
+                            <i-input placeholder="输入工号后回车自动填写数据项" prefix="md-create" :disabled="io.fieldAccess.GuideCode === 'r' || !io.isMyStep"
                             v-model="io.data.GuideCode" @on-enter="searchUser(io.data.GuideCode, 0)"/>
                         </i-form-item>
                     </i-col>
@@ -177,7 +177,7 @@
                 <i-row type="flex">
                     <i-col span="11">
                         <i-form-item label="社团负责人学号">
-                            <i-input prefix="ios-search" :disabled="io.fieldAccess.ChargerCode === 'r' || !io.isMyStep"
+                            <i-input placeholder="输入学号后回车自动填写数据项" prefix="md-create" :disabled="io.fieldAccess.ChargerCode === 'r' || !io.isMyStep"
                             v-model="io.data.ChargerCode" @on-enter="searchUser(io.data.ChargerCode, 1)"/>
                         </i-form-item>
                     </i-col>
@@ -227,7 +227,7 @@
                 <i-row type="flex">
                     <i-col span="11">
                         <i-form-item label="社团团支部书记学号">
-                            <i-input prefix="ios-search" :disabled="io.fieldAccess.ASecretaryCode === 'r' || !io.isMyStep || !io.data.HaveLeagueBranch"
+                            <i-input placeholder="输入学号后回车自动填写数据项" prefix="md-create" :disabled="io.fieldAccess.ASecretaryCode === 'r' || !io.isMyStep || !io.data.HaveLeagueBranch"
                             v-model="io.data.ASecretaryCode"  @on-enter="searchUser(io.data.ASecretaryCode, 2)"/>
                         </i-form-item>
                     </i-col>
@@ -272,7 +272,7 @@
                 <i-row type="flex">
                     <i-col span="11">
                         <i-form-item label="社团党支部书记学号">
-                            <i-input prefix="ios-search" :disabled="io.fieldAccess.BSecretaryCode === 'r' || !io.isMyStep || !io.data.HaveCPCBranch"
+                            <i-input placeholder="输入学号后回车自动填写数据项" prefix="md-create" :disabled="io.fieldAccess.BSecretaryCode === 'r' || !io.isMyStep || !io.data.HaveCPCBranch"
                             v-model="io.data.BSecretaryCode" @on-enter="searchUser(io.data.BSecretaryCode, 3)"/>
                         </i-form-item>
                     </i-col>

@@ -30,6 +30,18 @@ export default {
                 if (msg.success) {
                     msg.data.HaveCPCBranch = msg.data.HaveCPCBranch === "true";
                     msg.data.HaveLeagueBranch = msg.data.HaveLeagueBranch === "true";
+                    if (msg.data.GuideTeacherIsPass) {
+                        msg.data.GuideTeacherIsPass = msg.data.GuideTeacherIsPass === true ? 'true' : 'false';
+                    }
+                    if (msg.data.AffiliatedDepartIsPass) {
+                        msg.data.AffiliatedDepartIsPass = msg.data.AffiliatedDepartIsPass === true ? 'true' : 'false';
+                    }
+                    if (msg.data.SauOpinion) {
+                        msg.data.SauOpinion = msg.data.SauOpinion === true ? 'true' : 'false';
+                    }
+                    if (msg.data.YlcIsPass) {
+                        msg.data.YlcIsPass = msg.data.YlcIsPass === true ? 'true' : 'false';
+                    }
                     this.io = msg;
                 } else {
                     this.$Message.warning(msg.msg);
