@@ -240,7 +240,7 @@ export default {
                             // this.entryForManager.organization.badge = this.organizationData.length;
 
                             this.$nextTick(() => {
-                                this.contentHeight = document.getElementById("admin-index").offsetWidth;
+                                this.contentHeight = (window.screen.availHeight - 64) * 0.80;
                             })
                         }
                     });
