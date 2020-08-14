@@ -218,12 +218,18 @@ export default {
                 addAct: {
                     title: "我参加过的活动",
                     descrip: "查看我参加过的活动的记录",
-                    icon: "logo-buffer"
+                    icon: "logo-buffer",
+                    routerTo: {
+                        name: "MyApplications"
+                    }
                 },
                 activity: {
                     title: "我的申请记录",
                     descrip: "查看我报名加入社团的审核情况",
-                    icon: "md-information"
+                    icon: "md-information",
+                     routerTo: {
+                        name: "MyDepartApplicate"
+                    }
                 }
             },
             tableLoading: false,
@@ -318,7 +324,7 @@ export default {
                     })
                 } else {
                     this.$Message.warning({
-                        title: msg.msg
+                        content: msg.msg
                     })
                 }
             })
