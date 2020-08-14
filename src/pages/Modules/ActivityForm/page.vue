@@ -35,14 +35,8 @@
                         <i-col>
                             <p class="headline">社团活动申请表</p>
                             <p class="date">填表时间：{{io.data.CreatedTime}}</p>
+                            <p class="name">社团名称: {{io.data.DepartName}}</p>
                             <table border="1">
-                                <tr>
-                                    <td class="smallhang">社团名称</td>
-                                    <td class="longhang wen-zi-ju-zhong" colspan="4">
-                                        <i-input  v-if="io.fieldAccess.DepartName === 'w' && io.isMyStep" v-model="io.data.DepartName"/>
-                                        <p v-else>{{io.data.DepartName}}</p>
-                                    </td>
-                                </tr>
                                 <tr>
                                     <td class="smallhang">活动名称</td>
                                     <td class="longhang wen-zi-ju-zhong" colspan="4">
@@ -417,6 +411,14 @@ export default {
             });
         },
         submit () {
+            if (this.io.fieldAccess.ActivityName === 'w' && this.io.isMyStep) {
+                if (this.io.data.ActivityName === "") {
+                    this.$Message.warning({
+                        content: "必须填写活动名称"
+                    })
+                    return;
+                }
+            }
             this.io.shouldUpload.forEach(value => {
                 this.upLoad[value] = this.io[value] || this.io.data[value]
             });
@@ -491,6 +493,11 @@ export default {
         margin-left: 518px;
         font-size: 12px;
         font-family: 'FangSong';
+    }
+    .name {
+        font-size: 18.7px;
+        font-family: 'FangSong';
+        margin-left:94px
     }
     table {
         margin: 15px auto;

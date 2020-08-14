@@ -820,7 +820,7 @@ export default {
         addActivity () {
             axios.post("/api/org/Applicate", {id: this.orgInfo.ID}, msg => {
                 if (msg.success) {
-                    window.open("/manage/org/activityform?instanceId=" + msg.instanceId + '&stepId=' + msg.stepId);
+                   window.open("/manage/org/activityform?instanceId=" + msg.instanceId + '&stepId=' + msg.stepId);
                 } else {
                     this.$Message.warning(msg.msg);
                 }
