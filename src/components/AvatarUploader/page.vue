@@ -3,7 +3,7 @@
         <label class="shower" :style="style" for="uploader">
             <Icon class="icon" type="ios-camera" :size="iconSize"></Icon>
         </label>
-        <input type="file" id="uploader" ref="uploader" @change="onImageChanged($event, 1)" accept="image/png,image/jpeg,image/gif,image/jpg" />
+        <input :disabled="disabled" type="file" id="uploader" ref="uploader" @change="onImageChanged($event, 1)" accept="image/png,image/jpeg,image/gif,image/jpg" />
         <p v-if="showText">点击上传png, jpg, jpeg格式的图片，推荐尺寸为{{width}}px &times; {{height}}px。</p>
         <i-modal title="裁剪图片" :value.sync="showDialog" width="600px" class="clip-dialog" :mask-closable="false">
             <VueCropper ref="cropper" class="cropper" :high="true" :img="image" :autoCrop="true" :centerBox="true"
@@ -93,6 +93,9 @@ export default {
         }
     },
     props: {
+        disabled: {
+            type: Boolean
+        },
         width: {
             type: Number,
             required: true

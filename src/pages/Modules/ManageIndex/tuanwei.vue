@@ -29,7 +29,7 @@
                                 </p>
                             </i-col>
                             <i-col span="4">
-                                <Button type="success" @click="dealWorkflow(item.InstanceId, item.StepId, item.WorkflowName)">审核</Button>
+                                <Button type="success" @click="dealWorkflow(item.InstanceId, item.StepId, item.WorkflowType)">审核</Button>
                             </i-col>
                         </i-row>
                     </ListItem>
@@ -175,10 +175,8 @@ export default {
                     badge: 0,
                     description: "管理本单位所指导的社团，管理他们的基本信息。",
                     routerTo: {
-                        name: "OrgDetail",
-                        query: {
-                            tabSelect: "member"
-                        }
+                        name: "OrgList",
+                        query: {}
                     },
                     icon: "md-person-add"
                 },
@@ -242,7 +240,7 @@ export default {
                             // this.entryForManager.organization.badge = this.organizationData.length;
 
                             this.$nextTick(() => {
-                                this.contentHeight = document.getElementById("admin-index").offsetWidth;
+                                this.contentHeight = (window.screen.availHeight - 64) * 0.80;
                             })
                         }
                     });
@@ -286,8 +284,8 @@ export default {
                 this.entryForManager.pending.badge = this.pendingData.length;
             })
         },
-        dealWorkflow (instanceId, stepId, WorkflowName) {
-            window.open(`${this.dic[WorkflowName]}?instanceId=${instanceId}&stepId=${stepId}&detail=false`);
+        dealWorkflow (instanceId, stepId, WorkflowType) {
+            window.open(`${this.dic[WorkflowType]}?instanceId=${instanceId}&stepId=${stepId}&detail=false`);
         },
         navTo (url) {
             this.$router.push({name: 'OrgDetail'});

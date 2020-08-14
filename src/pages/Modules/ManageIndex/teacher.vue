@@ -195,7 +195,8 @@ export default {
                     routerTo: {
                         name: "OrgDetail",
                         query: {
-                            tabSelect: "member"
+                            tabSelect: "member",
+                            id: this.$route.query.overrideDptId
                         }
                     },
                     icon: "md-person-add"
