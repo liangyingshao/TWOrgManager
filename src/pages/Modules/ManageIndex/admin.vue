@@ -29,7 +29,7 @@
                                 </p>
                             </i-col>
                             <i-col span="4">
-                                <Button type="success" @click="dealWorkflow(item.InstanceId, item.StepId, item.WorkflowName)">审核</Button>
+                                <Button type="success" @click="dealWorkflow(item.InstanceId, item.StepId, item.WorkflowType)">审核</Button>
                             </i-col>
                         </i-row>
                     </ListItem>
@@ -267,8 +267,8 @@ export default {
                 this.entryForManager.pending.badge = this.pendingData.length;
             })
         },
-        dealWorkflow (instanceId, stepId, WorkflowName) {
-            window.open(`${this.dic[WorkflowName]}?instanceId=${instanceId}&stepId=${stepId}&detail=false`);
+        dealWorkflow (instanceId, stepId, WorkflowType) {
+            window.open(`${this.dic[WorkflowType]}?instanceId=${instanceId}&stepId=${stepId}&detail=false`);
         },
         navTo (url) {
             this.$router.push({name: 'OrgDetail'});
