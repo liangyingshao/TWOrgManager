@@ -73,7 +73,7 @@
                             <i-row v-if="io.data.HaveDepartRule && io.isMyStep " style="margin-top: 10px">
                                 <i-upload type="drag" :disabled="!io.data.HaveDepartRule || !io.isMyStep" action="/api/cms/UploadFile" :default-file-list="file"
                                 :before-upload="beforeUpload" :on-preview="previewFile" :on-remove="removeUpload"
-                                :data="{'usage': '附件', 'single': true, 'relateTable': 'DepartRule', 'id': this.io.instanceId, 'fileName': this.fileName}"
+                                :data="{'usage': 'DepartRule', 'single': true, 'relateTable': 'DepartInfo', 'id': this.io.instanceId, 'fileName': this.fileName}"
                                 >
                                     <div v-if="io.fieldAccess.Name === 'w'">
                                         <Icon type="ios-cloud-upload" size="36" style="color: #3399ff"></Icon>

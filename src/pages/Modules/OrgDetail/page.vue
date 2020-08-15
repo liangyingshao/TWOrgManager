@@ -88,8 +88,8 @@
                                     <i-col span="11">
                                         <i-form-item label="章程制定时间">
                                             <i-switch v-model="orgInfo.HaveDepartRule" />
-                                            <i-upload :disabled="!orgInfo.HaveDepartRule" action="/api/cms/UploadFile" :before-upload="handleUpload"
-                                            :data="{'usage': '附件', 'single': true, 'relateTable': 'AssociationCharter', 'id': this.orgInfo.ID, 'fileName': 'my-file'}">
+                                            <!--i-upload :disabled="!orgInfo.HaveDepartRule" action="/api/cms/UploadFile" :before-upload="handleUpload"
+                                            :data="{'usage': 'DepartRule', 'single': true, 'relateTable': 'DepartInfo', 'id': this.orgInfo.ID, 'fileName': 'my-file'}">
                                                 <i-button shape="circle"
                                                 :disabled="!orgInfo.HaveDepartRule" icon="ios-cloud-upload-outline" type="primary" ></i-button>
                                             </i-upload>
@@ -116,8 +116,9 @@
                                                         </div>
                                                     </i-row>
                                                 </template>
-                                            </div>
+                                            </div-->
                                             <i-date-picker :disabled="!orgInfo.HaveDepartRule" v-model="orgInfo.RuleCreatedOn"></i-date-picker>
+                                            <a v-if="orgInfo.rule" :href="orgInfo.rule" target="_blank">下载章程</a>
                                         </i-form-item>
                                     </i-col>
                                     <i-col span="11" offset="2">
@@ -513,8 +514,8 @@
                             <i-table stripe :columns="tableCol.activity" :data="tableData.activity" :loading="tableLoading">
                                 <template slot="Action" slot-scope="{row}">
                                     <i-button @click="checkWorkflow(row.InstanceId, row.StepId, row.ID)">查看</i-button>
-                                    <i-button type="primary" @click="iniateAct(row.ID, 1)" v-if="row.StartState === 0">发起活动</i-button>
-                                    <i-button @click="iniateAct(row.ID, 0)" v-if="row.StartState === 1">取消活动</i-button>
+                                    <i-button type="primary" @click="iniateAct(row.ID, 1)" v-if="row.StartState === 0 && row.ApplicateState === 3">发起活动</i-button>
+                                    <i-button @click="iniateAct(row.ID, 0)" v-if="row.StartState === 1 && row.ApplicateState === 3">取消活动</i-button>
                                 </template>
                                 <template slot="ShortCode" slot-scope="{row}">
                                     <img :src="getImg(row.ShortCode)" v-if="row.StartState === 1"/>
