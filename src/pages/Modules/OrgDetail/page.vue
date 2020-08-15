@@ -443,7 +443,7 @@
                         <i-page show-sizer show-total :total="pager.member.total" @on-change="getMemberTable($event, null)" @on-page-size-change="getMemberTable(null, $event)" />
                     </i-card>
                 </i-tab-pane>
-                <i-tab-pane label="成员审核" name="checkin">
+                <i-tab-pane label="成员审核" name="checkin" :disabled="!app.checkPermission('Security.AcceptJoinApplicate')">
                     <i-card dis-hover title="待加入成员">
                         <i-table stripe :columns="tableCol.applicate" :data="tableData.applicate" :loading="tableLoading">
                             <template slot="State" slot-scope="{row}">
@@ -529,7 +529,7 @@
                     <br/>
                     <i-page show-sizer show-total :total="pager.operation.total" @on-change="getOptTable($event, null)" @on-page-size-change="getOptTable(null, $event)" />
                 </i-tab-pane>
-                <i-tab-pane label="敬请期待" name="summary">
+                <i-tab-pane label="年终总结" name="summary">
                     功能开发中，敬请期待
                 </i-tab-pane>
             </i-tabs>

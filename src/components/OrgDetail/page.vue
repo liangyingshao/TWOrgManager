@@ -46,7 +46,7 @@
                 <i-row type="flex">
                     <i-col span="11">
                         <i-form-item label="排序号" prop="Sort">
-                            <i-input :disabled="io.fieldAccess.Sort === 'r' || !io.isMyStep" v-model="io.data.Sort"/>
+                            <i-input disabled v-model="io.data.Sort"/>
                         </i-form-item>
                     </i-col>
                     <i-col span="11" offset="2">
