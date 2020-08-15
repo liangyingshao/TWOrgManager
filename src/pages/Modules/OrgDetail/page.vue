@@ -3,15 +3,11 @@
         <i-card :padding="100">
             <i-row type="flex" style="margin: -50px 0px 40px 0px" align="middle">
                 <i-col span="3">
-                    <avatar-uploader
+                    <img
                         :width="128"
                         :height="128"
-                        usage="avatar"
-                        single
-                        :id="orgInfo.ID"
-                        :showText="false"
-                        relate-table="DepartInfo"
-                        v-model="orgInfo.avatar"
+                        :src="orgInfo.avatar"
+                        alt="暂无头像"
                     />
                 </i-col>
                 <i-col span="21">
