@@ -226,7 +226,7 @@ export default {
                 },
                 addAct: {
                     title: "添加活动",
-                    descrip: "添加一个活动的申请，需要指导老师，业务指导单位，学生联合会及团委审核",
+                    descrip: "添加一个活动的申请，需要指导老师，业务指导单位，学生社团管理部及团委审核",
                     routerTo: {
                         name: "OrgDetail",
                         query: {
