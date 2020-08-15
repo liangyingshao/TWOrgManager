@@ -6,11 +6,12 @@
                     <avatar-uploader
                         :width="128"
                         :height="128"
-                        usage="departAvatar"
+                        usage="avatar"
                         single
+                        :id="orgInfo.ID"
                         :showText="false"
-                        relate-table="IDepart"
-                        v-model="orgInfo.Avatar"
+                        relate-table="DepartInfo"
+                        v-model="orgInfo.avatar"
                     />
                 </i-col>
                 <i-col span="21">
@@ -27,6 +28,7 @@
                         <i-spin fix size="large" v-show="tableLoading"></i-spin>
                         <i-col span="14">
                             <i-button @click="changeOrgDetail">修改社团信息</i-button>
+                            <i-button @click="delThisDepart($route.query.id)" type="error" v-if="app.checkPermission('Organization.TwAdminUser')">删除社团</i-button>
                             <i-form :disabled="level !== 3" :model="orgInfo" :rules="ruleForBasic" ref="form">
                                 <Divider orientation="left">基本信息</Divider>
                                 <i-row type="flex" justify="space-between">
@@ -77,17 +79,17 @@
                                 </i-row>
                                 <i-row type="flex">
                                     <i-col span="24">
-                                        <i-form-item label="社团简介">
+                                        <i-form-item label="社团简介" prop="Description">
                                             <i-input type="textarea" maxlength="300" show-word-limit :autosize="{minRows: 3}" v-model="orgInfo.Description"/>
                                         </i-form-item>
                                     </i-col>
                                 </i-row>
                                 <i-row type="flex">
                                     <i-col span="11">
-                                        <i-form-item label="是否有社团章程">
+                                        <i-form-item label="章程制定时间">
                                             <i-switch v-model="orgInfo.HaveDepartRule" />
-                                            <i-upload :disabled="!orgInfo.HaveDepartRule" action="/api/cms/UploadFile" :before-upload="handleUpload"
-                                            :data="{'usage': '附件', 'single': true, 'relateTable': 'AssociationCharter', 'id': this.orgInfo.ID, 'fileName': 'my-file'}">
+                                            <!--i-upload :disabled="!orgInfo.HaveDepartRule" action="/api/cms/UploadFile" :before-upload="handleUpload"
+                                            :data="{'usage': 'DepartRule', 'single': true, 'relateTable': 'DepartInfo', 'id': this.orgInfo.ID, 'fileName': 'my-file'}">
                                                 <i-button shape="circle"
                                                 :disabled="!orgInfo.HaveDepartRule" icon="ios-cloud-upload-outline" type="primary" ></i-button>
                                             </i-upload>
@@ -114,12 +116,13 @@
                                                         </div>
                                                     </i-row>
                                                 </template>
-                                            </div>
+                                            </div-->
                                             <i-date-picker :disabled="!orgInfo.HaveDepartRule" v-model="orgInfo.RuleCreatedOn"></i-date-picker>
+                                            <a v-if="orgInfo.rule" :href="orgInfo.rule" target="_blank">下载章程</a>
                                         </i-form-item>
                                     </i-col>
                                     <i-col span="11" offset="2">
-                                        <i-form-item label="是否成立团支部">
+                                        <i-form-item label="团支部成立时间">
                                             <i-switch v-model="orgInfo.HaveLeagueBranch" />
                                             <i-date-picker :disabled="!orgInfo.HaveLeagueBranch" v-model="orgInfo.LeagueBrachCreatedOn"></i-date-picker>
                                         </i-form-item>
@@ -127,7 +130,7 @@
                                 </i-row>
                                 <i-row type="flex">
                                     <i-col span="11">
-                                        <i-form-item label="是否成立党支部">
+                                        <i-form-item label="党支部成立时间">
                                             <i-switch v-model="orgInfo.HaveCPCBranch" />
                                             <i-date-picker :disabled="!orgInfo.HaveCPCBranch" v-model="orgInfo.CPCBranchCreatedOn"></i-date-picker>
                                         </i-form-item>
@@ -408,7 +411,7 @@
                                         <i-input prefix="ios-search" placeholder="搜索成员" v-model="keyword" @keyup.enter.native="getMemberTable()"/>
                                     </i-col>
                                     <i-col>
-                                        <i-button v-if="!app.userInfo.permissons.includes('Organization.DepartAdminUser')" type="primary" @click="addMember('member', '成员')">添加成员</i-button>
+                                        <i-button v-if="app.checkPermission('Organization.TwAdminUser')" type="primary" @click="addMember('member', '成员')">添加成员</i-button>
                                     </i-col>
                                 </i-row>
                             </i-col>
@@ -419,7 +422,7 @@
                                     <i-tag v-if="row.isAdmin">管理员</i-tag>
                             </template>
                             <template slot="Action" slot-scope="{row}">
-                                <i-button :disabled="app.userInfo.permissons.includes('Organization.DepartAdminUser')" @click="modifyMember(row)" v-if="(level+orgInfo.Type>1)">修改</i-button>
+                                <i-button :disabled="!app.checkPermission('Organization.TwAdminUser')" @click="modifyMember(row)" v-if="(level+orgInfo.Type>1)">修改</i-button>
                                 <i-tooltip :disabled="!row.isAdmin" content="不能删除管理员" placement="top">
                                     <i-button :disabled="app.userInfo.permissons.includes('Organization.DepartAdminUser')" @click="delMember(row)" v-if="(2*orgInfo.Type+level>=3)">删除</i-button>
                                 </i-tooltip>
@@ -511,8 +514,8 @@
                             <i-table stripe :columns="tableCol.activity" :data="tableData.activity" :loading="tableLoading">
                                 <template slot="Action" slot-scope="{row}">
                                     <i-button @click="checkWorkflow(row.InstanceId, row.StepId, row.ID)">查看</i-button>
-                                    <i-button type="primary" @click="iniateAct(row.ID, 1)" v-if="row.StartState === 0">发起活动</i-button>
-                                    <i-button @click="iniateAct(row.ID, 0)" v-if="row.StartState === 1">取消活动</i-button>
+                                    <i-button type="primary" @click="iniateAct(row.ID, 1)" v-if="row.StartState === 0 && row.ApplicateState === 3">发起活动</i-button>
+                                    <i-button @click="iniateAct(row.ID, 0)" v-if="row.StartState === 1 && row.ApplicateState === 3">取消活动</i-button>
                                 </template>
                                 <template slot="ShortCode" slot-scope="{row}">
                                     <img :src="getImg(row.ShortCode)" v-if="row.StartState === 1"/>
@@ -529,6 +532,9 @@
                     </i-table>
                     <br/>
                     <i-page show-sizer show-total :total="pager.operation.total" @on-change="getOptTable($event, null)" @on-page-size-change="getOptTable(null, $event)" />
+                </i-tab-pane>
+                <i-tab-pane label="敬请期待" name="summary">
+                    功能开发中，敬请期待
                 </i-tab-pane>
             </i-tabs>
         </i-card>
@@ -563,13 +569,19 @@ export default {
         async submit () {
             let form = this.$refs["Form"];
             this.modalLoading = true;
-            form.submit(this.newDptId || this.orgInfo.ID, (res, msg) => {
-                this.modalLoading = false;
-                if (res) {
-                    this.callbackFunc(msg);
-                    this.modalShow = false;
+            this.$refs['form'].validate((valid) => {
+                if (!valid) {
+                    this.$Message.error('请完整填写表单!');
+                } else {
+                    form.submit(this.newDptId || this.orgInfo.ID, (res, msg) => {
+                        this.modalLoading = false;
+                        if (res) {
+                            this.callbackFunc(msg);
+                            this.modalShow = false;
+                        }
+                    });
                 }
-            });
+            })
         },
         cancel () {
             this.modalShow = false;
@@ -809,7 +821,7 @@ export default {
         addActivity () {
             axios.post("/api/org/Applicate", {id: this.orgInfo.ID}, msg => {
                 if (msg.success) {
-                    window.open("/manage/org/activityform?instanceId=" + msg.instanceId + '&stepId=' + msg.stepId);
+                   window.open("/manage/org/activityform?instanceId=" + msg.instanceId + '&stepId=' + msg.stepId);
                 } else {
                     this.$Message.warning(msg.msg);
                 }
@@ -855,17 +867,18 @@ export default {
                 }
             });
         },
-        delSubDepart (row) {
+        delThisDepart (id) {
             this.$Modal.confirm({
-                title: "确认删除该部门？",
+                title: "确认删除该社团？",
+                content: "删除社团后无法还原，但不会删除成员数据。",
                 onOk: () => {
-                    axios.post("/api/security/RemoveDepartV2", {id: row.id}, msg => {
+                    axios.post("/api/security/RemoveDepartV2", {id}, msg => {
                         if (msg.success) {
                             this.$Message.success("删除成功");
+                            this.$router.go(-1);
                         } else {
                             this.$Message.warning(msg.msg);
                         }
-                        this.getDeptTable();
                     });
                 }
             });
@@ -1076,12 +1089,15 @@ export default {
                         }
                     ],
                 BirthTime: [
-                    {
-                            required: true,
-                            type: "date",
-                            message: "必须填写成立时间",
-                            trigger: "change"
-                    }
+                        {
+                                required: true,
+                                type: "date",
+                                message: "必须填写成立时间",
+                                trigger: "change"
+                        }
+                    ],
+                Description: [
+                    { required: true, message: 'Please fill in the Description', trigger: 'blur' }
                 ]
             },
             pager: {

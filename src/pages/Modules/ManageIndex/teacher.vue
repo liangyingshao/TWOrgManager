@@ -195,7 +195,8 @@ export default {
                     routerTo: {
                         name: "OrgDetail",
                         query: {
-                            tabSelect: "member"
+                            tabSelect: "member",
+                            id: this.$route.query.overrideDptId
                         }
                     },
                     icon: "md-person-add"
@@ -205,9 +206,10 @@ export default {
                     badge: 0,
                     description: "管理本社团的所有活动，对已经通过审核的活动可以选择开始活动。也可以在本页面下载活动签到二维码",
                     routerTo: {
-                        name: "Affiliated",
+                        name: "OrgDetail",
                         query: {
-                            tabSelect: "activity"
+                            tabSelect: "activity",
+                            id: this.$route.query.overrideDptId
                         }
                     },
                     icon: "md-flag"

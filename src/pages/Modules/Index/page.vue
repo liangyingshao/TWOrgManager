@@ -1,7 +1,7 @@
 <template>
     <i-row>
-        <i-row type="flex" align="middle">
-            <img :src="newBanner" style="height: 10vh; padding: 16px"/>
+        <i-row type="flex" align="middle" style="height: 10vh;">
+            <img :src="newBanner" style="height: 100%; padding: 16px"/>
         </i-row>
         <i-row :style="bgImg" style="height: 80vh;">
             <i-col span="5" offset="17" class="card" v-show="app.userInfo.isLogined">

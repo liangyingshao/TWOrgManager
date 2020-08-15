@@ -79,6 +79,16 @@ module.exports = {
         layout: "admin",
         component: () => import(/* webpackChunkName: "WorkflowManager" */"@p/Modules/MyAttend")
     },
+    MyApplications: {
+        path: "/manage/wwf/myapplications",
+        layout: "admin",
+        component: () => import(/* webpackChunkName: "WorkflowManager" */"@p/Modules/MyApplications")
+    },
+    MyDepartApplicate: {
+        path: "/manage/wwf/mydepartapplicate",
+        layout: "admin",
+        component: () => import(/* webpackChunkName: "WorkflowManager" */"@p/Modules/MyDepartApplicate")
+    },
     MyFlow: {
         path: "/manage/wwf/myflow",
         layout: "admin",
@@ -113,5 +123,15 @@ module.exports = {
         path: "/manage/orgList",
         layout: "admin",
         component: () => import(/* webpackChunkName: "OrgManager" */"@p/Modules/OrgList")
+    },
+    OrgSwitch: {
+        path: "/manage/orgSwitch",
+        layout: "admin",
+        component: () => import(/* webpackChunkName: "OrgManager" */"@p/Modules/OrgSwitch")
+    },
+    BussinessCfg: {
+        path: "/manage/config/bussiness",
+        layout: "admin",
+        component: () => import(/* webpackChunkName: "config" */"@p/Modules/BussinessCfg")
     }
 };
