@@ -184,7 +184,7 @@
                                     </td>
                                 </tr>
                                 <tr v-show="io.fieldAccess.SauOpinion">
-                                    <td class="smallhang">学生社团联合会意见</td>
+                                    <td class="smallhang">学生社团管理部意见</td>
                                     <td class="longhang" colspan="4">
                                         <div v-show="io.fieldAccess.SauIsPass === 'w' && io.isMyStep">
                                             是否通过：
@@ -321,8 +321,8 @@ export default {
                     value: '业务指导单位审核',
                     label: '业务指导单位审核'
                 }, {
-                    value: '学生联合会审核',
-                    label: '学生联合会审核'
+                    value: '学生社团管理部审核',
+                    label: '学生社团管理部审核'
                 }, {
                     value: '校团委审核',
                     label: '校团委审核'
