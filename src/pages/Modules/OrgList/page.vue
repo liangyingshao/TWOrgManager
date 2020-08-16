@@ -5,7 +5,7 @@
                 <i-input search placeholder="搜索社团名" @on-search="searchOrganization" />
             </template>
             <i-row>
-                <i-table @on-row-dblclick="viewOrg($event.id)" :max-height="contentHeight" border stripe :columns="organizationCol" :data="organizationSearched" :loading="tableLoading">
+                <i-table :max-height="contentHeight" border stripe :columns="organizationCol" :data="organizationSearched" :loading="tableLoading">
                     <template slot="Action" slot-scope="{row}">
                         <i-button @click="viewOrg(row.id)">查看</i-button>
                     </template>

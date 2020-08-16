@@ -228,7 +228,7 @@ export default {
     mounted () {
         this.judgeTime();
         app.title = "主页";
-        this.getDashBoard(this.$route.query.overrideDptId);
+        this.getDashBoard(this.$route.query.overrideDptId || localStorage.getItem("defaultDepartId"));
         this.getPending();
     },
     methods: {
