@@ -64,7 +64,17 @@ let columns = {
             title: '业务指导单位',
             key: 'parent',
             width: 200,
-            align: 'center'
+            align: 'center',
+            render: (h, params) => {
+                return h('router-link', {
+                    props: {
+                        to: {
+                            name: 'CollegeManage',
+                            query: {overrideDptId: params.row.pid}
+                        }
+                    }
+                }, params.row.parent);
+            }
         },
         {
             title: '业务指导单位管理员',

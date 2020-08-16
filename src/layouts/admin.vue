@@ -137,7 +137,7 @@ export default {
                 } else {
                     this.$Message.warning("登出失败");
                 }
-                // this.$router.push({ name: "Login" });
+                this.$router.push({ name: "Index" });
             })
         }
     },
