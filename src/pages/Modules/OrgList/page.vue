@@ -33,6 +33,7 @@ export default {
     },
     methods: {
         getDashBoard () {
+            this.tableLoading = true;
             axios.post("/api/security/GetAllAssociationsByDepartId", {departId: localStorage.getItem("defaultDepartId")}, msg => {
                 if (msg.success) {
                     this.organizationData = msg.data;
@@ -41,6 +42,7 @@ export default {
                         this.contentHeight = window.innerHeight * 0.8;
                     })
                 }
+                this.tableLoading = false;
             });
         },
         searchOrganization (value) {

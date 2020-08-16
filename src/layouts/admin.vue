@@ -63,7 +63,7 @@
             <Content :style="{margin: '20px'}" class="content">
                 <slot></slot>
             </Content>
-            <Footer class="layout-footer-center">&copy;&nbsp;2020&nbsp;<a href="https://www.xmu.edu.cn/">厦门大学</a>&nbsp;版权所有</Footer>
+            <Footer class="layout-footer-center">&copy;&nbsp;2020&nbsp;<a href="https://www.xmu.edu.cn/">厦门大学</a>&nbsp;保留所有权利</Footer>
         </Layout>
     </Layout>
 </template>
