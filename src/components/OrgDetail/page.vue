@@ -43,7 +43,7 @@
                         </i-form-item>
                     </i-col>
                 </i-row>
-                <i-row type="flex">
+                <i-row type="flex" style="display: none">
                     <i-col span="11">
                         <i-form-item label="排序号" prop="Sort">
                             <i-input disabled v-model="io.data.Sort"/>
@@ -51,7 +51,7 @@
                     </i-col>
                     <i-col span="11" offset="2">
                         <i-form-item label="部门类型">
-                            <i-select v-model="io.data.Type" :disabled="io.fieldAccess.Type === 'r' || !io.isMyStep">
+                            <i-select v-model="io.data.Type" disabled>
                                 <i-option :value="0" key="业务指导单位">业务指导单位</i-option>
                                 <i-option :value="1" key="社团">社团</i-option>
                             </i-select>
