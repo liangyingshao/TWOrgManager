@@ -552,7 +552,7 @@ export default {
         width:200px;
     }
     .add1 {
-        height: 50px;
+        min-height: 50px;
     }
     .headline {
         margin-top: 9px;
