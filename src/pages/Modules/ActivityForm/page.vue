@@ -34,8 +34,10 @@
                     <i-row>
                         <i-col>
                             <p class="headline">社团活动申请表</p>
-                            <p class="date">填表时间：{{io.data.CreatedTime}}</p>
-                            <p class="name">社团名称: {{io.data.DepartName}}</p>
+                            <div class="info-row">
+                                <p>填表时间：{{io.data.CreatedTime}}</p>
+                                <p>社团名称: {{io.data.DepartName}}</p>
+                            </div>
                             <table border="1">
                                 <tr>
                                     <td class="smallhang">活动名称</td>
@@ -184,7 +186,7 @@
                                     </td>
                                 </tr>
                                 <tr v-show="io.fieldAccess.SauOpinion">
-                                    <td class="smallhang">学生社团联合会意见</td>
+                                    <td class="smallhang">学生社团管理部意见</td>
                                     <td class="longhang" colspan="4">
                                         <div v-show="io.fieldAccess.SauIsPass === 'w' && io.isMyStep">
                                             是否通过：
@@ -321,8 +323,8 @@ export default {
                     value: '业务指导单位审核',
                     label: '业务指导单位审核'
                 }, {
-                    value: '学生联合会审核',
-                    label: '学生联合会审核'
+                    value: '学生社团管理部审核',
+                    label: '学生社团管理部审核'
                 }, {
                     value: '校团委审核',
                     label: '校团委审核'
@@ -457,9 +459,9 @@ export default {
         border:none
     }
     .time{
-    font-weight: bold;
-    color: #888;
-    margin-bottom: 10px;
+        font-weight: bold;
+        color: #888;
+        margin-bottom: 10px;
     }
     .content{
         padding-left: 5px;
@@ -480,7 +482,7 @@ export default {
         width:200px;
     }
     .add1 {
-        height: 80px;
+        min-height: 50px;
     }
     .headline {
         margin-top: 9px;
@@ -488,19 +490,8 @@ export default {
         font-size: 24px;
         font-family: '';
     }
-    .date {
-        margin-top: 16px;
-        margin-left: 518px;
-        font-size: 12px;
-        font-family: 'FangSong';
-    }
-    .name {
-        font-size: 18.7px;
-        font-family: 'FangSong';
-        margin-left:94px
-    }
     table {
-        margin: 15px auto;
+        margin: 8px auto 15px auto;
         border-collapse: collapse;
         text-align: center;
         font-family: 'FangSong';
@@ -534,6 +525,14 @@ export default {
     }
     .button-position{
         float:right;
+    }
+    .info-row {
+        display: flex;
+        width: 602px;
+        justify-content: space-between;
+        margin: 24px auto 0px auto;
+        font-size: 14px;
+        font-family: 'FangSong';
     }
 }
 </style>

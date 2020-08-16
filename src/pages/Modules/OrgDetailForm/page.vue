@@ -36,8 +36,8 @@ export default {
                     if (msg.data.AffiliatedDepartIsPass) {
                         msg.data.AffiliatedDepartIsPass = msg.data.AffiliatedDepartIsPass === true ? 'true' : 'false';
                     }
-                    if (msg.data.SauOpinion) {
-                        msg.data.SauOpinion = msg.data.SauOpinion === true ? 'true' : 'false';
+                    if (msg.data.SauIsPass) {
+                        msg.data.SauIsPass = msg.data.SauIsPass === true ? 'true' : 'false';
                     }
                     if (msg.data.YlcIsPass) {
                         msg.data.YlcIsPass = msg.data.YlcIsPass === true ? 'true' : 'false';

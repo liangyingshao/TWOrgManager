@@ -3,15 +3,11 @@
         <i-card :padding="100">
             <i-row type="flex" style="margin: -50px 0px 40px 0px" align="middle">
                 <i-col span="3">
-                    <avatar-uploader
+                    <img
                         :width="128"
                         :height="128"
-                        usage="avatar"
-                        single
-                        :id="orgInfo.ID"
-                        :showText="false"
-                        relate-table="DepartInfo"
-                        v-model="orgInfo.avatar"
+                        :src="orgInfo.avatar"
+                        alt="暂无头像"
                     />
                 </i-col>
                 <i-col span="21">
@@ -88,8 +84,8 @@
                                     <i-col span="11">
                                         <i-form-item label="章程制定时间">
                                             <i-switch v-model="orgInfo.HaveDepartRule" />
-                                            <i-upload :disabled="!orgInfo.HaveDepartRule" action="/api/cms/UploadFile" :before-upload="handleUpload"
-                                            :data="{'usage': '附件', 'single': true, 'relateTable': 'AssociationCharter', 'id': this.orgInfo.ID, 'fileName': 'my-file'}">
+                                            <!--i-upload :disabled="!orgInfo.HaveDepartRule" action="/api/cms/UploadFile" :before-upload="handleUpload"
+                                            :data="{'usage': 'DepartRule', 'single': true, 'relateTable': 'DepartInfo', 'id': this.orgInfo.ID, 'fileName': 'my-file'}">
                                                 <i-button shape="circle"
                                                 :disabled="!orgInfo.HaveDepartRule" icon="ios-cloud-upload-outline" type="primary" ></i-button>
                                             </i-upload>
@@ -116,8 +112,9 @@
                                                         </div>
                                                     </i-row>
                                                 </template>
-                                            </div>
+                                            </div-->
                                             <i-date-picker :disabled="!orgInfo.HaveDepartRule" v-model="orgInfo.RuleCreatedOn"></i-date-picker>
+                                            <a v-if="orgInfo.rule" :href="orgInfo.rule" target="_blank">下载章程</a>
                                         </i-form-item>
                                     </i-col>
                                     <i-col span="11" offset="2">
@@ -446,7 +443,7 @@
                         <i-page show-sizer show-total :total="pager.member.total" @on-change="getMemberTable($event, null)" @on-page-size-change="getMemberTable(null, $event)" />
                     </i-card>
                 </i-tab-pane>
-                <i-tab-pane label="成员审核" name="checkin">
+                <i-tab-pane label="成员审核" name="checkin" :disabled="!app.checkPermission('Security.AcceptJoinApplicate')">
                     <i-card dis-hover title="待加入成员">
                         <i-table stripe :columns="tableCol.applicate" :data="tableData.applicate" :loading="tableLoading">
                             <template slot="State" slot-scope="{row}">
@@ -513,8 +510,8 @@
                             <i-table stripe :columns="tableCol.activity" :data="tableData.activity" :loading="tableLoading">
                                 <template slot="Action" slot-scope="{row}">
                                     <i-button @click="checkWorkflow(row.InstanceId, row.StepId, row.ID)">查看</i-button>
-                                    <i-button type="primary" @click="iniateAct(row.ID, 1)" v-if="row.StartState === 0">发起活动</i-button>
-                                    <i-button @click="iniateAct(row.ID, 0)" v-if="row.StartState === 1">取消活动</i-button>
+                                    <i-button type="primary" @click="iniateAct(row.ID, 1)" v-if="row.StartState === 0 && row.ApplicateState === 3">发起活动</i-button>
+                                    <i-button @click="iniateAct(row.ID, 0)" v-if="row.StartState === 1 && row.ApplicateState === 3">取消活动</i-button>
                                 </template>
                                 <template slot="ShortCode" slot-scope="{row}">
                                     <img :src="getImg(row.ShortCode)" v-if="row.StartState === 1"/>
@@ -532,7 +529,7 @@
                     <br/>
                     <i-page show-sizer show-total :total="pager.operation.total" @on-change="getOptTable($event, null)" @on-page-size-change="getOptTable(null, $event)" />
                 </i-tab-pane>
-                <i-tab-pane label="敬请期待" name="summary">
+                <i-tab-pane label="年终总结" name="summary">
                     功能开发中，敬请期待
                 </i-tab-pane>
             </i-tabs>

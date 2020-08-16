@@ -46,7 +46,7 @@
                 <i-row type="flex">
                     <i-col span="11">
                         <i-form-item label="排序号" prop="Sort">
-                            <i-input :disabled="io.fieldAccess.Sort === 'r' || !io.isMyStep" v-model="io.data.Sort"/>
+                            <i-input disabled v-model="io.data.Sort"/>
                         </i-form-item>
                     </i-col>
                     <i-col span="11" offset="2">
@@ -70,10 +70,10 @@
                         <i-form-item label="章程制定时间">
                             <i-switch :disabled="io.fieldAccess.HaveDepartRule === 'r' || !io.isMyStep" v-model="io.data.HaveDepartRule" />
                             <i-date-picker :disabled="!io.data.HaveDepartRule || io.fieldAccess.RuleCreatedOn === 'r' || !io.isMyStep" v-model="io.data.RuleCreatedOn"></i-date-picker>
-                            <i-row v-if="io.data.HaveDepartRule && io.isMyStep " style="margin-top: 10px">
+                            <i-row v-if="io.data.HaveDepartRule" style="margin-top: 10px">
                                 <i-upload type="drag" :disabled="!io.data.HaveDepartRule || !io.isMyStep" action="/api/cms/UploadFile" :default-file-list="file"
                                 :before-upload="beforeUpload" :on-preview="previewFile" :on-remove="removeUpload"
-                                :data="{'usage': '附件', 'single': true, 'relateTable': 'DepartRule', 'id': this.io.instanceId, 'fileName': this.fileName}"
+                                :data="{'usage': 'DepartRule', 'single': true, 'relateTable': 'DepartInfo', 'id': this.io.data.ID, 'fileName': this.fileName}"
                                 >
                                     <div v-if="io.fieldAccess.Name === 'w'">
                                         <Icon type="ios-cloud-upload" size="36" style="color: #3399ff"></Icon>
@@ -522,7 +522,7 @@ export default {
             });
         },
         getFile () {
-            axios.post("/api/cms/GetAttachments", {id: this.io.instanceId, relateTable: "DepartRule", usage: "附件"}, msg => {
+            axios.post("/api/cms/GetAttachments", {id: this.io.data.ID, relateTable: "DepartInfo", usage: "DepartRule"}, msg => {
                 if (msg.success) {
                     // console.log(msg);
                     this.file = msg.data.map(e => {
@@ -585,6 +585,11 @@ export default {
                 this.$emit('change', newValue);
             },
             deep: true
+        },
+        'io.data.ID' (newValue) {
+            if (newValue) {
+                this.getFile();
+            }
         }
     }
 }

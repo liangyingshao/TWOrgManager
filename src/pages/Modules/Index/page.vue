@@ -1,7 +1,7 @@
 <template>
     <i-row>
-        <i-row type="flex" align="middle" style="height: 10vh;">
-            <img :src="newBanner" style="height: 100%; padding: 16px"/>
+        <i-row type="flex" align="middle" style="height: 10vh; padding: 10px;">
+            <div :style="{background: `url(${newBanner}) no-repeat`, 'background-size': 'contain'}" class="banner" />
         </i-row>
         <i-row :style="bgImg" style="height: 80vh;">
             <i-col span="5" offset="17" class="card" v-show="app.userInfo.isLogined">
@@ -52,7 +52,7 @@
                 厦门大学学生社团管理系统
             </i-col>
             <i-col>
-                &copy; 2020 厦门大学 版权所有 保留所有权利
+                &copy; 2020 厦门大学 保留所有权利
             </i-col>
         </i-row>
     </i-row>
@@ -192,5 +192,9 @@ export default {
     flex-direction: column;
     height: 10vh;
     background-color: white;
+}
+.banner {
+    width: 100%;
+    height: 100%;
 }
 </style>
