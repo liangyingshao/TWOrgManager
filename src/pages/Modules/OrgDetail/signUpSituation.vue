@@ -52,7 +52,10 @@
                     <i-row>
                         <i-col>
                             <p class="headline">社团活动申请表</p>
-                            <p class="date">填表时间：{{nowDate}}</p>
+                            <div class="info-row">
+                                <p>填表时间：{{io.data.CreatedTime}}</p>
+                                <p>社团名称: {{io.data.DepartName}}</p>
+                            </div>
                             <table border="1" class="table">
                                 <tr>
                                     <td class="smallhang">社团名称</td>
@@ -511,7 +514,7 @@ export default {
     font-family: 'FangSong';
 }
 .table {
-    margin: 15px auto;
+    margin: 8px auto 15px auto;
     border-collapse: collapse;
     text-align: center;
     font-family: 'FangSong';
@@ -520,15 +523,15 @@ export default {
 }
 #activity-form {
     .opinionForm .ivu-input {
-    border:1px solid #dcdee2;
+        border:1px solid #dcdee2;
     }
     .ivu-input {
         border:none
     }
     .time{
-    font-weight: bold;
-    color: #888;
-    margin-bottom: 10px;
+        font-weight: bold;
+        color: #888;
+        margin-bottom: 10px;
     }
     .content{
         padding-left: 5px;
@@ -549,7 +552,7 @@ export default {
         width:200px;
     }
     .add1 {
-        height: 80px;
+        height: 50px;
     }
     .headline {
         margin-top: 9px;
@@ -584,6 +587,14 @@ export default {
     }
     .button-position{
         float:right;
+    }
+    .info-row {
+        display: flex;
+        width: 602px;
+        justify-content: space-between;
+        margin: 24px auto 0px auto;
+        font-size: 14px;
+        font-family: 'FangSong';
     }
 }
 </style>

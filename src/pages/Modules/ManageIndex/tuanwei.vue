@@ -229,6 +229,7 @@ export default {
         getDashBoard () {
             axios.post("/api/org/GetDashboard", {}, msg => {
                 this.dashBoard = msg;
+                this.tableLoading = true;
                 axios.post("/api/security/GetOrgDetail", {id: localStorage.getItem("defaultDepartId")}, msg => {
                     this.orgInfo = msg.data;
 
@@ -243,6 +244,7 @@ export default {
                                 this.contentHeight = (window.screen.availHeight - 64) * 0.80;
                             })
                         }
+                        this.tableLoading = false;
                     });
                     axios.post("/api/security/GetUsersByDepartId", {departId: this.orgInfo.ID}, msg => {
                         if (msg.success) {

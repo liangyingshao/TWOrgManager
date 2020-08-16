@@ -32,11 +32,27 @@ let columns = {
     ],
     organization: [
         {
-            title: '名称',
+            title: '名称\r\n（点击跳转至社团详情）',
             key: 'name',
             fixed: 'left',
             width: 200,
-            align: 'center'
+            align: 'center',
+            render: (h, params) => {
+                return h('router-link', {
+                    props: {
+                        to: {
+                            name: 'OrgDetail',
+                            query: {id: params.row.id}
+                        }
+                    }
+                }, params.row.name);
+            },
+            renderHeader: (h, params) => {
+                let text = "社团名称<br/>（点击可查看详情）";
+                return h('div', {
+                    domProps: { innerHTML: text }
+                });
+            }
         },
         {
             title: '社团类型',
