@@ -5,7 +5,7 @@
                 <i-input search placeholder="搜索社团名" @on-search="searchOrganization" />
             </template>
             <i-row>
-                <i-table @on-row-dblclick="viewOrg($event.id)" :max-height="contentHeight" border stripe :columns="organizationCol" :data="organizationSearched" :loading="tableLoading">
+                <i-table :max-height="contentHeight" border stripe :columns="organizationCol" :data="organizationSearched" :loading="tableLoading">
                     <template slot="Action" slot-scope="{row}">
                         <i-button @click="viewOrg(row.id)">查看</i-button>
                     </template>
@@ -33,6 +33,7 @@ export default {
     },
     methods: {
         getDashBoard () {
+            this.tableLoading = true;
             axios.post("/api/security/GetAllAssociationsByDepartId", {departId: localStorage.getItem("defaultDepartId")}, msg => {
                 if (msg.success) {
                     this.organizationData = msg.data;
@@ -41,6 +42,7 @@ export default {
                         this.contentHeight = window.innerHeight * 0.8;
                     })
                 }
+                this.tableLoading = false;
             });
         },
         searchOrganization (value) {

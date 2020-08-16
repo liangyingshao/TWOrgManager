@@ -43,7 +43,7 @@
                     <i-input search placeholder="搜索社团名" @on-search="searchOrganization" />
                 </template>
                 <i-row>
-                    <i-table @on-row-dblclick="viewOrg($event.id)" :max-height="contentHeight" border stripe :columns="organizationCol" :data="organizationSearched" :loading="tableLoading">
+                    <i-table :max-height="contentHeight" border stripe :columns="organizationCol" :data="organizationSearched" :loading="tableLoading">
                         <template slot="Action" slot-scope="{row}">
                             <i-button @click="viewOrg(row.id)">查看</i-button>
                         </template>
@@ -60,7 +60,7 @@
                         </i-col>
                         <i-col span="19">
                             <div style="font-size: 18px; color: #17233d;">{{time}}好! {{userInfo.realName}}</div>
-                            <a @click="navTo">{{orgInfo.Name}}的社团管理员</a>
+                            <a @click="navTo">{{orgInfo.Name}}的管理员</a>
                         </i-col>
                     </i-row>
                     <i-row type="flex" class="background-purple">
@@ -230,14 +230,15 @@ export default {
     mounted () {
         this.judgeTime();
         app.title = "主页";
-        this.getDashBoard();
+        this.getDashBoard(this.$route.query.overrideDptId || localStorage.getItem("defaultDepartId"));
         this.getPending();
     },
     methods: {
-        getDashBoard () {
+        getDashBoard (id) {
             axios.post("/api/org/GetDashboard", {}, msg => {
                 this.dashBoard = msg;
-                axios.post("/api/security/GetOrgDetail", {}, msg => {
+                this.tableLoading = true;
+                axios.post("/api/security/GetOrgDetail", {id}, msg => {
                     this.orgInfo = msg.data;
 
                     this.getActivities();
@@ -251,6 +252,7 @@ export default {
                                 this.contentHeight = document.getElementById("college-index").offsetWidth;
                             })
                         }
+                        this.tableLoading = false;
                     });
                     axios.post("/api/security/GetUsersByDepartId", {departId: this.orgInfo.ID}, msg => {
                         if (msg.success) {

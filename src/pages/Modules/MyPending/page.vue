@@ -15,19 +15,26 @@ export default {
             tableData: [],
             columns: [
                 {
-                    title: "流程类别",
+                    title: "流程名称",
                     key: "WorkflowName"
                 },
                 {
+                    title: "流程类别",
+                    key: "WorkflowType"
+                },
+                {
                     title: "申请人",
+                    maxWidth: 200,
                     key: "Owner"
                 },
                 {
                     title: "申请时间",
+                    maxWidth: 200,
                     key: "ArriveOn"
                 },
                 {
                     title: "操作",
+                    maxWidth: 200,
                     slot: "Action"
                 }
             ],
@@ -54,7 +61,7 @@ export default {
             });
         },
         dealWorkflow (row) {
-            window.open(`${this.dic[row.WorkflowName]}?instanceId=${row.InstanceId}&stepId=${row.StepId}&detail=false`);
+            window.open(`${this.dic[row.WorkflowType]}?instanceId=${row.InstanceId}&stepId=${row.StepId}&detail=false`);
         }
     }
 }

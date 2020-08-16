@@ -12,7 +12,7 @@
                         <i-col span="11">
                             <i-form-item label="学/工号" prop="Code">
                                 <template slot="label">
-                                    <Tooltip placement="right" content="上级部门才有权限修改该字段">
+                                    <Tooltip placement="right" content="无法修改学/工号">
                                         学/工号
                                         <i-icon type="md-information-circle" color="#2db7f5" />
                                     </Tooltip>

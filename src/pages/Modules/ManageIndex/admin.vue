@@ -29,7 +29,7 @@
                                 </p>
                             </i-col>
                             <i-col span="4">
-                                <Button type="success" @click="dealWorkflow(item.InstanceId, item.StepId, item.WorkflowName)">审核</Button>
+                                <Button type="success" @click="dealWorkflow(item.InstanceId, item.StepId, item.WorkflowType)">审核</Button>
                             </i-col>
                         </i-row>
                     </ListItem>
@@ -43,7 +43,7 @@
                     <i-input search placeholder="搜索社团名" @on-search="searchOrganization" />
                 </template>
                 <i-row>
-                    <i-table @on-row-dblclick="viewOrg($event.id)" :max-height="contentHeight" border stripe :columns="organizationCol" :data="organizationSearched" :loading="tableLoading">
+                    <i-table :max-height="contentHeight" border stripe :columns="organizationCol" :data="organizationSearched" :loading="tableLoading">
                         <template slot="Action" slot-scope="{row}">
                             <i-button @click="viewOrg(row.id)">查看</i-button>
                         </template>
@@ -60,7 +60,7 @@
                         </i-col>
                         <i-col span="19">
                             <div style="font-size: 18px; color: #17233d;">{{time}}好! {{userInfo.realName}}</div>
-                            <a @click="navTo">{{orgInfo.Name}}的社团管理员</a>
+                            <a @click="navTo">{{orgInfo.Name}}的管理员</a>
                         </i-col>
                     </i-row>
                     <i-row type="flex" class="background-purple">
@@ -212,6 +212,7 @@ export default {
         getDashBoard () {
             axios.post("/api/org/GetDashboard", {}, msg => {
                 this.dashBoard = msg;
+                this.tableLoading = true;
                 axios.post("/api/security/GetOrgDetail", {id: localStorage.getItem("defaultDepartId")}, msg => {
                     this.orgInfo = msg.data;
 
@@ -226,6 +227,7 @@ export default {
                                 this.contentHeight = (window.screen.availHeight - 64) * 0.80;
                             })
                         }
+                        this.tableLoading = false;
                     });
                     axios.post("/api/security/GetUsersByDepartId", {departId: this.orgInfo.ID}, msg => {
                         if (msg.success) {
@@ -267,8 +269,8 @@ export default {
                 this.entryForManager.pending.badge = this.pendingData.length;
             })
         },
-        dealWorkflow (instanceId, stepId, WorkflowName) {
-            window.open(`${this.dic[WorkflowName]}?instanceId=${instanceId}&stepId=${stepId}&detail=false`);
+        dealWorkflow (instanceId, stepId, WorkflowType) {
+            window.open(`${this.dic[WorkflowType]}?instanceId=${instanceId}&stepId=${stepId}&detail=false`);
         },
         navTo (url) {
             this.$router.push({name: 'OrgDetail'});
