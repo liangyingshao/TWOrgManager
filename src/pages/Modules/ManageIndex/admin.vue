@@ -60,7 +60,7 @@
                         </i-col>
                         <i-col span="19">
                             <div style="font-size: 18px; color: #17233d;">{{time}}好! {{userInfo.realName}}</div>
-                            <a @click="navTo">{{orgInfo.Name}}的社团管理员</a>
+                            <a @click="navTo">{{orgInfo.Name}}的管理员</a>
                         </i-col>
                     </i-row>
                     <i-row type="flex" class="background-purple">

@@ -61,7 +61,7 @@ export default {
             });
         },
         dealWorkflow (row) {
-            window.open(`${this.dic[row.WorkflowName]}?instanceId=${row.InstanceId}&stepId=${row.StepId}&detail=false`);
+            window.open(`${this.dic[row.WorkflowType]}?instanceId=${row.InstanceId}&stepId=${row.StepId}&detail=false`);
         }
     }
 }

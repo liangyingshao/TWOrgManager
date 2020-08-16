@@ -137,6 +137,7 @@
                                         </i-form-item>
                                     </i-col>
                                 </i-row>
+                            <div style="display: none">
                                 <Divider orientation="left">指导老师情况</Divider>
                                 <i-row type="flex">
                                     <i-col span="11">
@@ -368,6 +369,7 @@
                                         </i-form-item>
                                     </i-col>
                                 </i-row>
+                                </div>
                             </i-form>
                             <i-button type="primary" @click="saveOrgDetail()" :loading="isSaving">保存</i-button>
                         </i-col>
