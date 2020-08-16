@@ -3,11 +3,16 @@
         <i-card :padding="100">
             <i-row type="flex" style="margin: -50px 0px 40px 0px" align="middle">
                 <i-col span="3">
-                    <img
+                    <img v-if="orgInfo.avatar"
                         :width="128"
                         :height="128"
                         :src="orgInfo.avatar"
                         alt="暂无头像"
+                    />
+                    <img v-else
+                        :width="128"
+                        :height="128"
+                        :src="app.webInfo.avatar"
                     />
                 </i-col>
                 <i-col span="21">
@@ -137,6 +142,7 @@
                                         </i-form-item>
                                     </i-col>
                                 </i-row>
+                            <div style="display: none">
                                 <Divider orientation="left">指导老师情况</Divider>
                                 <i-row type="flex">
                                     <i-col span="11">
@@ -368,6 +374,7 @@
                                         </i-form-item>
                                     </i-col>
                                 </i-row>
+                                </div>
                             </i-form>
                             <i-button type="primary" @click="saveOrgDetail()" :loading="isSaving">保存</i-button>
                         </i-col>
@@ -407,7 +414,7 @@
                                         <i-input prefix="ios-search" placeholder="搜索成员" v-model="keyword" @keyup.enter.native="getMemberTable()"/>
                                     </i-col>
                                     <i-col>
-                                        <i-button v-if="app.checkPermission('Organization.TwAdminUser')" type="primary" @click="addMember('member', '成员')">添加成员</i-button>
+                                        <i-button v-if="app.checkPermission('Security.AddDepartUser')" type="primary" @click="addMember('member', '成员')">添加成员</i-button>
                                     </i-col>
                                 </i-row>
                             </i-col>
@@ -418,13 +425,13 @@
                                     <i-tag v-if="row.isAdmin">管理员</i-tag>
                             </template>
                             <template slot="Action" slot-scope="{row}">
-                                <i-button :disabled="!app.checkPermission('Organization.TwAdminUser')" @click="modifyMember(row)" v-if="(level+orgInfo.Type>1)">修改</i-button>
+                                <i-button @click="modifyMember(row)" v-if="app.checkPermission('Security.CheckDepartUser')">{{app.checkPermission('Security.EditDepartUser') ? '修改' : '查看'}}</i-button>
                                 <i-tooltip :disabled="!row.isAdmin" content="不能删除管理员" placement="top">
-                                    <i-button :disabled="app.userInfo.permissons.includes('Organization.DepartAdminUser')" @click="delMember(row)" v-if="(2*orgInfo.Type+level>=3)">删除</i-button>
+                                    <i-button :disabled="app.checkPermission('Security.RemoveDepartUser')" @click="delMember(row)" v-if="(2*orgInfo.Type+level>=3)">删除</i-button>
                                 </i-tooltip>
-                                <i-button v-if="(level === 3)&&(!row.isAdmin)" @click="setPositon(row.ID,'管理员')">设置管理员</i-button>
+                                <i-button v-if="(app.checkPermission('Security.SetDepartAdmin'))&&(!row.isAdmin)" @click="setPositon(row.ID,'管理员')">设置管理员</i-button>
                                 <i-poptip transfer v-model="visible" v-if="row.isAdmin">
-                                    <i-button v-if="(level === 3)&&row.isAdmin">设置密码</i-button>
+                                    <i-button v-if="(app.checkPermission('Security.SetDepartAdmin'))&&row.isAdmin">设置密码</i-button>
                                     <i-row slot="title">您正在更改社团管理员密码</i-row>
                                     <i-form  :model="password" slot="content" label-position="top" :rules="pwdRule">
                                         <i-form-item label="新密码" prop="password">
@@ -472,7 +479,7 @@
                                         <i-input prefix="ios-search" placeholder="搜索老师" v-model="keyword" @keyup.enter.native="getTutorTable()"/>
                                     </i-col>
                                     <i-col>
-                                        <i-button type="primary" @click="addMember('tutor')">添加老师</i-button>
+                                        <i-button type="primary" v-if="app.checkPermission('Security.AddDepartTeacher')" @click="addMember('tutor')">添加老师</i-button>
                                     </i-col>
                                 </i-row>
                             </i-col>
@@ -480,8 +487,8 @@
                         <i-row>
                             <i-table stripe :columns="tableCol.tutor" :data="tableData.tutor" :loading="tableLoading">
                                 <template slot="Action" slot-scope="{row}">
-                                    <i-button @click="modifyTutor(row)">修改</i-button>
-                                    <i-button @click="delTutor(row)">删除</i-button>
+                                    <i-button @click="modifyTutor(row)"  v-if="app.checkPermission('Security.CheckDepartTeacher')">{{app.checkPermission('Security.EditDepartTeacher') ? '修改' : '查看'}}</i-button>
+                                    <i-button @click="delTutor(row)" v-if="app.checkPermission('Security.RemoveDepartTeacher')">删除</i-button>
                                 </template>
                             </i-table>
                             <br/>
@@ -536,9 +543,15 @@
         </i-card>
         <i-modal :z-index="10" v-model="modalShow" :loading="true" :title="component.title || '暂无'">
             <component :is="component.name" ref="Form" :loading.sync="modalLoading" :modalData="recordData"></component>
-            <div slot="footer">
-                <i-button type="primary" :loading="modalLoading" @click="submit">确认</i-button>
-                <i-button @click="cancel">取消</i-button>
+            <div slot="footer" >
+                <div v-if="component.name === 'member-form'">
+                    <i-button type="primary" :loading="modalLoading" @click="submit" v-if="app.checkPermission('Security.EditDepartUser')">修改</i-button>
+                    <i-button @click="cancel">{{app.checkPermission('Security.EditDepartUser') ? '取消' : '确定'}}</i-button>
+                </div>
+                <div v-else-if="component.name === 'tutor-form'">
+                    <i-button type="primary" :loading="modalLoading" @click="submit" v-if="app.checkPermission('Security.EditDepartTeacher')">修改</i-button>
+                    <i-button @click="cancel">{{app.checkPermission('Security.EditDepartTeacher') ? '取消' : '确定'}}</i-button>
+                </div>
             </div>
         </i-modal>
     </i-row>
