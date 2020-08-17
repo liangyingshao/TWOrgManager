@@ -46,6 +46,8 @@
                     <i-table stripe :columns="tableColumns.activity" :data="activitySearched" :loading="tableLoading">
                         <template slot="Action" slot-scope="{row}">
                             <i-button @click="checkWorkflow(row.InstanceId, row.StepId, row.ID)">查看</i-button>
+                            <i-button type="primary" @click="iniateAct(row.ID, 1)" v-if="row.StartState === 0 && row.ApplicateState === 3">发起活动</i-button>
+                            <i-button @click="iniateAct(row.ID, 0)" v-if="row.StartState === 1 && row.ApplicateState === 3">取消活动</i-button>
                         </template>
                         <template slot="QRCode" slot-scope="{row}">
                             <img v-if="row.ShortCode" :src="'/qr/' + row.ShortCode" />
@@ -333,7 +335,21 @@ export default {
         },
         searchActivity (value) {
             this.activitySearched = this.activityData.filter(e => e.ActivityName.indexOf(value) > -1);
-        }
+        },
+        iniateAct (ID, state, index) {
+            axios.post("/api/org/ChangeActivityState", {actId: ID, state: state}, msg => {
+                if (msg.success) {
+                    if (state === 1) {
+                        this.$Message.success("活动发起成功");
+                    } else if (state === 0) {
+                        this.$Message.success("活动已取消");
+                    }
+                    this.getActivityTable();
+                } else {
+                    this.$Message.warning(msg.msg);
+                }
+            })
+        },
     }
 }
 </script>
@@ -359,56 +375,6 @@ export default {
     .background-purple{
         color: #ffffff;
         background: #6882da;
-    }
-    #chart {
-        padding: 24px;
-        // text-align: center;
-        #userInfo {
-            margin: 0 24px;
-            font-size: 24px;
-        }
-        .difference {
-            font-size: 16px;
-            color: #808695;
-            .number {
-                font-size: 16px;
-            }
-        }
-        .item-name {
-            font-size: 20px;
-            color: #17233d;
-        }
-        .number {
-            font-size: 36px;
-            font-weight: bold;
-        }
-        #organization {
-            width: 11%;
-            text-align: center;
-            margin: 15px 0;
-            .number
-            {
-                color: #da5953;;
-            }
-        }
-        #member {
-            width: 11%;
-            text-align: center;
-            margin: 15px 0;
-            .number
-            {
-                color: #d37b33;
-            }
-        }
-        #activity {
-            width: 11%;
-            text-align: center;
-            margin: 15px 0;
-            .number
-            {
-                color: #53ac9a;
-            }
-        }
     }
     .welcome {
         font-size: 40px;
