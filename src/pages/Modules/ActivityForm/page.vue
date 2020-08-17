@@ -406,13 +406,56 @@ export default {
         getFieldAccess () {
             axios.post("/api/workflow/LoadInstance", {instanceId: this.instanceId, stepId: this.stepId, detail: this.detailMode}, msg => {
                 if (msg.success) {
+                    if (msg.data.GuideTeacherIsPass !== undefined) {
+                        msg.data.GuideTeacherIsPass = msg.data.GuideTeacherIsPass === true ? 'true' : 'false';
+                    }
+                    if (msg.data.AffiliatedDepartIsPass !== undefined) {
+                        msg.data.AffiliatedDepartIsPass = msg.data.AffiliatedDepartIsPass === true ? 'true' : 'false';
+                    }
+                    if (msg.data.SauIsPass !== undefined) {
+                        msg.data.SauIsPass = msg.data.SauIsPass === true ? 'true' : 'false';
+                    }
+                    if (msg.data.YlcIsPass !== undefined) {
+                        msg.data.YlcIsPass = msg.data.YlcIsPass === true ? 'true' : 'false';
+                    }
                     this.io = msg;
                 } else {
                     this.$Message.warning(msg.msg);
                 }
             });
         },
+        dateFormat (fmt, d) {
+            let date = new Date(d);
+            let ret;
+            const opt = {
+                "Y+": date.getFullYear().toString(),
+                "m+": (date.getMonth() + 1).toString(),
+                "d+": date.getDate().toString(),
+                "H+": date.getHours().toString(),
+                "M+": date.getMinutes().toString(),
+                "S+": date.getSeconds().toString()
+                // 有其他格式化字符需求可以继续添加，必须转化成字符串
+            };
+            for (let k in opt) {
+                ret = new RegExp("(" + k + ")").exec(fmt);
+                if (ret) {
+                    fmt = fmt.replace(ret[1], (ret[1].length === 1) ? (opt[k]) : (opt[k].padStart(ret[1].length, "0")))
+                };
+            };
+            return fmt;
+        },
         submit () {
+            if (this.io.fieldAccess.StartDate === 'w' || this.io.isMyStep) {
+                // let temp = this.io.data.StartDate.getMonth() + 1;
+                // this.io.data.StartDate = this.io.data.StartDate.getFullYear() + '年' + temp + '月' + this.io.data.StartDate.getDate() + '日';
+                // console.log(this.io.data.StartDate.getFullYear() + '年' + temp + '月' + this.io.data.StartDate.getDate() + '日');
+                this.io.data.StartDate = this.dateFormat("YYYY-mm-dd HH:MM", this.io.data.StartDate);
+            }
+            if (this.io.fieldAccess.EndDate === 'w' || this.io.isMyStep) {
+                // let temp = this.io.data.EndDate.getMonth() + 1;
+                // this.io.data.EndDate = this.io.data.EndDate.getFullYear() + '年' + temp + '月' + this.io.data.EndDate.getDate() + '日';
+                this.io.data.EndDate = this.dateFormat("YYYY-mm-dd HH:MM", this.io.data.EndDate);
+            }
             if (this.io.fieldAccess.ActivityName === 'w' && this.io.isMyStep) {
                 if (this.io.data.ActivityName === "") {
                     this.$Message.warning({
