@@ -240,7 +240,7 @@ export default {
                     badge: 0,
                     descrip: "管理本社团的所有活动，对已经通过审核的活动可以选择开始活动。也可以在本页面下载活动签到二维码",
                     routerTo: {
-                        name: "Affiliated",
+                        name: "OrgDetail",
                         query: {
                             tabSelect: "activity"
                         }
