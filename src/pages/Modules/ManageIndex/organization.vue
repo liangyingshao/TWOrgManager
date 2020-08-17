@@ -349,7 +349,7 @@ export default {
                     this.$Message.warning(msg.msg);
                 }
             })
-        },
+        }
     }
 }
 </script>
