@@ -10,7 +10,7 @@
                         </template>
                         <template slot="RealName" slot-scope="{row}">
                             <p>{{row.RealName}}</p>
-                            <p>({{row.BelongDepart}})</p>
+                            <p>({{row.BelongDepart ? row.BelongDepart : '未填写学院'}})</p>
                         </template>
                         <template slot="SignInOn" slot-scope="{row}">
                             <p v-if="row.SignInState === 99">没有签到</p>
