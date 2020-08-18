@@ -16,34 +16,8 @@
                 </i-row>
                 <i-row type="flex" justify="space-between">
                     <i-col span="11">
-                        <i-form-item label="学历" prop="Educational">
-                            <dic-select dic="学历" v-model="modalData.user.Educational"/>
-                        </i-form-item>
-                    </i-col>
-                    <i-col span="11">
-                        <i-form-item label="学院" prop="Specialty">
-                            <i-input v-model="modalData.user.Specialty" />
-                        </i-form-item>
-                    </i-col>
-                </i-row>
-                <i-row type="flex" justify="space-between">
-                    <i-col span="11">
-                        <i-form-item label="政治面貌" prop="PoliticalStatus">
-                            <dic-select dic="政治面貌" v-model="modalData.user.PoliticalStatus"/>
-                        </i-form-item>
-                    </i-col>
-                    <i-col span="11">
-                        <i-form-item label="入团时间" prop="JoinCCYLTime">
-                            <i-checkbox v-model="haveJoinCCYL"></i-checkbox>
-                            <i-date-picker :disabled="!haveJoinCCYL" v-model="modalData.user.JoinCCYLTime" />
-                        </i-form-item>
-                    </i-col>
-                </i-row>
-                <i-row type="flex" justify="space-between">
-                    <i-col span="11">
-                        <i-form-item label="入党时间" prop="JoinCPCTime">
-                            <i-checkbox v-model="haveJoinCPC"></i-checkbox>
-                            <i-date-picker :disabled="!haveJoinCPC" v-model="modalData.user.JoinCPCTime" />
+                        <i-form-item label="电话" prop="Mobile">
+                            <i-input v-model="modalData.user.Mobile" />
                         </i-form-item>
                     </i-col>
                     <i-col span="11">
@@ -54,13 +28,25 @@
                 </i-row>
                 <i-row type="flex" justify="space-between">
                     <i-col span="11">
-                        <i-form-item label="电话" prop="Mobile">
-                            <i-input v-model="modalData.user.Mobile" />
+                        <i-form-item label="学院" prop="BelongDepart">
+                            <i-input v-model="modalData.user.BelongDepart" />
                         </i-form-item>
                     </i-col>
                     <i-col span="11">
-                        <i-form-item label="QQ" prop="QQ">
-                            <i-input v-model="modalData.user.QQ" />
+                        <i-form-item label="专业" prop="Specialty">
+                            <i-input v-model="modalData.user.Specialty" />
+                        </i-form-item>
+                    </i-col>
+                </i-row>
+                <i-row type="flex" justify="space-between">
+                    <i-col span="11">
+                        <i-form-item label="学历" prop="Educational">
+                            <dic-select dic="学历" v-model="modalData.user.Educational"/>
+                        </i-form-item>
+                    </i-col>
+                    <i-col span="11">
+                        <i-form-item label="政治面貌" prop="PoliticalStatus">
+                            <dic-select dic="政治面貌" v-model="modalData.user.PoliticalStatus"/>
                         </i-form-item>
                     </i-col>
                 </i-row>
@@ -77,9 +63,25 @@
                     </i-col>
                 </i-row>
                 <i-row type="flex" justify="space-between">
-                    <i-form-item label="所属部门" prop="BelongDepart">
-                        <i-input v-model="modalData.user.BelongDepart" />
-                    </i-form-item>
+                    <i-col span="11">
+                        <i-form-item label="入团时间" prop="JoinCCYLTime">
+                            <i-checkbox v-model="haveJoinCCYL"></i-checkbox>
+                            <i-date-picker :disabled="!haveJoinCCYL" v-model="modalData.user.JoinCCYLTime" />
+                        </i-form-item>
+                    </i-col>
+                    <i-col span="11">
+                        <i-form-item label="入党时间" prop="JoinCPCTime">
+                            <i-checkbox v-model="haveJoinCPC"></i-checkbox>
+                            <i-date-picker :disabled="!haveJoinCPC" v-model="modalData.user.JoinCPCTime" />
+                        </i-form-item>
+                    </i-col>
+                </i-row>
+                <i-row type="flex" justify="space-between">
+                    <i-col span="11">
+                        <i-form-item label="QQ" prop="QQ">
+                            <i-input v-model="modalData.user.QQ" />
+                        </i-form-item>
+                    </i-col>
                 </i-row>
                 <i-button @click="showLog = true" type="text" style="float:right; padding: 0;">查看修改记录</i-button>
             </i-form>
@@ -147,6 +149,13 @@
                             trigger: "blur"
                         }
                     ],
+                    BelongDepart: [
+                        {
+                            required: true,
+                            message: "必须填写学院",
+                            trigger: "blur"
+                        }
+                    ],
                     PoliticalStatus: [
                         {
                             required: true,
@@ -157,16 +166,34 @@
                     Educational: [
                         {
                             required: true,
-                            message: "必须选择政治学历",
+                            message: "必须选择学历",
                             trigger: "blur"
                         }
                     ],
                     Specialty: [
                         {
                             required: true,
-                            message: "必须选择学院",
+                            message: "必须填写专业",
                             trigger: "blur"
                         }
+                    ],
+                    Email: [
+                        {
+                            required: true,
+                            type: "email",
+                            message: "邮箱格式不正确",
+                            trigger: "blur"
+                        },
+                        _.debounce((rule, value, cb, source, options) => {
+                            let userId = THIS.modalData.user.ID;
+                            axios.post("/api/security/EmailValidate", { userId, email: value }, msg => {
+                                if (msg.success) {
+                                    cb();
+                                } else {
+                                    cb(msg.remote);
+                                }
+                            })
+                        }, 500)
                     ],
                     BirthPlace: [
                         {
@@ -178,7 +205,7 @@
                     Source: [
                         {
                             required: true,
-                            message: "必须选择生源地",
+                            message: "必须填写生源地",
                             trigger: "blur"
                         }
                     ],
@@ -217,8 +244,9 @@
                         JoinCPCTime: this.haveJoinCPC ? this.modalData.user.JoinCPCTime : "1900-01-01",
                         JoinCCYLTime: this.haveJoinCCYL ? this.modalData.user.JoinCCYLTime : "1900-01-01",
                         departId,
-                        position: this.modalData.position
-                        }, msg => {
+                        position: this.modalData.position,
+                        UserName: this.modalData.user.Code
+                    }, msg => {
                         this.resetFields();
                         if (msg.success) {
                             callback(TRUE, msg);
@@ -228,6 +256,11 @@
                         }
                     });
                 })
+            },
+            async validate (callback) {
+                let form = this.$refs["Form"];
+                let res = await form.validate();
+                callback(res);
             }
         }
     }

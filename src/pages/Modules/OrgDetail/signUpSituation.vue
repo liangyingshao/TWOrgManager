@@ -300,6 +300,14 @@ export default {
                     key: 'RealName'
                 },
                 {
+                    title: '手机号',
+                    key: "Monile"
+                },
+                {
+                    title: '学院',
+                    key: "BelongDepart"
+                },
+                {
                     title: '报名时间',
                     slot: 'SignUpOn'
                 },

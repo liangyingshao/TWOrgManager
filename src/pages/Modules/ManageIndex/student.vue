@@ -20,7 +20,7 @@
                                     </div>
                                     <div style="color: #aaaaaa;font-size:14px" v-else>
                                         <Icon type="md-information-circle" />
-                                        简介{{item.Description}}
+                                        {{item.Description}}
                                     </div>
                                 </i-col>
                             </i-row>
