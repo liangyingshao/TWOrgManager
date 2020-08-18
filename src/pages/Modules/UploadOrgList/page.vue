@@ -264,6 +264,7 @@ export default {
                 this.tableLoading = true */
                 this.showReadProgress = true;
                 this.showUploadProgress = false;
+                this.currentStep = 1;
             }
             reader.onprogress = e => {
                 this.readPercent = Math.round(e.loaded / e.total * 100);
@@ -286,7 +287,6 @@ export default {
                 this.tableTitle = tableTitle;
                 this.uploadLoading = false;
                 this.verifyTable();
-                this.currentStep = 1;
                 // this.tableLoading = false
                 // this.showRemoveFile = true
             }
@@ -318,7 +318,8 @@ export default {
                     this.tableData[index].color = "#ed4014";
                 }
             }
-            await axios.post("/api/security/UpdateAllOrgs", {})
+            await axios.post("/api/security/UpdateAllOrgs", {});
+            this.currentStep = 2;
             this.isUploading = false;
         }
     }

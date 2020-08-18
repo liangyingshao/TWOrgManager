@@ -8,6 +8,10 @@
                             <p v-if="row.SignUpState === 99">没有报名</p>
                             <p v-else>{{row.SignUpOn}}</p>
                         </template>
+                        <template slot="RealName" slot-scope="{row}">
+                            <p>{{row.RealName}}</p>
+                            <p>({{row.BelongDepart ? row.BelongDepart : '未填写学院'}})</p>
+                        </template>
                         <template slot="SignInOn" slot-scope="{row}">
                             <p v-if="row.SignInState === 99">没有签到</p>
                             <p v-else>{{row.SignInOn}}</p>
@@ -297,7 +301,11 @@ export default {
             signCol: [
                 {
                     title: '报名者姓名',
-                    key: 'RealName'
+                    slot: 'RealName'
+                },
+                {
+                    title: '手机号',
+                    key: "Monile"
                 },
                 {
                     title: '报名时间',
@@ -309,6 +317,7 @@ export default {
                 },
                 {
                     title: '操作',
+                    maxWidth: 100,
                     slot: 'Action'
                 }
             ],
@@ -464,6 +473,18 @@ export default {
         getFieldAccess () {
             axios.post("/api/workflow/LoadInstance", {instanceId: this.instanceId, stepId: this.stepId, detail: this.detailMode}, msg => {
                 if (msg.success) {
+                    if (msg.data.GuideTeacherIsPass !== undefined) {
+                        msg.data.GuideTeacherIsPass = msg.data.GuideTeacherIsPass === true ? 'true' : 'false';
+                    }
+                    if (msg.data.AffiliatedDepartIsPass !== undefined) {
+                        msg.data.AffiliatedDepartIsPass = msg.data.AffiliatedDepartIsPass === true ? 'true' : 'false';
+                    }
+                    if (msg.data.SauIsPass !== undefined) {
+                        msg.data.SauIsPass = msg.data.SauIsPass === true ? 'true' : 'false';
+                    }
+                    if (msg.data.YlcIsPass !== undefined) {
+                        msg.data.YlcIsPass = msg.data.YlcIsPass === true ? 'true' : 'false';
+                    }
                     this.io = msg;
                 } else {
                     this.$Message.warning(msg.msg);
