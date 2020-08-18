@@ -464,6 +464,18 @@ export default {
         getFieldAccess () {
             axios.post("/api/workflow/LoadInstance", {instanceId: this.instanceId, stepId: this.stepId, detail: this.detailMode}, msg => {
                 if (msg.success) {
+                    if (msg.data.GuideTeacherIsPass !== undefined) {
+                        msg.data.GuideTeacherIsPass = msg.data.GuideTeacherIsPass === true ? 'true' : 'false';
+                    }
+                    if (msg.data.AffiliatedDepartIsPass !== undefined) {
+                        msg.data.AffiliatedDepartIsPass = msg.data.AffiliatedDepartIsPass === true ? 'true' : 'false';
+                    }
+                    if (msg.data.SauIsPass !== undefined) {
+                        msg.data.SauIsPass = msg.data.SauIsPass === true ? 'true' : 'false';
+                    }
+                    if (msg.data.YlcIsPass !== undefined) {
+                        msg.data.YlcIsPass = msg.data.YlcIsPass === true ? 'true' : 'false';
+                    }
                     this.io = msg;
                 } else {
                     this.$Message.warning(msg.msg);
