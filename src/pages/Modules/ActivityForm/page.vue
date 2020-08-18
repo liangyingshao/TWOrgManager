@@ -154,24 +154,24 @@
                                     <td class="longhang" colspan="4">
                                         <i-input type="textarea" class="opinionForm" :rows="3" placeholder="（此处填写活动的详细介绍，文本会直接显示在学生界面的活动简介中）"
                                         v-if="io.fieldAccess.Description === 'w' && io.isMyStep" v-model="io.data.Description"/>
-                                        <p v-else>{{io.data.Description}}</p>
+                                        <p style="white-space: pre-wrap; text-align: justify;" v-else>{{io.data.Description}}</p>
                                     </td>
                                 </tr>
                                 <tr>
                                     <td class="smallhang">封面图片</td>
                                     <td class="longhang" colspan="4">
-                                        <i-upload :disabled="io.fieldAccess.Avatar !== 'w' || !io.isMyStep" action="/api/cms/UploadFile" :default-file-list="avatar" :show-upload-list="false"
+                                        <i-upload v-if="io.fieldAccess.Avatar === 'w' && io.isMyStep" action="/api/cms/UploadFile" :default-file-list="avatar" :show-upload-list="false"
                                         :before-upload="beforeUploadAvatar" :on-preview="previewAvatar" :on-remove="removeUpload" :on-success="uploadAvatarSuccess"
                                         :data="{'usage': 'avatar', 'single': true, 'relateTable': 'ActivityApplication', 'id': this.io.data.ID, 'fileName': this.avatarName}"
                                         >
-                                            <i-button v-if="io.fieldAccess.Avatar === 'w' && io.isMyStep" icon="ios-cloud-upload-outline" type="primary">上传封面</i-button>
+                                            <i-button icon="ios-cloud-upload-outline" type="primary">上传封面</i-button>
                                             <br>
                                             上传一张封面图片，推荐大小为 1080*540 。作为活动的封面图片。
                                         </i-upload>
-                                        <div v-if="io.data.avatar">
-                                            <Divider/>
+                                        <div v-if="io.data.Avatar">
                                             <i-row>
-                                                <img :src="io.data.avatar" />
+                                                <img :src="io.data.Avatar" />
+                                                <i-button type="error" v-if="io.fieldAccess.Avatar === 'w' && io.isMyStep" @click="removeUpload(avatar[0])">删除图片</i-button>
                                             </i-row>
                                         </div>
                                     </td>
@@ -396,17 +396,23 @@ export default {
                             id: e.ID
                         }
                     });
-                    this.io.data.avatar = msg.data[0].Download;
+                    this.io.data.Avatar = msg.data[0] ? msg.data[0].Download : "";
                 }
             });
         },
         removeUpload (file) {
-            axios.post("/api/cms/RemoveAttachment", {id: file.id || file.response.id}, msg => {
-                if (msg.success) {
-                    this.$Message.success('删除文件成功');
-                    this.getAvatar();
+            this.$Modal.confirm({
+                title: '您确定要删除图片吗？',
+                content: '图片删除后不可恢复。',
+                onOk: () => {
+                    axios.post("/api/cms/RemoveAttachment", {id: file.id || file.response.id}, msg => {
+                        if (msg.success) {
+                            this.$Message.success('删除文件成功');
+                            this.getAvatar();
+                        }
+                    });
                 }
-            })
+            });
         },
         previewAvatar (file) {
             const { href } = this.$router.resolve({
@@ -426,8 +432,7 @@ export default {
         },
         uploadAvatarSuccess (response, file, fileList) {
             if (response.success) {
-                debugger
-                this.io.data.avatar = response.download;
+                this.io.data.Avatar = response.download;
                 this.getAvatar();
             } else {
                 this.$Message.error(response.msg);
@@ -500,7 +505,7 @@ export default {
                         msg.data.YlcIsPass = msg.data.YlcIsPass === true ? 'true' : 'false';
                     }
                     if (msg.data.ActivityType) {
-                        msg.data.ActivityType = msg.data.ActivityType.replace(",", "，").replace("[", "").replace("]", "").replace("\"", "");
+                        msg.data.ActivityType = msg.data.ActivityType.replace(/[[\]"]/g, "").replace(/,/g, "，");
                     } else {
                         msg.data.ActivityType = [];
                     }
