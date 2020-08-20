@@ -146,7 +146,12 @@
                                         </i-checkbox-group>
                                     </td>
                                     <td class="longhang" v-else colspan="4">
-                                        <p v-if="io.data.ActivityType">{{io.data.ActivityType}}</p>
+                                        <p v-if="io.data.ActivityType">
+                                            <template v-for="(item, index) in io.data.ActivityType">
+                                                <Icon type="ios-checkbox-outline" :key="index"/>
+                                                {{item}}
+                                            </template>
+                                        </p>
                                     </td>
                                 </tr>
                                 <tr>
@@ -528,6 +533,7 @@ export default {
                     }
                     if (msg.data.ActivityType) {
                         msg.data.ActivityType = msg.data.ActivityType.replace(/[[\]"]/g, "").replace(/,/g, "，");
+                        msg.data.ActivityType = msg.data.ActivityType.split('，')
                     } else {
                         msg.data.ActivityType = "";
                     }

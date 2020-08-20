@@ -49,10 +49,10 @@
                                 <tr>
                                     <td class="smallhang">活动时间</td>
                                     <td colspan="4" width="200" class="longhang wen-zi-ju-zhong" style="letter-spacing: 2px;">
-                                        <i-date-picker type="date" format="yyyy年MM月dd日" v-if="io.fieldAccess.StartDate === 'w' && io.isMyStep" v-model="io.data.StartDate"/>
+                                        <i-date-picker type="datetime"  format="yyyy年MM月dd日 HH:mm" v-if="io.fieldAccess.StartDate === 'w' && io.isMyStep" v-model="io.data.StartDate"/>
                                         <span v-else>{{io.data.StartDate}}</span>
                                         至
-                                        <i-date-picker type="date" format="yyyy年MM月dd日" v-if="io.fieldAccess.EndDate === 'w' && io.isMyStep" v-model="io.data.EndDate"/>
+                                        <i-date-picker type="datetime"  format="yyyy年MM月dd日 HH:mm" v-if="io.fieldAccess.EndDate === 'w' && io.isMyStep" v-model="io.data.EndDate"/>
                                          <span v-else>{{io.data.EndDate}}</span>
                                     </td>
                                 </tr>
@@ -117,7 +117,12 @@
                                         </i-checkbox-group>
                                     </td>
                                     <td class="longhang" v-else colspan="4">
-                                        <p v-if="io.data.ActivityType">{{io.data.ActivityType}}</p>
+                                        <p v-if="io.data.ActivityType">
+                                            <template v-for="(item, index) in io.data.ActivityType">
+                                                <Icon type="ios-checkbox-outline" :key="index"/>
+                                                {{item}}
+                                            </template>
+                                        </p>
                                     </td>
                                 </tr>
                                 <tr>
@@ -506,6 +511,7 @@ export default {
                     }
                     if (msg.data.ActivityType) {
                         msg.data.ActivityType = msg.data.ActivityType.replace(/[[\]"]/g, "").replace(/,/g, "，");
+                        msg.data.ActivityType = msg.data.ActivityType.split('，')
                     } else {
                         msg.data.ActivityType = "";
                     }
@@ -521,10 +527,10 @@ export default {
             const opt = {
                 "Y+": date.getFullYear().toString(),
                 "m+": (date.getMonth() + 1).toString(),
-                "d+": date.getDate().toString()// ,
-                // "H+": date.getHours().toString(),
-                // "M+": date.getMinutes().toString(),
-                // "S+": date.getSeconds().toString()
+                "d+": date.getDate().toString(),
+                "H+": date.getHours().toString(),
+                "M+": date.getMinutes().toString(),
+                "S+": date.getSeconds().toString()
                 // 有其他格式化字符需求可以继续添加，必须转化成字符串
             };
             for (let k in opt) {
@@ -540,13 +546,14 @@ export default {
                 // let temp = this.io.data.StartDate.getMonth() + 1;
                 // this.io.data.StartDate = this.io.data.StartDate.getFullYear() + '年' + temp + '月' + this.io.data.StartDate.getDate() + '日';
                 // console.log(this.io.data.StartDate.getFullYear() + '年' + temp + '月' + this.io.data.StartDate.getDate() + '日');
-                this.io.data.StartDate = this.dateFormat("YYYY-mm-dd", this.io.data.StartDate);
+                this.io.data.StartDate = this.dateFormat("YYYY-mm-dd HH:MM", this.io.data.StartDate);
             }
             if (this.io.fieldAccess.EndDate === 'w' || this.io.isMyStep) {
                 // let temp = this.io.data.EndDate.getMonth() + 1;
                 // this.io.data.EndDate = this.io.data.EndDate.getFullYear() + '年' + temp + '月' + this.io.data.EndDate.getDate() + '日';
-                this.io.data.EndDate = this.dateFormat("YYYY-mm-dd", this.io.data.EndDate);
+                this.io.data.EndDate = this.dateFormat("YYYY-mm-dd HH:MM", this.io.data.EndDate);
             }
+            // console.log(this.io.data.StartDate + " " + this.io.data.EndDate)
             if (this.io.fieldAccess.ActivityName === 'w' && this.io.isMyStep) {
                 if (this.io.data.ActivityName === "") {
                     this.$Message.warning({
