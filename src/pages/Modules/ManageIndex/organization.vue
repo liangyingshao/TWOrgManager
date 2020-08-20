@@ -317,6 +317,13 @@ export default {
             let pageSize = targetPageSize || this.pager.pageSize;
             axios.post("/api/org/GetActByDepartId", {Id: this.data.ID, page, pageSize}, msg => {
                 if (msg.success) {
+                    for (let i = 0; i < msg.data.length; i++) {
+                        if (msg.data[i].ActivityType) {
+                            msg.data[i].ActivityType = msg.data[i].ActivityType.replace(/[[\]"]/g, "").replace(/,/g, "，");
+                        } else {
+                            msg.data[i].ActivityType = "";
+                        }
+                    }
                     this.activityData = msg.data;
                     this.activitySearched = this.activityData;
                     this.pager.totalRow = msg.totalRow;
