@@ -25,7 +25,7 @@
             <Affix>
                 <Header :style="{padding: 0}" class="layout-header-bar">
                     <i-row type="flex" align="middle">
-                        <i-col span="20">
+                        <i-col span="19">
                             <Icon @click.native="collapsedSider" :class="rotateIcon" :style="{margin: '0 20px'}" type="md-menu" size="24"></Icon>
                         </i-col>
                         <!-- <i-col span="1">
@@ -40,11 +40,21 @@
                         <i-col span="1">
                             <Icon :style="[{margin: '0 5px'},{cursor: 'pointer'}, {display: 'none'}]" @click="$Notice.info({title: '您当前没有通知'});" type="md-notifications-outline" size="24"></Icon>
                         </i-col>
-                        <i-col span="1">
-                            <Dropdown trigger="click">
+                        <i-col span="4">
+                            <Dropdown trigger="click" style="width: 100%;">
                                 <div style="cursor:pointer">
-                                    <Avatar :src="app.userInfo.avatar" />
-                                    <Icon type="md-arrow-dropdown" />
+                                    <i-row>
+                                        <i-col span="5">
+                                            <Avatar :src="app.userInfo.avatar" />
+                                        </i-col>
+                                        <i-col span="15" style="margin-top: 15px;">
+                                            <p style="line-height: 20px;overflow:hidden;text-overflow:ellipsis;white-space: nowrap;">{{userInfo.realName}}</p>
+                                            <p style="line-height: 20px;font-size: 12px;overflow:hidden;text-overflow:ellipsis;white-space: nowrap;">{{position}}</p>
+                                        </i-col>
+                                        <i-col span="2">
+                                            <Icon type="md-arrow-dropdown" />
+                                        </i-col>
+                                    </i-row>
                                 </div>
                                 <DropdownMenu slot="list">
                                     <DropdownItem>
@@ -56,7 +66,7 @@
                                 </DropdownMenu>
                             </Dropdown>
                         </i-col>
-                        <i-col span="2" />
+                        <!-- <i-col span="2" /> -->
                     </i-row>
                 </Header>
             </Affix>
@@ -83,6 +93,7 @@ export default {
         })
     },
     mounted () {
+        this.position = localStorage.getItem("position");
         if (!app.checkPermission("Security.LoginAdmin")) {
             this.$Message.warning("你没有权限登录后台");
             this.$router.push({ name: "Index" });
@@ -144,7 +155,9 @@ export default {
     data () {
         if (!app.toMenu) app.toMenu = this.collapseMenu;
         return {
+            position: "",
             app,
+            userInfo: app.userInfo,
             isCollapsed: false,
             menus: app.menus,
             openMenus: [],

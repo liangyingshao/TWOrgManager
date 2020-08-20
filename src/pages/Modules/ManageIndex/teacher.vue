@@ -274,7 +274,6 @@ export default {
                     axios.post("/api/org/GetActByDepartId", {Id: this.orgInfo.ID, page, pageSize}, msg => {
                         if (msg.success) {
                             this.entryForManager.activity.badge = msg.data.filter(e => e.ApplicateState === 3).length;
-                            console.log(this.entryForManager.activity.badge);
                         }
                     });
                 }

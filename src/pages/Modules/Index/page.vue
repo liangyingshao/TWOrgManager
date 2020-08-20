@@ -117,6 +117,7 @@ export default {
             })
         },
         toManage (role) {
+            localStorage.setItem("position", role.departName + role.position);
             localStorage.setItem("defaultDepartId", role.departId);
             localStorage.setItem("role", role.position);
             if (role.position === "指导老师") {
