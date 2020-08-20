@@ -10,7 +10,7 @@
                 您正处于编辑模式
                 <template slot="desc">您当前正在编辑社团基本信息，请单击“确定”按钮提交修改，单击“取消”按钮或关闭页面以放弃修改。</template>
             </i-alert>
-            <i-form :model="io" ref="form">
+            <i-form :model="io.data" ref="form" :rules="ruleInline">
                 <Divider orientation="left">基本信息</Divider>
                 <i-row type="flex" justify="space-between">
                     <i-col span="24">
@@ -43,15 +43,15 @@
                         </i-form-item>
                     </i-col>
                 </i-row>
-                <i-row type="flex">
+                <i-row type="flex" style="display: none">
                     <i-col span="11">
                         <i-form-item label="排序号" prop="Sort">
-                            <i-input :disabled="io.fieldAccess.Sort === 'r' || !io.isMyStep" v-model="io.data.Sort"/>
+                            <i-input disabled v-model="io.data.Sort"/>
                         </i-form-item>
                     </i-col>
                     <i-col span="11" offset="2">
                         <i-form-item label="部门类型">
-                            <i-select v-model="io.data.Type" :disabled="io.fieldAccess.Type === 'r' || !io.isMyStep">
+                            <i-select v-model="io.data.Type" disabled>
                                 <i-option :value="0" key="业务指导单位">业务指导单位</i-option>
                                 <i-option :value="1" key="社团">社团</i-option>
                             </i-select>
@@ -67,53 +67,68 @@
                 </i-row>
                 <i-row type="flex">
                     <i-col span="11">
-                        <i-form-item label="是否有社团章程">
+                        <i-form-item label="章程制定时间">
                             <i-switch :disabled="io.fieldAccess.HaveDepartRule === 'r' || !io.isMyStep" v-model="io.data.HaveDepartRule" />
-                            <i-date-picker :disabled="!io.data.HaveDepartRule || !io.isMyStep" v-model="io.data.RuleCreatedOn"></i-date-picker>
-                            <i-row v-if="io.data.HaveDepartRule && io.isMyStep" style="margin-top: 10px">
+                            <i-date-picker :disabled="!io.data.HaveDepartRule || io.fieldAccess.RuleCreatedOn === 'r' || !io.isMyStep" v-model="io.data.RuleCreatedOn"></i-date-picker>
+                            <i-row v-if="io.data.HaveDepartRule" style="margin-top: 10px">
                                 <i-upload type="drag" :disabled="!io.data.HaveDepartRule || !io.isMyStep" action="/api/cms/UploadFile" :default-file-list="file"
                                 :before-upload="beforeUpload" :on-preview="previewFile" :on-remove="removeUpload"
-                                :data="{'usage': '附件', 'single': true, 'relateTable': 'DepartRule', 'id': this.io.instanceId, 'fileName': this.fileName}"
+                                :data="{'usage': 'DepartRule', 'single': true, 'relateTable': 'DepartInfo', 'id': this.io.data.ID, 'fileName': this.fileName}"
                                 >
-                                    <div>
+                                    <div v-if="io.fieldAccess.Name === 'w'">
                                         <Icon type="ios-cloud-upload" size="36" style="color: #3399ff"></Icon>
-                                        <p>Click or drag files here to upload</p>
+                                        <p>上传社团章程</p>
                                     </div>
                                 </i-upload>
                             </i-row>
                         </i-form-item>
                     </i-col>
                     <i-col span="11" offset="2">
-                        <i-form-item label="是否成立团支部">
+                        <i-form-item label="团支部成立时间">
                             <i-switch :disabled="io.fieldAccess.HaveLeagueBranch === 'r' || !io.isMyStep" v-model="io.data.HaveLeagueBranch" />
-                            <i-date-picker :disabled="!io.data.HaveLeagueBranch || !io.isMyStep" v-model="io.data.LeagueBrachCreatedOn"></i-date-picker>
+                            <i-date-picker :disabled="!io.data.HaveLeagueBranch || io.fieldAccess.LeagueBrachCreatedOn === 'r' || !io.isMyStep" v-model="io.data.LeagueBrachCreatedOn"></i-date-picker>
                         </i-form-item>
                     </i-col>
                 </i-row>
                 <i-row type="flex">
                     <i-col span="11">
-                        <i-form-item label="是否成立党支部">
+                        <i-form-item label="党支部成立时间">
                             <i-switch :disabled="io.fieldAccess.HaveCPCBranch === 'r' || !io.isMyStep" v-model="io.data.HaveCPCBranch" />
-                            <i-date-picker :disabled="!io.data.HaveCPCBranch || !io.isMyStep" v-model="io.data.CPCBranchCreatedOn"></i-date-picker>
+                            <i-date-picker :disabled="!io.data.HaveCPCBranch || io.fieldAccess.CPCBranchCreatedOn === 'r' || !io.isMyStep" v-model="io.data.CPCBranchCreatedOn"></i-date-picker>
                         </i-form-item>
                     </i-col>
                     <i-col span="11" offset="2">
                         <i-form-item label="党支部类型">
-                            <dic-select dic="党支部类型" :disabled="!io.data.HaveCPCBranch || !io.isMyStep" v-model="io.data.CPCBranchType"/>
+                            <dic-select dic="党支部类型" :disabled="!io.data.HaveCPCBranch || io.fieldAccess.CPCBranchType === 'r' || !io.isMyStep" v-model="io.data.CPCBranchType"/>
                         </i-form-item>
                     </i-col>
+                </i-row>
+                <i-row>
+                    <i-form-item label="社团头像">
+                        <avatar-uploader
+                            :width="128"
+                            :height="128"
+                            usage="avatar"
+                            single
+                            :id="io.data.ID"
+                            :showText="false"
+                            relate-table="DepartInfo"
+                            :value="`/api/cms/downloadImage?id=${io.data.ID} `"
+                            :disabled="!io.isMyStep || io.fieldAccess.Name === 'r'"
+                        />
+                    </i-form-item>
                 </i-row>
                 <Divider orientation="left">指导老师情况</Divider>
                 <i-row type="flex">
                     <i-col span="11">
                         <i-form-item label="指导老师工号">
-                            <i-input prefix="ios-search" :disabled="io.fieldAccess.GuideCode === 'r' || !io.isMyStep"
-                            v-model="io.data.GuideCode" @on-enter="searchUser(io.data.GuideCode, 0)"/>
+                            <i-input placeholder="请输入..." prefix="md-create" :disabled="io.fieldAccess.GuideCode === 'r' || !io.isMyStep"
+                            v-model="io.data.GuideCode" @on-blur="searchUser(io.data.GuideCode, 0)"/>
                         </i-form-item>
                     </i-col>
                     <i-col span="11"  offset="2">
                         <i-form-item label="指导老师姓名">
-                            <i-input disabled v-model="io.data.GuideName"/>
+                            <i-input :disabled="!searchedTeacher" v-model="io.data.GuideName"/>
                         </i-form-item>
                     </i-col>
                 </i-row>
@@ -132,31 +147,31 @@
                 <i-row type="flex">
                     <i-col span="11">
                         <i-form-item label="指导教师类别">
-                            <i-input disabled v-model="io.data.GuideType"/>
+                            <i-input :disabled="!searchedTeacher" v-model="io.data.GuideType"/>
                         </i-form-item>
                     </i-col>
                     <i-col span="11" offset="2">
                         <i-form-item label="指导教师政治面貌">
-                            <i-input disabled v-model="io.data.GuidePolitics"/>
+                            <i-input :disabled="!searchedTeacher" v-model="io.data.GuidePolitics"/>
                         </i-form-item>
                     </i-col>
                 </i-row>
                 <i-row type="flex">
                     <i-col span="11">
                         <i-form-item label="指导教师单位">
-                            <i-input disabled v-model="io.data.GuideDepart"/>
+                            <i-input :disabled="!searchedTeacher" v-model="io.data.GuideDepart"/>
                         </i-form-item>
                     </i-col>
                     <i-col span="11" offset="2">
                         <i-form-item label="指导教师手机">
-                            <i-input disabled v-model="io.data.GuidePhone"/>
+                            <i-input :disabled="!searchedTeacher" v-model="io.data.GuidePhone"/>
                         </i-form-item>
                     </i-col>
                 </i-row>
                 <i-row type="flex">
                     <i-col span="11">
                         <i-form-item label="指导教师邮箱">
-                            <i-input disabled v-model="io.data.GuideEmail"/>
+                            <i-input :disabled="!searchedTeacher" v-model="io.data.GuideEmail"/>
                         </i-form-item>
                     </i-col>
                 </i-row>
@@ -164,8 +179,8 @@
                 <i-row type="flex">
                     <i-col span="11">
                         <i-form-item label="社团负责人学号">
-                            <i-input prefix="ios-search" :disabled="io.fieldAccess.ChargerCode === 'r' || !io.isMyStep"
-                            v-model="io.data.ChargerCode" @on-enter="searchUser(io.data.ChargerCode, 1)"/>
+                            <i-input placeholder="请输入..." prefix="md-create" :disabled="io.fieldAccess.ChargerCode === 'r' || !io.isMyStep"
+                            v-model="io.data.ChargerCode" @on-blur="searchUser(io.data.ChargerCode, 1)"/>
                         </i-form-item>
                     </i-col>
                     <i-col span="11" offset="2">
@@ -177,36 +192,36 @@
                 <i-row type="flex">
                     <i-col span="11">
                         <i-form-item label="社团负责人姓名">
-                            <i-input disabled v-model="io.data.ChargerName"/>
+                            <i-input :disabled="!searchedCharger" v-model="io.data.ChargerName"/>
                         </i-form-item>
                     </i-col>
                     <i-col span="11" offset="2">
                         <i-form-item label="社团负责人政治面貌">
-                            <i-input disabled v-model="io.data.ChargerPolitics"/>
+                            <i-input :disabled="!searchedCharger" v-model="io.data.ChargerPolitics"/>
                         </i-form-item>
                     </i-col>
                 </i-row>
                 <i-row type="flex">
                     <i-col span="11">
                         <i-form-item label="社团负责人学院">
-                            <i-input disabled v-model="io.data.ChargerCollege"/>
+                            <i-input :disabled="!searchedCharger" v-model="io.data.ChargerCollege"/>
                         </i-form-item>
                     </i-col>
                     <i-col span="11" offset="2">
                         <i-form-item label="社团负责人年级专业">
-                            <i-input disabled v-model="io.data.ChargerMajor"/>
+                            <i-input :disabled="!searchedCharger" v-model="io.data.ChargerMajor"/>
                         </i-form-item>
                     </i-col>
                 </i-row>
                 <i-row type="flex">
                     <i-col span="11">
                         <i-form-item label="社团负责人手机">
-                            <i-input disabled v-model="io.data.ChargerPhone"/>
+                            <i-input :disabled="!searchedCharger" v-model="io.data.ChargerPhone"/>
                         </i-form-item>
                     </i-col>
                     <i-col span="11" offset="2">
                         <i-form-item label="社团负责人邮箱">
-                            <i-input disabled v-model="io.data.ChargerEmail"/>
+                            <i-input :disabled="!searchedCharger" v-model="io.data.ChargerEmail"/>
                         </i-form-item>
                     </i-col>
                 </i-row>
@@ -214,8 +229,8 @@
                 <i-row type="flex">
                     <i-col span="11">
                         <i-form-item label="社团团支部书记学号">
-                            <i-input prefix="ios-search" :disabled="io.fieldAccess.ASecretaryCode === 'r' || !io.isMyStep || !io.data.HaveLeagueBranch"
-                            v-model="io.data.ASecretaryCode"  @on-enter="searchUser(io.data.ASecretaryCode, 2)"/>
+                            <i-input placeholder="请输入..." prefix="md-create" :disabled="io.fieldAccess.ASecretaryCode === 'r' || !io.isMyStep || !io.data.HaveLeagueBranch"
+                            v-model="io.data.ASecretaryCode"  @on-blur="searchUser(io.data.ASecretaryCode, 2)"/>
                         </i-form-item>
                     </i-col>
                     <i-col span="11" offset="2">
@@ -227,31 +242,31 @@
                 <i-row type="flex">
                     <i-col span="11">
                         <i-form-item label="社团团支部书记姓名">
-                            <i-input disabled v-model="io.data.ASecretaryName"/>
+                            <i-input :disabled="!searchedASecretary" v-model="io.data.ASecretaryName"/>
                         </i-form-item>
                     </i-col>
                     <i-col span="11" offset="2">
                         <i-form-item label="社团团支部书记所在学院">
-                            <i-input disabled v-model="io.data.ASecretaryCollege"/>
+                            <i-input :disabled="!searchedASecretary" v-model="io.data.ASecretaryCollege"/>
                         </i-form-item>
                     </i-col>
                 </i-row>
                 <i-row type="flex">
                     <i-col span="11">
                         <i-form-item label="社团团支部书记年级专业">
-                            <i-input disabled v-model="io.data.ASecretaryMajor"/>
+                            <i-input :disabled="!searchedASecretary" v-model="io.data.ASecretaryMajor"/>
                         </i-form-item>
                     </i-col>
                     <i-col span="11" offset="2">
                         <i-form-item label="社团团支部书记手机">
-                            <i-input disabled v-model="io.data.ASecretaryPhone"/>
+                            <i-input :disabled="!searchedASecretary" v-model="io.data.ASecretaryPhone"/>
                         </i-form-item>
                     </i-col>
                 </i-row>
                 <i-row type="flex">
                     <i-col span="11">
                         <i-form-item label="社团团支部书记邮箱">
-                            <i-input disabled v-model="io.data.ASecretaryEmail"/>
+                            <i-input :disabled="!searchedASecretary" v-model="io.data.ASecretaryEmail"/>
                         </i-form-item>
                     </i-col>
                 </i-row>
@@ -259,8 +274,8 @@
                 <i-row type="flex">
                     <i-col span="11">
                         <i-form-item label="社团党支部书记学号">
-                            <i-input prefix="ios-search" :disabled="io.fieldAccess.BSecretaryCode === 'r' || !io.isMyStep || !io.data.HaveCPCBranch"
-                            v-model="io.data.BSecretaryCode" @on-enter="searchUser(io.data.BSecretaryCode, 3)"/>
+                            <i-input placeholder="请输入..." prefix="md-create" :disabled="io.fieldAccess.BSecretaryCode === 'r' || !io.isMyStep || !io.data.HaveCPCBranch"
+                            v-model="io.data.BSecretaryCode" @on-blur="searchUser(io.data.BSecretaryCode, 3)"/>
                         </i-form-item>
                     </i-col>
                     <i-col span="11" offset="2">
@@ -272,31 +287,31 @@
                 <i-row type="flex">
                     <i-col span="11">
                         <i-form-item label="社团党支部书记姓名">
-                            <i-input disabled v-model="io.data.BSecretaryName"/>
+                            <i-input :disabled="!searchedBSecretary" v-model="io.data.BSecretaryName"/>
                         </i-form-item>
                     </i-col>
                     <i-col span="11" offset="2">
                         <i-form-item label="社团党支部书记所在学院">
-                            <i-input disabled v-model="io.data.BSecretaryCollege"/>
+                            <i-input :disabled="!searchedBSecretary" v-model="io.data.BSecretaryCollege"/>
                         </i-form-item>
                     </i-col>
                 </i-row>
                 <i-row type="flex">
                     <i-col span="11">
                         <i-form-item label="社团党支部书记年级专业">
-                            <i-input disabled v-model="io.data.BSecretaryMajor"/>
+                            <i-input :disabled="!searchedBSecretary" v-model="io.data.BSecretaryMajor"/>
                         </i-form-item>
                     </i-col>
                     <i-col span="11" offset="2">
                         <i-form-item label="社团党支部书记手机">
-                            <i-input disabled v-model="io.data.BSecretaryPhone"/>
+                            <i-input :disabled="!searchedBSecretary" v-model="io.data.BSecretaryPhone"/>
                         </i-form-item>
                     </i-col>
                 </i-row>
                 <i-row type="flex">
                     <i-col span="11">
                         <i-form-item label="社团党支部书记邮箱">
-                            <i-input disabled v-model="io.data.BSecretaryEmail"/>
+                            <i-input :disabled="!searchedBSecretary" v-model="io.data.BSecretaryEmail"/>
                         </i-form-item>
                     </i-col>
                 </i-row>
@@ -449,6 +464,10 @@ export default {
     },
     data () {
         return {
+            searchedTeacher: false,
+            searchedCharger: false,
+            searchedASecretary: false,
+            searchedBSecretary: false,
             file: [],
             fileName: "",
             stepInfo: enums.stepInfo,
@@ -460,7 +479,12 @@ export default {
                 "success",
                 "error",
                 "warning"
-            ]
+            ],
+            ruleInline: {
+                Description: [
+                    { required: true, message: 'Please fill in the Description', trigger: 'blur' }
+                ]
+            }
         }
     },
     methods: {
@@ -476,6 +500,7 @@ export default {
                         // this.io.data.GuideElectionBy = msg.user.
                         // this.io.data.GuideBonus = msg.user.
                         this.io.data.GuideEmail = msg.user.Email;
+                        this.searchedTeacher = false;
                     } else if (i === 1) {
                         this.io.data.ChargerName = msg.user.RealName;
                         this.io.data.ChargerPolitics = msg.user.PoliticalStatus;
@@ -483,26 +508,38 @@ export default {
                         this.io.data.ChargerMajor = msg.user.Specialty;
                         this.io.data.ChargerPhone = msg.user.Mobile;
                         this.io.data.ChargerEmail = msg.user.Email;
+                        this.searchedCharger = false;
                     } else if (i === 2) {
                         this.io.data.ASecretaryName = msg.user.RealName;
                         this.io.data.ASecretaryCollege = msg.user.BelongDepart;
                         this.io.data.ASecretaryMajor = msg.user.Specialty;
                         this.io.data.ASecretaryPhone = msg.user.Mobile;
                         this.io.data.ASecretaryEmail = msg.user.Email;
+                        this.searchedASecretary = false;
                     } else if (i === 3) {
                         this.io.data.BSecretaryName = msg.user.RealName;
                         this.io.data.BSecretaryCollege = msg.user.BelongDepart;
                         this.io.data.BSecretaryMajor = msg.user.Specialty;
                         this.io.data.BSecretaryPhone = msg.user.Mobile;
                         this.io.data.BSecretaryEmail = msg.user.Email;
+                        this.searchedBSecretary = false;
                     }
                 } else {
-                    alert(msg.msg);
+                    this.$Message.error(msg.msg + ",请自行填写相关数据项。");
+                    if (i === 0) {
+                        this.searchedTeacher = true;
+                    } else if (i === 1) {
+                        this.searchedCharger = true;
+                    } else if (i === 2) {
+                        this.searchedASecretary = true;
+                    } else if (i === 3) {
+                        this.searchedBSecretary = true;
+                    }
                 }
             });
         },
         getFile () {
-            axios.post("/api/cms/GetAttachments", {id: this.io.instanceId, relateTable: "DepartRule", usage: "附件"}, msg => {
+            axios.post("/api/cms/GetAttachments", {id: this.io.data.ID, relateTable: "DepartInfo", usage: "DepartRule"}, msg => {
                 if (msg.success) {
                     // console.log(msg);
                     this.file = msg.data.map(e => {
@@ -518,7 +555,7 @@ export default {
             axios.post("/api/cms/RemoveAttachment", {id: file.id || file.response.id}, msg => {
                 if (msg.success) {
                     this.$Message.success('删除文件成功');
-                    this.getFiles();
+                    this.getFile();
                 }
             })
         },
@@ -538,16 +575,24 @@ export default {
         giveUp () {
         },
         submit () {
-            this.io.shouldUpload.forEach(value => {
-                this.upLoad[value] = this.io[value] || this.io.data[value];
-            });
-            axios.post("/api/workflow/SubmitInstance", {...this.upLoad}, msg => {
-                if (msg.success) {
-                    this.$Message.success("提交成功");
+            this.$refs['form'].validate((valid) => {
+                if (!valid) {
+                    this.$Message.error('请完整填写表单!');
                 } else {
-                    this.$Message.warning(msg.msg);
+                    this.io.shouldUpload.forEach(value => {
+                        this.upLoad[value] = this.io[value] || this.io.data[value];
+                    });
+                    axios.post("/api/workflow/SubmitInstance", {
+                        ...this.upLoad
+                    }, msg => {
+                        if (msg.success) {
+                            this.$Message.success("提交成功");
+                        } else {
+                            this.$Message.warning(msg.msg);
+                        }
+                        //  setTimeout(window.close(), 8000);
+                    })
                 }
-                //  setTimeout(window.close(), 8000);
             })
         }
     },
@@ -557,6 +602,11 @@ export default {
                 this.$emit('change', newValue);
             },
             deep: true
+        },
+        'io.data.ID' (newValue) {
+            if (newValue) {
+                this.getFile();
+            }
         }
     }
 }

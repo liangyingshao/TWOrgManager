@@ -8,6 +8,10 @@
                             <p v-if="row.SignUpState === 99">没有报名</p>
                             <p v-else>{{row.SignUpOn}}</p>
                         </template>
+                        <template slot="RealName" slot-scope="{row}">
+                            <p>{{row.RealName}}</p>
+                            <p>({{row.BelongDepart ? row.BelongDepart : '未填写学院'}})</p>
+                        </template>
                         <template slot="SignInOn" slot-scope="{row}">
                             <p v-if="row.SignInState === 99">没有签到</p>
                             <p v-else>{{row.SignInOn}}</p>
@@ -52,7 +56,10 @@
                     <i-row>
                         <i-col>
                             <p class="headline">社团活动申请表</p>
-                            <p class="date">填表时间：{{nowDate}}</p>
+                            <div class="info-row">
+                                <p>填表时间：{{io.data.CreatedTime}}</p>
+                                <p>社团名称: {{io.data.DepartName}}</p>
+                            </div>
                             <table border="1" class="table">
                                 <tr>
                                     <td class="smallhang">社团名称</td>
@@ -200,7 +207,7 @@
                                     </td>
                                 </tr>
                                 <tr v-show="io.fieldAccess.SauOpinion">
-                                    <td class="smallhang">学生社团联合会意见</td>
+                                    <td class="smallhang">学生社团管理部意见</td>
                                     <td class="longhang" colspan="4">
                                         <div v-show="io.fieldAccess.SauIsPass === 'w' && io.isMyStep">
                                             是否通过：
@@ -294,7 +301,11 @@ export default {
             signCol: [
                 {
                     title: '报名者姓名',
-                    key: 'RealName'
+                    slot: 'RealName'
+                },
+                {
+                    title: '手机号',
+                    key: "Monile"
                 },
                 {
                     title: '报名时间',
@@ -306,6 +317,7 @@ export default {
                 },
                 {
                     title: '操作',
+                    maxWidth: 100,
                     slot: 'Action'
                 }
             ],
@@ -358,8 +370,8 @@ export default {
                     value: '业务指导单位审核',
                     label: '业务指导单位审核'
                 }, {
-                    value: '学生联合会审核',
-                    label: '学生联合会审核'
+                    value: '学生社团管理部审核',
+                    label: '学生社团管理部审核'
                 }, {
                     value: '校团委审核',
                     label: '校团委审核'
@@ -461,6 +473,18 @@ export default {
         getFieldAccess () {
             axios.post("/api/workflow/LoadInstance", {instanceId: this.instanceId, stepId: this.stepId, detail: this.detailMode}, msg => {
                 if (msg.success) {
+                    if (msg.data.GuideTeacherIsPass !== undefined) {
+                        msg.data.GuideTeacherIsPass = msg.data.GuideTeacherIsPass === true ? 'true' : 'false';
+                    }
+                    if (msg.data.AffiliatedDepartIsPass !== undefined) {
+                        msg.data.AffiliatedDepartIsPass = msg.data.AffiliatedDepartIsPass === true ? 'true' : 'false';
+                    }
+                    if (msg.data.SauIsPass !== undefined) {
+                        msg.data.SauIsPass = msg.data.SauIsPass === true ? 'true' : 'false';
+                    }
+                    if (msg.data.YlcIsPass !== undefined) {
+                        msg.data.YlcIsPass = msg.data.YlcIsPass === true ? 'true' : 'false';
+                    }
                     this.io = msg;
                 } else {
                     this.$Message.warning(msg.msg);
@@ -511,7 +535,7 @@ export default {
     font-family: 'FangSong';
 }
 .table {
-    margin: 15px auto;
+    margin: 8px auto 15px auto;
     border-collapse: collapse;
     text-align: center;
     font-family: 'FangSong';
@@ -520,15 +544,15 @@ export default {
 }
 #activity-form {
     .opinionForm .ivu-input {
-    border:1px solid #dcdee2;
+        border:1px solid #dcdee2;
     }
     .ivu-input {
         border:none
     }
     .time{
-    font-weight: bold;
-    color: #888;
-    margin-bottom: 10px;
+        font-weight: bold;
+        color: #888;
+        margin-bottom: 10px;
     }
     .content{
         padding-left: 5px;
@@ -549,7 +573,7 @@ export default {
         width:200px;
     }
     .add1 {
-        height: 80px;
+        min-height: 50px;
     }
     .headline {
         margin-top: 9px;
@@ -584,6 +608,14 @@ export default {
     }
     .button-position{
         float:right;
+    }
+    .info-row {
+        display: flex;
+        width: 602px;
+        justify-content: space-between;
+        margin: 24px auto 0px auto;
+        font-size: 14px;
+        font-family: 'FangSong';
     }
 }
 </style>

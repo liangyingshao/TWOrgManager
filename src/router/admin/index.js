@@ -1,23 +1,38 @@
 module.exports = {
     OrgManage: {
-        path: "/manage/switch",
+        path: "/manage/switcher",
         layout: "admin",
-        component: () => import(/* webpackChunkName: "OrgManager" */"@p/Modules/OrgManager/OrgManager")
+        component: () => import(/* webpackChunkName: "ManageIndex" */"@p/Modules/ManageIndex/switcher")
+    },
+    OrganizationManage: {
+        path: "/manage/organization",
+        layout: "admin",
+        component: () => import(/* webpackChunkName: "ManageIndex" */"@p/Modules/ManageIndex/organization")
+    },
+    TeacherManage: {
+        path: "/manage/teacher",
+        layout: "admin",
+        component: () => import(/* webpackChunkName: "ManageIndex" */"@p/Modules/ManageIndex/teacher")
+    },
+    StudentManage: {
+        path: "/manage/student",
+        layout: "admin",
+        component: () => import(/* webpackChunkName: "ManageIndex" */"@p/Modules/ManageIndex/student")
+    },
+    CollegeManage: {
+        path: "/manage/college",
+        layout: "admin",
+        component: () => import(/* webpackChunkName: "ManageIndex" */"@p/Modules/ManageIndex/college")
     },
     AdminManage: {
         path: "/manage/admin",
         layout: "admin",
-        component: () => import(/* webpackChunkName: "OrgManager" */"@p/Modules/OrgManager/forAdmin")
+        component: () => import(/* webpackChunkName: "ManageIndex" */"@p/Modules/ManageIndex/admin")
     },
-    DepartManage: {
-        path: "/manage/depart",
+    TwManage: {
+        path: "/manage/tuanwei",
         layout: "admin",
-        component: () => import(/* webpackChunkName: "OrgManager" */"@p/Modules/OrgManager/departManager-index")
-    },
-    StuManage: {
-        path: "/manage/student",
-        layout: "admin",
-        component: () => import(/* webpackChunkName: "OrgManager" */"@p/Modules/OrgManager/forStudent")
+        component: () => import(/* webpackChunkName: "ManageIndex" */"@p/Modules/ManageIndex/tuanwei")
     },
     OrgDetail: {
         path: "/manage/org/detail",
@@ -64,6 +79,16 @@ module.exports = {
         layout: "admin",
         component: () => import(/* webpackChunkName: "WorkflowManager" */"@p/Modules/MyAttend")
     },
+    MyApplications: {
+        path: "/manage/wwf/myapplications",
+        layout: "admin",
+        component: () => import(/* webpackChunkName: "WorkflowManager" */"@p/Modules/MyApplications")
+    },
+    MyDepartApplicate: {
+        path: "/manage/wwf/mydepartapplicate",
+        layout: "admin",
+        component: () => import(/* webpackChunkName: "WorkflowManager" */"@p/Modules/MyDepartApplicate")
+    },
     MyFlow: {
         path: "/manage/wwf/myflow",
         layout: "admin",
@@ -83,5 +108,30 @@ module.exports = {
         path: "/artical",
         layout: "empty",
         component: () => import(/* webpackChunkName: "Articals" */"@p/Modules/NewsDetail")
+    },
+    UploadOrgList: {
+        path: "/manage/upload-org-list",
+        layout: "admin",
+        component: () => import(/* webpackChunkName: "OrgManager" */"@p/Modules/UploadOrgList")
+    },
+    DownloadOrgList: {
+        path: "/manage/download-org-list",
+        layout: "admin",
+        component: () => import(/* webpackChunkName: "OrgManager" */"@p/Modules/DownloadOrgList")
+    },
+    OrgList: {
+        path: "/manage/orgList",
+        layout: "admin",
+        component: () => import(/* webpackChunkName: "OrgManager" */"@p/Modules/OrgList")
+    },
+    OrgSwitch: {
+        path: "/manage/orgSwitch",
+        layout: "admin",
+        component: () => import(/* webpackChunkName: "OrgManager" */"@p/Modules/OrgSwitch")
+    },
+    BussinessCfg: {
+        path: "/manage/config/bussiness",
+        layout: "admin",
+        component: () => import(/* webpackChunkName: "config" */"@p/Modules/BussinessCfg")
     }
 };

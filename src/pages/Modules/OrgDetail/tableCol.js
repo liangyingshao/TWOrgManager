@@ -5,10 +5,6 @@ let tableCol = {
             slot: 'RealName'
         },
         {
-            title: '学号',
-            key: 'Code'
-        },
-        {
             title: '手机',
             key: 'Mobile'
         },
@@ -17,8 +13,8 @@ let tableCol = {
             key: 'departName'
         },
         {
-            title: '生源地',
-            key: 'Source'
+            title: '学院',
+            key: 'BelongDepart'
         },
         {
             title: '操作',
