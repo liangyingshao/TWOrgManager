@@ -36,9 +36,9 @@
                             </i-button>
                             <DropdownMenu slot="list">
                                 <DropdownItem @click.native="login('15102242660', '88888888')">学生</DropdownItem>
-                                <DropdownItem @click.native="login('24320152356894', '123456')">社团</DropdownItem>
-                                <DropdownItem @click.native="login('25648', '123456')">指导老师</DropdownItem>
-                                <DropdownItem @click.native="login('13621345797', '88888888')">业务指导</DropdownItem>
+                                <DropdownItem @click.native="login('24320172203215', '7VJk86Bb')">社团</DropdownItem>
+                                <DropdownItem @click.native="login('2016190002', '7VJk86Bb')">指导老师</DropdownItem>
+                                <DropdownItem @click.native="login('2011100099', '7VJk86Bb')">业务指导</DropdownItem>
                                 <DropdownItem @click.native="login('15102246798', '123456')">社团管理部</DropdownItem>
                                 <DropdownItem @click.native="login('admin', '88888888')">团委</DropdownItem>
                             </DropdownMenu>
