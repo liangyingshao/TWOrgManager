@@ -260,6 +260,13 @@ export default {
             let pageSize = targetPageSize || this.pager.pageSize;
             axios.post("/api/org/GetActByDepartId", {Id: this.orgInfo.ID, page, pageSize, name: this.activitySearchValue}, msg => {
                 if (msg.success) {
+                    for (let i = 0; i < msg.data.length; i++) {
+                        if (msg.data[i].ActivityType) {
+                            msg.data[i].ActivityType = msg.data[i].ActivityType.replace(/[[\]"]/g, "").replace(/,/g, "，");
+                        } else {
+                            msg.data[i].ActivityType = "";
+                        }
+                    }
                     this.activityData = msg.data;
                     this.pager.totalRow = msg.totalRow;
                     let page = 1;
