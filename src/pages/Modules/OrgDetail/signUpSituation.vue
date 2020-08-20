@@ -8,6 +8,10 @@
                             <p v-if="row.SignUpState === 99">没有报名</p>
                             <p v-else>{{row.SignUpOn}}</p>
                         </template>
+                        <template slot="RealName" slot-scope="{row}">
+                            <p>{{row.RealName}}</p>
+                            <p>({{row.BelongDepart ? row.BelongDepart : '未填写学院'}})</p>
+                        </template>
                         <template slot="SignInOn" slot-scope="{row}">
                             <p v-if="row.SignInState === 99">没有签到</p>
                             <p v-else>{{row.SignInOn}}</p>
@@ -297,7 +301,11 @@ export default {
             signCol: [
                 {
                     title: '报名者姓名',
-                    key: 'RealName'
+                    slot: 'RealName'
+                },
+                {
+                    title: '手机号',
+                    key: "Monile"
                 },
                 {
                     title: '报名时间',
@@ -309,6 +317,7 @@ export default {
                 },
                 {
                     title: '操作',
+                    maxWidth: 100,
                     slot: 'Action'
                 }
             ],

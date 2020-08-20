@@ -555,7 +555,7 @@ export default {
             axios.post("/api/cms/RemoveAttachment", {id: file.id || file.response.id}, msg => {
                 if (msg.success) {
                     this.$Message.success('删除文件成功');
-                    this.getFiles();
+                    this.getFile();
                 }
             })
         },

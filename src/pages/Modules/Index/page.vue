@@ -29,8 +29,9 @@
                         </i-form>
                     </i-row>
                     <i-row type="flex" style="flex-direction: column;">
-                        <Dropdown>
-                            <i-button type="primary" style="margin-bottom: 16px;width: 100%" size="large">用厦大账号登录
+                        <i-button @click="login()" :loading='isloading' size="large">直接登录</i-button>
+                        <Dropdown style="margin-top: 16px">
+                            <i-button type="primary" long size="large">用厦大账号登录
                                 <Icon type="ios-arrow-down"/>
                             </i-button>
                             <DropdownMenu slot="list">
@@ -42,7 +43,6 @@
                                 <DropdownItem @click.native="login('admin', '88888888')">团委</DropdownItem>
                             </DropdownMenu>
                         </Dropdown>
-                        <i-button @click="login()" :loading='isloading' size="large">直接登录</i-button>
                     </i-row>
                 </i-card>
             </i-col>

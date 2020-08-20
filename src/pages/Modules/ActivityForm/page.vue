@@ -89,20 +89,35 @@
                                 </tr>
                                 <tr>
                                     <td class="smallhang" rowspan="2">面向范围</td>
-                                    <td class="longhang" colspan="4" v-if="io.fieldAccess.Description === 'w' && io.isMyStep">活动类型：
-                                        <i-radio-group v-model="io.data.ActivityType">
+                                    <td class="longhang" colspan="4" v-if="io.fieldAccess.FaceTo === 'w' && io.isMyStep">
+                                        活动范围：
+                                        <i-radio-group v-model="io.data.FaceTo">
                                             <i-radio label="社团内部活动" class="iview-type-size">社团内部活动</i-radio>
                                             <i-radio label="公开活动" class="iview-type-size">公开活动</i-radio>
                                         </i-radio-group>
                                     </td>
                                     <td class="longhang" v-else colspan="4">
-                                        <p v-if="io.data.ActivityType">活动类型：<Icon type="ios-checkbox-outline" />{{io.data.ActivityType}}</p>
+                                        <p>活动范围：<Icon type="ios-checkbox-outline" />{{io.data.FaceTo}}</p>
                                     </td>
                                 </tr>
                                 <tr>
                                     <td class="longhang" colspan="4">
-                                        <i-input type="textarea" class="opinionForm" v-model="io.data.FaceTo" :rows="3" v-if="io.fieldAccess.FaceTo === 'w' && io.isMyStep" placeholder="（如为公开活动可具体描写面向范围如：面向全体学生/面向校内外人员等，可给出示例填写）"/>
-                                        <p v-else>{{io.data.FaceTo}}</p>
+                                        <i-input type="textarea" class="opinionForm" v-model="io.data.ActivityFaceToDescription" :rows="3" v-if="io.fieldAccess.ActivityFaceToDescription === 'w' && io.isMyStep" placeholder="（如为公开活动可具体描写面向范围如：面向全体学生/面向校内外人员等，可给出示例填写）"/>
+                                        <p v-else>{{io.data.ActivityFaceToDescription}}</p>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="smallhang">活动类型</td>
+                                    <td class="longhang" colspan="4" v-if="io.fieldAccess.ActivityType === 'w' && io.isMyStep">
+                                        活动类型：
+                                        <i-checkbox-group v-model="io.data.ActivityType">
+                                            <i-checkbox label="普通活动" class="iview-type-size">普通活动</i-checkbox>
+                                            <i-checkbox label="团支部活动" class="iview-type-size">团支部活动</i-checkbox>
+                                            <i-checkbox label="党支部活动" class="iview-type-size">党支部活动</i-checkbox>
+                                        </i-checkbox-group>
+                                    </td>
+                                    <td class="longhang" v-else colspan="4">
+                                        <p v-if="io.data.ActivityType">{{io.data.ActivityType}}</p>
                                     </td>
                                 </tr>
                                 <tr>
@@ -137,8 +152,28 @@
                                 </tr>
                                 <tr>
                                     <td class="longhang" colspan="4">
-                                        <i-input type="textarea" class="opinionForm" :rows="3" placeholder="" v-if="io.fieldAccess.Description === 'w' && io.isMyStep" v-model="io.data.Description"/>
-                                        <p v-else>{{io.data.Description}}</p>
+                                        <i-input type="textarea" class="opinionForm" :rows="3" placeholder="（此处填写活动的详细介绍，文本会直接显示在学生界面的活动简介中）"
+                                        v-if="io.fieldAccess.Description === 'w' && io.isMyStep" v-model="io.data.Description"/>
+                                        <p style="white-space: pre-wrap; text-align: justify;" v-else>{{io.data.Description}}</p>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="smallhang">封面图片</td>
+                                    <td class="longhang" colspan="4">
+                                        <i-upload v-if="io.fieldAccess.Avatar === 'w' && io.isMyStep" action="/api/cms/UploadFile" :default-file-list="avatar" :show-upload-list="false"
+                                        :before-upload="beforeUploadAvatar" :on-preview="previewAvatar" :on-remove="removeUpload" :on-success="uploadAvatarSuccess"
+                                        :data="{'usage': 'avatar', 'single': true, 'relateTable': 'ActivityApplication', 'id': this.io.data.ID, 'fileName': this.avatarName}"
+                                        >
+                                            <i-button icon="ios-cloud-upload-outline" type="primary">上传封面</i-button>
+                                            <br>
+                                            上传一张封面图片，推荐大小为 1080*540 。作为活动的封面图片。
+                                        </i-upload>
+                                        <div v-if="io.data.Avatar">
+                                            <i-row>
+                                                <img :src="io.data.Avatar" />
+                                                <i-button type="error" v-if="io.fieldAccess.Avatar === 'w' && io.isMyStep" @click="removeUpload(avatar[0])">删除图片</i-button>
+                                            </i-row>
+                                        </div>
                                     </td>
                                 </tr>
                                 <tr v-show="io.fieldAccess.GuideTeacherOpinion">
@@ -331,7 +366,9 @@ export default {
                 }
             ],
             userId: "",
-            nextStep: ""
+            nextStep: "",
+            avatarName: "",
+            avatar: []
         }
     },
     methods: {
@@ -350,12 +387,56 @@ export default {
                 }
             })
         },
+        getAvatar () {
+            axios.post("/api/cms/GetAttachments", {id: this.io.data.ID, relateTable: "ActivityApplication", usage: "avatar"}, msg => {
+                if (msg.success) {
+                    this.avatar = msg.data.map(e => {
+                        return {
+                            name: e.DisplayName,
+                            id: e.ID
+                        }
+                    });
+                    this.io.data.Avatar = msg.data[0] ? msg.data[0].Download : "";
+                }
+            });
+        },
+        removeUpload (file) {
+            this.$Modal.confirm({
+                title: '您确定要删除图片吗？',
+                content: '图片删除后不可恢复。',
+                onOk: () => {
+                    axios.post("/api/cms/RemoveAttachment", {id: file.id || file.response.id}, msg => {
+                        if (msg.success) {
+                            this.$Message.success('删除文件成功');
+                            this.getAvatar();
+                        }
+                    });
+                }
+            });
+        },
+        previewAvatar (file) {
+            const { href } = this.$router.resolve({
+                path: "/api/cms/Download",
+                query: {
+                    id: file.id || file.response.id
+                }
+            });
+            window.open(href);
+        },
         removeFormData () {
             this.formData = null;
         },
         handleUpload (file) {
             this.formData = file;
             return false;
+        },
+        uploadAvatarSuccess (response, file, fileList) {
+            if (response.success) {
+                this.io.data.Avatar = response.download;
+                this.getAvatar();
+            } else {
+                this.$Message.error(response.msg);
+            }
         },
         uploadFile () {
             let param = new FormData();
@@ -397,6 +478,10 @@ export default {
                 }
             })
         },
+        async beforeUploadAvatar (file) {
+            this.avatarName = file.name;
+            await this.$nextTick();
+        },
         getFromPrepage () {
             this.instanceId = this.$route.query.instanceId;
             this.stepId = this.$route.query.stepId;
@@ -406,6 +491,7 @@ export default {
         getFieldAccess () {
             axios.post("/api/workflow/LoadInstance", {instanceId: this.instanceId, stepId: this.stepId, detail: this.detailMode}, msg => {
                 if (msg.success) {
+                    this.getAvatar();
                     if (msg.data.GuideTeacherIsPass !== undefined) {
                         msg.data.GuideTeacherIsPass = msg.data.GuideTeacherIsPass === true ? 'true' : 'false';
                     }
@@ -417,6 +503,11 @@ export default {
                     }
                     if (msg.data.YlcIsPass !== undefined) {
                         msg.data.YlcIsPass = msg.data.YlcIsPass === true ? 'true' : 'false';
+                    }
+                    if (msg.data.ActivityType) {
+                        msg.data.ActivityType = msg.data.ActivityType.replace(/[[\]"]/g, "").replace(/,/g, "，");
+                    } else {
+                        msg.data.ActivityType = [];
                     }
                     this.io = msg;
                 } else {
