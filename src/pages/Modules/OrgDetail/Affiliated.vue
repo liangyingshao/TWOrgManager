@@ -14,7 +14,7 @@
                             <i-button @click="modifyBasicInfo" type="text">修改基本信息</i-button>
                             <i-button @click="showLog = !showLog" type="text" style="float:right; padding-top: 12px;">查看修改记录</i-button>
                         </i-row>
-                        <i-row type="flex" justify="space-between" id="chart" v-if="!orgInfo.Type">
+                        <i-row type="flex" justify="space-between" id="chart" v-if="!orgInfo.Type" style="display: none">
                             <i-col span="8" id="organization">
                                 <i-row class="difference">较去年<span class="number">+{{chart.organization.allChildrenIncrease}}</span></i-row>
                                 <i-row class="number">{{chart.organization.allChildrenCount}}</i-row>
@@ -170,6 +170,9 @@
                                         </i-col>
                                         <i-col>
                                             <i-row type="flex" :gutter="16">
+                                                <i-col>
+                                                    <i-input search placeholder="搜索活动名称" @on-search="searchActivity" />
+                                                </i-col>
                                                 <i-col>
                                                     <i-button type="primary" @click="addActivity">添加活动</i-button>
                                                 </i-col>
@@ -357,10 +360,10 @@ export default {
             });
         },
         getActivityTable (page, pageSize) {
-            this.tableLoading = true;
+            // this.tableLoading = true;
             this.pager.activity.page = page || this.pager.activity.page;
             this.pager.activity.pageSize = pageSize || this.pager.activity.pageSize;
-            axios.post("/api/org/GetActByDepartId", {Id: this.orgInfo.ID, page: this.pager.activity.page, pageSize: this.pager.activity.pageSize}, msg => {
+            axios.post("/api/org/GetActByDepartId", {Id: this.orgInfo.ID, page: this.pager.activity.page, pageSize: this.pager.activity.pageSize, name: this.activitySearchValue}, msg => {
                 for (let i = 0; i < msg.data.length; i++) {
                     if (msg.data[i].ActivityType) {
                         msg.data[i].ActivityType = msg.data[i].ActivityType.replace(/[[\]"]/g, "").replace(/,/g, "，");
@@ -370,7 +373,7 @@ export default {
                 }
                 this.tableData.activity = msg.data;
                 this.pager.activity.total = msg.totalRow;
-                this.tableLoading = false;
+                // this.tableLoading = false;
                 this.chart.activity = msg.charts;
             });
         },
@@ -503,6 +506,10 @@ export default {
                 })
             }
         },
+        searchActivity (value) {
+            this.activitySearchValue = value;
+            this.getActivityTable();
+        },
         searchMember: _.debounce(function () {
             if (this.tabSelect === "member") {
                 this.getMemberTable();
@@ -594,6 +601,7 @@ export default {
             logs: [],
             memberkeyword: "",
             deptkeyword: "",
+            activitySearchValue: "",
             teachers: [],
             enumDic: {
                 0: "已通过",
