@@ -30,16 +30,16 @@ export default {
                 if (msg.success) {
                     msg.data.HaveCPCBranch = msg.data.HaveCPCBranch === "true";
                     msg.data.HaveLeagueBranch = msg.data.HaveLeagueBranch === "true";
-                    if (msg.data.GuideTeacherIsPass) {
+                    if (msg.data.GuideTeacherIsPass !== undefined) {
                         msg.data.GuideTeacherIsPass = msg.data.GuideTeacherIsPass === true ? 'true' : 'false';
                     }
-                    if (msg.data.AffiliatedDepartIsPass) {
+                    if (msg.data.AffiliatedDepartIsPass !== undefined) {
                         msg.data.AffiliatedDepartIsPass = msg.data.AffiliatedDepartIsPass === true ? 'true' : 'false';
                     }
-                    if (msg.data.SauIsPass) {
+                    if (msg.data.SauIsPass !== undefined) {
                         msg.data.SauIsPass = msg.data.SauIsPass === true ? 'true' : 'false';
                     }
-                    if (msg.data.YlcIsPass) {
+                    if (msg.data.YlcIsPass !== undefined) {
                         msg.data.YlcIsPass = msg.data.YlcIsPass === true ? 'true' : 'false';
                     }
                     this.io = msg;

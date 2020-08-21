@@ -376,7 +376,7 @@
                                 </i-row>
                                 </div>
                             </i-form>
-                            <i-button type="primary" @click="saveOrgDetail()" :loading="isSaving">保存</i-button>
+                            <i-button type="primary" v-if="app.checkPermission('Security.SaveDepartDirectly')" @click="saveOrgDetail()" :loading="isSaving">保存</i-button>
                         </i-col>
                         <i-col span="9" offset="1">
                             <!--i-timeline class="timeline i-scrollbar-hide">
@@ -522,6 +522,7 @@
                                 </template>
                                 <template slot="ShortCode" slot-scope="{row}">
                                     <img :src="getImg(row.ShortCode)" v-if="row.StartState === 1"/>
+                                    <p v-else-if="row.ApplicateState === 4 || row.StartState === 2">活动已结束</p>
                                     <p v-else>活动未开始</p>
                                 </template>
                             </i-table>
@@ -578,7 +579,7 @@ export default {
         async submit () {
             let form = this.$refs["Form"];
             this.modalLoading = true;
-            this.$refs['form'].validate((valid) => {
+            this.$refs['Form'].validate((valid) => {
                 if (!valid) {
                     this.$Message.error('请完整填写表单!');
                 } else {
@@ -795,6 +796,13 @@ export default {
             this.pager.activity.page = page || this.pager.activity.page;
             this.pager.activity.pageSize = pageSize || this.pager.activity.pageSize;
             axios.post("/api/org/GetActByDepartId", {Id: this.orgInfo.ID, page: this.pager.activity.page, pageSize: this.pager.activity.pageSize}, msg => {
+                for (let i = 0; i < msg.data.length; i++) {
+                    if (msg.data[i].ActivityType) {
+                        msg.data[i].ActivityType = msg.data[i].ActivityType.replace(/[[\]"]/g, "").replace(/,/g, "，");
+                    } else {
+                        msg.data[i].ActivityType = "";
+                    }
+                }
                 this.tableData.activity = msg.data;
                 this.pager.activity.total = msg.totalRow;
                 this.tableLoading = false;

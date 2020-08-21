@@ -29,20 +29,20 @@
                         </i-form>
                     </i-row>
                     <i-row type="flex" style="flex-direction: column;">
-                        <Dropdown>
-                            <i-button type="primary" style="margin-bottom: 16px;width: 100%" size="large">用厦大账号登录
+                        <i-button @click="login()" :loading='isloading' size="large">直接登录</i-button>
+                        <Dropdown style="margin-top: 16px">
+                            <i-button type="primary" long size="large">用厦大账号登录
                                 <Icon type="ios-arrow-down"/>
                             </i-button>
                             <DropdownMenu slot="list">
                                 <DropdownItem @click.native="login('15102242660', '88888888')">学生</DropdownItem>
-                                <DropdownItem @click.native="login('24320152356894', '123456')">社团</DropdownItem>
-                                <DropdownItem @click.native="login('25648', '123456')">指导老师</DropdownItem>
-                                <DropdownItem @click.native="login('13621345797', '88888888')">业务指导</DropdownItem>
+                                <DropdownItem @click.native="login('24320172203215', '7VJk86Bb')">社团</DropdownItem>
+                                <DropdownItem @click.native="login('2016190002', '7VJk86Bb')">指导老师</DropdownItem>
+                                <DropdownItem @click.native="login('2011100099', '7VJk86Bb')">业务指导</DropdownItem>
                                 <DropdownItem @click.native="login('15102246798', '123456')">社团管理部</DropdownItem>
                                 <DropdownItem @click.native="login('admin', '88888888')">团委</DropdownItem>
                             </DropdownMenu>
                         </Dropdown>
-                        <i-button @click="login()" :loading='isloading' size="large">直接登录</i-button>
                     </i-row>
                 </i-card>
             </i-col>
@@ -117,6 +117,7 @@ export default {
             })
         },
         toManage (role) {
+            localStorage.setItem("position", role.departName + role.position);
             localStorage.setItem("defaultDepartId", role.departId);
             localStorage.setItem("role", role.position);
             if (role.position === "指导老师") {

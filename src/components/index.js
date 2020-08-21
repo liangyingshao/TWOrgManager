@@ -5,6 +5,7 @@ import UEditor from './UEditor/components/vue-ueditor-wrap.vue'
 import UserSelector from './UserSelector'
 import OrgSelector from './OrgSelector'
 import DictionarySelect from './DictionarySelect'
+import ActivityList from './ActivityList'
 const installer = {
     install: function (Vue) {
         Vue.component("avatar-uploader", AvatarUploader);
@@ -14,6 +15,7 @@ const installer = {
         Vue.component("user-selector", UserSelector);
         Vue.component("org-selector", OrgSelector);
         Vue.component("dic-select", DictionarySelect);
+        Vue.component("activityList", ActivityList);
     }
 }
 

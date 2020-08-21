@@ -38,23 +38,7 @@
                     <i-row class="picture">所有工作已完成</i-row>
                 </template>
             </i-card>
-            <i-card style="margin-top:10px" title="社团活动" :padding="24">
-                <template v-slot:extra>
-                    <i-input search placeholder="搜索活动名称" @on-search="searchActivity" />
-                </template>
-                <i-row>
-                    <i-table stripe :columns="tableColumns.activity" :data="activitySearched" :loading="tableLoading">
-                        <template slot="Action" slot-scope="{row}">
-                            <i-button @click="checkWorkflow(row.InstanceId, row.StepId, row.ID)">查看</i-button>
-                        </template>
-                        <template slot="QRCode" slot-scope="{row}">
-                            <img v-if="row.ShortCode" :src="'/qr/' + row.ShortCode" />
-                        </template>
-                    </i-table>
-                    <Page :styles="{'margin-top': '16px'}" :total="pager.totalRow" show-sizer show-total :page-size="5"
-                     @on-change="getActivities($event)" @on-page-size-change="getActivities(null ,$event)" />
-                </i-row>
-            </i-card>
+            <activityList />
         </i-col>
         <i-col span="8">
             <i-card :padding="0" style="margin-bottom:10px">
@@ -147,7 +131,9 @@ export default {
             pic: pic,
             messageNum: 0,
             tableColumns,
-            data: [],
+            data: {
+                ID: ""
+            },
             activityData: [],
             message: [
                 {
@@ -240,7 +226,7 @@ export default {
                     badge: 0,
                     descrip: "管理本社团的所有活动，对已经通过审核的活动可以选择开始活动。也可以在本页面下载活动签到二维码",
                     routerTo: {
-                        name: "Affiliated",
+                        name: "OrgDetail",
                         query: {
                             tabSelect: "activity"
                         }
@@ -258,10 +244,8 @@ export default {
                     icon: "ios-add-circle"
                 }
             },
-            tableLoading: false,
             membersData: [],
             applicationsData: [],
-            activitySearched: [],
             pager: {
                 page: 1,
                 pageSize: 5,
@@ -315,9 +299,6 @@ export default {
             let pageSize = targetPageSize || this.pager.pageSize;
             axios.post("/api/org/GetActByDepartId", {Id: this.data.ID, page, pageSize}, msg => {
                 if (msg.success) {
-                    this.activityData = msg.data;
-                    this.activitySearched = this.activityData;
-                    this.pager.totalRow = msg.totalRow;
                     this.entryForManager.activity.badge = msg.data.filter(e => e.ApplicateState === 3).length;
                 }
             });
@@ -327,12 +308,6 @@ export default {
         },
         navTo (url) {
             this.$router.push({name: 'OrgDetail'});
-        },
-        checkWorkflow (instanceId, stepId, actId) {
-            window.open(`/manage/org/signUpSituation?instanceId=${instanceId}&stepId=${stepId}&detail=true&actId=${actId}`);
-        },
-        searchActivity (value) {
-            this.activitySearched = this.activityData.filter(e => e.ActivityName.indexOf(value) > -1);
         }
     }
 }
@@ -359,56 +334,6 @@ export default {
     .background-purple{
         color: #ffffff;
         background: #6882da;
-    }
-    #chart {
-        padding: 24px;
-        // text-align: center;
-        #userInfo {
-            margin: 0 24px;
-            font-size: 24px;
-        }
-        .difference {
-            font-size: 16px;
-            color: #808695;
-            .number {
-                font-size: 16px;
-            }
-        }
-        .item-name {
-            font-size: 20px;
-            color: #17233d;
-        }
-        .number {
-            font-size: 36px;
-            font-weight: bold;
-        }
-        #organization {
-            width: 11%;
-            text-align: center;
-            margin: 15px 0;
-            .number
-            {
-                color: #da5953;;
-            }
-        }
-        #member {
-            width: 11%;
-            text-align: center;
-            margin: 15px 0;
-            .number
-            {
-                color: #d37b33;
-            }
-        }
-        #activity {
-            width: 11%;
-            text-align: center;
-            margin: 15px 0;
-            .number
-            {
-                color: #53ac9a;
-            }
-        }
     }
     .welcome {
         font-size: 40px;
