@@ -511,7 +511,7 @@
                                         <i-button type="primary" @click="addActivity">添加活动</i-button>
                                     </i-col>
                                     <i-col>
-                                        <i-input type="search" search v-model="activityName" @on-enter="getActivityTable(null)" placeholder="搜索活动名" />
+                                        <i-input type="text" search v-model="activityName" @on-enter="getActivityTable(null)" placeholder="搜索活动名" />
                                     </i-col>
                                 </i-row>
                             </i-col>
@@ -802,6 +802,10 @@ export default {
                 for (let i = 0; i < msg.data.length; i++) {
                     if (msg.data[i].ActivityType) {
                         msg.data[i].ActivityType = msg.data[i].ActivityType.replace(/[[\]"]/g, "").replace(/,/g, "，");
+                        let reg1 = new RegExp('[r|n| ]', "g");
+                        msg.data[i].ActivityType = msg.data[i].ActivityType.replace(reg1, '');
+                        let reg2 = new RegExp(/\\/g, "g");
+                        msg.data[i].ActivityType = msg.data[i].ActivityType.replace(reg2, '');
                     } else {
                         msg.data[i].ActivityType = "";
                     }

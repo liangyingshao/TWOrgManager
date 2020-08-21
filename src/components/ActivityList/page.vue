@@ -54,8 +54,12 @@ export default {
             axios.post("/api/org/GetActByDepartId", {Id: this.ID, page, pageSize, name: value}, msg => {
                 if (msg.success) {
                     for (let i = 0; i < msg.data.length; i++) {
-                        if (msg.data[i].ActivityType) {
+                        if (msg.data[i].ActivityType !== "") {
                             msg.data[i].ActivityType = msg.data[i].ActivityType.replace(/[[\]"]/g, "").replace(/,/g, "，");
+                            let reg1 = new RegExp('[r|n| ]', "g");
+                            msg.data[i].ActivityType = msg.data[i].ActivityType.replace(reg1, '');
+                            let reg2 = new RegExp(/\\/g, "g");
+                            msg.data[i].ActivityType = msg.data[i].ActivityType.replace(reg2, '');
                         } else {
                             msg.data[i].ActivityType = "";
                         }
@@ -89,8 +93,12 @@ export default {
             axios.post("/api/org/GetActByDepartId", {Id: this.ID, page, pageSize}, msg => {
                 if (msg.success) {
                     for (let i = 0; i < msg.data.length; i++) {
-                        if (msg.data[i].ActivityType) {
+                        if (msg.data[i].ActivityType !== "") {
                             msg.data[i].ActivityType = msg.data[i].ActivityType.replace(/[[\]"]/g, "").replace(/,/g, "，");
+                            let reg1 = new RegExp('[r|n| ]', "g");
+                            msg.data[i].ActivityType = msg.data[i].ActivityType.replace(reg1, '');
+                            let reg2 = new RegExp(/\\/g, "g");
+                            msg.data[i].ActivityType = msg.data[i].ActivityType.replace(reg2, '');
                         } else {
                             msg.data[i].ActivityType = "";
                         }

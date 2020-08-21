@@ -50,10 +50,10 @@
                                     <td class="smallhang">活动时间</td>
                                     <td colspan="4" width="200" class="longhang wen-zi-ju-zhong" style="letter-spacing: 2px;">
                                         <i-date-picker type="datetime"  format="yyyy年MM月dd日 HH:mm" v-if="io.fieldAccess.StartDate === 'w' && io.isMyStep" v-model="io.data.StartDate"/>
-                                        <span v-else>{{io.data.StartDate.substring(0, io.data.StartDate.length - 3)}}</span>
+                                        <span v-else-if="io.data.StartDate">{{io.data.StartDate.substring(0, io.data.StartDate.length - 3)}}</span>
                                         至
                                         <i-date-picker type="datetime"  format="yyyy年MM月dd日 HH:mm" v-if="io.fieldAccess.EndDate === 'w' && io.isMyStep" v-model="io.data.EndDate"/>
-                                         <span v-else>{{io.data.EndDate.substring(0, io.data.EndDate.length - 3)}}</span>
+                                         <span v-else-if="io.data.EndDate">{{io.data.EndDate.substring(0, io.data.EndDate.length - 3)}}</span>
                                     </td>
                                 </tr>
                                 <tr>
@@ -509,9 +509,15 @@ export default {
                     if (msg.data.YlcIsPass !== undefined) {
                         msg.data.YlcIsPass = msg.data.YlcIsPass === true ? 'true' : 'false';
                     }
-                    if (msg.data.ActivityType) {
+                    if (msg.data.ActivityType !== "") {
                         msg.data.ActivityType = msg.data.ActivityType.replace(/[[\]"]/g, "").replace(/,/g, "，");
-                        msg.data.ActivityType = msg.data.ActivityType.split('，')
+                        let reg1 = new RegExp('[r|n| ]', "g");
+                        msg.data.ActivityType = msg.data.ActivityType.replace(reg1, '');
+                        let reg2 = new RegExp(/\\/g, "g");
+                        msg.data.ActivityType = msg.data.ActivityType.replace(reg2, '');
+                        if (this.io.fieldAccess.ActivityType === 'r' || !this.io.isMyStep) {
+                            msg.data.ActivityType = msg.data.ActivityType.split('，');
+                        }
                     } else {
                         msg.data.ActivityType = [];
                     }

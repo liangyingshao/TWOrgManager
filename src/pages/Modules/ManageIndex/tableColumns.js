@@ -23,7 +23,8 @@ let columns = {
         {
             title: '二维码',
             slot: 'QRCode',
-            key: 'ShortCode'
+            key: 'ShortCode',
+            minWidth: 100
         },
         {
             title: '操作',
