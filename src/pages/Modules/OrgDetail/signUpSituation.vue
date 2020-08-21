@@ -62,13 +62,6 @@
                             </div>
                             <table border="1" class="table">
                                 <tr>
-                                    <td class="smallhang">社团名称</td>
-                                    <td class="longhang wen-zi-ju-zhong" colspan="4">
-                                        <i-input  v-if="io.fieldAccess.DepartName === 'w' && io.isMyStep" v-model="io.data.DepartName"/>
-                                        <p v-else>{{io.data.DepartName}}</p>
-                                    </td>
-                                </tr>
-                                <tr>
                                     <td class="smallhang">活动名称</td>
                                     <td class="longhang wen-zi-ju-zhong" colspan="4">
                                         <i-input  v-if="io.fieldAccess.ActivityName === 'w' && io.isMyStep" v-model="io.data.ActivityName"/>
@@ -79,10 +72,10 @@
                                     <td class="smallhang">活动时间</td>
                                     <td colspan="4" width="200" class="longhang wen-zi-ju-zhong" style="letter-spacing: 2px;">
                                         <i-date-picker type="date" format="yyyy年MM月dd日" v-if="io.fieldAccess.StartDate === 'w' && io.isMyStep" v-model="io.data.StartDate"/>
-                                        <span v-else>{{io.data.StartDate}}</span>
+                                        <span v-else>{{io.data.StartDate.substring(0, io.data.StartDate.length - 3)}}</span>
                                         至
                                         <i-date-picker type="date" format="yyyy年MM月dd日" v-if="io.fieldAccess.EndDate === 'w' && io.isMyStep" v-model="io.data.EndDate"/>
-                                         <span v-else>{{io.data.EndDate}}</span>
+                                         <span v-else>{{io.data.EndDate.substring(0, io.data.EndDate.length - 3)}}</span>
                                     </td>
                                 </tr>
                                 <tr>

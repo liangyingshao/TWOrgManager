@@ -510,6 +510,9 @@
                                     <i-col>
                                         <i-button type="primary" @click="addActivity">添加活动</i-button>
                                     </i-col>
+                                    <i-col>
+                                        <i-input type="search" search v-model="activityName" @on-enter="getActivityTable(null)" placeholder="搜索活动名" />
+                                    </i-col>
                                 </i-row>
                             </i-col>
                         </i-row>
@@ -795,7 +798,7 @@ export default {
             this.tableLoading = true;
             this.pager.activity.page = page || this.pager.activity.page;
             this.pager.activity.pageSize = pageSize || this.pager.activity.pageSize;
-            axios.post("/api/org/GetActByDepartId", {Id: this.orgInfo.ID, page: this.pager.activity.page, pageSize: this.pager.activity.pageSize}, msg => {
+            axios.post("/api/org/GetActByDepartId", {Id: this.orgInfo.ID, page: this.pager.activity.page, pageSize: this.pager.activity.pageSize, name: this.activityName}, msg => {
                 for (let i = 0; i < msg.data.length; i++) {
                     if (msg.data[i].ActivityType) {
                         msg.data[i].ActivityType = msg.data[i].ActivityType.replace(/[[\]"]/g, "").replace(/,/g, "，");
@@ -1059,6 +1062,7 @@ export default {
             visible: false,
             logs: [],
             keyword: "",
+            activityName: "",
             teachers: [],
             users: 0,
             tabSelect: "",

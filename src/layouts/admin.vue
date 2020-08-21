@@ -43,15 +43,15 @@
                         <i-col span="4">
                             <Dropdown trigger="click" style="width: 100%;">
                                 <div style="cursor:pointer">
-                                    <i-row>
-                                        <i-col span="5">
+                                    <i-row type="flex" :gutter="16">
+                                        <i-col>
                                             <Avatar :src="app.userInfo.avatar" />
                                         </i-col>
-                                        <i-col span="15" style="margin-top: 15px;">
-                                            <p style="line-height: 20px;overflow:hidden;text-overflow:ellipsis;white-space: nowrap;">{{userInfo.realName}}</p>
-                                            <p style="line-height: 20px;font-size: 12px;overflow:hidden;text-overflow:ellipsis;white-space: nowrap;">{{position}}</p>
+                                        <i-col style="margin-top: 15px; max-width: 60%;">
+                                            <p style="line-height: 20px; overflow:hidden; text-overflow:ellipsis; white-space: nowrap;">{{userInfo.realName}}</p>
+                                            <p style="line-height: 20px; font-size: 12px; overflow:hidden; text-overflow:ellipsis; white-space: nowrap;">{{position}}</p>
                                         </i-col>
-                                        <i-col span="2">
+                                        <i-col>
                                             <Icon type="md-arrow-dropdown" />
                                         </i-col>
                                     </i-row>
