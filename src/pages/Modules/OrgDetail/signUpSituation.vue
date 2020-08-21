@@ -524,9 +524,15 @@ export default {
                     if (msg.data.YlcIsPass !== undefined) {
                         msg.data.YlcIsPass = msg.data.YlcIsPass === true ? 'true' : 'false';
                     }
-                    if (msg.data.ActivityType) {
+                    if (msg.data.ActivityType !== "") {
                         msg.data.ActivityType = msg.data.ActivityType.replace(/[[\]"]/g, "").replace(/,/g, "，");
-                        msg.data.ActivityType = msg.data.ActivityType.split('，')
+                        let reg1 = new RegExp('[r|n| ]', "g");
+                        msg.data.ActivityType = msg.data.ActivityType.replace(reg1, '');
+                        let reg2 = new RegExp(/\\/g, "g");
+                        msg.data.ActivityType = msg.data.ActivityType.replace(reg2, '');
+                        if (this.io.fieldAccess.ActivityType === 'r' || !this.io.isMyStep) {
+                            msg.data.ActivityType = msg.data.ActivityType.split('，');
+                        }
                     } else {
                         msg.data.ActivityType = "";
                     }
