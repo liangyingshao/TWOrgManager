@@ -340,6 +340,8 @@ export default {
                         ID: msg.appID,
                         State: 3
                     }
+                } else {
+                    this.$Message.error(msg.msg);
                 }
             })
         },
@@ -351,6 +353,8 @@ export default {
                         content: "撤回成功"
                     })
                     item.app = {}
+                } else {
+                    this.$Message.error(msg.msg);
                 }
             })
         }
