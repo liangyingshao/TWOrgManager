@@ -76,18 +76,25 @@
                                     </td>
                                 </tr>
                                 <tr>
-                                    <td class="smallhang" style="height:76px;">活动时间</td>
-                                    <td colspan="2" width="200" style="letter-spacing: 2px;">
+                                    <td class="smallhang">活动时间</td>
+                                    <td colspan="4" width="200" class="longhang wen-zi-ju-zhong" style="letter-spacing: 2px;">
                                         <i-date-picker type="date" format="yyyy年MM月dd日" v-if="io.fieldAccess.StartDate === 'w' && io.isMyStep" v-model="io.data.StartDate"/>
-                                        <p v-else>{{io.data.StartDate}}</p>
+                                        <span v-else>{{io.data.StartDate}}</span>
                                         至
                                         <i-date-picker type="date" format="yyyy年MM月dd日" v-if="io.fieldAccess.EndDate === 'w' && io.isMyStep" v-model="io.data.EndDate"/>
-                                        <p v-else>{{io.data.EndDate}}</p>
+                                         <span v-else>{{io.data.EndDate}}</span>
                                     </td>
+                                </tr>
+                                <tr>
                                     <td class="smallhang">活动人数</td>
                                     <td colspan="2" width="200">
                                         <i-input  v-if="io.fieldAccess.AttendanceFigures === 'w' && io.isMyStep" v-model="io.data.AttendanceFigures"/>
                                         <p v-else>{{io.data.AttendanceFigures}}人</p>
+                                    </td>
+                                    <td class="smallhang">预算金额</td>
+                                    <td colspan="2" width="200">
+                                        <i-input v-if="io.fieldAccess.AttendanceFigures === 'w' && io.isMyStep" v-model="io.data.Budget"/>
+                                        <p v-else>{{io.data.Budget}}</p>
                                     </td>
                                 </tr>
                                 <tr>
@@ -111,20 +118,40 @@
                                 </tr>
                                 <tr>
                                     <td class="smallhang" rowspan="2">面向范围</td>
-                                    <td class="longhang" colspan="4" v-if="io.fieldAccess.Description === 'w' && io.isMyStep">活动类型：
-                                        <i-radio-group v-model="io.data.ActivityType">
+                                    <td class="longhang" colspan="4" v-if="io.fieldAccess.FaceTo === 'w' && io.isMyStep">
+                                        活动范围：
+                                        <i-radio-group v-model="io.data.FaceTo">
                                             <i-radio label="社团内部活动" class="iview-type-size">社团内部活动</i-radio>
                                             <i-radio label="公开活动" class="iview-type-size">公开活动</i-radio>
                                         </i-radio-group>
                                     </td>
                                     <td class="longhang" v-else colspan="4">
-                                        <p v-if="io.data.ActivityType">活动类型：<Icon type="ios-checkbox-outline" />{{io.data.ActivityType}}</p>
+                                        <p>活动范围：<Icon type="ios-checkbox-outline" />{{io.data.FaceTo}}</p>
                                     </td>
                                 </tr>
                                 <tr>
                                     <td class="longhang" colspan="4">
-                                        <i-input type="textarea" class="opinionForm" v-model="io.data.FaceTo" :rows="3" v-if="io.fieldAccess.FaceTo === 'w' && io.isMyStep" placeholder="（如为公开活动可具体描写面向范围如：面向全体学生/面向校内外人员等，可给出示例填写）"/>
-                                        <p v-else>{{io.data.FaceTo}}</p>
+                                        <i-input type="textarea" class="opinionForm" v-model="io.data.ActivityFaceToDescription" :rows="3" v-if="io.fieldAccess.ActivityFaceToDescription === 'w' && io.isMyStep" placeholder="（如为公开活动可具体描写面向范围如：面向全体学生/面向校内外人员等，可给出示例填写）"/>
+                                        <p v-else>{{io.data.ActivityFaceToDescription}}</p>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="smallhang">活动类型</td>
+                                    <td class="longhang" colspan="4" v-if="io.fieldAccess.ActivityType === 'w' && io.isMyStep">
+                                        活动类型：
+                                        <i-checkbox-group v-model="io.data.ActivityType">
+                                            <i-checkbox label="普通活动" class="iview-type-size">普通活动</i-checkbox>
+                                            <i-checkbox label="团支部活动" class="iview-type-size">团支部活动</i-checkbox>
+                                            <i-checkbox label="党支部活动" class="iview-type-size">党支部活动</i-checkbox>
+                                        </i-checkbox-group>
+                                    </td>
+                                    <td class="longhang" v-else colspan="4">
+                                        <p v-if="io.data.ActivityType">
+                                            <template v-for="(item, index) in io.data.ActivityType">
+                                                <Icon type="ios-checkbox-outline" :key="index"/>
+                                                {{item}}
+                                            </template>
+                                        </p>
                                     </td>
                                 </tr>
                                 <tr>
@@ -159,7 +186,26 @@
                                 <tr>
                                     <td class="longhang" colspan="4">
                                         <i-input type="textarea" class="opinionForm" :rows="3" placeholder="" v-if="io.fieldAccess.Description === 'w' && io.isMyStep" v-model="io.data.Description"/>
-                                        <p v-else>{{io.data.Description}}</p>
+                                        <p style="white-space: pre-wrap; text-align: justify;" v-else>{{io.data.Description}}</p>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="smallhang">封面图片</td>
+                                    <td class="longhang" colspan="4">
+                                        <i-upload v-if="io.fieldAccess.Avatar === 'w' && io.isMyStep" action="/api/cms/UploadFile" :default-file-list="avatar" :show-upload-list="false"
+                                        :before-upload="beforeUploadAvatar" :on-preview="previewAvatar" :on-remove="removeUpload" :on-success="uploadAvatarSuccess"
+                                        :data="{'usage': 'avatar', 'single': true, 'relateTable': 'ActivityApplication', 'id': this.io.data.ID, 'fileName': this.avatarName}"
+                                        >
+                                            <i-button icon="ios-cloud-upload-outline" type="primary">上传封面</i-button>
+                                            <br>
+                                            上传一张封面图片，推荐大小为 1080*540 。作为活动的封面图片。
+                                        </i-upload>
+                                        <div v-if="io.data.Avatar">
+                                            <i-row>
+                                                <img :src="io.data.Avatar" />
+                                                <i-button type="error" v-if="io.fieldAccess.Avatar === 'w' && io.isMyStep" @click="removeUpload(avatar[0])">删除图片</i-button>
+                                            </i-row>
+                                        </div>
                                     </td>
                                 </tr>
                                 <tr v-show="io.fieldAccess.GuideTeacherOpinion">
@@ -484,6 +530,12 @@ export default {
                     }
                     if (msg.data.YlcIsPass !== undefined) {
                         msg.data.YlcIsPass = msg.data.YlcIsPass === true ? 'true' : 'false';
+                    }
+                    if (msg.data.ActivityType) {
+                        msg.data.ActivityType = msg.data.ActivityType.replace(/[[\]"]/g, "").replace(/,/g, "，");
+                        msg.data.ActivityType = msg.data.ActivityType.split('，')
+                    } else {
+                        msg.data.ActivityType = "";
                     }
                     this.io = msg;
                 } else {
