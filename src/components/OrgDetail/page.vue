@@ -39,7 +39,7 @@
                     </i-col>
                     <i-col span="11" offset="2">
                         <i-form-item label="业务指导单位" prop="ParentId">
-                            <org-selector :disabled="io.fieldAccess.ParentId === 'r' || !io.isMyStep" v-model="io.data.ParentId"/>
+                            <org-selector disabled v-model="io.data.ParentId"/>
                         </i-form-item>
                     </i-col>
                 </i-row>
@@ -482,7 +482,7 @@ export default {
             ],
             ruleInline: {
                 Description: [
-                    { required: true, message: 'Please fill in the Description', trigger: 'blur' }
+                    { required: true, message: '必须填写社团简介', trigger: 'blur' }
                 ]
             }
         }
