@@ -121,7 +121,7 @@
                 <Divider orientation="left">指导老师情况</Divider>
                 <i-row type="flex">
                     <i-col span="11">
-                        <i-form-item label="指导老师工号">
+                        <i-form-item label="指导老师工号" prop="GuideCode">
                             <i-input placeholder="请输入..." prefix="md-create" :disabled="io.fieldAccess.GuideCode === 'r' || !io.isMyStep"
                             v-model="io.data.GuideCode" @on-blur="searchUser(io.data.GuideCode, 0)"/>
                         </i-form-item>
@@ -178,7 +178,7 @@
                 <Divider orientation="left">社团负责人情况</Divider>
                 <i-row type="flex">
                     <i-col span="11">
-                        <i-form-item label="社团负责人学号">
+                        <i-form-item label="社团负责人学号" prop="ChargerCode">
                             <i-input placeholder="请输入..." prefix="md-create" :disabled="io.fieldAccess.ChargerCode === 'r' || !io.isMyStep"
                             v-model="io.data.ChargerCode" @on-blur="searchUser(io.data.ChargerCode, 1)"/>
                         </i-form-item>
@@ -483,6 +483,12 @@ export default {
             ruleInline: {
                 Description: [
                     { required: true, message: '必须填写社团简介', trigger: 'blur' }
+                ],
+                GuideCode: [
+                    { required: true, message: '必须填写指导老师工号', trigger: 'blur' }
+                ],
+                ChargerCode: [
+                    { required: true, message: '必须填写社团管理员学号', trigger: 'blur' }
                 ]
             }
         }
@@ -586,7 +592,10 @@ export default {
                         ...this.upLoad
                     }, msg => {
                         if (msg.success) {
-                            this.$Message.success("提交成功");
+                            this.$Message.success("提交成功，3秒后关闭页面");
+                            setTimeout(function () {
+                                window.close();
+                            }, 3000);
                         } else {
                             this.$Message.warning(msg.msg);
                         }

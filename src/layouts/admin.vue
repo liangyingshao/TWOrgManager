@@ -41,7 +41,7 @@
                             <Icon :style="[{margin: '0 5px'},{cursor: 'pointer'}, {display: 'none'}]" @click="$Notice.info({title: '您当前没有通知'});" type="md-notifications-outline" size="24"></Icon>
                         </i-col>
                         <i-col span="4">
-                            <Dropdown trigger="click" style="width: 100%;">
+                            <Dropdown trigger="click">
                                 <div style="cursor:pointer">
                                     <i-row type="flex" :gutter="16">
                                         <i-col>
