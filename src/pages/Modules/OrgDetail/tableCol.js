@@ -104,7 +104,8 @@ let tableCol = {
         },
         {
             title: '二维码',
-            slot: 'ShortCode'
+            slot: 'ShortCode',
+            minWidth: 100
         },
         {
             title: '操作',
