@@ -15,8 +15,12 @@ export default {
             tableData: [],
             columns: [
                 {
-                    title: "流程类别",
+                    title: "流程名称",
                     key: "WorkflowName"
+                },
+                {
+                    title: "流程类别",
+                    key: "WorkflowType"
                 },
                 {
                     title: "申请人",
@@ -44,7 +48,7 @@ export default {
     methods: {
         getFlows () {
             this.loading = true;
-            axios.post("/api/workflow/MyAttend", {name: "社团活动申请"}, msg => {
+            axios.post("/api/workflow/MyAttend", {name: ""}, msg => {
                 if (msg.success) {
                     this.tableData = msg.data;
                 } else {
@@ -54,7 +58,7 @@ export default {
             });
         },
         checkWorkflow (row) {
-            window.open(`${this.dic[row.WorkflowName]}?instanceId=${row.InstanceId}&stepId=${row.StepId}&detail=true`);
+            window.open(`${this.dic[row.WorkflowType]}?instanceId=${row.InstanceId}&stepId=${row.StepId}&detail=true`);
         }
     }
 }
