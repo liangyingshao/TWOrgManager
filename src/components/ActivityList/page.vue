@@ -81,7 +81,7 @@ export default {
                     } else if (state === 0) {
                         this.$Message.success("活动已取消");
                     }
-                    this.getActivityTable();
+                    this.getActivities();
                 } else {
                     this.$Message.warning(msg.msg);
                 }

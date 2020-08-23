@@ -1,7 +1,7 @@
 <template>
     <i-row type="flex" :gutter="24">
         <i-col span="15">
-            <i-card title="报名社团">
+            <i-card title="报名社团" v-if="myOrgs.length < 1">
                 <template v-slot:extra>
                     <i-input search placeholder="搜索社团名称" @on-search="searchOrg" />
                 </template>
@@ -165,7 +165,10 @@ export default {
                 },
                 {
                     title: '活动类型',
-                    key: 'ActivityType'
+                    key: 'ActivityType',
+                    render: (h, params) => {
+                        return h('p', params.row.ActivityType.replace(/[[\]"]/g, "").replace(/,/g, "，"));
+                    }
                 },
                 {
                     title: '举办社团',
@@ -321,7 +324,8 @@ export default {
                     this.modelShow = !this.modelShow;
                     this.$Message.success({
                         content: state === 0 ? "报名成功" : "取消报名成功"
-                    })
+                    });
+                    this.getActivities();
                 } else {
                     this.$Message.warning({
                         content: msg.msg

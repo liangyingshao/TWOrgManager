@@ -573,7 +573,10 @@ export default {
             });
             axios.postStream("/api/workflow/SubmitInstance", {...this.upLoad}, msg => {
                 if (msg.success) {
-                    this.$Message.info("保存成功");
+                    this.$Message.info("保存成功，三秒后关闭页面");
+                    setTimeout(function () {
+                        window.close();
+                    }, 3000);
                 } else {
                      this.$Message.warning(msg.msg);
                 }

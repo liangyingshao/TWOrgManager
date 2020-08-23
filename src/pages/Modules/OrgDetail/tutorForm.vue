@@ -44,6 +44,7 @@
 
 <script>
     let _ = require("lodash");
+    const md5 = require("md5");
     const axios = require("axios");
     const regex = require("@/regex.js");
     export default {
@@ -93,6 +94,9 @@
                 let form = this.$refs["Form"];
                 form.resetFields();
             },
+            randomPassword () {
+                return Math.round(Math.random() * 1000000).toString();
+            },
             submit (departId, callback) {
                 let form = this.$refs["Form"];
                 // 注：在ES6的严格模式中，不允许回调函数直接返回bool类型的true和false，以免程序被误导。所以这里使用常量，也可以使用字符串返回。
@@ -103,16 +107,34 @@
                         callback(FALSE);
                         return;
                     }
-                    axios.post("/api/security/SaveUserV2", {...this.modalData.user, departId, position: "指导老师"}, msg => {
+                    let pwd = this.randomPassword();
+                    axios.post("/api/security/SaveUserV2", {
+                        ...this.modalData.user,
+                        departId,
+                        position: "指导老师",
+                        UserName: this.modalData.user.Code,
+                        UserPassword: this.modalData.user.ID ? undefined : md5(pwd)
+                    }, msg => {
                         this.resetFields();
                         if (msg.success) {
                             callback(TRUE);
+                            if (!this.modalData.user.ID) {
+                                this.$Modal.success({
+                                    title: "新建指导老师成功",
+                                    content: `该用户的新密码是${pwd}，系统不记录此密码，请妥善保存。`
+                                });
+                            }
                         } else {
                             callback(FALSE);
                             this.$Message.warning(msg.msg);
                         }
                     })
                 })
+            },
+            async validate (callback) {
+                let form = this.$refs["Form"];
+                let res = await form.validate();
+                callback(res);
             }
         }
     }
