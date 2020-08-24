@@ -39,6 +39,25 @@
                 </TimelineItem>
             </i-timeline>
         </i-drawer>
+        <i-modal v-model="showModal">
+            <p slot="header" style="text-align:center">
+                <Icon type="ios-checkmark-circle" style="color:#19be6b;" />
+                <span>指导老师新建成功</span>
+            </p>
+            <div style="text-align:center">
+                <p>用户初始密码已经设置，本页面关闭后，本系统不再显示该密码，请妥善保存。</p>
+                <br>
+                <p>
+                    <span>{{'学工号：' + modalData.user.Code}}</span>
+                    <span>{{'密码：' + this.pwd}}</span>
+                </p>
+                <br>
+                <i-checkbox v-model="canClose">我已复制并保存好该密码</i-checkbox>
+            </div>
+            <div slot="footer">
+                <Button type="primary" :disabled="!canClose" long @click="showModal=false">Delete</Button>
+            </div>
+        </i-modal>
     </i-row>
 </template>
 
@@ -58,6 +77,8 @@
             let THIS = this;
             return {
                 showLog: false,
+                showModal: false,
+                canClose: false,
                 ruleForMem: {
                     RealName: [
                         {
@@ -86,7 +107,8 @@
                             })
                         }, 500)
                     ]
-                }
+                },
+                pwd: ''
             }
         },
         methods: {
@@ -107,22 +129,19 @@
                         callback(FALSE);
                         return;
                     }
-                    let pwd = this.randomPassword();
+                    this.pwd = this.randomPassword();
                     axios.post("/api/security/SaveUserV2", {
                         ...this.modalData.user,
                         departId,
                         position: "指导老师",
                         UserName: this.modalData.user.Code,
-                        UserPassword: this.modalData.user.ID ? undefined : md5(pwd)
+                        UserPassword: this.modalData.user.ID ? undefined : md5(this.pwd)
                     }, msg => {
                         this.resetFields();
                         if (msg.success) {
                             callback(TRUE);
                             if (!this.modalData.user.ID) {
-                                this.$Modal.success({
-                                    title: "新建指导老师成功",
-                                    content: `该用户的新密码是${pwd}，系统不记录此密码，请妥善保存。`
-                                });
+                                this.showModal = true;
                             }
                         } else {
                             callback(FALSE);

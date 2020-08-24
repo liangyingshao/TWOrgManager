@@ -105,6 +105,25 @@
                 </TimelineItem>
             </i-timeline>
         </i-drawer>
+        <i-modal v-model="showModal">
+            <p slot="header" style="text-align:center">
+                <Icon type="ios-checkmark-circle" style="color:#19be6b;" />
+                <span>社团成员新建成功</span>
+            </p>
+            <div style="text-align:center">
+                <p>用户初始密码已经设置，本页面关闭后，本系统不再显示该密码，请妥善保存。</p>
+                <br>
+                <div>
+                    <p>{{'学号：' + code}}</p>
+                    <p>{{'密码：' + pwd}}</p>
+                </div>
+                <br>
+                <i-checkbox v-model="canClose">我已复制并保存好该密码</i-checkbox>
+            </div>
+            <div slot="footer">
+                <Button type="primary" :disabled="!canClose" long @click="showModal = false">确认</Button>
+            </div>
+        </i-modal>
     </i-row>
 </template>
 
@@ -133,8 +152,12 @@
             let THIS = this;
             return {
                 showLog: false,
+                showModal: false,
+                canClose: false,
                 haveJoinCPC: false,
                 haveJoinCCYL: false,
+                pwd: '',
+                code: '',
                 ruleForMem: {
                     RealName: [
                         {
@@ -243,7 +266,7 @@
                         callback(FALSE);
                         return;
                     }
-                    let pwd = this.randomPassword();
+                    this.pwd = this.randomPassword();
                     axios.post("/api/security/SaveUserV2", {
                         ...this.modalData.user,
                         JoinCPCTime: this.haveJoinCPC ? this.modalData.user.JoinCPCTime : "1900-01-01",
@@ -251,21 +274,19 @@
                         departId,
                         position: this.modalData.position,
                         UserName: this.modalData.user.Code,
-                        UserPassword: this.modalData.user.ID ? undefined : md5(pwd)
+                        UserPassword: this.modalData.user.ID ? undefined : md5(this.pwd)
                     }, msg => {
-                        this.resetFields();
                         if (msg.success) {
-                            callback(TRUE, msg);
                             if (!this.modalData.user.ID) {
-                                this.$Modal.success({
-                                    title: "新建成员成功",
-                                    content: `该用户的新密码是${pwd}，系统不记录此密码，请妥善保存。`
-                                });
+                                this.code = this.modalData.user.Code;
+                                this.showModal = true;
                             }
+                            callback(TRUE, msg);
                         } else {
                             callback(FALSE);
                             this.$Message.warning(msg.msg);
                         }
+                        this.resetFields();
                     });
                 })
             },
