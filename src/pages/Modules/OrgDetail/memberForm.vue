@@ -105,6 +105,25 @@
                 </TimelineItem>
             </i-timeline>
         </i-drawer>
+        <i-modal v-model="showModal">
+            <p slot="header" style="text-align:center">
+                <Icon type="ios-checkmark-circle" style="color:#19be6b;" />
+                <span>社团成员新建成功</span>
+            </p>
+            <div style="text-align:center">
+                <p>用户初始密码已经设置，本页面关闭后，本系统不再显示该密码，请妥善保存。</p>
+                <br>
+                <div>
+                    <p>{{'学号：' + code}}</p>
+                    <p>{{'密码：' + pwd}}</p>
+                </div>
+                <br>
+                <i-checkbox v-model="canClose">我已复制并保存好该密码</i-checkbox>
+            </div>
+            <div slot="footer">
+                <Button type="primary" :disabled="!canClose" long @click="showModal = false">确认</Button>
+            </div>
+        </i-modal>
     </i-row>
 </template>
 
@@ -113,6 +132,7 @@
     let badDate = new Date("Mon Jan 01 1900 00:00:00 GMT+0805 (中国标准时间)");
     const axios = require("axios");
     const regex = require("@/regex.js");
+    const md5 = require("md5");
     export default {
         props: {
             modalData: {
@@ -132,8 +152,12 @@
             let THIS = this;
             return {
                 showLog: false,
+                showModal: false,
+                canClose: false,
                 haveJoinCPC: false,
                 haveJoinCCYL: false,
+                pwd: '',
+                code: '',
                 ruleForMem: {
                     RealName: [
                         {
@@ -229,6 +253,9 @@
             resetFields () {
                 this.$refs["Form"].resetFields();
             },
+            randomPassword () {
+                return Math.round(Math.random() * 1000000).toString();
+            },
             submit (departId, callback) {
                 let form = this.$refs["Form"];
                 // 注：在ES6的严格模式中，不允许回调函数直接返回bool类型的true和false，以免程序被误导。所以这里使用常量，也可以使用字符串返回。
@@ -239,21 +266,27 @@
                         callback(FALSE);
                         return;
                     }
+                    this.pwd = this.randomPassword();
                     axios.post("/api/security/SaveUserV2", {
                         ...this.modalData.user,
                         JoinCPCTime: this.haveJoinCPC ? this.modalData.user.JoinCPCTime : "1900-01-01",
                         JoinCCYLTime: this.haveJoinCCYL ? this.modalData.user.JoinCCYLTime : "1900-01-01",
                         departId,
                         position: this.modalData.position,
-                        UserName: this.modalData.user.Code
+                        UserName: this.modalData.user.Code,
+                        UserPassword: this.modalData.user.ID ? undefined : md5(this.pwd)
                     }, msg => {
-                        this.resetFields();
                         if (msg.success) {
+                            if (!this.modalData.user.ID) {
+                                this.code = this.modalData.user.Code;
+                                this.showModal = true;
+                            }
                             callback(TRUE, msg);
                         } else {
                             callback(FALSE);
                             this.$Message.warning(msg.msg);
                         }
+                        this.resetFields();
                     });
                 })
             },

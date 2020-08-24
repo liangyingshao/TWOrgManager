@@ -16,8 +16,17 @@
                 <div class="header">
                     <span>{{depart}}（{{totalUsers}}人）</span>
                 </div>
-                <Button @click="showUserDetail('')" v-if="permissions.add">添加成员</Button>
-                <!-- <Button>删除成员</Button> -->
+                <i-row type="flex" :gutter="16">
+                    <i-col>
+                        <Button @click="showUserDetail('')" v-if="permissions.add">添加成员</Button>
+                    </i-col>
+                    <i-col>
+                        <i-input search v-model="userName" @on-enter="getUsers()" placeholder="搜索成员" />
+                    </i-col>
+                    <i-col>
+                        <!-- <Button>删除成员</Button> -->
+                    </i-col>
+                </i-row>
                 <Table :loading="isLoadingUser" stripe :columns="columns1" :data="userData" class="user-table" width="100%">
                     <template slot="isBind" slot-scope="{row}">
                         <template v-if="row.OpenId">
@@ -243,7 +252,7 @@ export default {
             this.isLoadingUser = true;
             this.showTab = "user";
             this.page = page || this.page;
-            axios.post("/api/security/GetUsers", { departId: this.departId, isAll: this.isAll, page: this.page, pageSize: this.pageSize }, msg => {
+            axios.post("/api/security/GetUsers", { departId: this.departId, isAll: this.isAll, page: this.page, pageSize: this.pageSize, name: this.userName }, msg => {
                 this.isLoadingUser = false;
                 if (msg.success) {
                     this.totalUsers = msg.totalRow;
@@ -332,6 +341,7 @@ export default {
             pageSize: 20,
             departId: "",
             isAll: true,
+            userName: '',
             totalUsers: 0,
             isLoadingUser: false,
             depart: "所有部门",

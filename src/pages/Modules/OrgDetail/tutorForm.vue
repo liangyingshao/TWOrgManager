@@ -39,11 +39,31 @@
                 </TimelineItem>
             </i-timeline>
         </i-drawer>
+        <i-modal v-model="showModal">
+            <p slot="header" style="text-align:center">
+                <Icon type="ios-checkmark-circle" style="color:#19be6b;" />
+                <span>指导老师新建成功</span>
+            </p>
+            <div style="text-align:center">
+                <p>用户初始密码已经设置，本页面关闭后，本系统不再显示该密码，请妥善保存。</p>
+                <br>
+                <p>
+                    <span>{{'学工号：' + modalData.user.Code}}</span>
+                    <span>{{'密码：' + this.pwd}}</span>
+                </p>
+                <br>
+                <i-checkbox v-model="canClose">我已复制并保存好该密码</i-checkbox>
+            </div>
+            <div slot="footer">
+                <Button type="primary" :disabled="!canClose" long @click="showModal=false">Delete</Button>
+            </div>
+        </i-modal>
     </i-row>
 </template>
 
 <script>
     let _ = require("lodash");
+    const md5 = require("md5");
     const axios = require("axios");
     const regex = require("@/regex.js");
     export default {
@@ -57,6 +77,8 @@
             let THIS = this;
             return {
                 showLog: false,
+                showModal: false,
+                canClose: false,
                 ruleForMem: {
                     RealName: [
                         {
@@ -85,13 +107,17 @@
                             })
                         }, 500)
                     ]
-                }
+                },
+                pwd: ''
             }
         },
         methods: {
             resetFields () {
                 let form = this.$refs["Form"];
                 form.resetFields();
+            },
+            randomPassword () {
+                return Math.round(Math.random() * 1000000).toString();
             },
             submit (departId, callback) {
                 let form = this.$refs["Form"];
@@ -103,16 +129,31 @@
                         callback(FALSE);
                         return;
                     }
-                    axios.post("/api/security/SaveUserV2", {...this.modalData.user, departId, position: "指导老师"}, msg => {
+                    this.pwd = this.randomPassword();
+                    axios.post("/api/security/SaveUserV2", {
+                        ...this.modalData.user,
+                        departId,
+                        position: "指导老师",
+                        UserName: this.modalData.user.Code,
+                        UserPassword: this.modalData.user.ID ? undefined : md5(this.pwd)
+                    }, msg => {
                         this.resetFields();
                         if (msg.success) {
                             callback(TRUE);
+                            if (!this.modalData.user.ID) {
+                                this.showModal = true;
+                            }
                         } else {
                             callback(FALSE);
                             this.$Message.warning(msg.msg);
                         }
                     })
                 })
+            },
+            async validate (callback) {
+                let form = this.$refs["Form"];
+                let res = await form.validate();
+                callback(res);
             }
         }
     }
