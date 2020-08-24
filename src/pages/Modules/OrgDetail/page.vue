@@ -429,10 +429,10 @@
                                 <i-tooltip :disabled="!row.isAdmin" content="不能删除管理员" placement="top">
                                     <i-button :disabled="!app.checkPermission('Security.RemoveDepartUser') || row.isAdmin" @click="delMember(row)" v-if="(2*orgInfo.Type+level>=3)">删除</i-button>
                                 </i-tooltip>
-                                <i-button v-if="(app.checkPermission('Security.SetDepartAdmin'))&&(!row.isAdmin)" @click="setPositon(row.ID,'管理员')">设置管理员</i-button>
+                                <i-button v-if="app.checkPermission('Security.SetDepartAdmin') && !row.isAdmin" @click="setPositon(row.ID,'管理员')">设置管理员</i-button>
                                 <i-poptip transfer v-model="visible" v-if="row.isAdmin">
-                                    <i-button v-if="(app.checkPermission('Security.SetDepartAdmin'))&&row.isAdmin">设置密码</i-button>
-                                    <i-row slot="title">您正在更改社团管理员密码</i-row>
+                                    <i-button v-if="app.checkPermission('Security.EditDepartUser')">设置密码</i-button>
+                                    <i-row slot="title">您正在更改社团成员密码</i-row>
                                     <i-form  :model="password" slot="content" label-position="top" :rules="pwdRule">
                                         <i-form-item label="新密码" prop="password">
                                             <i-input v-model="password.password" size="small" type="password"/>

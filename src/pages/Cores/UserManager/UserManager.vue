@@ -3,12 +3,7 @@
         <Row type="flex">
             <i-col class="tree">
                 <div class="user-search">
-                    <Input prefix="ios-search" placeholder="搜索成员，部门" />
-                    <div class="more-btn" @click="addDepart">
-                        <Tooltip content="添加部门" placement="right">
-                            <Icon type="md-add" />
-                        </Tooltip>
-                    </div>
+                    <i-button long @click="addDepart" ghost icon="md-add">添加部门</i-button>
                 </div>
                 <Tree :data="orgTree" class="org-tree" :render="renderOrgTree" :empty-text="emptyText" :load-data="getChildTree"></Tree>
             </i-col>
@@ -96,6 +91,19 @@
                 <Button type="primary" :loading="modifyDialog.isLoading" @click="confirmDepart" >确认</Button>
             </div>
         </Modal>
+        <Modal v-model="pwdModel.show" title="设置用户密码">
+            <Form ref="pwdForm" :rules="pwdRule" :model="pwdModel">
+                <FormItem label="密码" prop="pwd">
+                    <Input v-model="pwdModel.pwd" />
+                </FormItem>
+                <FormItem label="确认密码" prop="checkPwd">
+                    <Input v-model="pwdModel.checkPwd" />
+                </FormItem>
+            </Form>
+            <div slot="footer">
+                <Button type="primary" @click="setPassword" :loading="pwdModel.loading">更改密码</Button>
+            </div>
+        </Modal>
     </div>
 </template>
 
@@ -103,6 +111,7 @@
 import OrgSelector from '@c/OrgSelector'
 import UserDetail from './UserDetail'
 var _ = require("lodash")
+const md5 = require("md5");
 const app = require("@/config")
 const axios = require("axios");
 export default {
@@ -278,11 +287,47 @@ export default {
                     this.$Message.error(msg.msg);
                 }
             })
+        },
+        setPassword () {
+            this.pwdModel.loading = true;
+            let form = this.$refs["pwdForm"];
+            form.validate(v => {
+                if (!v) {
+                    this.pwdModel.loading = false;
+                    return;
+                }
+
+                axios.post("/api/security/SetPassword", {userId: this.userId, password: md5(this.pwdModel.pwd)},
+                    msg => {
+                        this.pwdModel.loading = false;
+                        if (msg.success) {
+                            this.$Message.success('修改成功');
+                            this.pwdModel.show = false;
+                        } else {
+                            this.$Message.warning(msg.msg);
+                        }
+                    }
+                );
+            })
         }
     },
     data () {
         let THIS = this;
         return {
+            pwdRule: {
+                pwd: {
+                    trigger: 'blur',
+                    validator (rule, value, callback, source, options) {
+                        (value && value.length >= 6 && value.length <= 16) ? callback() : callback(new Error('密码必须在6至16位之间'));
+                    }
+                },
+                checkPwd: {
+                    trigger: 'blur',
+                    validator (rule, value, callback, source, options) {
+                        value === THIS.pwdModel.pwd ? callback() : callback(new Error('两次输入的密码不一致'));
+                    }
+                }
+            },
             columns1: [
                 {
                     title: '姓名',
@@ -328,7 +373,16 @@ export default {
                                 }
                             }
                         }, "[删除]"));
-                        return h("div", [...operate])
+                        app.checkPermission('Security.EditDepartUser') && operate.push(h("a", {
+                            style: { marginRight: "10px", display: "inline-block" },
+                            on: {
+                                click () {
+                                    THIS.pwdModel.show = true;
+                                    THIS.userId = id;
+                                }
+                            }
+                        }, "[重置密码]"));
+                        return h("div", [...operate]);
                     }
                 }
             ],
@@ -375,7 +429,13 @@ export default {
                     ]
                 }
             },
-            removeUserShow: false
+            removeUserShow: false,
+            pwdModel: {
+                show: false,
+                pwd: '',
+                checkPwd: '',
+                loading: false
+            }
         };
     },
     mounted () {

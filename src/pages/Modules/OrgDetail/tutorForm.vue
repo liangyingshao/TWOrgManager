@@ -137,11 +137,11 @@
                         UserName: this.modalData.user.Code,
                         UserPassword: this.modalData.user.ID ? undefined : md5(this.pwd)
                     }, msg => {
-                        this.resetFields();
                         if (msg.success) {
                             callback(TRUE);
                             if (!this.modalData.user.ID) {
                                 this.showModal = true;
+                                this.resetFields();
                             }
                         } else {
                             callback(FALSE);
