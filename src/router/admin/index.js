@@ -133,5 +133,10 @@ module.exports = {
         path: "/manage/config/bussiness",
         layout: "admin",
         component: () => import(/* webpackChunkName: "config" */"@p/Modules/BussinessCfg")
+    },
+    AdminMember: {
+        path: "/manage/adminmember",
+        layout: "admin",
+        component: () => import(/* webpackChunkName: "config" */"@p/Modules/OrgDetail/AdminMember")
     }
 };

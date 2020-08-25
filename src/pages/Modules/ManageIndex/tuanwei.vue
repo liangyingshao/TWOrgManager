@@ -181,14 +181,12 @@ export default {
                     icon: "md-person-add"
                 },
                 activity: {
-                    title: "活动管理",
+                    title: "学生社团管理部管理",
                     badge: 0,
-                    description: "管理本单位所属所有社团的所有活动。查看他们的报名记录和签到记录。",
+                    description: "管理学生社团管理部成员",
                     routerTo: {
-                        name: "Affiliated",
-                        query: {
-                            tabSelect: "activity"
-                        }
+                        name: "AdminMember",
+                        query: {}
                     },
                     icon: "md-flag"
                 },
@@ -271,7 +269,7 @@ export default {
         getActivities () {
             axios.post("/api/org/GetActByDepartId", {Id: this.orgInfo.ID, applicationState: 3}, msg => {
                 if (msg.success) {
-                    this.entryForManager.activity.badge = msg.data.length;
+                    // this.entryForManager.activity.badge = msg.data.length;
                 }
             });
             axios.post("/api/org/GetActByDepartId", {Id: this.orgInfo.ID}, msg => {

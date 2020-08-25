@@ -281,12 +281,12 @@
                                 this.code = this.modalData.user.Code;
                                 this.showModal = true;
                             }
+                            this.resetFields();
                             callback(TRUE, msg);
                         } else {
                             callback(FALSE);
                             this.$Message.warning(msg.msg);
                         }
-                        this.resetFields();
                     });
                 })
             },
