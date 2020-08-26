@@ -1,5 +1,5 @@
 <template>
-    <Select v-bind="$attrs" :multiple="multiple" ref="control" @on-clear="onClear" :capture="false"
+    <Select v-bind="$attrs" :multiple="multiple" ref="control" @on-clear="onClear" :capture="false" placeholder="请输入姓名或学工号"
             :loading="loading" filterable remote :remote-method="userRemote" @on-change="setSelect" :clearable="true"
     >
         <Option v-for="option in userOptions" :value="JSON.stringify(option)" :key="option.ID">
