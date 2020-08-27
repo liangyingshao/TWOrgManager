@@ -5,7 +5,8 @@
                 <i-card>
                     <i-table stripe :columns="signCol" :data="signData">
                         <template slot="SignUpOn" slot-scope="{row}">
-                            <p v-if="row.SignUpState === 99">没有报名</p>
+                            <p v-if="row.SignUpState === 999">没有报名</p>
+                            <p v-else-if="row.SignUpState === 99">已取消报名</p>
                             <p v-else>{{row.SignUpOn}}</p>
                         </template>
                         <template slot="RealName" slot-scope="{row}">
@@ -13,7 +14,8 @@
                             <p>({{row.BelongDepart ? row.BelongDepart : '未填写学院'}})</p>
                         </template>
                         <template slot="SignInOn" slot-scope="{row}">
-                            <p v-if="row.SignInState === 99">没有签到</p>
+                            <p v-if="row.SignInState === 999">没有签到</p>
+                            <p v-else-if="row.SignInState === 99">已取消签到</p>
                             <p v-else>{{row.SignInOn}}</p>
                         </template>
                         <template slot="Action" slot-scope="{row}">
@@ -484,7 +486,7 @@ export default {
             })
         },
         removeUpload (file, fileList) {
-            if (this.form.fieldAccess.Description !== 'w') {
+            if (this.form.fieldAccess.Description !== 'w' || !this.form.isMyStep) {
                 this.$Message.warning('你没有权限删除附件');
                 this.files.push(file);
                 this.files.pop();
@@ -543,13 +545,40 @@ export default {
                     }
                     msg.data.Avatar = this.form.data.Avatar || msg.data.Avatar;
 
+                    if (this.form.data.fieldAccess === 'w') {
+                        let EndDate = new Date(msg.data.EndDate);
+                        EndDate.setHours(EndDate.getHours() + 3);
+                        msg.data.EndDate = EndDate;
+                    }
+
                     this.form = msg;
                 } else {
                     this.$Message.warning(msg.msg);
                 }
             })
         },
+        validate () {
+            let errMsg = "";
+            if (this.form.fieldAccess.ActivityName === 'w' && !this.form.data.ActivityName) {
+                errMsg = "必须填写活动名称"
+            } else if (this.form.fieldAccess.Description === 'w' && !this.form.data.Description) {
+                errMsg = "必须填写活动内容"
+            } else if (this.form.fieldAccess.FaceTo === 'w' && !this.form.data.FaceTo) {
+                errMsg = "必须填写活动范围"
+            } else if (this.form.fieldAccess.ActivityType === 'w' && !this.form.data.ActivityType) {
+                errMsg = "必须填写活动类型"
+            } else if (new Date(this.form.data.StartDate) - new Date(this.form.data.EndDate) >= 0) {
+                errMsg = "活动开始时间必须早于活动结束时间"
+            }
+            return errMsg;
+        },
         submit () {
+            let err = this.validate();
+            if (err) {
+                this.$Message.warning(err);
+                return;
+            }
+
             this.form.data.instanceId = this.instanceId;
             this.form.data.stepId = this.stepId;
             this.form.shouldUpload.forEach(value => {
@@ -624,7 +653,7 @@ export default {
         },
         endDate: {
             get: function () {
-                return this.form.data.EndDate ? this.form.data.EndDate.substring(0, this.form.data.EndDate.length - 3) : '';
+                return this.form.data.EndDate ? this.dateFormat("YYYY-mm-dd HH:MM", this.form.data.EndDate) : '';
             }
         }
     }
