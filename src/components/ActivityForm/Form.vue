@@ -313,7 +313,6 @@ export default {
     data () {
         return {
             app,
-            loadingStatus: false,
             files: [],
             avatar: [],
             avatarName: '',
@@ -369,7 +368,6 @@ export default {
                 }
             ],
             stepInfo: enums.stepInfo,
-            showPicker: false,
             form: {
                 fieldAccess: {},
                 data: {},
@@ -398,6 +396,12 @@ export default {
                 }, {
                     value: '校团委审核',
                     label: '校团委审核'
+                }, {
+                    value: '完成',
+                    label: '完成'
+                }, {
+                    value: '取消',
+                    label: '取消'
                 }
             ],
             userId: "",
@@ -553,10 +557,21 @@ export default {
 
             axios.post("/api/workflow/SubmitInstance", {...this.upLoad}, msg => {
                 if (msg.success) {
-                    this.$Message.success("表单已提交");
-                    this.getData();
+                    if (this.form.allSteps[0].status === 10 && app.checkPermission("Organization.XSLHH")) {
+                        axios.post("/api/workflow/GotoStep", {instanceId: this.instanceId, stepId: this.stepId, nextStep: '完成'}, msg => {
+                            if (msg.success) {
+                                this.$Message.success("活动已建立");
+                                this.getData();
+                            } else {
+                                this.$Message.warning(msg.msg);
+                            }
+                        })
+                    } else {
+                        this.$Message.success("表单已提交");
+                        this.getData();
+                    }
                 } else {
-                     this.$Message.warning(msg.msg);
+                    this.$Message.warning(msg.msg);
                 }
             })
         },

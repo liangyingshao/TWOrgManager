@@ -21,6 +21,7 @@
                 <i-page style="margin-top: 16px;" :page-size="pager.pageSize" :total="pager.totalRow" show-sizer show-total @on-change="getUsers($event)" @on-page-size-change="getUsers(null, $event)" />
             </i-row>
         </i-card>
+        <activity-list overrideID="5dde2413-02d1-4ffd-9030-835afad93888"></activity-list>
         <i-modal :title="modalData.title" v-model="modalData.show">
             <Form ref="form" :model="modalData" :rules="rules" label-position="right" :label-width="100">
                 <FormItem label="姓名" prop="RealName">
@@ -64,10 +65,14 @@
 
 <script>
 import axios from 'axios';
+import activityList from '@/components/ActivityList/page.vue';
 const regex = require("@/regex.js");
 var _ = require("lodash");
 const md5 = require("md5");
 export default {
+    components: {
+        'activity-list': activityList
+    },
     data () {
         let THIS = this;
         return {
