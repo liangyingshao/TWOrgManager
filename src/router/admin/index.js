@@ -137,6 +137,11 @@ module.exports = {
     AdminMember: {
         path: "/manage/adminmember",
         layout: "admin",
-        component: () => import(/* webpackChunkName: "config" */"@p/Modules/OrgDetail/AdminMember")
+        component: () => import(/* webpackChunkName: "OrgManager" */"@p/Modules/OrgDetail/AdminMember")
+    },
+    AdminActivity: {
+        path: "/manage/adminactivity",
+        layout: "admin",
+        component: () => import(/* webpackChunkName: "OrgManager" */"@p/Modules/ActivityForm/ShortCut")
     }
 };

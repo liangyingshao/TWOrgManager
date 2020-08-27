@@ -1,11 +1,11 @@
 <template>
-    <div>
-        <activity-form :instanceId="instanceId" :stepId="stepId" :actID="actID"></activity-form>
+    <div id="activity-form">
+        <activity-form :instanceId="instanceId" :stepId="stepId" :detailMode="detailMode"></activity-form>
     </div>
 </template>
 
 <script>
-import activityForm from "@/components/ActivityForm/Form"
+import activityForm from "@/components/ActivityForm/Form";
 let app = require("@/config");
 export default {
     components: {
@@ -14,15 +14,13 @@ export default {
     created () {
         this.instanceId = this.$route.query.instanceId;
         this.stepId = this.$route.query.stepId;
-        this.actID = this.$route.query.actId;
         this.detailMode = Boolean(this.$route.query.detail);
     },
     data () {
         return {
             instanceId: '',
-            stepId: '',
-            actID: '',
-            detailMode: true
+            detailMode: true,
+            stepId: ''
         }
     },
     methods: {},
@@ -33,23 +31,9 @@ export default {
 </script>
 
 <style lang="less">
-.date {
-    margin-top: 16px;
-    margin-left: 518px;
-    font-size: 12px;
-    font-family: 'FangSong';
-}
-.table {
-    margin: 8px auto 15px auto;
-    border-collapse: collapse;
-    text-align: center;
-    font-family: 'FangSong';
-    font-size: 18.7px;
-    line-height: 30px;
-}
 #activity-form {
     .opinionForm .ivu-input {
-        border:1px solid #dcdee2;
+    border:1px solid #dcdee2;
     }
     .ivu-input {
         border:none
@@ -85,6 +69,14 @@ export default {
         text-align: center;
         font-size: 24px;
         font-family: '';
+    }
+    table {
+        margin: 8px auto 15px auto;
+        border-collapse: collapse;
+        text-align: center;
+        font-family: 'FangSong';
+        font-size: 18.7px;
+        line-height: 30px;
     }
     .smallhang {
         width: 101px;
