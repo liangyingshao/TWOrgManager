@@ -562,16 +562,10 @@ export default {
                     if (this.form.allSteps[0].status === 10 && app.checkPermission("Organization.XSLHH")) {
                         axios.post("/api/workflow/GotoStep", {instanceId: this.instanceId, stepId: this.stepId, nextStep: '完成'}, msg => {
                             if (msg.success) {
-                                this.$Message.success("活动已建立");
-                                this.$router.replace({
-                                    name: "ActivityForm",
-                                    query: {
-                                        instanceId: msg.instanceId,
-                                        stepId: msg.stepId,
-                                        detail: true
-                                    }
-                                })
-                                this.getData();
+                                this.$Message.success("活动已建立，三秒后关闭页面");
+                                setTimeout(function () {
+                                    window.close();
+                                }, 3000);
                             } else {
                                 this.$Message.warning(msg.msg);
                             }
