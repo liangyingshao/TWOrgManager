@@ -167,17 +167,17 @@
                                 <tr>
                                     <td class="smallhang">封面图片</td>
                                     <td class="longhang" colspan="4">
-                                        <i-upload v-if="form.fieldAccess.Avatar === 'w' && form.isMyStep" action="/api/cms/UploadFile" :default-file-list="avatar" :show-upload-list="false"
-                                        :before-upload="beforeUploadAvatar" :on-preview="previewFile" :on-remove="removeUpload" :on-success="uploadAvatarSuccess"
+                                        <i-upload v-if="form.fieldAccess.Avatar" action="/api/cms/UploadFile" :default-file-list="avatar" :show-upload-list="false"
+                                        :before-upload="beforeUploadAvatar" :on-preview="previewFile" :on-remove="removeUpload" :on-success="uploadAvatarSuccess" :disabled="form.fieldAccess.Avatar !== 'w' || !form.isMyStep"
                                         :data="{'usage': 'avatar', 'single': true, 'relateTable': 'ActivityApplication', 'id': instanceId, 'fileName': avatarName}"
                                         >
-                                            <i-button icon="ios-cloud-upload-outline" type="primary">上传封面</i-button>
+                                            <i-button icon="ios-cloud-upload-outline" type="primary" :disabled="form.fieldAccess.Avatar !== 'w' || !form.isMyStep">上传封面</i-button>
                                             <br>
                                             上传一张封面图片，推荐大小为 1080*540 。作为活动的封面图片。
                                         </i-upload>
                                         <div v-if="form.data.Avatar">
                                             <i-row>
-                                                <img :src="form.data.Avatar" />
+                                                <img :src="form.data.Avatar" style="max-width: 100%;" />
                                                 <i-button type="error" v-if="form.fieldAccess.Avatar === 'w' && form.isMyStep" @click="removeUpload(avatar[0])">删除图片</i-button>
                                             </i-row>
                                         </div>
@@ -457,7 +457,11 @@ export default {
                             id: e.ID
                         }
                     });
-                    this.avatar = msg.data;
+                    if (msg.data[0]) {
+                        this.form.data.Avatar = msg.data[0].Download;
+                    } else {
+                        this.form.data.Avatar = '';
+                    }
                 }
             });
         },
@@ -474,7 +478,12 @@ export default {
             })
         },
         removeUpload (file, fileList) {
-            debugger
+            if (this.form.fieldAccess.Description !== 'w') {
+                this.$Message.warning('你没有权限删除附件');
+                this.files.push(file);
+                this.files.pop();
+                return;
+            }
             let THIS = this;
             this.$Modal.confirm({
                 title: "确认删除文件",
@@ -506,12 +515,10 @@ export default {
         gotoNextStep () {
             axios.post("/api/workflow/GotoStep", {instanceId: this.instanceId, stepId: this.stepId, userId: this.userId, nextStep: this.nextStep}, msg => {
                 if (msg.success) {
-                    if (msg.success) {
-                    this.io = msg;
+                    this.form = msg;
                     this.$Message.success("强制执行步骤成功");
                 } else {
                     this.$Message.warning(msg.msg);
-                }
                 }
             })
         },
@@ -528,6 +535,7 @@ export default {
                     } else {
                         msg.data.ActivityType = [];
                     }
+                    msg.data.Avatar = this.form.data.Avatar || msg.data.Avatar;
 
                     this.form = msg;
                 } else {
@@ -536,12 +544,12 @@ export default {
             })
         },
         submit () {
-            this.upLoad.ActivityType = this.form.data.ActivityType.toString();
             this.form.data.instanceId = this.instanceId;
             this.form.data.stepId = this.stepId;
             this.form.shouldUpload.forEach(value => {
                 this.upLoad[value] = this.form[value] || this.form.data[value]
             });
+            this.upLoad.ActivityType = this.form.data.ActivityType.toString();
 
             axios.post("/api/workflow/SubmitInstance", {...this.upLoad}, msg => {
                 if (msg.success) {
