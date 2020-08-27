@@ -1,7 +1,7 @@
 <template>
     <i-card style="margin-top:10px" title="社团活动" :padding="24">
         <template v-slot:extra>
-            <i-row type="flex" gutter="16">
+            <i-row type="flex" :gutter="16">
                 <i-col>
                     <i-button type="primary" @click="addActivity">新建活动</i-button>
                 </i-col>
@@ -53,11 +53,13 @@ export default {
     mounted () {
         if (this.overrideID) {
             this.ID = this.overrideID;
-        }
-        axios.post("/api/security/GetOrgDetail", {}, msg => {
-            this.ID = msg.data.ID;
             this.getActivities();
-        })
+        } else {
+            axios.post("/api/security/GetOrgDetail", {}, msg => {
+                this.ID = msg.data.ID;
+                this.getActivities();
+            })
+        }
     },
     methods: {
         addActivity () {

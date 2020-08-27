@@ -191,7 +191,7 @@ export default {
                     badge: 0,
                     description: "管理本单位所属所有社团的所有活动。查看他们的报名记录和签到记录。",
                     routerTo: {
-                        name: "AdminMember",
+                        name: "AdminActivity",
                         query: {}
                     },
                     icon: "md-flag"
