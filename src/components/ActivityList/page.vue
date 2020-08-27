@@ -1,7 +1,14 @@
 <template>
     <i-card style="margin-top:10px" title="社团活动" :padding="24">
         <template v-slot:extra>
-            <i-input search placeholder="搜索活动名称" @on-search="searchActivity" />
+            <i-row type="flex" :gutter="16">
+                <i-col>
+                    <i-button type="primary" @click="addActivity">新建活动</i-button>
+                </i-col>
+                <i-col>
+                    <i-input search placeholder="搜索活动名称" v-model="activityName" @on-search="getActivities()" />
+                </i-col>
+            </i-row>
         </template>
         <i-row>
             <i-table stripe  :columns="tableColumns.activity" :data="activityData" :loading="tableLoading">
@@ -24,8 +31,14 @@
 import axios from 'axios';
 import tableColumns from '../../pages/Modules/ManageIndex/tableColumns';
 export default {
+    props: {
+        overrideID: {
+            type: String
+        }
+    },
     data () {
         return {
+            activityName: '',
             tableLoading: false,
             tableColumns,
             activityData: [],
@@ -38,13 +51,27 @@ export default {
         }
     },
     mounted () {
-        axios.post("/api/security/GetOrgDetail", {}, msg => {
-            this.ID = msg.data.ID;
+        if (this.overrideID) {
+            this.ID = this.overrideID;
             this.getActivities();
-        })
+        } else {
+            axios.post("/api/security/GetOrgDetail", {}, msg => {
+                this.ID = msg.data.ID;
+                this.getActivities();
+            })
+        }
     },
     methods: {
-        searchActivity (value) {
+        addActivity () {
+            axios.post("/api/org/Applicate", {id: this.ID}, msg => {
+                if (msg.success) {
+                   window.open("/manage/org/activityform?instanceId=" + msg.instanceId + '&stepId=' + msg.stepId);
+                } else {
+                    this.$Message.warning(msg.msg);
+                }
+            })
+        },
+        /* searchActivity (value) {
             if (!value) {
                 this.getActivities();
                 return;
@@ -69,7 +96,7 @@ export default {
                     // this.activitySearched = this.activityData.filter(e => e.ActivityName.indexOf(value) > -1);
                 }
             });
-        },
+        }, */
         checkWorkflow (instanceId, stepId, actId) {
             window.open(`/manage/org/signUpSituation?instanceId=${instanceId}&stepId=${stepId}&detail=true&actId=${actId}`);
         },
@@ -90,19 +117,10 @@ export default {
         getActivities (targetPage, targetPageSize) {
             let page = targetPage || this.pager.page;
             let pageSize = targetPageSize || this.pager.pageSize;
-            axios.post("/api/org/GetActByDepartId", {Id: this.ID, page, pageSize}, msg => {
+            this.tableLoading = true;
+            axios.post("/api/org/GetActByDepartId", {Id: this.ID, page, pageSize, name: this.activityName}, msg => {
+                this.tableLoading = false;
                 if (msg.success) {
-                    for (let i = 0; i < msg.data.length; i++) {
-                        if (msg.data[i].ActivityType !== "") {
-                            msg.data[i].ActivityType = msg.data[i].ActivityType.replace(/[[\]"]/g, "").replace(/,/g, "，");
-                            let reg1 = new RegExp('[r|n| ]', "g");
-                            msg.data[i].ActivityType = msg.data[i].ActivityType.replace(reg1, '');
-                            let reg2 = new RegExp(/\\/g, "g");
-                            msg.data[i].ActivityType = msg.data[i].ActivityType.replace(reg2, '');
-                        } else {
-                            msg.data[i].ActivityType = "";
-                        }
-                    }
                     this.activityData = msg.data;
                     this.pager.totalRow = msg.totalRow;
                     // this.entryForManager.activity.badge = msg.data.filter(e => e.ApplicateState === 3).length;

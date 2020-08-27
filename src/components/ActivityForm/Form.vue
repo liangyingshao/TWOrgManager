@@ -71,10 +71,10 @@
                                 <tr>
                                     <td class="smallhang">活动时间</td>
                                     <td colspan="4" width="200" class="longhang wen-zi-ju-zhong" style="letter-spacing: 2px;">
-                                        <i-date-picker type="date" format="yyyy年MM月dd日" v-if="form.fieldAccess.StartDate === 'w' && form.isMyStep" v-model="form.data.StartDate"/>
+                                        <i-date-picker type="datetime" format="yyyy-MM-dd HH:mm" v-if="form.fieldAccess.StartDate === 'w' && form.isMyStep" v-model="form.data.StartDate"/>
                                         <span v-else>{{startDate}}</span>
                                         至
-                                        <i-date-picker type="date" format="yyyy年MM月dd日" v-if="form.fieldAccess.EndDate === 'w' && form.isMyStep" v-model="form.data.EndDate"/>
+                                        <i-date-picker type="datetime" format="yyyy-MM-dd HH:mm" v-if="form.fieldAccess.EndDate === 'w' && form.isMyStep" v-model="form.data.EndDate"/>
                                          <span v-else>{{endDate}}</span>
                                     </td>
                                 </tr>
@@ -304,7 +304,9 @@ export default {
         },
         detailMode: {
             type: Boolean,
-            default: true
+            default: function () {
+                return true;
+            }
         },
         actID: {
             type: String
@@ -313,7 +315,6 @@ export default {
     data () {
         return {
             app,
-            loadingStatus: false,
             files: [],
             avatar: [],
             avatarName: '',
@@ -369,7 +370,6 @@ export default {
                 }
             ],
             stepInfo: enums.stepInfo,
-            showPicker: false,
             form: {
                 fieldAccess: {},
                 data: {},
@@ -398,6 +398,12 @@ export default {
                 }, {
                     value: '校团委审核',
                     label: '校团委审核'
+                }, {
+                    value: '完成',
+                    label: '完成'
+                }, {
+                    value: '取消',
+                    label: '取消'
                 }
             ],
             userId: "",
@@ -553,10 +559,29 @@ export default {
 
             axios.post("/api/workflow/SubmitInstance", {...this.upLoad}, msg => {
                 if (msg.success) {
-                    this.$Message.success("表单已提交");
-                    this.getData();
+                    if (this.form.allSteps[0].status === 10 && app.checkPermission("Organization.XSLHH")) {
+                        axios.post("/api/workflow/GotoStep", {instanceId: this.instanceId, stepId: this.stepId, nextStep: '完成'}, msg => {
+                            if (msg.success) {
+                                this.$Message.success("活动已建立");
+                                this.$router.replace({
+                                    name: "ActivityForm",
+                                    query: {
+                                        instanceId: msg.instanceId,
+                                        stepId: msg.stepId,
+                                        detail: true
+                                    }
+                                })
+                                this.getData();
+                            } else {
+                                this.$Message.warning(msg.msg);
+                            }
+                        })
+                    } else {
+                        this.$Message.success("表单已提交");
+                        this.getData();
+                    }
                 } else {
-                     this.$Message.warning(msg.msg);
+                    this.$Message.warning(msg.msg);
                 }
             })
         },
