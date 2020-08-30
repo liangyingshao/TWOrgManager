@@ -427,12 +427,12 @@
                             <template slot="Action" slot-scope="{row}">
                                 <i-button @click="modifyMember(row)" v-if="app.checkPermission('Security.CheckDepartUser')">{{app.checkPermission('Security.EditDepartUser') ? '修改' : '查看'}}</i-button>
                                 <i-tooltip :disabled="!row.isAdmin" content="不能删除管理员" placement="top">
-                                    <i-button :disabled="app.checkPermission('Security.RemoveDepartUser')" @click="delMember(row)" v-if="(2*orgInfo.Type+level>=3)">删除</i-button>
+                                    <i-button :disabled="!app.checkPermission('Security.RemoveDepartUser') || row.isAdmin" @click="delMember(row)" v-if="(2*orgInfo.Type+level>=3)">删除</i-button>
                                 </i-tooltip>
-                                <i-button v-if="(app.checkPermission('Security.SetDepartAdmin'))&&(!row.isAdmin)" @click="setPositon(row.ID,'管理员')">设置管理员</i-button>
+                                <i-button v-if="app.checkPermission('Security.SetDepartAdmin') && !row.isAdmin" @click="setPositon(row.ID,'管理员')">设置管理员</i-button>
                                 <i-poptip transfer v-model="visible" v-if="row.isAdmin">
-                                    <i-button v-if="(app.checkPermission('Security.SetDepartAdmin'))&&row.isAdmin">设置密码</i-button>
-                                    <i-row slot="title">您正在更改社团管理员密码</i-row>
+                                    <i-button v-if="app.checkPermission('Security.EditDepartUser')">设置密码</i-button>
+                                    <i-row slot="title">您正在更改社团成员密码</i-row>
                                     <i-form  :model="password" slot="content" label-position="top" :rules="pwdRule">
                                         <i-form-item label="新密码" prop="password">
                                             <i-input v-model="password.password" size="small" type="password"/>
@@ -589,7 +589,7 @@ export default {
                     form.submit(this.newDptId || this.orgInfo.ID, (res, msg) => {
                         this.modalLoading = false;
                         if (res) {
-                            this.callbackFunc(msg);
+                            this.callbackFunc();
                             this.modalShow = false;
                         }
                     });
@@ -961,7 +961,7 @@ export default {
         setPassword (row) {
             axios.post("/api/security/SetPassword", {userId: row.ID, departId: this.orgInfo.ID, password: md5(this.password.password)}, msg => {
                 this.getMemberTable();
-                this.$Message.info('修改成功');
+                this.$Message.success('修改成功');
             })
             this.visible = false;
         },

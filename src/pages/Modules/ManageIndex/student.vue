@@ -1,7 +1,7 @@
 <template>
     <i-row type="flex" :gutter="24">
         <i-col span="15">
-            <i-card title="报名社团" v-if="myOrgs.length < 1">
+            <i-card title="报名社团" v-if="myOrgs.length < 2 && canSignUpOrg">
                 <template v-slot:extra>
                     <i-input search placeholder="搜索社团名称" @on-search="searchOrg" />
                 </template>
@@ -245,7 +245,8 @@ export default {
             allOrgs: [],
             allOrgsSearched: [],
             activityDetail: {},
-            signUpState: {}
+            signUpState: {},
+            canSignUpOrg: false
         };
     },
     mounted () {
@@ -253,8 +254,14 @@ export default {
         this.getDashBoard();
         this.judgeTime();
         this.getAllDeparts();
+        this.getSignUpState();
     },
     methods: {
+        getSignUpState () {
+            axios.post("/api/config/GetSignUpState", {}, msg => {
+                this.canSignUpOrg = msg.value;
+            })
+        },
         getDashBoard () {
             axios.post("/api/org/StudentDashboard", {}, msg => {
                 this.myOrgs = msg.departs;
