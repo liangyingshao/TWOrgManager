@@ -3,7 +3,7 @@
 		<view class="head border" :style="{'background-image': 'url('+userInfo.Avatar+')'}"></view>
 		<view class="info-bar">
 			<view class="cf text-xxl">
-				<navigator class="fr cuIcon-settings text-white justify-end padding-lr padding-top" url="../userInfo/userInfo"></navigator>
+				<navigator class="fr cuIcon-settings text-white justify-end padding-lr padding-top" url="userInfo"></navigator>
 			</view>
 			<view class="flex justify-center">
 				<view class="basis-xs"></view>
