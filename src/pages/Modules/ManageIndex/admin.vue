@@ -60,7 +60,7 @@
                         </i-col>
                         <i-col>
                             <div style="font-size: 18px; color: #17233d;">{{time}}好! {{userInfo.realName}}</div>
-                            <a @click="navTo">{{orgInfo.Name}}的管理员</a>
+                            <a @click="navTo">学生社团管理部的管理员</a>
                         </i-col>
                         <i-col offset="2">
                             <i-button @click="setSignUpState(!canSignUpOrg)">{{canSignUpOrg ? '禁止' : '允许'}}报名社团</i-button>
