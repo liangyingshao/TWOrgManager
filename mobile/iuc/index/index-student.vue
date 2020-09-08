@@ -1,16 +1,15 @@
 <template>
 	<div>
 		<view class="bg-blue">
-			<view class="flex padding" @click="navTo('../profile/profile')">
+			<view class="flex padding align-center" @click="navTo('../profile/profile')">
 				<view class="margin-right-lg">
 					<image class="cu-avatar round xl center" :src="userInfo.avatar"/>
 				</view>
 				<view>
-					<view class="">
-						<text class="text-xxl block margin-bottom-xs">{{userInfo.realName}}</text>
-						<text>学号：{{userInfo.userCode}}</text>
-					</view>
+					<text class="text-xxl block margin-bottom-xs">{{userInfo.realName}}</text>
+					<text>学号：{{userInfo.userCode}}</text>
 				</view>
+				<view class="margin-left-xl">个人中心&nbsp;></view>
 			</view>
 		</view>
 		<view class="cu-bar bg-white solid-bottom margin-top solid-bottom">
@@ -18,8 +17,11 @@
 				<text class="cuIcon-titles text-blue"></text> 我的社团
 				<text class="margin-left">我申请的社团：{{applications.length}}个</text>
 			</view>
-			<view class="action" @click="navTo('../orgmanagement/orgList')">
+			<view v-if="canSignUpOrg" class="action" @click="navTo('../orgmanagement/orgList')">
 				<view class="text-blue">[报名参加]</view>
+			</view>
+			<view v-else class="action">
+				<view class="text-gray">[未到报名时间]</view>
 			</view>
 		</view>
 		<view class="cu-card no-card">
@@ -90,6 +92,9 @@
 						this.myOrgs = msg.departs;
 					}
 				})
+				uni.post("/api/config/GetSignUpState", {}, msg => {
+					this.canSignUpOrg = msg.value;
+				})
 			},
 			getActivities() {
 				uni.post("/api/org/GetStartedApplications", {}, msg => {
@@ -128,6 +133,7 @@
 			// 1. 在可以申请加入社团的时候，第一个按钮显示：“查找社团”
 			// 2. 如果用户已经加入了两个社团，显示：“我的社团”
 			return {
+				canSignUpOrg: false,
 				firtstButtonText: "我的社团",
 				searchText: "搜索活动",
 				showTab: "applicate", // "my-orgs"
@@ -142,7 +148,7 @@
 	}
 </script>
 
-<style lang="less">
+<style scoped>
 	.none {
 		width: 100%;
 	}
