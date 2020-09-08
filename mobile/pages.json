@@ -80,6 +80,10 @@
 			"style": {}
 		},
 		{
+			"path": "iuc/profile/userInfo",
+			"style": {}
+		},
+		{
 			"path": "iuc/profile/user-detail",
 			"style": {}
 		},

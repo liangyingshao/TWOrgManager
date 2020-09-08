@@ -12,7 +12,7 @@
 				PC版需要一样处理。
 			-->
 			<view class="cu-item arrow" v-for="role in availableRoles" :key="role.departId">
-				<view class="content" @click="choosePosition(role.departId)">
+				<view class="content" @click="choosePosition(role)">
 					<text class="cuIcon-circlefill text-grey"></text>
 					<text class="text-grey">{{role.departName}}{{role.position}}</text>
 				</view>
@@ -33,16 +33,16 @@
 			this.getAvailablePositon();
 		},
 		methods: {
-			choosePosition(departId) {
-				uni.chosePostion(departId);
-				uni.switchDashboard(app.checkPermission);
+			choosePosition(role) {
+				uni.chosePostion(role);
+				uni.switchDashboard(role);
 			},
 			getAvailablePositon() {
 				uni.post("/api/security/GetMyPositions", {}, msg => {
 					if(msg.success){
 						this.availableRoles = msg.data;
 						if(this.availableRoles.length === 1) {
-							this.choosePosition(this.availableRoles[0].departId);
+							this.choosePosition(this.availableRoles[0]);
 						}
 					}
 				})
