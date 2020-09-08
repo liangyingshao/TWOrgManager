@@ -103,7 +103,7 @@
 						if(new Date() > endDate){
 							this.actInfo.isSignUping = "已结束";
 						} else if(new Date() > startDate){
-							this.actInfo.isSignUping = "活动阶段";
+							this.actInfo.isSignUping = "签到阶段";
 						} else {
 							this.actInfo.isSignUping = "报名阶段";
 						}
