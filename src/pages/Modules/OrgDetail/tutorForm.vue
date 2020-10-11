@@ -2,11 +2,11 @@
     <i-row>
         <i-col style="padding: 0px 10%">
             <i-form :model="modalData.user" ref="Form" :rules="ruleForMem">
-                <i-form-item label="姓名" prop="RealName">
-                    <i-input v-model="modalData.user.RealName" />
-                </i-form-item>
                 <i-form-item label="工号" prop="Code">
                     <i-input v-model="modalData.user.Code" />
+                </i-form-item>
+                <i-form-item label="姓名" prop="RealName">
+                    <i-input v-model="modalData.user.RealName" />
                 </i-form-item>
                 <i-form-item label="手机" prop="Mobile">
                     <i-input v-model="modalData.user.Mobile" />
@@ -55,17 +55,16 @@
                 <i-checkbox v-model="canClose">我已复制并保存好该密码</i-checkbox>
             </div>
             <div slot="footer">
-                <Button type="primary" :disabled="!canClose" long @click="showModal=false">Delete</Button>
+                <Button type="primary" :disabled="!canClose" long @click="showModal=false">确定</Button>
             </div>
         </i-modal>
     </i-row>
 </template>
 
 <script>
-    let _ = require("lodash");
     const md5 = require("md5");
     const axios = require("axios");
-    const regex = require("@/regex.js");
+    // const regex = require("@/regex.js");
     export default {
         props: {
             modalData: {
@@ -74,7 +73,6 @@
             }
         },
         data () {
-            let THIS = this;
             return {
                 showLog: false,
                 showModal: false,
@@ -93,20 +91,10 @@
                             message: "必须填写工号",
                             trigger: "blur"
                         }
-                    ],
-                    "Mobile": [
-                        {type: "string", required: true, pattern: regex.mobile, message: "手机格式不正确", trigger: "blur"},
-                        _.debounce(function (rule, value, cb) {
-                            let userId = THIS.modalData.user.ID;
-                            axios.post("/api/security/MobileValidate", { userId, mobile: value }, msg => {
-                                if (msg.success) {
-                                    cb();
-                                } else {
-                                    cb(msg.remote);
-                                }
-                            })
-                        }, 500)
                     ]
+                    // "Mobile": [
+                    //     {type: "string", required: true, pattern: regex.mobile, message: "手机格式不正确", trigger: "blur"}
+                    // ]
                 },
                 pwd: ''
             }
@@ -134,13 +122,14 @@
                         ...this.modalData.user,
                         departId,
                         position: "指导老师",
+                        Email: this.modalData.user.Code,
                         UserName: this.modalData.user.Code,
                         UserPassword: this.modalData.user.ID ? undefined : md5(this.pwd)
                     }, msg => {
                         if (msg.success) {
                             callback(TRUE);
                             if (!this.modalData.user.ID) {
-                                this.showModal = true;
+                                this.showModal = false;
                                 this.resetFields();
                             }
                         } else {

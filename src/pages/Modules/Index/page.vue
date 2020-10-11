@@ -30,10 +30,8 @@
                     </i-row>
                     <i-row type="flex" style="flex-direction: column;">
                         <i-button @click="login()" :loading='isloading' size="large">直接登录</i-button>
-                        <Dropdown style="margin-top: 16px">
-                            <i-button type="primary" long size="large">用厦大账号登录
-                                <Icon type="ios-arrow-down"/>
-                            </i-button>
+                        <i-button @click="toXmuLogin()" type="primary" long size="large"  style="margin-top: 16px">用厦大账号登录</i-button>
+                        <!-- <Dropdown style="margin-top: 16px">
                             <DropdownMenu slot="list">
                                 <DropdownItem @click.native="login('15102242660', '88888888')">学生</DropdownItem>
                                 <DropdownItem @click.native="login('24320172203215', '7VJk86Bb')">社团</DropdownItem>
@@ -42,7 +40,7 @@
                                 <DropdownItem @click.native="login('15102246798', '123456')">社团管理部</DropdownItem>
                                 <DropdownItem @click.native="login('admin', '88888888')">团委</DropdownItem>
                             </DropdownMenu>
-                        </Dropdown>
+                        </Dropdown> -->
                     </i-row>
                 </i-card>
             </i-col>
@@ -90,6 +88,9 @@ export default {
         }
     },
     methods: {
+        toXmuLogin () {
+            location.href = "http://ids.xmu.edu.cn/authserver/login?service=http://xsst.xmu.edu.cn/api/ecard";
+        },
         getAvailablePositon () {
             axios.post("/api/security/GetMyPositions", {}, msg => {
                 if (msg.success) {

@@ -197,7 +197,7 @@ export default {
                 upload: {
                     title: "上传社团列表",
                     badge: 0,
-                    description: "填写模板EXCEL（做一个链接，先放空）后上传，可以同步系统中的社团信息。",
+                    description: "填写模板EXCEL后上传，可以同步系统中的社团信息。",
                     routerTo: {
                         name: "UploadOrgList",
                         query: {}

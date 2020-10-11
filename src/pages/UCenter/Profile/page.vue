@@ -116,6 +116,7 @@
                                 single
                                 relate-table="Users"
                                 v-model="model.avatar"
+                                action="/api/security/uploadAvatar"
                                 />
                             </i-col>
                             </i-row>
