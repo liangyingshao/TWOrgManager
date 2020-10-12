@@ -2,7 +2,7 @@
     <card title="个人信息">
         <i-row>
             <i-col span="12">
-                <i-form ref="user-form" label-position="top" :model="model" :rules="rules">
+                <i-form ref="user-form" label-position="top" :model="model" :rules="ruleForMem">
                     <i-row type="flex" justify="space-between">
                         <i-col span="11">
                             <i-form-item label="姓名" prop="RealName">
@@ -29,7 +29,7 @@
                         </i-col>
                         <i-col span="11">
                             <i-form-item label="学院" prop="BelongDepart">
-                                <i-input :value="model.BelongDepart" />
+                                <i-input v-model="model.BelongDepart" />
                             </i-form-item>
                         </i-col>
                     </i-row>
@@ -54,7 +54,7 @@
                     <i-row type="flex" justify="space-between">
                         <i-col span="11">
                             <i-form-item label="政治面貌" prop="PoliticalStatus">
-                                <dic-select dic="政治面貌" v-model="model.PoliticalStatus"/>
+                                <i-input v-model="model.PoliticalStatus"/>
                             </i-form-item>
                         </i-col>
                         <i-col span="11">
@@ -87,13 +87,13 @@
                             </i-form-item>
                         </i-col>
                     </i-row>
-                    <i-row type="flex" justify="space-between">
+                    <!--i-row type="flex" justify="space-between">
                         <i-col span="11">
                             <i-form-item label="所属部门" prop="BelongDepart">
                                 <i-input v-model="model.BelongDepart" />
                             </i-form-item>
                         </i-col>
-                        <!--i-col span="11">
+                        <i-col span="11">
                             <i-form-item label="指导老师类别" prop="GuideTeacherType">
                                 <template slot="label">
                                 <Tooltip placement="right" content="上级部门才有权限修改该字段">
@@ -103,8 +103,8 @@
                                 </template>
                                 <i-input disabled v-model="model.GuideTeacherType" />
                             </i-form-item>
-                        </i-col-->
-                    </i-row>
+                        </i-col>
+                    </i-row-->
                     <i-row type="flex" justify="space-between">
                         <i-form-item label="头像" prop="avatar">
                             <i-row>
@@ -178,58 +178,164 @@ export default {
                 avatar: ""
             },
             orgInfo: {},
-            rules: {
-                Mobile: [
-                    {
-                        required: true,
-                        message: "必须输入手机号",
-                        trigger: "blur"
-                    },
-                    {
-                        type: "string",
-                        pattern: regex.mobile,
-                        message: "手机格式不正确",
-                        trigger: "blur"
-                    },
-                    _.debounce(function (rule, value, cb, source, options) {
-                        axios.post(
-                        "/api/security/MobileValidate",
-                        { mobile: value },
-                        (msg) => {
-                            if (msg.success) {
-                            cb();
-                            } else {
-                            cb(msg.remote);
-                            }
+            ruleForMem: {
+                    RealName: [
+                        {
+                            required: true,
+                            message: "必须填写姓名",
+                            trigger: "blur"
                         }
-                        );
-                    }, 500)
-                ],
-                Email: [
-                    {
-                        required: true,
-                        message: "必须输入电子邮箱",
-                        trigger: "blur"
-                    },
-                    {
-                        type: "string",
-                        pattern: regex.email,
-                        message: "电子邮箱格式不正确",
-                        trigger: "blur"
-                    },
-                    _.debounce((rule, value, cb, source, options) => {
-                        axios.post("/api/security/EmailValidate", { email: value }, msg => {
-                            if (msg.success) {
+                    ],
+                    Code: [
+                        {
+                            required: true,
+                            message: "必须填写学号",
+                            trigger: "blur"
+                        }
+                    ],
+                    BelongDepart: [
+                        {
+                            required: true,
+                            message: "必须填写学院",
+                            trigger: "blur"
+                        }
+                    ],
+                    PoliticalStatus: [
+                        {
+                            required: true,
+                            message: "必须填写政治面貌",
+                            trigger: "blur"
+                        }
+                    ],
+                    Educational: [
+                        {
+                            required: true,
+                            message: "必须填写学历",
+                            trigger: "blur"
+                        }
+                    ],
+                    Specialty: [
+                        {
+                            required: true,
+                            message: "必须填写专业",
+                            trigger: "blur"
+                        }
+                    ],
+                    BirthPlace: [
+                        {
+                            required: true,
+                            message: "必须填写民族",
+                            trigger: "blur"
+                        }
+                    ],
+                    Source: [
+                        {
+                            required: true,
+                            message: "必须填写生源地",
+                            trigger: "blur"
+                        }
+                    ],
+                    Mobile: [
+                        {
+                            required: true,
+                            message: "必须输入手机号",
+                            trigger: "blur"
+                        },
+                        {
+                            type: "string",
+                            pattern: regex.mobile,
+                            message: "手机格式不正确",
+                            trigger: "blur"
+                        },
+                        _.debounce(function (rule, value, cb, source, options) {
+                            axios.post(
+                            "/api/security/MobileValidate",
+                            { mobile: value },
+                            (msg) => {
+                                if (msg.success) {
                                 cb();
-                            } else {
+                                } else {
                                 cb(msg.remote);
+                                }
                             }
-                        });
-                    }, 500)
-                ],
-                RealName: { required: true, message: "必须输入姓名", trigger: "blur" },
-                avatar: { required: true, message: "必须上传图片", trigger: "blur" }
-            }
+                            );
+                        }, 500)
+                    ],
+                    Email: [
+                        {
+                            required: true,
+                            message: "必须输入电子邮箱",
+                            trigger: "blur"
+                        },
+                        {
+                            type: "string",
+                            pattern: regex.email,
+                            message: "电子邮箱格式不正确",
+                            trigger: "blur"
+                        },
+                        _.debounce((rule, value, cb, source, options) => {
+                            axios.post("/api/security/EmailValidate", { email: value }, msg => {
+                                if (msg.success) {
+                                    cb();
+                                } else {
+                                    cb(msg.remote);
+                                }
+                            });
+                        }, 500)
+                    ]
+                }
+            // rules: {
+            //     Mobile: [
+            //         {
+            //             required: true,
+            //             message: "必须输入手机号",
+            //             trigger: "blur"
+            //         },
+            //         {
+            //             type: "string",
+            //             pattern: regex.mobile,
+            //             message: "手机格式不正确",
+            //             trigger: "blur"
+            //         },
+            //         _.debounce(function (rule, value, cb, source, options) {
+            //             axios.post(
+            //             "/api/security/MobileValidate",
+            //             { mobile: value },
+            //             (msg) => {
+            //                 if (msg.success) {
+            //                 cb();
+            //                 } else {
+            //                 cb(msg.remote);
+            //                 }
+            //             }
+            //             );
+            //         }, 500)
+            //     ],
+            //     Email: [
+            //         {
+            //             required: true,
+            //             message: "必须输入电子邮箱",
+            //             trigger: "blur"
+            //         },
+            //         {
+            //             type: "string",
+            //             pattern: regex.email,
+            //             message: "电子邮箱格式不正确",
+            //             trigger: "blur"
+            //         },
+            //         _.debounce((rule, value, cb, source, options) => {
+            //             axios.post("/api/security/EmailValidate", { email: value }, msg => {
+            //                 if (msg.success) {
+            //                     cb();
+            //                 } else {
+            //                     cb(msg.remote);
+            //                 }
+            //             });
+            //         }, 500)
+            //     ],
+            //     RealName: { required: true, message: "必须输入姓名", trigger: "blur" },
+            //     avatar: { required: true, message: "必须上传图片", trigger: "blur" }
+            // }
         };
     },
     mounted () {
