@@ -587,7 +587,7 @@ export default {
             });
             this.upLoad.ActivityType = this.form.data.ActivityType.toString();
 
-            axios.post("/api/workflow/SubmitInstance", {...this.upLoad}, msg => {
+            axios.postStream("/api/workflow/SubmitInstance", {...this.upLoad}, msg => {
                 if (msg.success) {
                     if (this.form.allSteps[0].status === 10 && app.checkPermission("Organization.XSLHH")) {
                         axios.post("/api/workflow/GotoStep", {instanceId: this.instanceId, stepId: this.stepId, nextStep: '完成'}, msg => {
