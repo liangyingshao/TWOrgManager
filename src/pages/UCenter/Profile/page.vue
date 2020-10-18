@@ -24,7 +24,7 @@
                     <i-row type="flex" justify="space-between">
                         <i-col span="11">
                             <i-form-item label="学历" prop="Educational">
-                                <i-input v-model="model.Educational" />
+                                <dic-select dic="学历" v-model="model.Educational"/>
                             </i-form-item>
                         </i-col>
                         <i-col span="11">
@@ -54,7 +54,7 @@
                     <i-row type="flex" justify="space-between">
                         <i-col span="11">
                             <i-form-item label="政治面貌" prop="PoliticalStatus">
-                                <i-input v-model="model.PoliticalStatus"/>
+                                <dic-select dic="政治面貌" v-model="model.PoliticalStatus"/>
                             </i-form-item>
                         </i-col>
                         <i-col span="11">
