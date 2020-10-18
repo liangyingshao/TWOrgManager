@@ -29,7 +29,7 @@
                         </i-col>
                         <i-col span="11">
                             <i-form-item label="学院" prop="BelongDepart">
-                                <i-input v-model="model.BelongDepart" />
+                                <dic-select dic="学院" v-model="model.BelongDepart" />
                             </i-form-item>
                         </i-col>
                     </i-row>
@@ -82,29 +82,27 @@
                             </i-form-item>
                         </i-col>
                         <i-col span="11">
-                            <i-form-item label="生源地" prop="Source">
+                            <i-form-item label="籍贯" prop="Source">
                                 <i-input v-model="model.Source" />
                             </i-form-item>
                         </i-col>
                     </i-row>
-                    <!--i-row type="flex" justify="space-between">
+                    <i-row type="flex" justify="space-between">
                         <i-col span="11">
-                            <i-form-item label="所属部门" prop="BelongDepart">
-                                <i-input v-model="model.BelongDepart" />
+                            <i-form-item label="所属校区" prop="Campus">
+                                <dic-select dic="校区" v-model="model.Campus" />
                             </i-form-item>
                         </i-col>
                         <i-col span="11">
-                            <i-form-item label="指导老师类别" prop="GuideTeacherType">
-                                <template slot="label">
-                                <Tooltip placement="right" content="上级部门才有权限修改该字段">
-                                    指导老师类别
-                                    <i-icon type="md-information-circle" color="#2db7f5" />
-                                </Tooltip>
-                                </template>
-                                <i-input disabled v-model="model.GuideTeacherType" />
+                            <i-form-item label="性别" prop="Gender">
+                                <i-select v-model="model.Gender">
+                                    <i-option value="男" key="男">男</i-option>
+                                    <i-option value="女" key="女">女</i-option>
+                                    <!--i-option value="未知" key="未知">未知</i-option-->
+                                </i-select>
                             </i-form-item>
                         </i-col>
-                    </i-row-->
+                    </i-row>
                     <i-row type="flex" justify="space-between">
                         <i-form-item label="头像" prop="avatar">
                             <i-row>
@@ -228,10 +226,24 @@ export default {
                             trigger: "blur"
                         }
                     ],
+                    Campus: [
+                        {
+                            required: true,
+                            message: "必须填写校区",
+                            trigger: "blur"
+                        }
+                    ],
+                    Gender: [
+                        {
+                            required: true,
+                            message: "必须填写性别",
+                            trigger: "blur"
+                        }
+                    ],
                     Source: [
                         {
                             required: true,
-                            message: "必须填写生源地",
+                            message: "必须填写籍贯",
                             trigger: "blur"
                         }
                     ],
