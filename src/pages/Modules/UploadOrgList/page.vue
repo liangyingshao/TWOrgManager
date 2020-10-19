@@ -27,7 +27,7 @@
                 </i-col>
                 <i-col span="5" offset="2">
                     <Steps :current="currentStep" direction="vertical">
-                        <Step title="导入Excel" content="选择本地Excel文件，也可以[下载模板]"></Step>
+                        <Step title="导入Excel" content="选择本地Excel文件"></Step>
                         <Step title="上传社团信息" content="将社团信息上传至服务器，需要花费一些时间"></Step>
                     </Steps>
                 </i-col>

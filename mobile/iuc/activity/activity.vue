@@ -9,6 +9,7 @@
 					<view class="action">
 						<text class="cuIcon-title text-green"></text>
 						<text class="text-xl text-bold">活动基本信息</text>
+						<text>（PC版可以进行更多操作）</text>
 					</view>
 				</view>
 				<view class="cu-form-group">

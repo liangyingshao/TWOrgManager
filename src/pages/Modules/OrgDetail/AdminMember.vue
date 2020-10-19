@@ -15,7 +15,7 @@
                 <i-table :columns="columns" :data="users" :loading="tableLoading">
                     <template v-slot:Action="data">
                         <i-button @click="modifyUser(data.row)">修改</i-button>
-                        <i-button type="error" @click="deleteUser(data.row)">删除</i-button>
+                        <i-button type="error" @click="deleteUser(data.row)">取消权限</i-button>
                     </template>
                 </i-table>
                 <i-page style="margin-top: 16px;" :page-size="pager.pageSize" :total="pager.totalRow" show-sizer show-total @on-change="getUsers($event)" @on-page-size-change="getUsers(null, $event)" />
@@ -65,11 +65,11 @@
 <script>
 import axios from 'axios';
 const regex = require("@/regex.js");
-var _ = require("lodash");
+// var _ = require("lodash");
 const md5 = require("md5");
 export default {
     data () {
-        let THIS = this;
+        // let THIS = this;
         return {
             showModal: false,
             tableLoading: false,
@@ -113,44 +113,14 @@ export default {
             rules: {
                "Mobile": [
                    {required: true, message: "必须输入手机号", trigger: "blur"},
-                   {type: "string", pattern: regex.mobile, message: "手机格式不正确", trigger: "blur"},
-                   _.debounce(function (rule, value, cb, source, options) {
-                       let userId = THIS.modalData.ID;
-                       axios.post("/api/security/MobileValidate", { userId, mobile: value }, msg => {
-                           if (msg.success) {
-                               cb();
-                           } else {
-                               cb(msg.remote);
-                           }
-                       })
-                   }, 500)
+                   {type: "string", pattern: regex.mobile, message: "手机格式不正确", trigger: "blur"}
                ],
                "Email": [
                    {required: true, message: "必须输入电子邮箱", trigger: "blur"},
-                   {type: "string", pattern: regex.email, message: "电子邮箱格式不正确", trigger: "blur"},
-                   _.debounce((rule, value, cb, source, options) => {
-                       let userId = THIS.modalData.ID;
-                       axios.post("/api/security/EmailValidate", { userId, email: value }, msg => {
-                           if (msg.success) {
-                               cb();
-                           } else {
-                               cb(msg.remote);
-                           }
-                       })
-                   }, 500)
+                   {type: "string", pattern: regex.email, message: "电子邮箱格式不正确", trigger: "blur"}
                ],
                "Code": [
-                   {required: true, message: "必须输入学/工号", trigger: "blur"},
-                   _.debounce(function (rule, value, cb, source, options) {
-                       let userId = THIS.modalData.ID;
-                       axios.post("/api/security/CodeValidate", { userId, code: value }, msg => {
-                           if (msg.success) {
-                               cb();
-                           } else {
-                               cb(msg.remote);
-                           }
-                       })
-                   }, 500)
+                   {required: true, message: "必须输入学/工号", trigger: "blur"}
                ],
                "RealName": {required: true, message: "必须输入姓名", trigger: "blur"}
             }

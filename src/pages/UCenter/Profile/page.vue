@@ -2,7 +2,7 @@
     <card title="个人信息">
         <i-row>
             <i-col span="12">
-                <i-form ref="user-form" label-position="top" :model="model" :rules="rules">
+                <i-form ref="user-form" label-position="top" :model="model" :rules="ruleForMem">
                     <i-row type="flex" justify="space-between">
                         <i-col span="11">
                             <i-form-item label="姓名" prop="RealName">
@@ -24,12 +24,12 @@
                     <i-row type="flex" justify="space-between">
                         <i-col span="11">
                             <i-form-item label="学历" prop="Educational">
-                                <i-input v-model="model.Educational" />
+                                <dic-select dic="学历" v-model="model.Educational"/>
                             </i-form-item>
                         </i-col>
                         <i-col span="11">
                             <i-form-item label="学院" prop="BelongDepart">
-                                <i-input :value="model.BelongDepart" />
+                                <dic-select dic="学院" v-model="model.BelongDepart" />
                             </i-form-item>
                         </i-col>
                     </i-row>
@@ -82,28 +82,26 @@
                             </i-form-item>
                         </i-col>
                         <i-col span="11">
-                            <i-form-item label="生源地" prop="Source">
+                            <i-form-item label="籍贯" prop="Source">
                                 <i-input v-model="model.Source" />
                             </i-form-item>
                         </i-col>
                     </i-row>
                     <i-row type="flex" justify="space-between">
                         <i-col span="11">
-                            <i-form-item label="所属部门" prop="BelongDepart">
-                                <i-input v-model="model.BelongDepart" />
+                            <i-form-item label="所属校区" prop="Campus">
+                                <dic-select dic="校区" v-model="model.Campus" />
                             </i-form-item>
                         </i-col>
-                        <!--i-col span="11">
-                            <i-form-item label="指导老师类别" prop="GuideTeacherType">
-                                <template slot="label">
-                                <Tooltip placement="right" content="上级部门才有权限修改该字段">
-                                    指导老师类别
-                                    <i-icon type="md-information-circle" color="#2db7f5" />
-                                </Tooltip>
-                                </template>
-                                <i-input disabled v-model="model.GuideTeacherType" />
+                        <i-col span="11">
+                            <i-form-item label="性别" prop="Gender">
+                                <i-select v-model="model.Gender">
+                                    <i-option value="男" key="男">男</i-option>
+                                    <i-option value="女" key="女">女</i-option>
+                                    <!--i-option value="未知" key="未知">未知</i-option-->
+                                </i-select>
                             </i-form-item>
-                        </i-col-->
+                        </i-col>
                     </i-row>
                     <i-row type="flex" justify="space-between">
                         <i-form-item label="头像" prop="avatar">
@@ -116,6 +114,7 @@
                                 single
                                 relate-table="Users"
                                 v-model="model.avatar"
+                                action="/api/security/uploadAvatar"
                                 />
                             </i-col>
                             </i-row>
@@ -177,58 +176,178 @@ export default {
                 avatar: ""
             },
             orgInfo: {},
-            rules: {
-                Mobile: [
-                    {
-                        required: true,
-                        message: "必须输入手机号",
-                        trigger: "blur"
-                    },
-                    {
-                        type: "string",
-                        pattern: regex.mobile,
-                        message: "手机格式不正确",
-                        trigger: "blur"
-                    },
-                    _.debounce(function (rule, value, cb, source, options) {
-                        axios.post(
-                        "/api/security/MobileValidate",
-                        { mobile: value },
-                        (msg) => {
-                            if (msg.success) {
-                            cb();
-                            } else {
-                            cb(msg.remote);
-                            }
+            ruleForMem: {
+                    RealName: [
+                        {
+                            required: true,
+                            message: "必须填写姓名",
+                            trigger: "blur"
                         }
-                        );
-                    }, 500)
-                ],
-                Email: [
-                    {
-                        required: true,
-                        message: "必须输入电子邮箱",
-                        trigger: "blur"
-                    },
-                    {
-                        type: "string",
-                        pattern: regex.email,
-                        message: "电子邮箱格式不正确",
-                        trigger: "blur"
-                    },
-                    _.debounce((rule, value, cb, source, options) => {
-                        axios.post("/api/security/EmailValidate", { email: value }, msg => {
-                            if (msg.success) {
+                    ],
+                    Code: [
+                        {
+                            required: true,
+                            message: "必须填写学号",
+                            trigger: "blur"
+                        }
+                    ],
+                    BelongDepart: [
+                        {
+                            required: true,
+                            message: "必须填写学院",
+                            trigger: "blur"
+                        }
+                    ],
+                    PoliticalStatus: [
+                        {
+                            required: true,
+                            message: "必须填写政治面貌",
+                            trigger: "blur"
+                        }
+                    ],
+                    Educational: [
+                        {
+                            required: true,
+                            message: "必须填写学历",
+                            trigger: "blur"
+                        }
+                    ],
+                    Specialty: [
+                        {
+                            required: true,
+                            message: "必须填写专业",
+                            trigger: "blur"
+                        }
+                    ],
+                    BirthPlace: [
+                        {
+                            required: true,
+                            message: "必须填写民族",
+                            trigger: "blur"
+                        }
+                    ],
+                    Campus: [
+                        {
+                            required: true,
+                            message: "必须填写校区",
+                            trigger: "blur"
+                        }
+                    ],
+                    Gender: [
+                        {
+                            required: true,
+                            message: "必须填写性别",
+                            trigger: "blur"
+                        }
+                    ],
+                    Source: [
+                        {
+                            required: true,
+                            message: "必须填写籍贯",
+                            trigger: "blur"
+                        }
+                    ],
+                    Mobile: [
+                        {
+                            required: true,
+                            message: "必须输入手机号",
+                            trigger: "blur"
+                        },
+                        {
+                            type: "string",
+                            pattern: regex.mobile,
+                            message: "手机格式不正确",
+                            trigger: "blur"
+                        },
+                        _.debounce(function (rule, value, cb, source, options) {
+                            axios.post(
+                            "/api/security/MobileValidate",
+                            { mobile: value },
+                            (msg) => {
+                                if (msg.success) {
                                 cb();
-                            } else {
+                                } else {
                                 cb(msg.remote);
+                                }
                             }
-                        });
-                    }, 500)
-                ],
-                RealName: { required: true, message: "必须输入姓名", trigger: "blur" },
-                avatar: { required: true, message: "必须上传图片", trigger: "blur" }
-            }
+                            );
+                        }, 500)
+                    ],
+                    Email: [
+                        {
+                            required: true,
+                            message: "必须输入电子邮箱",
+                            trigger: "blur"
+                        },
+                        {
+                            type: "string",
+                            pattern: regex.email,
+                            message: "电子邮箱格式不正确",
+                            trigger: "blur"
+                        },
+                        _.debounce((rule, value, cb, source, options) => {
+                            axios.post("/api/security/EmailValidate", { email: value }, msg => {
+                                if (msg.success) {
+                                    cb();
+                                } else {
+                                    cb(msg.remote);
+                                }
+                            });
+                        }, 500)
+                    ]
+                }
+            // rules: {
+            //     Mobile: [
+            //         {
+            //             required: true,
+            //             message: "必须输入手机号",
+            //             trigger: "blur"
+            //         },
+            //         {
+            //             type: "string",
+            //             pattern: regex.mobile,
+            //             message: "手机格式不正确",
+            //             trigger: "blur"
+            //         },
+            //         _.debounce(function (rule, value, cb, source, options) {
+            //             axios.post(
+            //             "/api/security/MobileValidate",
+            //             { mobile: value },
+            //             (msg) => {
+            //                 if (msg.success) {
+            //                 cb();
+            //                 } else {
+            //                 cb(msg.remote);
+            //                 }
+            //             }
+            //             );
+            //         }, 500)
+            //     ],
+            //     Email: [
+            //         {
+            //             required: true,
+            //             message: "必须输入电子邮箱",
+            //             trigger: "blur"
+            //         },
+            //         {
+            //             type: "string",
+            //             pattern: regex.email,
+            //             message: "电子邮箱格式不正确",
+            //             trigger: "blur"
+            //         },
+            //         _.debounce((rule, value, cb, source, options) => {
+            //             axios.post("/api/security/EmailValidate", { email: value }, msg => {
+            //                 if (msg.success) {
+            //                     cb();
+            //                 } else {
+            //                     cb(msg.remote);
+            //                 }
+            //             });
+            //         }, 500)
+            //     ],
+            //     RealName: { required: true, message: "必须输入姓名", trigger: "blur" },
+            //     avatar: { required: true, message: "必须上传图片", trigger: "blur" }
+            // }
         };
     },
     mounted () {

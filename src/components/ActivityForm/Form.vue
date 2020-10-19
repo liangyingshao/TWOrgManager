@@ -158,11 +158,12 @@
                                         >
                                             <i-button icon="ios-cloud-upload-outline" type="primary" :disabled="form.fieldAccess.Description !== 'w' || !form.isMyStep">上传文件</i-button>
                                         </i-upload>
+                                        请上传活动策划、详细预算等。
                                     </td>
                                 </tr>
                                 <tr>
                                     <td class="longhang" colspan="4">
-                                        <i-input type="textarea" class="opinionForm" :rows="3" placeholder="" v-if="form.fieldAccess.Description === 'w' && form.isMyStep" v-model="form.data.Description"/>
+                                        <i-input type="textarea" class="opinionForm" :rows="3" placeholder="此处内容会显示在主页上，请注意填写。" v-if="form.fieldAccess.Description === 'w' && form.isMyStep" v-model="form.data.Description"/>
                                         <p style="white-space: pre-wrap; text-align: justify;" v-else>{{form.data.Description}}</p>
                                     </td>
                                 </tr>
@@ -586,7 +587,7 @@ export default {
             });
             this.upLoad.ActivityType = this.form.data.ActivityType.toString();
 
-            axios.post("/api/workflow/SubmitInstance", {...this.upLoad}, msg => {
+            axios.postStream("/api/workflow/SubmitInstance", {...this.upLoad}, msg => {
                 if (msg.success) {
                     if (this.form.allSteps[0].status === 10 && app.checkPermission("Organization.XSLHH")) {
                         axios.post("/api/workflow/GotoStep", {instanceId: this.instanceId, stepId: this.stepId, nextStep: '完成'}, msg => {

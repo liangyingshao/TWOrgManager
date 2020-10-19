@@ -9,7 +9,7 @@
 			</template>
 			<template v-else>
 				<text v-if="state === 2" class="cu-tag margin-right-sm round bg-blue">已结束</text>
-				<text v-if="state === 1" class="cu-tag margin-right-sm round bg-blue">活动进行中</text>
+				<text v-if="state === 1" class="cu-tag margin-right-sm round bg-blue">活动签到中</text>
 				<text v-if="state === 0" class="cu-tag margin-right-sm round bg-blue">活动报名中</text>
 			</template>
 			<text class="text-cut">{{activity.ActivityName ? activity.ActivityName : "暂无标题"}}</text>
