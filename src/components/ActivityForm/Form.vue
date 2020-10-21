@@ -586,6 +586,8 @@ export default {
                 this.upLoad[value] = this.form[value] || this.form.data[value]
             });
             this.upLoad.ActivityType = this.form.data.ActivityType.toString();
+            this.upLoad.StartDate = this.dateFormat("YYYY-mm-dd HH:MM:SS", this.form.data.StartDate);
+            this.upLoad.EndDate = this.dateFormat("YYYY-mm-dd HH:MM:SS", this.form.data.EndDate);
 
             axios.postStream("/api/workflow/SubmitInstance", {...this.upLoad}, msg => {
                 if (msg.success) {

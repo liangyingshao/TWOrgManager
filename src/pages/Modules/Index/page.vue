@@ -33,7 +33,7 @@
                         <i-button @click="toXmuLogin()" type="primary" long size="large"  style="margin-top: 16px">用厦大账号登录</i-button>
                         <!-- <Dropdown style="margin-top: 16px">
                             <DropdownMenu slot="list">
-                                <DropdownItem @click.native="login('15102242660', '88888888')">学生</DropdownItem>
+                                <DropdownItem @click.native="login('15102242660', '7VJk86Bb')">学生</DropdownItem>
                                 <DropdownItem @click.native="login('24320172203215', '7VJk86Bb')">社团</DropdownItem>
                                 <DropdownItem @click.native="login('2016190002', '7VJk86Bb')">指导老师</DropdownItem>
                                 <DropdownItem @click.native="login('2011100099', '7VJk86Bb')">业务指导</DropdownItem>
