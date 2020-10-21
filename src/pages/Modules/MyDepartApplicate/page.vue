@@ -1,8 +1,11 @@
 <template>
     <i-table :columns="columns" :data="tableData" :loading="loading">
-        <template slot="Description" slot-scope="{row}">
-            <div v-if="row.Description === ''">暂无简介</div>
+        <template v-slot:Description="data">
+            <div v-if="data.row.Description === ''">暂无简介</div>
             <div v-else>{{row.Description}}</div>
+        </template>
+        <template v-slot:State="data">
+            <div>{{stateDic[data.row.app.State]}}</div>
         </template>
     </i-table>
 </template>
@@ -14,6 +17,12 @@ export default {
         return {
             loading: false,
             tableData: [],
+            stateDic: {
+                0: "已通过",
+                1: "被拒绝",
+                2: "自行撤回",
+                3: "申请中"
+            },
             columns: [
                 {
                     title: "社团名称",
@@ -26,6 +35,10 @@ export default {
                 {
                     title: "简介",
                     slot: "Description"
+                },
+                {
+                    title: "申请状态",
+                    slot: "State"
                 }
             ]
         }
@@ -39,7 +52,7 @@ export default {
             this.loading = true;
             axios.post("/api/security/GetAllDeparts", {}, msg => {
                 if (msg.success) {
-                    this.tableData = msg.data.filter(e => e.app.State === 3);
+                    this.tableData = msg.data.filter(e => e.app);
                 } else {
                     this.$Message.warning(msg.msg);
                 }
