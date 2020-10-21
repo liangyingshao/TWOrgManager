@@ -82,17 +82,20 @@
 			</view>
 		</view-->
 		<view class="cu-bar bg-white solid-bottom margin-top">
-			<view class="action" @click="changeMemShow()">
+			<view class="action">
 				<text class="cuIcon-titles text-blue"></text>
-				<text class="block position-relative">
+				<text class="block position-relative" @click="navTo('/iuc/index/index-all-associations')">
 					社团列表
 				</text>
 			</view>
-			<view class="action" @click="navTo('/iuc/index/index-all-associations')">
-				<view class="text-blue">[所有社团]</view>
+			<view class="action" @click="changeOrgShow">
+				<view>
+					{{showOrgs ? "收起社团列表" : "展开社团列表"}}
+					<text :class="[showOrgs ? 'cuIcon-fold' : 'cuIcon-unfold']"></text>
+				</view>
 			</view>
 		</view>
-		<view class="padding-lr bg-white solids-bottom" v-for="(item,index) in departs" :key="index" @click="toOrg(item.id)">
+		<view v-show="showOrgs" class="padding-lr bg-white solids-bottom" v-for="(item,index) in departs" :key="index" @click="toOrg(item.id)">
 			<view class="cu-item">
 				<view class="content padding-tb-sm">
 					<view>
@@ -116,8 +119,8 @@
 			titleBar
 		},
 		methods: {
-			changeMemShow() {
-				this.showMemberReview = !this.showMemberReview;
+			changeOrgShow() {
+				this.showOrgs = !this.showOrgs;
 			},
 			changeActShow() {
 				this.showAct = !this.showAct;
@@ -182,7 +185,7 @@
 		},
 		data() {
 			return {
-				showMemberReview: true,
+				showOrgs: true,
 				showAct: true,
 				searchText: "搜索社团名称",
 				allAppNum: 0,

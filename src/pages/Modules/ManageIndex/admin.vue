@@ -54,13 +54,16 @@
         <i-col span="8">
             <i-card :padding="0" style="margin-bottom:10px">
                 <div :to="dashBoard.DepartType === 0 ? routers[1]:routers[0]" v-if="true" style="background-color:#ffffff">
-                    <i-row type="flex" align="middle" style="padding:16px;margin: 16px 0px">
-                        <i-col span="4">
+                    <i-row type="flex" align="middle" style="padding:16px;margin: 16px 0px" :gutter="16">
+                        <i-col>
                             <Avatar :size="48" :src="userInfo.avatar"/>
                         </i-col>
-                        <i-col span="19">
+                        <i-col>
                             <div style="font-size: 18px; color: #17233d;">{{time}}好! {{userInfo.realName}}</div>
-                            <a @click="navTo">{{orgInfo.Name}}的管理员</a>
+                            <a @click="navTo">学生社团管理部的管理员</a>
+                        </i-col>
+                        <i-col offset="2">
+                            <i-button @click="setSignUpState(!canSignUpOrg)">{{canSignUpOrg ? '禁止' : '允许'}}报名社团</i-button>
                         </i-col>
                     </i-row>
                     <i-row type="flex" class="background-purple">
@@ -188,10 +191,8 @@ export default {
                     badge: 0,
                     description: "管理本单位所属所有社团的所有活动。查看他们的报名记录和签到记录。",
                     routerTo: {
-                        name: "Affiliated",
-                        query: {
-                            tabSelect: "activity"
-                        }
+                        name: "AdminActivity",
+                        query: {}
                     },
                     icon: "md-flag"
                 }
@@ -199,7 +200,8 @@ export default {
             tableLoading: false,
             membersData: [],
             activityCount: 0,
-            contentHeight: ''
+            contentHeight: '',
+            canSignUpOrg: false
         };
     },
     mounted () {
@@ -207,8 +209,32 @@ export default {
         app.title = "主页";
         this.getDashBoard();
         this.getPending();
+        this.getSignUpState();
     },
     methods: {
+        getSignUpState () {
+            axios.post("/api/config/GetSignUpState", {}, msg => {
+                this.canSignUpOrg = msg.value;
+            })
+        },
+        setSignUpState (target) {
+            this.$Modal.confirm({
+                title: '更改社团报名状态',
+                content: `将<strong>${target ? '允许' : '禁止'}</strong>学生报名社团，是否继续？`,
+                onOk: () => {
+                    axios.post("/api/config/SetSignUpState", {
+                        startSignUp: target
+                    }, msg => {
+                        if (msg.success) {
+                            this.$Message.success('设置成功');
+                            this.getSignUpState();
+                        } else {
+                            this.$Message.warning(msg.msg);
+                        }
+                    })
+                }
+            })
+        },
         getDashBoard () {
             axios.post("/api/org/GetDashboard", {}, msg => {
                 this.dashBoard = msg;
