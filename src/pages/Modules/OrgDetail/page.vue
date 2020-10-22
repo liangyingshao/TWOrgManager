@@ -1155,7 +1155,7 @@ export default {
             memberManage: (h) => {
                     return h('div', [
                         h('span', '成员管理'),
-                        h('span', '（' + this.tableData.member.length + '人）')
+                        h('span', '（' + this.pager.member.total + '人）')
                     ])
             },
             password: {},
