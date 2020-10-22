@@ -30,7 +30,7 @@
                             </i-col>
                         </i-row>
                         <template v-slot:action>
-                            <Button type="success" @click="dealWorkflow(item.InstanceId, item.StepId, item.WorkflowType)">审核</Button>=
+                            <Button type="success" @click="dealWorkflow(item.InstanceId, item.StepId, item.WorkflowType)">继续填写</Button>
                         </template>
                     </ListItem>
                 </List>
