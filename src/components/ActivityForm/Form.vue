@@ -267,7 +267,8 @@
                         </i-col>
                     </i-row>
                     <i-row class="add1 headline">
-                        <i-button  v-show="form.currentStep==='填写申请表' && form.isMyStep" style="width: 200px;margin: 18px auto;" type="primary" @click="submit">提交申请</i-button>
+                        <i-button v-show="form.currentStep==='填写申请表' && form.isMyStep" style="width: 200px;margin: 18px auto;" type="primary" @click="submit">提交申请</i-button>
+                        <i-button v-show="form.currentStep==='填写申请表' && form.isMyStep" style="width: 200px;margin: 18px auto;" @click="cancel">取消申请</i-button>
                     </i-row>
                 </div>
             </div>
@@ -641,6 +642,17 @@ export default {
             this.getAvatar();
             if (this.actID) {
                 this.getSignUps();
+            }
+        },
+        cancel () {
+            if (this.form.currentStep === "填写申请表") {
+                axios.post("/api/org/RemoveActivity", {id: this.form.data.ID}, msg => {
+                    if (msg.success) {
+                        this.$Message.success("取消成功");
+                    } else {
+                        this.$Message.error(msg.msg);
+                    }
+                })
             }
         }
     },
