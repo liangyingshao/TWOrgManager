@@ -124,7 +124,7 @@
                         <i-form-item label="三张最具代表性的社团照片">
                             <br/>
                             <div class="demo-upload-list" v-for="(item,index) in iconicPhoto" :key="index">
-                                <img style="width: 80%;" :src="`/api/cms/Download?id=${item.id}`"/>
+                                <img :src="`/api/cms/Download?id=${item.id}`"/>
                                 <div class="demo-upload-list-cover">
                                     <Icon type="ios-trash-outline" @click.native="removeUpload(item)" v-if="io.isMyStep && io.fieldAccess.Name === 'w'"></Icon>
                                 </div>
@@ -696,5 +696,37 @@ export default {
 .opinionForm{
     margin-top: 10px;
     margin-bottom: 10px;
+}
+.demo-upload-list{
+    display: inline-block;
+    text-align: center;
+    line-height: 60px;
+    border-radius: 4px;
+    overflow: hidden;
+    position: relative;
+    margin-top: 10px;
+}
+.demo-upload-list img{
+    width: 100%;
+    height: 100%;
+}
+.demo-upload-list-cover{
+    display: none;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: rgba(0,0,0,.6);
+}
+.demo-upload-list:hover .demo-upload-list-cover{
+    display: block;
+}
+.demo-upload-list-cover i{
+    color: #fff;
+    font-size: 40px;
+    cursor: pointer;
+    margin-top: 60px;
+    align-items: center;
 }
 </style>
