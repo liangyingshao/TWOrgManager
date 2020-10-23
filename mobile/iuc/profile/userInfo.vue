@@ -158,7 +158,7 @@
 							var temp = [];
 							for(let i  in t[obj])
 							{
-								temp.push(t[obj][i]);
+								temp.push(i);
 							}
 							x[obj] = temp;
 						}
