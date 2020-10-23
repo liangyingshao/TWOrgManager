@@ -143,7 +143,7 @@
                                     </i-col>
                                 </i-row>
                                 <i-row type="flex">
-                                    <i-form-item label="三张最具代表性的社团照片" v-if="iconicPhoto.length > 0">
+                                    <i-form-item label="三张最具代表性的社团照片：" v-if="iconicPhoto.length > 0">
                                         <br/>
                                         <div class="demo-upload-list" v-for="(item,index) in iconicPhoto" :key="index">
                                             <img :src="`/api/cms/Download?id=${item.id}`"/>
@@ -1072,11 +1072,11 @@ export default {
                 this.getActivityTable();
                 this.getApplicateTable();
                 this.getAllOrgDetail();
+                this.getPhoto();
             }
             this.$Spin.hide();
             this.tabSelect = this.$route.query.tabSelect || "basicInfo";
         });
-        this.getPhoto();
     },
     data () {
         let THIS = this;
@@ -1252,5 +1252,18 @@ h3 {
 }
 .ivu-poptip-body-content {
     overflow: hidden;
+}
+.demo-upload-list{
+    display: inline-block;
+    text-align: center;
+    line-height: 60px;
+    border-radius: 4px;
+    overflow: hidden;
+    position: relative;
+    margin-top: 10px;
+}
+.demo-upload-list img{
+    width: 100%;
+    height: 100%;
 }
 </style>
