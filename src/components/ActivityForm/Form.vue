@@ -267,8 +267,9 @@
                         </i-col>
                     </i-row>
                     <i-row class="add1 headline">
-                        <i-button v-show="form.currentStep==='填写申请表' && form.isMyStep" style="width: 200px;margin: 18px auto;" type="primary" @click="submit">提交申请</i-button>
-                        <i-button v-show="form.currentStep==='填写申请表' && form.isMyStep" style="width: 200px;margin: 18px auto;" @click="cancel">取消申请</i-button>
+                        <i-button v-if="form.currentStep==='填写申请表' && form.isMyStep" style="width: 200px;margin: 18px auto;" type="primary" @click="submit">提交申请</i-button>
+                        <i-button v-if="form.currentStep==='填写申请表' && form.isMyStep" style="width: 200px;margin: 18px auto;" @click="cancel(true)">删除申请</i-button>
+                        <i-button v-if="canCancel" style="width: 200px;margin: 18px auto;" type="error" @click="cancel(false)">作废申请</i-button>
                     </i-row>
                 </div>
             </div>
@@ -644,16 +645,30 @@ export default {
                 this.getSignUps();
             }
         },
-        cancel () {
-            if (this.form.currentStep === "填写申请表") {
-                axios.post("/api/org/RemoveActivity", {id: this.form.data.ID}, msg => {
-                    if (msg.success) {
-                        this.$Message.success("取消成功");
+        cancel (del) {
+            this.$Modal.confirm({
+                title: "确认删除",
+                content: `确实要${del ? '删除' : '作废'}申请吗？此操作不可恢复。`,
+                onOk: () => {
+                    if (del) {
+                        axios.post("/api/org/RemoveActivity", {id: this.form.data.ID}, msg => {
+                            if (msg.success) {
+                                this.$Message.success("删除成功");
+                            } else {
+                                this.$Message.error(msg.msg);
+                            }
+                        });
                     } else {
-                        this.$Message.error(msg.msg);
+                        axios.post("/api/org/AbortActivity", {id: this.form.data.ID}, msg => {
+                            if (msg.success) {
+                                this.$Message.success("作废成功");
+                            } else {
+                                this.$Message.error(msg.msg);
+                            }
+                        });
                     }
-                })
-            }
+                }
+            });
         }
     },
     mounted () {
@@ -669,6 +684,14 @@ export default {
         endDate: {
             get: function () {
                 return this.form.data.EndDate ? this.dateFormat("YYYY-mm-dd HH:MM", this.form.data.EndDate) : '';
+            }
+        },
+        canCancel: {
+            get: function () {
+                let generalCondition = this.form.currentStep !== '填写申请表' && this.form.currentStep !== '已完成' && this.form.currentStep !== '已取消';
+                let hasPrivilege = app.checkPermission('Organization.RemoveActivity');
+                let myOrg = false;
+                return generalCondition && (hasPrivilege || myOrg);
             }
         }
     }

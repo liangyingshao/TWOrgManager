@@ -143,5 +143,10 @@ module.exports = {
         path: "/manage/adminactivity",
         layout: "admin",
         component: () => import(/* webpackChunkName: "OrgManager" */"@p/Modules/OrgDetail/AdminActivity")
+    },
+    ExportReport: {
+        path: "/manage/exportreport",
+        layout: "admin",
+        component: () => import(/* webpackChunkName: "OrgManager" */"@p/Modules/ExportReport")
     }
 };
