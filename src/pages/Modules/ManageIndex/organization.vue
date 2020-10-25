@@ -100,7 +100,7 @@
                     <i-row type="flex" align="middle">
                         <i-col span="3" offset="1">
                             <div>
-                                <Badge :count="item.badge" v-if="item.title!='添加活动'">
+                                <Badge :count="item.badge" v-if="item.title!='新建项目'">
                                     <i-avatar :icon="item.icon" />
                                 </Badge>
                                 <i-avatar :icon="item.icon" v-else/>
@@ -211,7 +211,7 @@ export default {
                     icon: "md-person-add"
                 },
                 addAct: {
-                    title: "添加活动",
+                    title: "新建项目",
                     descrip: "添加一个活动的申请，需要指导老师，业务指导单位，学生社团管理部及团委审核",
                     routerTo: {
                         name: "OrgDetail",
