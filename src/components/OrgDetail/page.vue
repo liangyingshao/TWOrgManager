@@ -74,6 +74,7 @@
                                 <i-upload type="drag" :disabled="!io.data.HaveDepartRule || !io.isMyStep" action="/api/cms/UploadFile" :default-file-list="file"
                                 :before-upload="beforeUpload" :on-preview="previewFile" :on-remove="removeUpload"
                                 :data="{'usage': 'DepartRule', 'single': true, 'relateTable': 'DepartInfo', 'id': this.io.data.ID, 'fileName': this.fileName}"
+                                :on-success=getFile
                                 >
                                     <div v-if="io.fieldAccess.Name === 'w'">
                                         <Icon type="ios-cloud-upload" size="36" style="color: #3399ff"></Icon>
@@ -104,19 +105,49 @@
                     </i-col>
                 </i-row>
                 <i-row>
-                    <i-form-item label="社团头像">
-                        <avatar-uploader
-                            :width="128"
-                            :height="128"
-                            usage="avatar"
-                            single
-                            :id="io.data.ID"
-                            :showText="false"
-                            relate-table="DepartInfo"
-                            :value="`/api/cms/downloadImage?id=${io.data.ID} `"
-                            :disabled="!io.isMyStep || io.fieldAccess.Name === 'r'"
-                        />
-                    </i-form-item>
+                    <i-col span="11">
+                        <i-form-item label="社团头像">
+                            <avatar-uploader
+                                :width="128"
+                                :height="128"
+                                usage="avatar"
+                                single
+                                :id="io.data.ID"
+                                :showText="false"
+                                relate-table="DepartInfo"
+                                :value="`/api/cms/downloadImage?id=${io.data.ID}`"
+                                :disabled="!io.isMyStep || io.fieldAccess.Name === 'r'"
+                            />
+                        </i-form-item>
+                    </i-col>
+                    <i-col span="11" offset="2">
+                        <i-form-item label="三张最具代表性的社团照片">
+                            <br/>
+                            <div class="demo-upload-list" v-for="(item,index) in iconicPhoto" :key="index">
+                                <img :src="`/api/cms/Download?id=${item.id}`"/>
+                                <div class="demo-upload-list-cover">
+                                    <Icon type="ios-trash-outline" @click.native="removeUpload(item)" v-if="io.isMyStep && io.fieldAccess.Name === 'w'"></Icon>
+                                </div>
+                            </div>
+                            <i-row style="margin-top: 10px;width: 100%">
+                                <i-upload type="drag" :disabled="!io.isMyStep || io.fieldAccess.Name === 'r'" action="/api/cms/UploadFile"
+                                :show-upload-list="false"
+                                ref="upload"
+                                :format="['jpg','jpeg','png']"
+                                :default-file-list="iconicPhoto"
+                                :before-upload="beforeUploadImg" :on-preview="previewFile" :on-remove="removeUpload"
+                                :data="{'usage': 'DepartGraph', 'single': false, 'relateTable': 'DepartInfo', 'id': this.io.data.ID, 'fileName': this.fileName}"
+                                :on-success=getPhoto
+                                style=" width: 100%;"
+                                >
+                                    <div v-if="io.fieldAccess.Name === 'w'">
+                                        <Icon type="ios-cloud-upload" size="36" style="color: #3399ff"></Icon>
+                                        <p>上传社团照片</p>
+                                    </div>
+                                </i-upload>
+                            </i-row>
+                        </i-form-item>
+                    </i-col>
                 </i-row>
                 <Divider orientation="left">指导老师情况</Divider>
                 <i-row type="flex">
@@ -444,7 +475,6 @@ const axios = require("axios");
 const enums = require("@/config/enums");
 export default {
     mounted () {
-        this.getFile();
     },
     props: {
         io: {
@@ -469,7 +499,9 @@ export default {
             searchedASecretary: false,
             searchedBSecretary: false,
             file: [],
+            iconicPhoto: [],
             fileName: "",
+            photoNames: [],
             stepInfo: enums.stepInfo,
             upLoad: {},
             icons: [
@@ -557,15 +589,39 @@ export default {
                 }
             });
         },
+        getPhoto () {
+            axios.post("/api/cms/GetAttachments", {id: this.io.data.ID, relateTable: "DepartInfo", usage: "DepartGraph"}, msg => {
+                if (msg.success) {
+                    // console.log(msg);
+                    this.iconicPhoto = msg.data.map(e => {
+                        return {
+                            name: e.DisplayName,
+                            id: e.ID,
+                            downLoad: e.Download
+                        }
+                    });
+                    // console.log(this.iconicPhoto);
+                }
+            });
+        },
         removeUpload (file) {
             axios.post("/api/cms/RemoveAttachment", {id: file.id || file.response.id}, msg => {
                 if (msg.success) {
                     this.$Message.success('删除文件成功');
                     this.getFile();
+                    this.getPhoto();
                 }
             })
         },
         async beforeUpload (file) {
+            this.fileName = file.name;
+            await this.$nextTick();
+        },
+        async beforeUploadImg (file) {
+            if (this.iconicPhoto.length > 2) {
+                this.$Message.error('照片数量已达三张!');
+                return false;
+            }
             this.fileName = file.name;
             await this.$nextTick();
         },
@@ -615,6 +671,7 @@ export default {
         'io.data.ID' (newValue) {
             if (newValue) {
                 this.getFile();
+                this.getPhoto();
             }
         }
     }
@@ -639,5 +696,37 @@ export default {
 .opinionForm{
     margin-top: 10px;
     margin-bottom: 10px;
+}
+.demo-upload-list{
+    display: inline-block;
+    text-align: center;
+    line-height: 60px;
+    border-radius: 4px;
+    overflow: hidden;
+    position: relative;
+    margin-top: 10px;
+}
+.demo-upload-list img{
+    width: 100%;
+    height: 100%;
+}
+.demo-upload-list-cover{
+    display: none;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: rgba(0,0,0,.6);
+}
+.demo-upload-list:hover .demo-upload-list-cover{
+    display: block;
+}
+.demo-upload-list-cover i{
+    color: #fff;
+    font-size: 40px;
+    cursor: pointer;
+    margin-top: 60px;
+    align-items: center;
 }
 </style>
