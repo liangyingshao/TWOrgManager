@@ -6,10 +6,48 @@
             </i-form-item>
         </i-form>
         <i-row>
-            <i-button :to="`/api/org/ExportFullInfo?departId=${departId}`" target="_blank">社团整体信息表</i-button>
-            <i-button :disabled="!hasDate" :to="`/api/org/ExportMemberFullInfo?departId=${departId}&start=${dateRange[0]}&end=${dateRange[1]}`" target="_blank">社团成员完整信息表</i-button>
-            <i-button :disabled="!hasDate" :to="`/api/org/ExportMemberSimpleInfo?departId=${departId}&start=${dateRange[0]}&end=${dateRange[1]}`" target="_blank">社团成员基本信息表</i-button>
-            <i-button :disabled="!hasDate" :to="`/api/org/ExportActFullInfo?departId=${departId}&start=${dateRange[0]}&end=${dateRange[1]}`" target="_blank">社团活动信息表</i-button>
+            <i-col span="10">
+                <i-card style="margin-bottom: 8px" align="middle" :to="`/api/org/ExportFullInfo?departId=${departId}`" target="_blank">
+                    <i-row type="flex" :gutter="24">
+                        <i-col>
+                            <Icon :size="48" type="md-list" color="rgb(105, 192, 255)"/>
+                        </i-col>
+                        <i-col>
+                            <div style="color: #515a6e;">社团整体信息表</div>
+                        </i-col>
+                    </i-row>
+                </i-card>
+                <i-card style="margin-bottom: 8px" :disabled="!hasDate" :to="`/api/org/ExportMemberFullInfo?departId=${departId}&start=${dateRange[0]}&end=${dateRange[1]}`" target="_blank">
+                    <i-row type="flex" :gutter="24">
+                        <i-col>
+                            <Icon :size="48" type="md-people" color="rgb(255, 156, 110)"/>
+                        </i-col>
+                        <i-col>
+                            <div style="color: #515a6e;">社团成员完整信息表</div>
+                        </i-col>
+                    </i-row>
+                </i-card>
+                <i-card style="margin-bottom: 8px" :disabled="!hasDate" :to="`/api/org/ExportMemberSimpleInfo?departId=${departId}&start=${dateRange[0]}&end=${dateRange[1]}`" target="_blank">
+                    <i-row type="flex" :gutter="24">
+                        <i-col>
+                            <Icon :size="48" type="md-contact" color="rgb(92, 219, 211)"/>
+                        </i-col>
+                        <i-col>
+                            <div style="color: #515a6e;">社团成员基本信息表</div>
+                        </i-col>
+                    </i-row>
+                </i-card>
+                <i-card style="margin-bottom: 8px" :disabled="!hasDate" :to="`/api/org/ExportActFullInfo?departId=${departId}&start=${dateRange[0]}&end=${dateRange[1]}`" target="_blank">
+                    <i-row type="flex" :gutter="24">
+                        <i-col>
+                            <Icon :size="48" type="md-flag" color="rgb(149, 222, 100)"/>
+                        </i-col>
+                        <i-col>
+                            <div style="color: #515a6e;">社团活动信息表</div>
+                        </i-col>
+                    </i-row>
+                </i-card>
+            </i-col>
         </i-row>
     </i-row>
 </template>
