@@ -56,7 +56,7 @@
     },
     "h5" : {
         "title" : "厦门大学学生社团信息系统",
-        "domain" : "stgl.ricebird.cn",
+        "domain" : "xsst.ricebird.cn",
         "router" : {
             "mode" : "history",
             "base" : "/mob/"

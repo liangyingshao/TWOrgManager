@@ -19,7 +19,7 @@ let appSetting = {
         subtitle: "",
         title: ""
     },
-	domain: "http://stgl.ricebird.cn",//"http://localhost:2034", //
+	domain: process.env.NODE_ENV === "production" ? "http://xsst.xmu.edu.cn" : "http://stgl.ricebird.cn",//"http://localhost:2034", //
     dashboard: "/iuc/index/index",
     ueditor: {
         serverUrl: "/ueditor/process",
