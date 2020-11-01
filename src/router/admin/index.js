@@ -148,5 +148,10 @@ module.exports = {
         path: "/manage/exportreport",
         layout: "admin",
         component: () => import(/* webpackChunkName: "OrgManager" */"@p/Modules/ExportReport")
+    },
+    PrintActivityApplication: {
+        path: "/manage/printactivityapplication",
+        layout: "empty",
+        component: () => import(/* webpackChunkName: "OrgManager" */"@p/Modules/ActivityForm/detail.vue")
     }
 };
