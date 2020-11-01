@@ -2,7 +2,7 @@
     <div id="activity-form">
         <Affix :offset-top="50" style="position: fixed; right: 2vw;">
             <i-row type="flex" justify="end">
-                <i-col>
+                <i-col v-if="form.intstanceState === 3">
                     <Button icon="md-print" :to="`/manage/printactivityapplication?instanceId=${instanceId}&stepId=${stepId}&actID=${actID}&detail=true`" target="_blank">打印</Button>
                 </i-col>
             </i-row>
@@ -61,8 +61,8 @@
                             </tr>
                         </table>
                     </div>
-                    <div class="add1" style="width: 602px; margin: auto;">
-                        <img width="100" style="position: absolute; left: 0px; top: 8px;" :src="qrCodeUrl"/>
+                    <div class="add1" style="width: 602px; margin: auto;" v-if="form.intstanceState === 3">
+                        <img  width="100" style="position: absolute; left: 0px; top: 8px;" :src="qrCodeUrl"/>
                     </div>
                     <i-row>
                         <i-col>

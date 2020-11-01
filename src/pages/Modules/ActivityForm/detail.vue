@@ -27,7 +27,7 @@
             </div> -->
             <div class="paper">
                 <div>
-                    <div class="add1" style="width: 602px; margin: auto;">
+                    <div class="add1" style="width: 602px; margin: auto;" v-if="form.intstanceState === 3">
                         <img width="100" style="position: absolute; left: 0px; top: 0px;" :src="qrCodeUrl"/>
                     </div>
                     <i-row>
