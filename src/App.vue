@@ -74,6 +74,7 @@ export default {
                 return ps && ps.indexOf(p) >= 0;
             }
             this.loginSuccess(app.userInfo.currentUserGuid);
+        } else if (document.location.href.indexOf("printactivityapplication") > 0) {
         } else {
             let path = document.location.href;
             let arrUrl = path.split("//");

@@ -356,7 +356,9 @@ export default {
                 if (msg.success) {
                     this.signData = msg.data;
                 } else {
-                    this.$Message.warning(msg.msg);
+                    if (document.location.href.indexOf("printactivityapplication") < 0) {
+                        this.$Message.warning(msg.msg);
+                    }
                 }
             })
         },
@@ -550,9 +552,9 @@ export default {
         },
         qrCodeUrl: {
             get: function () {
-                let url = "http://xsst.xmu.edu.cn/manage/printactivityapplication";
+                let url = `http://xsst.xmu.edu.cn/manage/printactivityapplication?instanceId=${this.instanceId}`;
                 let encoding = encodeURIComponent(url);
-                let finalUrl = `/url2qr?url=${encoding}&instanceId=${this.instanceId}&state=2`;
+                let finalUrl = `/url2qr?url=${encoding}&state=2`;
                 return finalUrl;
             }
         }
