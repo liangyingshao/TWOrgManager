@@ -1,11 +1,12 @@
 <template>
     <i-row type="flex" :gutter="24">
         <i-col span="15">
-            <i-card title="报名社团" v-if="myOrgs.length < 2 && canSignUpOrg">
+            <i-card title="报名社团" v-if="canSignUpOrg">
                 <template v-slot:extra>
                     <i-input search placeholder="搜索社团名称" @on-search="searchOrg" />
                 </template>
                 <Scroll v-if="allOrgs.length">
+                    <i-alert>每名学生最多加入2个学生社团</i-alert>
                     <List style="margin-right:10px">
                         <ListItem v-for="(item,index) in allOrgsSearched" :key="index">
                             <i-row type="flex" align="middle" style="width:100%">
