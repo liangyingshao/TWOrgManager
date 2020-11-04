@@ -571,6 +571,11 @@ export default {
         },
         validate () {
             let errMsg = "";
+
+            var isRequest = (fieldName) => {
+                return this.form.fieldAccess[fieldName] === 'w' && !this.form.data[fieldName];
+            };
+
             if (this.form.fieldAccess.ActivityName === 'w' && !this.form.data.ActivityName) {
                 errMsg = "必须填写活动名称"
             } else if (this.form.fieldAccess.Description === 'w' && !this.form.data.Description) {
@@ -581,6 +586,12 @@ export default {
                 errMsg = "必须填写活动类型"
             } else if (new Date(this.form.data.StartDate) - new Date(this.form.data.EndDate) >= 0) {
                 errMsg = "活动开始时间必须早于活动结束时间"
+            } else if (isRequest("GuideTeacherOpinion")) {
+                errMsg = "必须填写指导老师意见"
+            } else if (isRequest("AffiliatedDepartOpinion")) {
+                errMsg = "必须填写业务指导单位意见"
+            } else if (isRequest("SauOpinion")) {
+                errMsg = "必须填写社团管理部意见"
             }
             return errMsg;
         },

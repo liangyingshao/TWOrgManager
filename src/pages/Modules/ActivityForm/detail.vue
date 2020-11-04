@@ -552,7 +552,7 @@ export default {
         },
         qrCodeUrl: {
             get: function () {
-                if (form.intstanceState !== 3) {
+                if (this.form.intstanceState !== 3) {
                     return "";
                 }
                 let url = `http://xsst.xmu.edu.cn/manage/printactivityapplication?instanceId=${this.instanceId}`;
