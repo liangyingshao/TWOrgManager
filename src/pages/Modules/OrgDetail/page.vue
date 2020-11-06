@@ -30,48 +30,48 @@
                         <i-col span="14">
                             <i-button @click="changeOrgDetail">修改社团信息</i-button>
                             <i-button @click="delThisDepart($route.query.id)" type="error" v-if="app.checkPermission('Organization.TwAdminUser')">删除社团</i-button>
-                            <i-form :disabled="level !== 3" :model="orgInfo" :rules="ruleForBasic" ref="form">
+                            <i-form :model="orgInfo" :rules="ruleForBasic" ref="form">
                                 <Divider orientation="left">基本信息</Divider>
                                 <i-row type="flex" justify="space-between">
                                     <i-col span="24">
                                         <i-form-item label="社团名称" span="8" prop="Name">
-                                            <i-input v-model="orgInfo.Name"/>
+                                            <i-input v-model="orgInfo.Name" :readonly="!app.checkPermission('Security.SaveDepartDirectly')?'readonly':null/* level !== 3 */"/>
                                         </i-form-item>
                                     </i-col>
                                 </i-row>
                                 <i-row type="flex">
                                     <i-col span="11">
                                         <i-form-item label="社团类型" prop="DepartType">
-                                            <dic-select dic="社团类型" v-model="orgInfo.DepartType" />
+                                            <dic-select dic="社团类型" v-model="orgInfo.DepartType" :disabled="!app.checkPermission('Security.SaveDepartDirectly')"/>
                                         </i-form-item>
                                     </i-col>
                                     <i-col span="11" offset="2">
-                                        <i-form-item label="成立时间" prop="BirthTime">
-                                            <i-date-picker type="date" v-model="orgInfo.BirthTime" format="yyyy年MM月dd日" />
+                                        <i-form-item label="成立时间">
+                                            <i-date-picker type="date" v-model="orgInfo.BirthTime" format="yyyy年MM月dd日" :readonly="!app.checkPermission('Security.SaveDepartDirectly')?'readonly':null/* level !== 3 */"/>
                                         </i-form-item>
                                     </i-col>
                                 </i-row>
                                 <i-row type="flex">
                                     <i-col span="11">
                                         <i-form-item label="部门电话">
-                                            <i-input v-model="orgInfo.Phone"/>
+                                            <i-input v-model="orgInfo.Phone" :readonly="!app.checkPermission('Security.SaveDepartDirectly')?'readonly':null/* level !== 3 */"/>
                                         </i-form-item>
                                     </i-col>
                                     <i-col span="11" offset="2">
                                         <i-form-item label="业务指导单位">
-                                            <org-selector v-model="orgInfo.ParentId"/>
+                                             <org-selector :disabled="!app.checkPermission('Security.SaveDepartDirectly')" v-model="orgInfo.ParentId"/>
                                         </i-form-item>
                                     </i-col>
                                 </i-row>
                                 <i-row type="flex">
                                     <i-col span="11">
                                         <i-form-item label="排序号">
-                                            <i-input v-model="orgInfo.Sort"/>
+                                            <i-input v-model="orgInfo.Sort" :readonly="!app.checkPermission('Security.SaveDepartDirectly')?'readonly':null/* level !== 3 */"/>
                                         </i-form-item>
                                     </i-col>
                                     <i-col span="11" offset="2">
                                         <i-form-item label="部门类型">
-                                            <i-select v-model="orgInfo.Type">
+                                            <i-select v-model="orgInfo.Type" :disabled="!app.checkPermission('Security.SaveDepartDirectly')">
                                                 <i-option :value="0" key="业务指导单位">业务指导单位</i-option>
                                                 <i-option :value="1" key="社团">社团</i-option>
                                             </i-select>
@@ -81,14 +81,14 @@
                                 <i-row type="flex">
                                     <i-col span="24">
                                         <i-form-item label="社团简介" prop="Description">
-                                            <i-input type="textarea" maxlength="300" show-word-limit :autosize="{minRows: 3}" v-model="orgInfo.Description"/>
+                                            <i-input type="textarea" maxlength="300" show-word-limit :autosize="{minRows: 3}" v-model="orgInfo.Description" :readonly="!app.checkPermission('Security.SaveDepartDirectly')?'readonly':null/* level !== 3 */"/>
                                         </i-form-item>
                                     </i-col>
                                 </i-row>
                                 <i-row type="flex">
                                     <i-col span="11">
                                         <i-form-item label="章程制定时间">
-                                            <i-switch v-model="orgInfo.HaveDepartRule" />
+                                            <i-switch v-model="orgInfo.HaveDepartRule" :disabled="!app.checkPermission('Security.SaveDepartDirectly')"/>
                                             <!--i-upload :disabled="!orgInfo.HaveDepartRule" action="/api/cms/UploadFile" :before-upload="handleUpload"
                                             :data="{'usage': 'DepartRule', 'single': true, 'relateTable': 'DepartInfo', 'id': this.orgInfo.ID, 'fileName': 'my-file'}">
                                                 <i-button shape="circle"
@@ -118,29 +118,37 @@
                                                     </i-row>
                                                 </template>
                                             </div-->
-                                            <i-date-picker :disabled="!orgInfo.HaveDepartRule" v-model="orgInfo.RuleCreatedOn"></i-date-picker>
+                                            <i-date-picker :disabled="!orgInfo.HaveDepartRule || !app.checkPermission('Security.SaveDepartDirectly')" v-model="orgInfo.RuleCreatedOn"></i-date-picker>
                                             <a v-if="orgInfo.rule" :href="orgInfo.rule" target="_blank">下载章程</a>
                                         </i-form-item>
                                     </i-col>
                                     <i-col span="11" offset="2">
                                         <i-form-item label="团支部成立时间">
-                                            <i-switch v-model="orgInfo.HaveLeagueBranch" />
-                                            <i-date-picker :disabled="!orgInfo.HaveLeagueBranch" v-model="orgInfo.LeagueBrachCreatedOn"></i-date-picker>
+                                            <i-switch v-model="orgInfo.HaveLeagueBranch" :disabled="!app.checkPermission('Security.SaveDepartDirectly')"/>
+                                            <i-date-picker :disabled="!orgInfo.HaveLeagueBranch || !app.checkPermission('Security.SaveDepartDirectly')" v-model="orgInfo.LeagueBrachCreatedOn"></i-date-picker>
                                         </i-form-item>
                                     </i-col>
                                 </i-row>
                                 <i-row type="flex">
                                     <i-col span="11">
                                         <i-form-item label="党支部成立时间">
-                                            <i-switch v-model="orgInfo.HaveCPCBranch" />
-                                            <i-date-picker :disabled="!orgInfo.HaveCPCBranch" v-model="orgInfo.CPCBranchCreatedOn"></i-date-picker>
+                                            <i-switch v-model="orgInfo.HaveCPCBranch" :disabled="!app.checkPermission('Security.SaveDepartDirectly')"/>
+                                            <i-date-picker :disabled="!orgInfo.HaveCPCBranch || !app.checkPermission('Security.SaveDepartDirectly')" v-model="orgInfo.CPCBranchCreatedOn"></i-date-picker>
                                         </i-form-item>
                                     </i-col>
                                     <i-col span="11" offset="2">
                                         <i-form-item label="党支部类型">
-                                            <dic-select dic="党支部类型" :disabled="!orgInfo.HaveCPCBranch" v-model="orgInfo.CPCBranchType"/>
+                                            <dic-select dic="党支部类型" :disabled="!orgInfo.HaveCPCBranch || app.checkPermission('Security.SaveDepartDirectly')" v-model="orgInfo.CPCBranchType"/>
                                         </i-form-item>
                                     </i-col>
+                                </i-row>
+                                <i-row type="flex">
+                                    <i-form-item label="三张最具代表性的社团照片：" v-if="iconicPhoto.length > 0">
+                                        <br/>
+                                        <div class="demo-upload-list" v-for="(item,index) in iconicPhoto" :key="index">
+                                            <img :src="`/api/cms/Download?id=${item.id}`"/>
+                                        </div>
+                                    </i-form-item>
                                 </i-row>
                             <div style="display: none">
                                 <Divider orientation="left">指导老师情况</Divider>
@@ -508,7 +516,7 @@
                             <i-col>
                                 <i-row type="flex" :gutter="16">
                                     <i-col>
-                                        <i-button type="primary" @click="addActivity">添加活动</i-button>
+                                        <i-button type="primary" @click="addActivity">新建项目</i-button>
                                     </i-col>
                                     <i-col>
                                         <i-input type="text" search v-model="activityName" @on-enter="getActivityTable(null)" placeholder="搜索活动名" />
@@ -985,7 +993,22 @@ export default {
                 if (this.tabSelect === "subDept") {
                     this.searchSubDepart();
                 }
-        }, 500)
+        }, 500),
+        getPhoto () {
+            axios.post("/api/cms/GetAttachments", {id: this.orgInfo.ID, relateTable: "Department", usage: "DepartGraph"}, msg => {
+                if (msg.success) {
+                    // console.log(msg);
+                    this.iconicPhoto = msg.data.map(e => {
+                        return {
+                            name: e.DisplayName,
+                            id: e.ID,
+                            downLoad: e.Download
+                        }
+                    });
+                    // console.log(this.iconicPhoto);
+                }
+            });
+        }
     },
     watch: {
         keyword (v) {
@@ -1013,6 +1036,7 @@ export default {
         }
     },
     mounted () {
+        // console.log("bool:" + app.checkPermission('Organization.TwAdminUser'));
         app.title = "社团管理";
         this.$Spin.show({
             render: (h) => {
@@ -1048,6 +1072,7 @@ export default {
                 this.getActivityTable();
                 this.getApplicateTable();
                 this.getAllOrgDetail();
+                this.getPhoto();
             }
             this.$Spin.hide();
             this.tabSelect = this.$route.query.tabSelect || "basicInfo";
@@ -1056,6 +1081,7 @@ export default {
     data () {
         let THIS = this;
         return {
+            iconicPhoto: [],
             modalShow: false,
             modalLoading: false,
             app,
@@ -1155,7 +1181,7 @@ export default {
             memberManage: (h) => {
                     return h('div', [
                         h('span', '成员管理'),
-                        h('span', '（' + this.tableData.member.length + '人）')
+                        h('span', '（' + this.pager.member.total + '人）')
                     ])
             },
             password: {},
@@ -1226,5 +1252,18 @@ h3 {
 }
 .ivu-poptip-body-content {
     overflow: hidden;
+}
+.demo-upload-list{
+    display: inline-block;
+    text-align: center;
+    line-height: 60px;
+    border-radius: 4px;
+    overflow: hidden;
+    position: relative;
+    margin-top: 10px;
+}
+.demo-upload-list img{
+    width: 100%;
+    height: 100%;
 }
 </style>
