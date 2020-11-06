@@ -1,9 +1,12 @@
 <template>
-    <i-table :columns="columns" :data="tableData" :loading="loading">
+    <i-row>
+        <i-table :columns="columns" :data="tableData" :loading="loading">
         <template slot="Action" slot-scope="{row}">
             <i-button @click="checkWorkflow(row)">查看</i-button>
         </template>
-    </i-table>
+        </i-table>
+        <i-page :total="40"  />
+    </i-row>
 </template>
 <script>
 import axios from 'axios';
