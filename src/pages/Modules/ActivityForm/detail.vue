@@ -552,6 +552,9 @@ export default {
         },
         qrCodeUrl: {
             get: function () {
+                if (this.form.intstanceState !== 3) {
+                    return "";
+                }
                 let url = `http://xsst.xmu.edu.cn/manage/printactivityapplication?instanceId=${this.instanceId}`;
                 let encoding = encodeURIComponent(url);
                 let finalUrl = `/url2qr?url=${encoding}&state=2`;
