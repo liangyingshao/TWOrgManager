@@ -174,7 +174,7 @@
                                                     <i-input search placeholder="搜索活动名称" @on-search="searchActivity" />
                                                 </i-col>
                                                 <i-col>
-                                                    <i-button type="primary" @click="addActivity">添加活动</i-button>
+                                                    <i-button type="primary" @click="addActivity">新建项目</i-button>
                                                 </i-col>
                                             </i-row>
                                         </i-col>

@@ -86,7 +86,7 @@ export default {
         },
         addRole () {
             this.loading = true;
-            axios.post("/api/security/SaveRole", { role: this.newRole }, msg => {
+            axios.postStream("/api/security/SaveRole", { role: this.newRole }, msg => {
                 if (msg.success) {
                     this.$Message.success(msg.msg);
                     this.newRole = "";

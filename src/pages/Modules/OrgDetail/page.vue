@@ -516,7 +516,7 @@
                             <i-col>
                                 <i-row type="flex" :gutter="16">
                                     <i-col>
-                                        <i-button type="primary" @click="addActivity">添加活动</i-button>
+                                        <i-button type="primary" @click="addActivity">新建项目</i-button>
                                     </i-col>
                                     <i-col>
                                         <i-input type="text" search v-model="activityName" @on-enter="getActivityTable(null)" placeholder="搜索活动名" />
@@ -1181,7 +1181,7 @@ export default {
             memberManage: (h) => {
                     return h('div', [
                         h('span', '成员管理'),
-                        h('span', '（' + this.tableData.member.length + '人）')
+                        h('span', '（' + this.pager.member.total + '人）')
                     ])
             },
             password: {},

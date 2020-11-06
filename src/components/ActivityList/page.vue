@@ -3,7 +3,7 @@
         <template v-slot:extra>
             <i-row type="flex" :gutter="16">
                 <i-col>
-                    <i-button type="primary" @click="addActivity">新建活动</i-button>
+                    <i-button type="primary" @click="addActivity">新建项目</i-button>
                 </i-col>
                 <i-col>
                     <i-input search placeholder="搜索活动名称" v-model="activityName" @on-search="getActivities()" />
