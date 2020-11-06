@@ -91,6 +91,13 @@
                             message: "必须填写工号",
                             trigger: "blur"
                         }
+                    ],
+                    GuideTeacherType: [
+                        {
+                            required: true,
+                            message: "必须填写指导老师类别",
+                            trigger: "blur"
+                        }
                     ]
                     // "Mobile": [
                     //     {type: "string", required: true, pattern: regex.mobile, message: "手机格式不正确", trigger: "blur"}

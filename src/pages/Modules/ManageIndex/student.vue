@@ -3,7 +3,17 @@
         <i-col span="15">
             <i-card title="报名社团" v-if="canSignUpOrg">
                 <template v-slot:extra>
-                    <i-input search placeholder="搜索社团名称" @on-search="searchOrg" />
+                    <AutoComplete @on-search="searchOrg" icon="ios-search" placeholder="搜索社团名称" style="width:300px">
+                        <div class="demo-auto-complete-item" v-for="(item, index) in communityType" :key="index">
+                            <div class="demo-auto-complete-group">
+                                <span>{{ item.title }}</span>
+                            </div>
+                            <Option v-for="option in item.children" :value="option.title" :key="option.title">
+                                <span class="demo-auto-complete-title">{{ option.title }}</span>
+                            </Option>
+                        </div>
+                    </AutoComplete>
+                    <!-- <i-input search placeholder="搜索社团名称" @on-search="searchOrg" /> -->
                 </template>
                 <Scroll v-if="allOrgs.length">
                     <i-alert>每名学生最多加入2个学生社团</i-alert>
@@ -154,6 +164,12 @@ export default {
     data () {
         return {
             app,
+            communityType: [
+                {
+                    title: '按类别搜索',
+                    children: []
+                }
+            ],
             level: -1,
             pic: pic,
             data: [],
@@ -252,6 +268,12 @@ export default {
     },
     mounted () {
         app.title = "主页";
+        let temp = app.dictionary["社团类型"];
+        for (var key in temp) {
+            this.communityType[0].children.push({
+                'title': temp[key]
+            })
+        }
         this.getDashBoard();
         this.judgeTime();
         this.getAllDeparts();
@@ -324,7 +346,10 @@ export default {
             this.activitySearched = this.activityData.filter(e => e.ActivityName.indexOf(value) > -1);
         },
         searchOrg (value) {
-            this.allOrgsSearched = this.allOrgs.filter(e => e.Name.indexOf(value) > -1);
+            let union1 = this.allOrgs.filter(e => e.Name.indexOf(value) > -1);
+            let union2 = this.allOrgs.filter(e => e.DepartType === value);
+            // 并集
+            this.allOrgsSearched = union1.concat(union2.filter(v => !union1.includes(v)))
         },
         signUp (state) {
             axios.post("/api/org/ChangeSignUpState", {actId: this.activityDetail.ID, state}, msg => {
@@ -410,5 +435,31 @@ export default {
         border-radius: 20px;
         height:300px;
         line-height: 300px;
+    }
+    .demo-auto-complete-item{
+        padding: 4px 0;
+        border-bottom: 1px solid #F6F6F6;
+    }
+    .demo-auto-complete-group{
+        font-size: 12px;
+        padding: 4px 6px;
+    }
+    .demo-auto-complete-group span{
+        color: #666;
+        font-weight: bold;
+    }
+    .demo-auto-complete-group a{
+        float: right;
+    }
+    .demo-auto-complete-count{
+        float: right;
+        color: #999;
+    }
+    .demo-auto-complete-more{
+        display: block;
+        margin: 0 auto;
+        padding: 4px;
+        text-align: center;
+        font-size: 12px;
     }
 </style>
