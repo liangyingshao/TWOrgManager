@@ -21,8 +21,8 @@
                     <img v-if="row.ShortCode" :src="'/qr/' + row.ShortCode" />
                 </template>
             </i-table>
-            <Page :styles="{'margin-top': '16px'}" :total="pager.totalRow" show-sizer show-total :page-size="5"
-                @on-change="getActivities($event)" @on-page-size-change="getActivities(null ,$event)" />
+            <Page :styles="{'margin-top': '16px'}" :total="pager.totalRow" show-sizer show-total :page-size="10"
+                @on-change="getActivities($event, null)" @on-page-size-change="getActivities(null ,$event)" />
         </i-row>
     </i-card>
 </template>

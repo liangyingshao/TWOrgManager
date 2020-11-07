@@ -48,11 +48,11 @@ export default {
             columns: [
                 {
                     title: "流程名称",
-                    key: "WorkflowType"
+                    key: "WorkflowName"
                 },
                 {
                     title: "流程类别",
-                    key: "WorkflowName"
+                    key: "WorkflowType"
                 },
                 {
                     title: "申请人",
@@ -99,7 +99,7 @@ export default {
             });
         },
         checkWorkflow (row) {
-            window.open(`${this.dic[row.WorkflowName]}?instanceId=${row.InstanceId}&stepId=${row.StepId}&detail=true`);
+            window.open(`${this.dic[row.WorkflowType]}?instanceId=${row.InstanceId}&stepId=${row.StepId}&detail=true`);
         }
     }
 }
