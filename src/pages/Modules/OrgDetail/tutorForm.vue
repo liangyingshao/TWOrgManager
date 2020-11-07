@@ -94,6 +94,13 @@
                     ],
                     "Mobile": [
                         {type: "string", required: true, pattern: regex.mobile, message: "必须填写手机号", trigger: "blur"}
+                    ],    
+                    GuideTeacherType: [
+                        {
+                            required: true,
+                            message: "必须填写指导老师类别",
+                            trigger: "blur"
+                        }
                     ]
                 },
                 pwd: ''

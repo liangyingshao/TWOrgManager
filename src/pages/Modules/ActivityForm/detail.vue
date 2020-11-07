@@ -34,7 +34,8 @@
                         <i-col>
                             <p class="headline">社团活动申请表</p>
                             <div class="info-row">
-                                <p>填表时间：{{form.data.CreatedTime}}</p>
+                                <p>活动编号: {{form.data.ActNo ? form.data.ActNo : "（请等待活动审核完成）"}}</p>
+                                <!--p>填表时间：{{form.data.CreatedTime}}</p-->
                                 <p>社团名称: {{form.data.DepartName}}</p>
                             </div>
                             <table border="1" class="table">
