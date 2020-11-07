@@ -60,6 +60,10 @@
 					<view class="title">活动内容</view>
 					<input class="text-right" name="Description" v-model="io.data.Description" :disabled="io.fieldAccess.Description !== 'w' || !io.isMyStep"></input>
 				</view>
+				<view class="cu-form-group" v-for="(item,index) in files" :key="index">
+					<view class="title">附件</view>
+					<a target="_blank" :href="item.Download">{{item.DisplayName}}</a>
+				</view>
 				<view class="cu-bar bg-white solids-bottom margin-top-xs" v-if="io.fieldAccess.GuideTeacherOpinion">
 					<view class="action">
 						<text class="text-bold" :class="io.data.GuideTeacherIsPass ? 'cuIcon-check text-green' : 'cuIcon-close text-red'"></text>
@@ -205,6 +209,7 @@
 			this.stepId = query.stepId;
 			this.detailMode = Boolean(query.detail);
 			this.getFieldAccess();
+			this.getFiles();
 		},
 		data() {
 			return {
@@ -216,12 +221,21 @@
 				stepId: "",
 				displayTimeline: true,
 				detailMode: true,
+				files: [
+				],
 				upLoad: {
 
 				}
 			}
 		},
 		methods: {
+			getFiles () {
+				uni.post("/api/cms/GetAttachments", {id: this.instanceId, relateTable: "ActivityApplication", usage: "附件"}, msg => {
+					if (msg.success) {
+						this.files = msg.data;
+					}
+				})
+			},
 			foldUp() {
 				this.displayTimeline = !this.displayTimeline;
 			},
