@@ -91,10 +91,10 @@
                             message: "必须填写工号",
                             trigger: "blur"
                         }
+                    ],
+                    "Mobile": [
+                        {type: "string", required: true, pattern: regex.mobile, message: "必须填写手机号", trigger: "blur"}
                     ]
-                    // "Mobile": [
-                    //     {type: "string", required: true, pattern: regex.mobile, message: "手机格式不正确", trigger: "blur"}
-                    // ]
                 },
                 pwd: ''
             }
