@@ -64,7 +64,7 @@
 <script>
     const md5 = require("md5");
     const axios = require("axios");
-    // const regex = require("@/regex.js");
+    const regex = require("@/regex.js");
     export default {
         props: {
             modalData: {
@@ -94,7 +94,7 @@
                     ],
                     "Mobile": [
                         {type: "string", required: true, pattern: regex.mobile, message: "必须填写手机号", trigger: "blur"}
-                    ],    
+                    ],
                     GuideTeacherType: [
                         {
                             required: true,

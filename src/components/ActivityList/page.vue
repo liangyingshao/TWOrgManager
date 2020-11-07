@@ -44,7 +44,7 @@ export default {
             activityData: [],
             pager: {
                 page: 1,
-                pageSize: 5,
+                pageSize: 10,
                 totalRow: 0
             },
             ID: ""
