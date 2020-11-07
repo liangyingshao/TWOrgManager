@@ -6,7 +6,7 @@
                     <i-button type="primary" @click="addActivity">新建项目</i-button>
                 </i-col>
                 <i-col>
-                    <i-input search placeholder="搜索活动名称" v-model="activityName" @on-search="getActivities()" />
+                    <i-input search placeholder="搜索活动名称或编号" v-model="activityName" @on-search="getActivities()" />
                 </i-col>
             </i-row>
         </template>
