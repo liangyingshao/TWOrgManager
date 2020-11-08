@@ -447,7 +447,8 @@
             <i-row style="margin-top: 40px;">
                 <template v-if="io.isMyStep && io.currentStep==='填写申请表'">
                     <i-button @click="submit" type="primary">提交修改</i-button>
-                    <i-button @click="giveUp">放弃修改</i-button>
+                    <!--i-button v-if="io.currentStep === '填写申请表' && io.isMyStep" @click="cancel(true)">删除申请</i-button-->
+                    <i-button v-if="canCancel" type="error" @click="cancel(false)">作废申请</i-button>
                 </template>
             </i-row>
             <i-divider style="padding: 20px 0px" orientation="center">时间轴</i-divider>
@@ -460,8 +461,8 @@
                             </i-col>
                         </i-row>
                         <i-row v-for="(item,index) in item.steps" :key="index" class="content">
-                            <Alert v-if="item.State !== 0 && item.State !== 1" show-icon :type="icons[item.State]">{{item.StepName}}于{{item.CreatedOn}}{{item.Time}}由{{item.ExecutorName}}{{stepInfo[item.State]}}</Alert>
-                            <Alert v-else show-icon>{{item.StepName}}于{{item.CreatedOn}}{{item.Time}}由{{item.ExecutorName}}{{stepInfo[item.State]}}</Alert>
+                            <Alert v-if="item.State !== 0 && item.State !== 1" show-icon :type="icons[item.State]">{{item.StepName}}于{{item.CreatedOn}}由{{item.ExecutorName}}{{stepInfo[item.State]}}</Alert>
+                            <Alert v-else show-icon>{{item.StepName}}于{{item.CreatedOn}}由{{item.ExecutorName}}{{stepInfo[item.State]}}</Alert>
                         </i-row>
                     </TimelineItem>
                 </i-timeline>
@@ -471,6 +472,7 @@
 </template>
 
 <script>
+const app = require("@/config");
 const axios = require("axios");
 const enums = require("@/config/enums");
 export default {
@@ -526,6 +528,31 @@ export default {
         }
     },
     methods: {
+        cancel (del) {
+            this.$Modal.confirm({
+                title: "确认删除",
+                content: `确实要${del ? '删除' : '作废'}申请吗？此操作不可恢复。`,
+                onOk: () => {
+                    if (del) {
+                        axios.post("/api/org/RemoveActivity", {id: this.io.data.ID}, msg => {
+                            if (msg.success) {
+                                this.$Message.success("删除成功");
+                            } else {
+                                this.$Message.error(msg.msg);
+                            }
+                        });
+                    } else {
+                        axios.post("/api/org/AbortActivity", {id: this.io.data.ID}, msg => {
+                            if (msg.success) {
+                                this.$Message.success("作废成功");
+                            } else {
+                                this.$Message.error(msg.msg);
+                            }
+                        });
+                    }
+                }
+            });
+        },
         searchUser (code, i) {
             axios.post("/api/security/GetUserByCode", {code: code}, msg => {
                 if (msg.success) {
@@ -672,6 +699,16 @@ export default {
             if (newValue) {
                 this.getFile();
                 this.getPhoto();
+            }
+        }
+    },
+    computed: {
+        canCancel: {
+            get: function () {
+                let generalCondition = this.io.currentStep !== '填写申请表' && this.io.currentStep !== '已完成' && this.io.currentStep !== '已取消';
+                let hasPrivilege = app.checkPermission('Organization.RemoveActivity');
+                let myOrg = false;
+                return generalCondition && (hasPrivilege || myOrg);
             }
         }
     }

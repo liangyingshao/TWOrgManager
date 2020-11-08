@@ -3,7 +3,7 @@
         <i-col span="15">
             <i-card title="报名社团" v-if="canSignUpOrg">
                 <template v-slot:extra>
-                    <AutoComplete @on-search="searchOrg" icon="ios-search" placeholder="搜索社团名称" style="width:300px">
+                    <AutoComplete @on-change="searchOrg" icon="ios-search" placeholder="搜索社团名称" style="width:300px">
                         <div class="demo-auto-complete-item" v-for="(item, index) in communityType" :key="index">
                             <div class="demo-auto-complete-group">
                                 <span>{{ item.title }}</span>

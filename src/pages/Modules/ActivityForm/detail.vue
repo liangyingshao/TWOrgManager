@@ -34,7 +34,8 @@
                         <i-col>
                             <p class="headline">社团活动申请表</p>
                             <div class="info-row">
-                                <p>填表时间：{{form.data.CreatedTime}}</p>
+                                <p>活动编号: {{form.data.ActNo ? form.data.ActNo : "（请等待活动审核完成）"}}</p>
+                                <!--p>填表时间：{{form.data.CreatedTime}}</p-->
                                 <p>社团名称: {{form.data.DepartName}}</p>
                             </div>
                             <table border="1" class="table">
@@ -223,8 +224,8 @@
                                 </i-col>
                             </i-row>
                             <i-row v-for="(item,index) in item.steps" :key="index" class="content">
-                                <Alert v-if="item.State !== 0 && item.State !== 1" show-icon :type="icons[item.State]">{{item.StepName}}于{{item.CreatedOn}}{{item.Time}}由{{item.ExecutorName}}{{stepInfo[item.State]}}</Alert>
-                                <Alert v-else show-icon>{{item.StepName}}于{{item.CreatedOn}}{{item.Time}}由{{item.ExecutorName}}{{stepInfo[item.State]}}</Alert>
+                                <Alert v-if="item.State !== 0 && item.State !== 1" show-icon :type="icons[item.State]">{{item.StepName}}于{{item.CreatedOn}}由{{item.ExecutorName}}{{stepInfo[item.State]}}</Alert>
+                                <Alert v-else show-icon>{{item.StepName}}于{{item.CreatedOn}}由{{item.ExecutorName}}{{stepInfo[item.State]}}</Alert>
                             </i-row>
                         </TimelineItem>
                     </i-timeline>

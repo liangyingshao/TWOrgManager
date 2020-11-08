@@ -1,9 +1,24 @@
 <template>
-    <i-table :columns="columns" :data="tableData" :loading="loading">
-        <template slot="Action" slot-scope="{row}">
-            <i-button @click="checkWorkflow(row)">查看</i-button>
-        </template>
-    </i-table>
+    <i-row>
+        <i-tabs v-model="currentTab" @on-click="getFlows(null, null)">
+            <i-tab-pane label="活动申请" name="社团活动申请">
+                <i-table :columns="columns" :data="tableData" :loading="loading">、
+                    <template slot="Action" slot-scope="{row}">
+                        <i-button @click="checkWorkflow(row)">查看</i-button>
+                    </template>
+                </i-table>
+                <i-page style="margin-top: 8px" :page-size="page.activity.pageSize" :total="page.activity.totalRow" show-total show-sizer @on-page-size-change="getFlows(null, $event)" @on-change="getFlows($event, null)"/>
+            </i-tab-pane>
+            <i-tab-pane label="修改社团信息申请" name="修改社团基本信息申请">
+                <i-table :columns="columns" :data="tableData" :loading="loading">、
+                    <template slot="Action" slot-scope="{row}">
+                        <i-button @click="checkWorkflow(row)">查看</i-button>
+                    </template>
+                </i-table>
+                <i-page style="margin-top: 8px" :page-size="page.information.pageSize" :total="page.information.totalRow" show-total show-sizer @on-page-size-change="getFlows(null, $event)" @on-change="getFlows($event, null)"/>
+            </i-tab-pane>
+        </i-tabs>
+    </i-row>
 </template>
 <script>
 import axios from 'axios';
@@ -12,11 +27,32 @@ export default {
     data () {
         return {
             loading: false,
+            currentTab: "社团活动申请",
             tableData: [],
+            page: {
+                information: {
+                    page: 1,
+                    pageSize: 20,
+                    totalRow: 0
+                },
+                activity: {
+                    page: 1,
+                    pageSize: 20,
+                    totalRow: 0
+                }
+            },
+            dic2: {
+               '社团活动申请': 'activity',
+               '修改社团基本信息申请': 'information'
+            },
             columns: [
                 {
-                    title: "申请类别",
+                    title: "流程名称",
                     key: "WorkflowName"
+                },
+                {
+                    title: "流程类别",
+                    key: "WorkflowType"
                 },
                 {
                     title: "申请人",
@@ -46,19 +82,16 @@ export default {
         this.getFlows();
     },
     methods: {
-        getFlows () {
+        getFlows (tpage, tpageSize) {
+            let page = tpage || this.page[this.dic2[this.currentTab]].page;
+            let pageSize = tpageSize || this.page[this.dic2[this.currentTab]].pageSize;
             this.loading = true;
-            axios.post("/api/workflow/AllFlow", {name: "社团活动申请"}, msg => {
+            axios.post("/api/workflow/AllFlow", {name: this.currentTab, page, pageSize}, msg => {
                 if (msg.success) {
-                    this.tableData = this.tableData.concat(msg.data);
-                } else {
-                    this.$Message.warning(msg.msg);
-                }
-                this.loading = false;
-            });
-            axios.post("/api/workflow/AllFlow", {name: "修改社团基本信息申请"}, msg => {
-                if (msg.success) {
-                    this.tableData = this.tableData.concat(msg.data);
+                    this.page[this.dic2[this.currentTab]].totalRow = msg.totalRow;
+                    this.page[this.dic2[this.currentTab]].page = msg.page;
+                    this.page[this.dic2[this.currentTab]].pageSize = msg.pageSize;
+                    this.tableData = msg.data;
                 } else {
                     this.$Message.warning(msg.msg);
                 }
@@ -66,7 +99,7 @@ export default {
             });
         },
         checkWorkflow (row) {
-            window.open(`${this.dic[row.WorkflowName]}?instanceId=${row.InstanceId}&stepId=${row.StepId}&detail=true`);
+            window.open(`${this.dic[row.WorkflowType]}?instanceId=${row.InstanceId}&stepId=${row.StepId}&detail=true`);
         }
     }
 }
