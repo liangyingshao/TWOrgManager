@@ -461,8 +461,8 @@
                             </i-col>
                         </i-row>
                         <i-row v-for="(item,index) in item.steps" :key="index" class="content">
-                            <Alert v-if="item.State !== 0 && item.State !== 1" show-icon :type="icons[item.State]">{{item.StepName}}于{{item.CreatedOn}}{{item.Time}}由{{item.ExecutorName}}{{stepInfo[item.State]}}</Alert>
-                            <Alert v-else show-icon>{{item.StepName}}于{{item.CreatedOn}}{{item.Time}}由{{item.ExecutorName}}{{stepInfo[item.State]}}</Alert>
+                            <Alert v-if="item.State !== 0 && item.State !== 1" show-icon :type="icons[item.State]">{{item.StepName}}于{{item.CreatedOn}}由{{item.ExecutorName}}{{stepInfo[item.State]}}</Alert>
+                            <Alert v-else show-icon>{{item.StepName}}于{{item.CreatedOn}}由{{item.ExecutorName}}{{stepInfo[item.State]}}</Alert>
                         </i-row>
                     </TimelineItem>
                 </i-timeline>
