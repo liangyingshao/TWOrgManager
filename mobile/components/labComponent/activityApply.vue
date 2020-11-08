@@ -51,7 +51,7 @@
     },
     methods:{
     	toExecute(data) {
-    		if (data.WorkflowType === "社团活动申请") {
+    		/*if (data.WorkflowType === "社团活动申请") {
     			uni.navigateTo({
     				url: `../../activity/activity?instanceId=${data.InstanceId}&stepId=${data.StepId}&detail=true`
     			})
@@ -65,7 +65,10 @@
     					})
     				}
     			})
-    		}
+    		}*/
+			uni.navigateTo({
+				url: `../../activity/activity?instanceId=${data.InstanceId}&stepId=${data.StepId}&detail=true`
+			})
     	}
     }
   }

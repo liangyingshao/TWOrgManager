@@ -137,7 +137,8 @@
 						}
 					});
 				} else if (e === "../index/index") {
-					uni.switchDashboard(app.checkPermission);
+					let role = uni.getStorageSync("userRole");
+					uni.switchDashboard(role);
 				} else {
 					uni.navigateTo({
 						url: e
