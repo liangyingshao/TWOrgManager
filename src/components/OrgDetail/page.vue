@@ -4,11 +4,11 @@
         <i-col span="24">
             <i-alert show-icon v-if="!io.isMyStep">
                 您正处于查看模式
-                <template slot="desc">您只能查看该申请，不能编辑</template>
+                <template slot="desc">您只能查看该申请，不能编辑。</template>
             </i-alert>
             <i-alert show-icon v-else>
                 您正处于编辑模式
-                <template slot="desc">您当前正在编辑社团基本信息，请单击“确定”按钮提交修改，单击“取消”按钮或关闭页面以放弃修改。</template>
+                <template slot="desc">您当前正在编辑社团基本信息，请单击“提交修改”按钮提交修改，如关闭页面您的修改将不会保存。</template>
             </i-alert>
             <i-form :model="io.data" ref="form" :rules="ruleInline">
                 <Divider orientation="left">基本信息</Divider>
@@ -447,8 +447,8 @@
             <i-row style="margin-top: 40px;">
                 <template v-if="io.isMyStep && io.currentStep==='填写申请表'">
                     <i-button @click="submit" type="primary">提交修改</i-button>
-                    <!--i-button v-if="io.currentStep === '填写申请表' && io.isMyStep" @click="cancel(true)">删除申请</i-button-->
-                    <i-button v-if="canCancel" type="error" @click="cancel(false)">作废申请</i-button>
+                    <!-- <i-button v-if="io.currentStep === '填写申请表' && io.isMyStep" @click="cancel(true)">删除申请</i-button> -->
+                    <!-- <i-button v-if="canCancel" type="error" @click="cancel(false)">作废申请</i-button> -->
                 </template>
             </i-row>
             <i-divider style="padding: 20px 0px" orientation="center">时间轴</i-divider>
