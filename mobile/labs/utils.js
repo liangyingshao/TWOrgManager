@@ -6,6 +6,7 @@ uni.chosePostion = function (role) {
 	uni.setStorageSync("defaultDepartId", role.departId);
 	uni.setStorageSync("position", role.departName + role.position);
 	uni.setStorageSync("role", role.position);
+	uni.setStorageSync("userRole", role);
 }
 
 uni.switchDashboard = function (role) {
