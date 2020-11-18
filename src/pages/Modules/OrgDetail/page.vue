@@ -505,7 +505,8 @@
                     </i-card>
                 </i-tab-pane>
                 <i-tab-pane label="社团活动" name="activity">
-                    <i-card dis-hover>
+                    <activityList />
+                    <!-- <i-card dis-hover>
                         <i-row type="flex" justify="space-between" align="middle" slot="title">
                             <i-col>
                                 <i-row type="flex" align="middle" :gutter="16">
@@ -540,7 +541,7 @@
                             <br/>
                             <i-page show-sizer show-total :total="pager.activity.total" @on-change="getActivityTable($event, null)" @on-page-size-change="getActivityTable(null, $event)" />
                         </i-row>
-                    </i-card>
+                    </i-card> -->
                 </i-tab-pane>
                 <i-tab-pane label="操作记录" name="operation">
                     <i-table stripe :columns="tableCol.operation" :data="tableData.operation" :loading="tableLoading">
