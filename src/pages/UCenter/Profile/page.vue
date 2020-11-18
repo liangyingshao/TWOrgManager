@@ -359,7 +359,7 @@ export default {
             this.haveJoinCPC = !!value.toLocaleDateString && value.toLocaleDateString() !== badDate.toLocaleDateString();
         },
         "model.JoinCCYLTime" (value) {
-            this.haveJoinCPC = !!value.toLocaleDateString && value.toLocaleDateString() !== badDate.toLocaleDateString();
+            this.haveJoinCCYL = !!value.toLocaleDateString && value.toLocaleDateString() !== badDate.toLocaleDateString();
         }
     }
 };

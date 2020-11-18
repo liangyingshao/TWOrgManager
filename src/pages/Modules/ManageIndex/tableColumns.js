@@ -6,11 +6,61 @@ let columns = {
         },
         {
             title: '活动类型',
-            key: 'ActivityType'
+            key: 'ActivityType',
+            filters: [
+                {
+                    label: '团支部活动',
+                    value: '团支部活动'
+                },
+                {
+                    label: '党支部活动',
+                    value: '党支部活动'
+                },
+                {
+                    label: '普通活动',
+                    value: '普通活动'
+                }
+            ],
+            filterMultiple: false,
+            filterRemote (value, key, col) {
+            }
         },
         {
             title: '审核进度',
-            key: 'CurrentStep'
+            key: 'CurrentStep',
+            filters: [
+                {
+                    label: '填写申请表',
+                    value: '填写申请表'
+                },
+                {
+                    label: '指导老师审核',
+                    value: '指导老师审核'
+                },
+                {
+                    label: '业务指导单位审核',
+                    value: '业务指导单位审核'
+                },
+                {
+                    label: '学生社团管理部审核',
+                    value: '学生社团管理部审核'
+                },
+                {
+                    label: '校团委审核',
+                    value: '校团委审核'
+                },
+                {
+                    label: '完成',
+                    value: '完成'
+                },
+                {
+                    label: '取消',
+                    value: '取消'
+                }
+            ],
+            filterMultiple: false,
+            filterRemote (value, key, col) {
+            }
         },
         {
             title: '负责人姓名',
@@ -24,7 +74,7 @@ let columns = {
             title: '二维码',
             slot: 'QRCode',
             key: 'ShortCode',
-            minWidth: 100
+            width: 100
         },
         {
             title: '操作',

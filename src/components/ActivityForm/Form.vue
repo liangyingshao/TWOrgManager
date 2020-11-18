@@ -278,7 +278,7 @@
                     </i-row>
                     <i-row class="add2 headline">
                         <i-button v-if="form.currentStep==='填写申请表' && form.isMyStep" style="width: 200px;margin: 18px auto;" type="primary" @click="submit">提交申请</i-button>
-                        <i-button v-if="form.currentStep==='填写申请表' && form.isMyStep" style="width: 200px;margin: 18px auto;" @click="cancel(true)">删除申请</i-button>
+                        <i-button v-if="canDelete" style="width: 200px;margin: 18px auto;" @click="cancel(true)">删除申请</i-button>
                         <i-button v-if="canCancel" style="width: 200px;margin: 18px auto;" type="error" @click="cancel(false)">作废申请</i-button>
                     </i-row>
                 </div>
@@ -716,6 +716,13 @@ export default {
                 return generalCondition && (hasPrivilege || myOrg);
             }
         },
+        canDelete: {
+            get: function () {
+                let isOrgManager = (this.form.currentStep === '填写申请表' || this.form.currentStep === '指导老师审核') && localStorage.getItem("role") === "管理员";
+                let hasPrivilege = app.checkPermission('Organization.RemoveActivity');
+                return isOrgManager || hasPrivilege;
+            }
+        },
         qrCodeUrl: {
             get: function () {
                 let url = `http://xsst.xmu.edu.cn/manage/printactivityapplication?instanceId=${this.instanceId}`;
@@ -781,7 +788,7 @@ export default {
         min-height: 50px;
     }
     .headline {
-        margin-top: 9px;
+        margin-top: 50px;
         text-align: center;
         font-size: 24px;
         font-family: '';
