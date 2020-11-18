@@ -13,10 +13,10 @@
         <i-row>
             <i-table stripe :columns="tableColumns.activity" @on-filter-change="onFilterChange" :data="activityData" :loading="tableLoading">
                 <template slot="Action" slot-scope="{row}">
-                    <i-button @click="checkWorkflow(row.InstanceId, row.StepId, row.ID)">查看</i-button>
-                    <i-button type="primary" @click="iniateAct(row.ID, 1)" v-if="row.StartState === 0 && row.ApplicateState === 3">发起活动</i-button>
-                    <i-button @click="iniateAct(row.ID, 0)" v-if="row.StartState === 1 && row.ApplicateState === 3">取消活动</i-button>
-                    <i-button v-if="canDelete(row)" type="error" @click="cancel(row)">作废申请</i-button>
+                    <a class="a-button" @click="checkWorkflow(row.InstanceId, row.StepId, row.ID)">[查看]</a>
+                    <a class="a-button" @click="iniateAct(row.ID, 1)" v-if="row.StartState === 0 && row.ApplicateState === 3">[发起活动]</a>
+                    <a class="a-button" @click="iniateAct(row.ID, 0)" v-if="row.StartState === 1 && row.ApplicateState === 3">[取消活动]</a>
+                    <a class="a-button" v-if="canDelete(row)" type="error" @click="cancel(row)">[删除项目]</a>
                 </template>
                 <template slot="QRCode" slot-scope="{row}">
                     <img width="80" v-if="row.ShortCode" :src="'/qr/' + row.ShortCode" />
@@ -153,6 +153,7 @@ export default {
                     axios.post("/api/org/RemoveActivity", {id: row.ID}, msg => {
                         if (msg.success) {
                             this.$Message.success("删除成功");
+                            this.getActivities();
                         } else {
                             this.$Message.error(msg.msg);
                         }
@@ -165,5 +166,9 @@ export default {
 </script>
 
 <style scoped>
-
+.a-button{
+    color: dodgerblue;
+    cursor: pointer;
+    margin-right: 10px;
+}
 </style>
