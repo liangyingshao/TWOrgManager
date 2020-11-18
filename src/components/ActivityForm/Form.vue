@@ -718,7 +718,7 @@ export default {
         },
         canDelete: {
             get: function () {
-                let isOrgManager = (this.form.currentStep === '填写申请表' || this.form.currentStep === '指导老师审核') && localStorage.getItem("position") === "管理员";
+                let isOrgManager = (this.form.currentStep === '填写申请表' || this.form.currentStep === '指导老师审核') && localStorage.getItem("role") === "管理员";
                 let hasPrivilege = app.checkPermission('Organization.RemoveActivity');
                 return isOrgManager || hasPrivilege;
             }
@@ -788,7 +788,7 @@ export default {
         min-height: 50px;
     }
     .headline {
-        margin-top: 9px;
+        margin-top: 50px;
         text-align: center;
         font-size: 24px;
         font-family: '';

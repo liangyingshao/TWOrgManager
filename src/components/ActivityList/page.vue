@@ -3,7 +3,7 @@
         <template v-slot:extra>
             <i-row type="flex" :gutter="16">
                 <i-col>
-                    <i-button type="primary" @click="addActivity">新建项目</i-button>
+                    <i-button type="primary" @click="addActivity">申请新活动</i-button>
                 </i-col>
                 <i-col>
                     <i-input search placeholder="搜索活动名称或编号" v-model="activityName" @on-search="getActivities()" />
@@ -16,7 +16,7 @@
                     <i-button @click="checkWorkflow(row.InstanceId, row.StepId, row.ID)">查看</i-button>
                     <i-button type="primary" @click="iniateAct(row.ID, 1)" v-if="row.StartState === 0 && row.ApplicateState === 3">发起活动</i-button>
                     <i-button @click="iniateAct(row.ID, 0)" v-if="row.StartState === 1 && row.ApplicateState === 3">取消活动</i-button>
-                    <i-button v-if="canDelete(row)" type="error" @click="cancel(false)">作废申请</i-button>
+                    <i-button v-if="canDelete(row)" type="error" @click="cancel(row)">作废申请</i-button>
                 </template>
                 <template slot="QRCode" slot-scope="{row}">
                     <img width="80" v-if="row.ShortCode" :src="'/qr/' + row.ShortCode" />
@@ -141,16 +141,16 @@ export default {
             });
         },
         canDelete (row) {
-            let isOrgManager = (row.CurrentStep === '填写申请表' || row.CurrentStep === '指导老师审核') && localStorage.getItem("position") === "管理员";
+            let isOrgManager = (row.CurrentStep === '填写申请表' || row.CurrentStep === '指导老师审核') && localStorage.getItem("role") === "管理员";
             let hasPrivilege = app.checkPermission('Organization.RemoveActivity');
             return isOrgManager || hasPrivilege;
         },
-        cancel () {
+        cancel (row) {
             this.$Modal.confirm({
                 title: "确认删除",
                 content: "确实要删除申请吗？此操作不可恢复。",
                 onOk: () => {
-                    axios.post("/api/org/RemoveActivity", {id: this.form.data.ID}, msg => {
+                    axios.post("/api/org/RemoveActivity", {id: row.ID}, msg => {
                         if (msg.success) {
                             this.$Message.success("删除成功");
                         } else {
