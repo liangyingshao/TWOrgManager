@@ -36,6 +36,11 @@ export default {
                 {
                     title: "申请时间",
                     maxWidth: 200,
+                    key: "CreatedOn"
+                },
+                {
+                    title: "到达时间",
+                    maxWidth: 200,
                     key: "ArriveOn"
                 },
                 {
