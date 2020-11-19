@@ -67,7 +67,6 @@ export default {
     },
     methods: {
         onFilterChange (e) {
-            debugger
             if (e.key === "CurrentStep") {
                 this.step = e._filterChecked[0];
             } else if (e.key === "ActivityType") {
