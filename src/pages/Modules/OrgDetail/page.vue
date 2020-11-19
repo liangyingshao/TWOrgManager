@@ -505,7 +505,7 @@
                     </i-card>
                 </i-tab-pane>
                 <i-tab-pane label="社团活动" name="activity">
-                    <activityList />
+                    <activityList :overrideID="$route.query.id" />
                     <!-- <i-card dis-hover>
                         <i-row type="flex" justify="space-between" align="middle" slot="title">
                             <i-col>
