@@ -1,6 +1,7 @@
 <template>
 	<view class="cu-item">
-		<view class="content padding-tb-sm">
+		<img :onerror="`javascript:this.src='${app.webInfo.avatar}';`" class="cu-avatar round lg" :src="orgInfo.Avatar"></img>
+		<view class="content padding-tb-sm" style="position: relative; left: -30upx">
 			<view>
 				<text class="cuIcon-group_fill text-blue margin-right-xs"></text>{{orgInfo.Name}}</view>
 			<view class="text-gray text-sm">
@@ -14,7 +15,7 @@
 				v-if="orgInfo.app && orgInfo.app.State === 3">
 					撤回
 				</button>
-				<button class="cu-btn bg-green shadow" @click="applicate(orgInfo.ID)" v-else>
+				<button class="cu-btn bg-green shadow" style="padding: 0 20upx" @click="applicate(orgInfo.ID)" v-else>
 					申请
 				</button>
 			</view>
@@ -64,4 +65,7 @@
 </script>
 
 <style lang="scss">
+	.cu-list.menu-avatar>.cu-item {
+		height: auto;
+	}
 </style>
