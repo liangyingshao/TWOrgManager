@@ -13,7 +13,7 @@
 			</view>
 		</view>
 		<view>
-			<view v-if="orgs.length" class="cu-list menu">
+			<view v-if="orgs.length" class="cu-list menu-avatar">
 				<org-info v-for="org in orgs" :key="org.ID" :orgInfo="org"></org-info>
 			</view>
 			<view v-else class="flex justify-center text-center">
