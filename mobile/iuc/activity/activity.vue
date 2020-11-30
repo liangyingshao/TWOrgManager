@@ -268,6 +268,14 @@
 				});
 			},
 			submit(e) {
+				let err = this.validate();
+				if (err) {
+					uni.showToast({
+						icon: 'none',
+						title: err
+					})
+					return;
+				}
 				//this.io.data = e.detail.value;
 				this.io.shouldUpload.forEach(value => {
 					this.upLoad[value] = this.io[value] || this.io.data[value]
@@ -288,6 +296,32 @@
 						})
 					}
 				})
+			},
+			validate(){
+				let errMsg = "";
+				
+				var isRequest = (fieldName) => {
+					return this.io.fieldAccess[fieldName] === 'w' && !this.io.data[fieldName];
+				};
+	
+				if (this.io.fieldAccess.ActivityName === 'w' && !this.io.data.ActivityName) {
+					errMsg = "必须填写活动名称"
+				} else if (this.io.fieldAccess.Description === 'w' && !this.io.data.Description) {
+					errMsg = "必须填写活动内容"
+				} else if (this.io.fieldAccess.FaceTo === 'w' && !this.io.data.FaceTo) {
+					errMsg = "必须填写活动范围"
+				} else if (this.io.fieldAccess.ActivityType === 'w' && !this.io.data.ActivityType) {
+					errMsg = "必须填写活动类型"
+				} else if (new Date(this.io.data.StartDate) - new Date(this.io.data.EndDate) >= 0) {
+					errMsg = "活动开始时间必须早于活动结束时间"
+				} else if (isRequest("GuideTeacherOpinion")) {
+					errMsg = "必须填写指导老师意见"
+				} else if (isRequest("AffiliatedDepartOpinion")) {
+					errMsg = "必须填写业务指导单位意见"
+				} else if (isRequest("SauOpinion")) {
+					errMsg = "必须填写社团管理部意见"
+				}
+				return errMsg;
 			}
 		}
 	}
