@@ -19,6 +19,11 @@
 				<view class="flex flex-direction margin-tb login-rl">
 					<button class="cu-btn bg-blue lg" form-type="submit">登录</button>
 				</view>
+				<view class="flex flex-direction margin-tb login-rl">
+					<a class="cu-btn bg-blue lg" href="http://ids.xmu.edu.cn/authserver/login?service=http://xsst.xmu.edu.cn/api/ecard">
+						用厦大账号登录
+					</a>
+				</view>
 			</form>
 		</view>
 <!--    <view class="flex margin-bottom-xl justify-center footer">
