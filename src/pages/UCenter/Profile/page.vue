@@ -140,7 +140,8 @@ export default {
             let model = this.model;
             form.validate((err) => {
                 if (!err) {
-                return;
+                    this.isloading = false;
+                    return;
                 }
                 axios.post("/api/security/SaveUserV2", {
                     ...model,
