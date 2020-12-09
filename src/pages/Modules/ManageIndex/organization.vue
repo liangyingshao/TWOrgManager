@@ -5,7 +5,7 @@
                 <template v-slot:title>
                     <i-row style="flex" align="middle">
                         <span style="font-size:18px">我的待办</span>
-                        <Badge :count="message.length" v-if="message.length >0"></Badge>
+                        <Badge :count="messageNum" v-if="messageNum >0"></Badge>
                     </i-row>
                 </template>
                 <template v-slot:extra>
