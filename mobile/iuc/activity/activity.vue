@@ -60,6 +60,10 @@
 					<view class="title">活动内容</view>
 					<input class="text-right" name="Description" v-model="io.data.Description" :disabled="io.fieldAccess.Description !== 'w' || !io.isMyStep"></input>
 				</view>
+				<view class="cu-form-group" v-for="(item,index) in files" :key="index">
+					<view class="title">附件</view>
+					<a target="_blank" :href="item.Download">{{item.DisplayName}}</a>
+				</view>
 				<view class="cu-bar bg-white solids-bottom margin-top-xs" v-if="io.fieldAccess.GuideTeacherOpinion">
 					<view class="action">
 						<text class="text-bold" :class="io.data.GuideTeacherIsPass ? 'cuIcon-check text-green' : 'cuIcon-close text-red'"></text>
@@ -205,6 +209,7 @@
 			this.stepId = query.stepId;
 			this.detailMode = Boolean(query.detail);
 			this.getFieldAccess();
+			this.getFiles();
 		},
 		data() {
 			return {
@@ -216,12 +221,21 @@
 				stepId: "",
 				displayTimeline: true,
 				detailMode: true,
+				files: [
+				],
 				upLoad: {
 
 				}
 			}
 		},
 		methods: {
+			getFiles () {
+				uni.post("/api/cms/GetAttachments", {id: this.instanceId, relateTable: "ActivityApplication", usage: "附件"}, msg => {
+					if (msg.success) {
+						this.files = msg.data;
+					}
+				})
+			},
 			foldUp() {
 				this.displayTimeline = !this.displayTimeline;
 			},
@@ -254,6 +268,14 @@
 				});
 			},
 			submit(e) {
+				let err = this.validate();
+				if (err) {
+					uni.showToast({
+						icon: 'none',
+						title: err
+					})
+					return;
+				}
 				//this.io.data = e.detail.value;
 				this.io.shouldUpload.forEach(value => {
 					this.upLoad[value] = this.io[value] || this.io.data[value]
@@ -274,6 +296,32 @@
 						})
 					}
 				})
+			},
+			validate(){
+				let errMsg = "";
+				
+				var isRequest = (fieldName) => {
+					return this.io.fieldAccess[fieldName] === 'w' && !this.io.data[fieldName];
+				};
+	
+				if (this.io.fieldAccess.ActivityName === 'w' && !this.io.data.ActivityName) {
+					errMsg = "必须填写活动名称"
+				} else if (this.io.fieldAccess.Description === 'w' && !this.io.data.Description) {
+					errMsg = "必须填写活动内容"
+				} else if (this.io.fieldAccess.FaceTo === 'w' && !this.io.data.FaceTo) {
+					errMsg = "必须填写活动范围"
+				} else if (this.io.fieldAccess.ActivityType === 'w' && !this.io.data.ActivityType) {
+					errMsg = "必须填写活动类型"
+				} else if (new Date(this.io.data.StartDate) - new Date(this.io.data.EndDate) >= 0) {
+					errMsg = "活动开始时间必须早于活动结束时间"
+				} else if (isRequest("GuideTeacherOpinion")) {
+					errMsg = "必须填写指导老师意见"
+				} else if (isRequest("AffiliatedDepartOpinion")) {
+					errMsg = "必须填写业务指导单位意见"
+				} else if (isRequest("SauOpinion")) {
+					errMsg = "必须填写社团管理部意见"
+				}
+				return errMsg;
 			}
 		}
 	}

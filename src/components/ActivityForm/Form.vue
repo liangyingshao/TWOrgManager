@@ -68,7 +68,8 @@
                         <i-col>
                             <p class="headline">社团活动申请表</p>
                             <div class="info-row">
-                                <p>填表时间：{{form.data.CreatedTime}}</p>
+                                <p>活动编号: {{form.data.ActNo ? form.data.ActNo : "（请等待活动审核完成）"}}</p>
+                                <!--p>填表时间：{{form.data.CreatedTime}}</p-->
                                 <p>社团名称: {{form.data.DepartName}}</p>
                             </div>
                             <table border="1" class="table">
@@ -277,7 +278,7 @@
                     </i-row>
                     <i-row class="add2 headline">
                         <i-button v-if="form.currentStep==='填写申请表' && form.isMyStep" style="width: 200px;margin: 18px auto;" type="primary" @click="submit">提交申请</i-button>
-                        <i-button v-if="form.currentStep==='填写申请表' && form.isMyStep" style="width: 200px;margin: 18px auto;" @click="cancel(true)">删除申请</i-button>
+                        <i-button v-if="canDelete" style="width: 200px;margin: 18px auto;" @click="cancel(true)">删除申请</i-button>
                         <i-button v-if="canCancel" style="width: 200px;margin: 18px auto;" type="error" @click="cancel(false)">作废申请</i-button>
                     </i-row>
                 </div>
@@ -293,8 +294,8 @@
                             </i-col>
                         </i-row>
                         <i-row v-for="(item,index) in item.steps" :key="index" class="content">
-                            <Alert v-if="item.State !== 0 && item.State !== 1" show-icon :type="icons[item.State]">{{item.StepName}}于{{item.CreatedOn}}{{item.Time}}由{{item.ExecutorName}}{{stepInfo[item.State]}}</Alert>
-                            <Alert v-else show-icon>{{item.StepName}}于{{item.CreatedOn}}{{item.Time}}由{{item.ExecutorName}}{{stepInfo[item.State]}}</Alert>
+                            <Alert v-if="item.State !== 0 && item.State !== 1" show-icon :type="icons[item.State]">{{item.StepName}}于{{item.CreatedOn}}由{{item.ExecutorName}}{{stepInfo[item.State]}}</Alert>
+                            <Alert v-else show-icon>{{item.StepName}}于{{item.CreatedOn}}由{{item.ExecutorName}}{{stepInfo[item.State]}}</Alert>
                         </i-row>
                     </TimelineItem>
                 </i-timeline>
@@ -715,11 +716,18 @@ export default {
                 return generalCondition && (hasPrivilege || myOrg);
             }
         },
+        canDelete: {
+            get: function () {
+                let isOrgManager = (this.form.currentStep === '填写申请表' || this.form.currentStep === '指导老师审核') && localStorage.getItem("role") === "管理员";
+                let hasPrivilege = app.checkPermission('Organization.RemoveActivity');
+                return isOrgManager || hasPrivilege;
+            }
+        },
         qrCodeUrl: {
             get: function () {
-                let url = "http://xsst.xmu.edu.cn/manage/printactivityapplication";
+                let url = `http://xsst.xmu.edu.cn/manage/printactivityapplication?instanceId=${this.instanceId}`;
                 let encoding = encodeURIComponent(url);
-                let finalUrl = `/url2qr?url=${encoding}&instanceId=${this.instanceId}&state=2`;
+                let finalUrl = `/url2qr?url=${encoding}&state=2`;
                 return finalUrl;
             }
         }
@@ -780,7 +788,7 @@ export default {
         min-height: 50px;
     }
     .headline {
-        margin-top: 9px;
+        margin-top: 50px;
         text-align: center;
         font-size: 24px;
         font-family: '';

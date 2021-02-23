@@ -140,7 +140,8 @@ export default {
             let model = this.model;
             form.validate((err) => {
                 if (!err) {
-                return;
+                    this.isloading = false;
+                    return;
                 }
                 axios.post("/api/security/SaveUserV2", {
                     ...model,
@@ -359,7 +360,7 @@ export default {
             this.haveJoinCPC = !!value.toLocaleDateString && value.toLocaleDateString() !== badDate.toLocaleDateString();
         },
         "model.JoinCCYLTime" (value) {
-            this.haveJoinCPC = !!value.toLocaleDateString && value.toLocaleDateString() !== badDate.toLocaleDateString();
+            this.haveJoinCCYL = !!value.toLocaleDateString && value.toLocaleDateString() !== badDate.toLocaleDateString();
         }
     }
 };

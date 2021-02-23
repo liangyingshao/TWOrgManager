@@ -5,7 +5,7 @@
                 <template v-slot:title>
                     <i-row type="flex" align="middle">
                         <span style="font-size: 18px;">我的待办&nbsp;</span>
-                        <Badge :count="pendingData.length" v-if="pendingData.length > 0"></Badge>
+                        <Badge :count="entryForManager.pending.badge" v-if="entryForManager.pending.badge  > 0"></Badge>
                     </i-row>
                 </template>
                 <template v-slot:extra>
@@ -292,7 +292,7 @@ export default {
         getPending () {
             axios.post("/api/workflow/Pending", {}, msg => {
                 this.pendingData = msg.data;
-                this.entryForManager.pending.badge = this.pendingData.length;
+                this.entryForManager.pending.badge = msg.totalRow;
             })
         },
         dealWorkflow (instanceId, stepId, WorkflowType) {

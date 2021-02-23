@@ -3,26 +3,27 @@
         <template v-slot:extra>
             <i-row type="flex" :gutter="16">
                 <i-col>
-                    <i-button type="primary" @click="addActivity">新建项目</i-button>
+                    <i-button type="primary" @click="addActivity">申请新活动</i-button>
                 </i-col>
                 <i-col>
-                    <i-input search placeholder="搜索活动名称" v-model="activityName" @on-search="getActivities()" />
+                    <i-input search placeholder="搜索活动名称或编号" v-model="activityName" @on-search="getActivities()" />
                 </i-col>
             </i-row>
         </template>
         <i-row>
-            <i-table stripe  :columns="tableColumns.activity" :data="activityData" :loading="tableLoading">
+            <i-table stripe :columns="tableColumns.activity" @on-filter-change="onFilterChange" :data="activityData" :loading="tableLoading">
                 <template slot="Action" slot-scope="{row}">
-                    <i-button @click="checkWorkflow(row.InstanceId, row.StepId, row.ID)">查看</i-button>
-                    <i-button type="primary" @click="iniateAct(row.ID, 1)" v-if="row.StartState === 0 && row.ApplicateState === 3">发起活动</i-button>
-                    <i-button @click="iniateAct(row.ID, 0)" v-if="row.StartState === 1 && row.ApplicateState === 3">取消活动</i-button>
+                    <a class="a-button" @click="checkWorkflow(row.InstanceId, row.StepId, row.ID)">[查看]</a>
+                    <a class="a-button" @click="iniateAct(row.ID, 1)" v-if="row.StartState === 0 && row.ApplicateState === 3">[发起活动]</a>
+                    <a class="a-button" @click="iniateAct(row.ID, 0)" v-if="row.StartState === 1 && row.ApplicateState === 3">[取消活动]</a>
+                    <a class="a-button" v-if="canDelete(row)" type="error" @click="cancel(row)">[删除项目]</a>
                 </template>
                 <template slot="QRCode" slot-scope="{row}">
-                    <img v-if="row.ShortCode" :src="'/qr/' + row.ShortCode" />
+                    <img width="80" v-if="row.ShortCode" :src="'/qr/' + row.ShortCode" />
                 </template>
             </i-table>
-            <Page :styles="{'margin-top': '16px'}" :total="pager.totalRow" show-sizer show-total :page-size="5"
-                @on-change="getActivities($event)" @on-page-size-change="getActivities(null ,$event)" />
+            <Page :styles="{'margin-top': '16px'}" :total="pager.totalRow" show-sizer show-total :page-size="10"
+                @on-change="getActivities($event, null)" @on-page-size-change="getActivities(null ,$event)" />
         </i-row>
     </i-card>
 </template>
@@ -30,6 +31,7 @@
 <script>
 import axios from 'axios';
 import tableColumns from '../../pages/Modules/ManageIndex/tableColumns';
+const app = require("@/config");
 export default {
     props: {
         overrideID: {
@@ -44,10 +46,12 @@ export default {
             activityData: [],
             pager: {
                 page: 1,
-                pageSize: 5,
+                pageSize: 10,
                 totalRow: 0
             },
-            ID: ""
+            ID: "",
+            step: "",
+            type: ""
         }
     },
     mounted () {
@@ -62,6 +66,14 @@ export default {
         }
     },
     methods: {
+        onFilterChange (e) {
+            if (e.key === "CurrentStep") {
+                this.step = e._filterChecked[0];
+            } else if (e.key === "ActivityType") {
+                this.type = e._filterChecked[0];
+            }
+            this.getActivities();
+        },
         addActivity () {
             axios.post("/api/org/Applicate", {id: this.ID}, msg => {
                 if (msg.success) {
@@ -118,7 +130,7 @@ export default {
             let page = targetPage || this.pager.page;
             let pageSize = targetPageSize || this.pager.pageSize;
             this.tableLoading = true;
-            axios.post("/api/org/GetActByDepartId", {Id: this.ID, page, pageSize, name: this.activityName}, msg => {
+            axios.post("/api/org/GetActByDepartId", {Id: this.ID, page, pageSize, name: this.activityName, type: this.type, step: this.step}, msg => {
                 this.tableLoading = false;
                 if (msg.success) {
                     this.activityData = msg.data;
@@ -126,11 +138,36 @@ export default {
                     // this.entryForManager.activity.badge = msg.data.filter(e => e.ApplicateState === 3).length;
                 }
             });
+        },
+        canDelete (row) {
+            let isOrgManager = (row.CurrentStep === '填写申请表' || row.CurrentStep === '指导老师审核') && localStorage.getItem("role") === "管理员";
+            let hasPrivilege = app.checkPermission('Organization.RemoveActivity');
+            return isOrgManager || hasPrivilege;
+        },
+        cancel (row) {
+            this.$Modal.confirm({
+                title: "确认删除",
+                content: "确实要删除申请吗？此操作不可恢复。",
+                onOk: () => {
+                    axios.post("/api/org/RemoveActivity", {id: row.ID}, msg => {
+                        if (msg.success) {
+                            this.$Message.success("删除成功");
+                            this.getActivities();
+                        } else {
+                            this.$Message.error(msg.msg);
+                        }
+                    });
+                }
+            })
         }
     }
 }
 </script>
 
 <style scoped>
-
+.a-button{
+    color: dodgerblue;
+    cursor: pointer;
+    margin-right: 10px;
+}
 </style>

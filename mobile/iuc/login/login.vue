@@ -19,9 +19,14 @@
 				<view class="flex flex-direction margin-tb login-rl">
 					<button class="cu-btn bg-blue lg" form-type="submit">登录</button>
 				</view>
+				<view class="flex flex-direction margin-tb login-rl">
+					<a class="cu-btn bg-blue lg" href="http://ids.xmu.edu.cn/authserver/login?service=http://xsst.xmu.edu.cn/api/ecard">
+						用厦大账号登录
+					</a>
+				</view>
 			</form>
 		</view>
-    <view class="flex margin-bottom-xl justify-center footer">
+<!--    <view class="flex margin-bottom-xl justify-center footer">
     	<text @click="login('15102242660', '88888888')">学生</text>
     	<text class="padding-lr-xs">|</text>
     	<text @click="login('24320152356894', '123456')">社团</text>
@@ -33,7 +38,7 @@
     	<text @click="login('15102246798', '123456')">社团管理部</text>
     	<text class="padding-lr-xs">|</text>
     	<text @click="login('admin', '88888888')">团委</text>
-    </view>
+    </view> -->
 	</view>
 </template>
 
